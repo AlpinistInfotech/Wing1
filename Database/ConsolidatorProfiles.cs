@@ -36,7 +36,7 @@ namespace Database
         public bool IsTerminate { get; set; }
         public DateTime JoiningDt { get; set; }
         public int SpLegNumber { get; set; }        
-        public enmTCRanks enmTCRanks { get; set; }
+        public enmTCRanks TCRanks { get; set; }
     }
 
     [Index(nameof(TcNid))]
@@ -59,7 +59,7 @@ namespace Database
         [ForeignKey("tblRegistration")]
         public int? TcNid { get; set; }
         public tblRegistration tblRegistration { get; set; }
-        public enmTCRanks enmTCRanks { get; set; }
+        public enmTCRanks TCRanks { get; set; }
         public DateTime QualifyDate { get; set; }
         public double PPRequired { get; set; }
         public double PPDone { get; set; }
@@ -85,6 +85,7 @@ namespace Database
         [ForeignKey("tblCountryMaster")]
         public int? CountryId { get; set; }
         public tblCountryMaster tblCountryMaster { get; set; }
+        public string Pincode { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime CreatedDt { get; set; }
         public int CreatedBy { get; set; }

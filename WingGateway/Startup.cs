@@ -28,7 +28,15 @@ namespace WingGateway
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<DBContext>();
+            services.AddIdentity<ApplicationUser, IdentityRole>(option=> {
+                    option.Password.RequireDigit = true;
+                    option.Password.RequireLowercase = true;
+                    option.Password.RequireUppercase = true;
+                    option.Password.RequiredLength = 7;
+                    option.Lockout.MaxFailedAccessAttempts = 4;
+                    option.Lockout.DefaultLockoutTimeSpan = new TimeSpan(24, 0, 0);
+                }
+            ).AddEntityFrameworkStores<DBContext>();
 
             #region ************* Services Registration ************************
             services.AddScoped<ICaptchaGenratorBase>(ctx => new CaptchaGenratorBase(ctx.GetRequiredService<DBContext>()));

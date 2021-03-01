@@ -50,6 +50,14 @@ namespace WingGateway.Models
 
     public class mdlRegistration
     {
+        [StringLength(10,ErrorMessage = "The {0} must be at {2} characters long.", MinimumLength = 10)]
+        [RegularExpression("[a-zA-Z0-9]*$", ErrorMessage = "Invalid {0}, no special charcter")]
+        [Display(Name = "SponsorId")]
+        public string SpTcId { get; set; }
+
+
+        public int TcNId { get; set; }
+        public string TcId { get; set; }
         [Required]
         [Display(Name = "Gender")]
         public enmGender gender { get; set; }
@@ -88,6 +96,7 @@ namespace WingGateway.Models
         [DataType(DataType.EmailAddress)]
         public string EmailAddress { get; set; }
 
+        [Classes.CustomValidation.MinimumAge(18,ErrorMessage ="Age Should be 18 year")]
         [Required]
         [Display(Name = "DOB")]
         public DateTime Dob{ get; set; }
@@ -128,5 +137,76 @@ namespace WingGateway.Models
         [DataType(DataType.Password)]
         [Compare(nameof(Password),ErrorMessage ="Password & confirm Password do not match")]
         public string ConfirmPassword { get; set; }
+
+        public bool GenrateRegistration(ISequenceMaster sequenceMaster,IConsolidatorProfile consolidatorProfile, DBContext context)
+        {
+            DateTime CurrentDatetime = DateTime.Now;
+            //Validate Sponsor
+            int? SpNid=null;
+            List<int> AllSpNid = new List<int>();
+            if (this.SpTcId != null && this.SpTcId.Length > 0)
+            {
+                SpNid = consolidatorProfile.GetNId(this.SpTcId);
+                if (SpNid == 0)
+                {
+                    throw new Exception("Invalid Sponsor Nid");
+                }
+                AllSpNid = consolidatorProfile.GetAllSpNid(SpNid.Value);
+                AllSpNid.Add(SpNid.Value);
+            }
+            
+            this.TcId=sequenceMaster.GenrateSequence(this.state_id);
+            tblRegistration tr = new tblRegistration()
+            {
+                Id = TcId,
+                FirstName = first_name,
+                MiddleName = middle_name,
+                LastName = last_name,
+                Husband_father_name = husband_father_name,
+                Gender = gender,
+                Dob = this.Dob,
+                JoiningState = state_id,
+                SpNid = SpNid,
+                SpId = SpTcId,
+                Isblock = false,
+                IsTerminate = false,
+                JoiningDt = CurrentDatetime,
+                SpLegNumber = (consolidatorProfile.GetNidLegCount(SpNid.Value) + 1),
+                TCRanks = enmTCRanks.Level1
+            };
+            context.tblRegistration.Add(tr);
+            context.SaveChanges();
+            TcNId = tr.Nid;
+            context.tblTree.AddRange(AllSpNid.Select(p=>new tblTree { TcNid= TcNId, TcSpNid=p }).ToList());
+            tblTcAddressDetail tblTcAddressDetail = new tblTcAddressDetail()
+            {
+                AddressType = enmAddressType.Permanent,
+                address_line1 = this.address_line1,
+                address_line2 = this.address_line2,
+                StateId = this.state_id,
+                CountryId = this.country_id,
+                TcNid = TcNId,
+                IsDeleted = false,
+                CreatedBy = 0,
+                CreatedDt = CurrentDatetime,
+                ModifiedBy = 0,
+                ModifiedDt = CurrentDatetime
+            };
+            context.tblTcAddressDetail.Add(tblTcAddressDetail);
+            tblTcRanksDetails tblTcRanksDetails = new tblTcRanksDetails()
+            {
+                TCRanks = enmTCRanks.Level1,
+                TcNid = TcNId,
+                QualifyDate = CurrentDatetime,
+                PPRequired = 0,
+                PPDone = 0,
+                Isdeleted = false
+            };
+            context.tblTcRanksDetails.Add(tblTcRanksDetails);
+            context.SaveChanges();
+            return true;
+
+
+        }
     }
 }

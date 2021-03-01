@@ -16,4 +16,6 @@ namespace Database
         public int CreatedBy { get; set; }
     }
 
+    
+
 }

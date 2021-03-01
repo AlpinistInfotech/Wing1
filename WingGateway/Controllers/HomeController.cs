@@ -65,11 +65,22 @@ namespace WingGateway.Controllers
 
         [Route("Register")]
         [HttpPost]
-        public IActionResult Register([FromServices] ICaptchaGenratorBase captchaGenratorBase,[FromForm] mdlRegistration mdl)
+        public IActionResult Register([FromServices]IUserManager , [FromServices] ICaptchaGenratorBase captchaGenratorBase,[FromForm] mdlRegistration mdl)
         {
+            if (_context.ApplicationUser.Where(p => (p.Email == mdl.EmailAddress) && !p.IsTerminated).Any())
+            {
+                ModelState.AddModelError(mdl.EmailAddress, "Already Exists");
+            }
+            if (_context.ApplicationUser.Where(p => (p.Email == mdl.EmailAddress || p.PhoneNumber == mdl.PhoneNo) && !p.IsTerminated).Any())
+            {
+                ModelState.AddModelError(mdl.PhoneNo, "Already Exists");
+            }
             if (ModelState.IsValid)
-            { 
-
+            {
+                
+                ApplicationUser applicationUser = new ApplicationUser();
+                applicationUser.UserName= 
+                _context.ApplicationUser
             }
             return View();
         }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -74,4 +75,18 @@ namespace Database
         public virtual string CountryName { get; set; }
 
     }
+    
+    
+    public class tblTcSequcence
+    {
+        [Key]
+        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
+        public int TcSequcence { get; set; }
+        public int Monthyear { get; set; }
+        public int StateId { get; set; }
+        public int CurrentSeq { get; set; }
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
+    }
+
 }

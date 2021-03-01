@@ -33,4 +33,12 @@ namespace Database
         Consolidator=1,
         Employee=2
     }
+
+    public enum enmMessageType
+    {
+        Success=1,
+        Error=2,
+        Warning = 3,
+        Info = 4,
+    }
 }
