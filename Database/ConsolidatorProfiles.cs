@@ -33,6 +33,7 @@ namespace Database
         public tblRegistration tblRegistrationSponsor { get; set; }
         public string SpId { get; set; }
         public bool Isblock { get; set; }
+        public enmIsKycUpdated IsKycUpdated { get; set; }
         public bool IsTerminate { get; set; }
         public DateTime JoiningDt { get; set; }
         public int SpLegNumber { get; set; }        

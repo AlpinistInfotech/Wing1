@@ -10,8 +10,7 @@ namespace Database
 {
 
     public class ApplicationUser : IdentityUser
-    {
-        public bool IsTerminated { get; set; }
+    {   
         public enmUserType UserType { get; set; }
         [ForeignKey("tblRegistration")]
         public int? TcNid { get; set; }

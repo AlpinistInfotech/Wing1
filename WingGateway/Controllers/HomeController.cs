@@ -1,5 +1,6 @@
 ﻿using Database;
 using Database.Classes;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -14,10 +15,15 @@ namespace WingGateway.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly DBContext _context;
-        public HomeController(ILogger<HomeController> logger, DBContext context)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly DBContext _context;        
+        
+        public HomeController(ILogger<HomeController> logger,UserManager<ApplicationUser> userManager,SignInManager<ApplicationUser> signInManager ,DBContext context)
         {
             _logger = logger;
+            this._userManager = userManager;
+            this._signInManager = signInManager;
             _context = context;
         }
 
@@ -31,7 +37,7 @@ namespace WingGateway.Controllers
             return View();
         }
 
-        [Route("Login")]
+        
         public IActionResult Login([FromServices]ICaptchaGenratorBase captchaGenratorBase)
         {   
             mdlCaptcha mdC = new mdlCaptcha();
@@ -42,7 +48,7 @@ namespace WingGateway.Controllers
             };
             return View(mdl);
         }
-        [Route("Login")]
+        
         [HttpPost]
         public IActionResult Login([FromServices] ICaptchaGenratorBase captchaGenratorBase, mdlLogin mdl)
         {
@@ -51,8 +57,9 @@ namespace WingGateway.Controllers
             return View();
         }
 
-        [Route("Register")]
-        public IActionResult Register([FromServices] ICaptchaGenratorBase captchaGenratorBase)
+        
+        [HttpGet]
+        public IActionResult Registration([FromServices] ICaptchaGenratorBase captchaGenratorBase)
         {
             mdlCaptcha mdC = new mdlCaptcha();
             mdC.GenrateCaptcha(captchaGenratorBase);
@@ -63,26 +70,50 @@ namespace WingGateway.Controllers
             return View(mdl);
         }
 
-        [Route("Register")]
+        
         [HttpPost]
-        public IActionResult Register([FromServices]IUserManager , [FromServices] ICaptchaGenratorBase captchaGenratorBase,[FromForm] mdlRegistration mdl)
+        public async Task<IActionResult> RegistrationAsync([FromServices] ICaptchaGenratorBase captchaGenratorBase,
+                            [FromServices]ISequenceMaster sequenceMaster ,
+                            [FromServices] IConsolidatorProfile consolidatorProfile,
+                            [FromForm] mdlRegistration mdl)
         {
-            if (_context.ApplicationUser.Where(p => (p.Email == mdl.EmailAddress) && !p.IsTerminated).Any())
+            if (!captchaGenratorBase.verifyCaptch(mdl.CaptchaData.SaltId, mdl.CaptchaData.CaptchaCode))
             {
-                ModelState.AddModelError(mdl.EmailAddress, "Already Exists");
-            }
-            if (_context.ApplicationUser.Where(p => (p.Email == mdl.EmailAddress || p.PhoneNumber == mdl.PhoneNo) && !p.IsTerminated).Any())
-            {
-                ModelState.AddModelError(mdl.PhoneNo, "Already Exists");
-            }
+                ModelState.AddModelError(mdl.CaptchaData.CaptchaCode, "Invalid Captcha");
+            }            
             if (ModelState.IsValid)
             {
-                
-                ApplicationUser applicationUser = new ApplicationUser();
-                applicationUser.UserName= 
-                _context.ApplicationUser
+                using var transaction = _context.Database.BeginTransaction();
+                try {
+                    mdl.GenrateRegistration(sequenceMaster, consolidatorProfile, _context);
+                    ApplicationUser appuser = new ApplicationUser()
+                    {
+                        UserName = mdl.TcId,
+                        Email = mdl.EmailAddress,
+                        TcNid = mdl.TcNId
+                    };
+                    var result= await _userManager.CreateAsync(appuser, mdl.Password);
+                    if (result.Succeeded)
+                    {
+                        await _signInManager.SignInAsync(appuser, isPersistent: false);
+                        return RedirectToAction("Index","home");
+                    }
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    ModelState.AddModelError("", ex.Message);
+                }
+
+
             }
-            return View();
+            return View(mdl);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

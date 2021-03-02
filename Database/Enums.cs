@@ -41,4 +41,11 @@ namespace Database
         Warning = 3,
         Info = 4,
     }
+
+    public enum enmIsKycUpdated
+    {
+        No=0,
+        Yes=1,
+        Partial=2
+    }
 }

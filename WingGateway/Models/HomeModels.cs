@@ -146,7 +146,7 @@ namespace WingGateway.Models
             List<int> AllSpNid = new List<int>();
             if (this.SpTcId != null && this.SpTcId.Length > 0)
             {
-                SpNid = consolidatorProfile.GetNId(this.SpTcId);
+                SpNid = consolidatorProfile.GetNId(this.SpTcId ,true);
                 if (SpNid == 0)
                 {
                     throw new Exception("Invalid Sponsor Nid");
@@ -170,6 +170,7 @@ namespace WingGateway.Models
                 SpId = SpTcId,
                 Isblock = false,
                 IsTerminate = false,
+                IsKycUpdated=enmIsKycUpdated.No,
                 JoiningDt = CurrentDatetime,
                 SpLegNumber = (consolidatorProfile.GetNidLegCount(SpNid.Value) + 1),
                 TCRanks = enmTCRanks.Level1
