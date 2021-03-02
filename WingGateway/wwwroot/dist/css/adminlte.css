@@ -1,4 +1,4 @@
-@charset "UTF-8";
+﻿@charset "UTF-8";
 /*!
  *   AdminLTE v3.0.2
  *   Author: Colorlib
@@ -19971,9 +19971,11 @@ html.maximized-card {
   justify-content: center;
 }
 
-.login-box,
+.login-box {
+    width: 360px
+}
 .register-box {
-  width: 360px;
+  width: 720px;
 }
 
 @media (max-width: 576px) {

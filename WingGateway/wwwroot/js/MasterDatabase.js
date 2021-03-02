@@ -4,10 +4,11 @@ openRequest.onupgradeneeded = function (e) {
     console.log("Upgrading...");
     var thisDB = e.target.result;
     if (!thisDB.objectStoreNames.contains("tblCountryMaster")) {
-        thisDB.createObjectStore("tblCountryMaster", { keyPath: "country_id" });
+        thisDB.createObjectStore("tblCountryMaster", { keyPath: "countryId" });
     }
     if (!thisDB.objectStoreNames.contains("tblStateMaster")) {
-        thisDB.createObjectStore("tblStateMaster", { keyPath: "state_id" });
+        var objectStore = thisDB.createObjectStore("tblStateMaster", { keyPath: "stateId" });
+        objectStore.createIndex("countryId", "countryId", { unique: false });
     }
     
 }
@@ -41,8 +42,8 @@ openRequest.onsuccess = function (e) {
     db = e.target.result;
     postMessage("Loading data...");
     //delete exiting data
-    LoadDataInDB("/api/Returnapi/GettblStateMaster", {}, 'tblCountryMaster');
-    LoadDataInDB("/api/Returnapi/GettblStateMaster", {}, 'tblStateMaster');
+    LoadDataInDB("/api/Returnapi/GetCountry", {}, 'tblCountryMaster');
+    LoadDataInDB("/api/Returnapi/GetState", {}, 'tblStateMaster');
     
 }
 openRequest.onerror = function (e) {

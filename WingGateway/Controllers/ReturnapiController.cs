@@ -21,14 +21,16 @@ namespace WingGateway.Controllers
         }
 
         // GET: api/Returnapi
-        [HttpGet]
+        [HttpPost]
+        [Route("GetCountry")]
         public async Task<ActionResult<IEnumerable<tblCountryMaster>>> GettblCountryMaster()
         {
             return await _context.tblCountryMaster.ToListAsync();
         }
 
         // GET: api/Returnapi/5
-        [HttpGet("{id}")]
+        [HttpPost]
+        [Route("GetCountry/{id}")]
         public async Task<ActionResult<tblCountryMaster>> GettblCountryMaster(int id)
         {
             var tblCountryMaster = await _context.tblCountryMaster.FindAsync(id);
@@ -40,15 +42,17 @@ namespace WingGateway.Controllers
 
             return tblCountryMaster;
         }
-
-        [HttpGet]
+        
+        [HttpPost]
+        [Route("GetState")]
         public async Task<ActionResult<IEnumerable<tblStateMaster>>> GettblStateMaster()
         {
             return await _context.tblStateMaster.ToListAsync();
         }
 
         // GET: api/Returnapi/5
-        [HttpGet("{id}")]
+        [HttpPost]
+        [Route("GetState/{id}")]
         public async Task<ActionResult<tblStateMaster>> GettblStateMaster(int id)
         {
             var tblStateMaster = await _context.tblStateMaster.FindAsync(id);

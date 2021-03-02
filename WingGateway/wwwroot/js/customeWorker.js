@@ -7,6 +7,8 @@ if (localStorage.getItem("loadData") == null) {
 
 function loadDatainIndexDb() {
     localStorage.setItem("loadData", 1);
+    localStorage.setItem("databaseName", "dpbs");
+    localStorage.setItem("databaseVersion", 1);
     location.reload();
 }
 function startWorker() {
