@@ -37,11 +37,20 @@ namespace WingGateway
                     option.Lockout.DefaultLockoutTimeSpan = new TimeSpan(24, 0, 0);
                 }
             ).AddEntityFrameworkStores<DBContext>();
+            
 
             #region ************* Services Registration ************************
             services.AddScoped<ICaptchaGenratorBase>(ctx => new CaptchaGenratorBase(ctx.GetRequiredService<DBContext>()));
-            
+
             #endregion
+
+            services.AddAuthorization(options =>
+            {
+                foreach (var name in Enum.GetNames(typeof(enmDocumentMaster)))
+                {
+                    options.AddPolicy(name, p => p.RequireClaim(name));
+                }                
+            });
 
             services.AddControllersWithViews();
             

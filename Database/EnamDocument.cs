@@ -44,11 +44,78 @@ namespace Database
         Gateway_Dashboard = 1,
         [Document(enmDocumentType.Report, 1, "Notification", "Notifications", "far fa-circle nav-icon", "Notifications")]
         Gateway_Notifications = 2,
+        [Document(EnmSubModule :enmSubModule.Gateway_Personal_Profile, DocumentType:enmDocumentType.Create | enmDocumentType.Update, DisplayOrder:1,Name:"Kyc",Description:"Kyc",Icon:"far fa-circle nav-icon",ActionName:"Kyc")]
+        Gateway_UploadKyc = 3,
+        [Document(EnmSubModule: enmSubModule.Gateway_Personal_Profile, DocumentType: enmDocumentType.Create | enmDocumentType.Update, DisplayOrder: 1, Name: "Address", Description: "Address", Icon: "far fa-circle nav-icon", ActionName: "Address")]
+        Gateway_Address = 4,
+        [Document(EnmSubModule: enmSubModule.Gateway_Personal_Profile, DocumentType: enmDocumentType.Create | enmDocumentType.Update, DisplayOrder: 1, Name: "Contact", Description: "Contact", Icon: "far fa-circle nav-icon", ActionName: "Contact")]
+        Gateway_Contact = 5,
+        [Document(EnmModule: enmModule.Gateway_Profile, DocumentType: enmDocumentType.Create | enmDocumentType.Update,
+            DisplayOrder: 1, Name: "Pan", Description: "Pan", Icon: "far fa-circle nav-icon", ActionName: "Pan")]
+        Gateway_Pan = 6,
+        [Document(EnmModule: enmModule.Gateway_Profile, DocumentType: enmDocumentType.Create | enmDocumentType.Update,
+            DisplayOrder: 1, Name: "Bank", Description: "Bank", Icon: "far fa-circle nav-icon", ActionName: "Bank")]
+        Gateway_Bank = 7,
+        [Document(EnmModule: enmModule.Gateway_Profile, DocumentType: enmDocumentType.Create | enmDocumentType.Update,
+            DisplayOrder: 1, Name: "Nominee", Description: "Nominee", Icon: "far fa-circle nav-icon", ActionName: "Nominee")]
+        Gateway_Nominee = 8,
+        [Document(EnmModule: enmModule.Gateway_Booking, DocumentType: enmDocumentType.Create | enmDocumentType.Update, 
+            DisplayOrder: 1, Name: "Flight", Description: "Flight", Icon: "fa fa-plane nav-icon", ActionName: "Flight")]
+        Gateway_Flight = 10,
+        [Document(EnmModule: enmModule.Gateway_Booking, DocumentType: enmDocumentType.Create | enmDocumentType.Update, 
+            DisplayOrder: 1, Name: "Hotel", Description: "Hotel", Icon: "fa fa-building nav-icon", ActionName: "Hotel")]
+        Gateway_Hotel = 11,
+        [Document(EnmModule: enmModule.Gateway_Booking, DocumentType: enmDocumentType.Create | enmDocumentType.Update,
+            DisplayOrder: 1, Name: "Buses", Description: "Buses", Icon: "fa fa-bus nav-icon", ActionName: "Buses")]
+        Gateway_Buses = 12,
+        [Document(EnmModule: enmModule.Gateway_Booking, DocumentType: enmDocumentType.Create | enmDocumentType.Update,
+            DisplayOrder: 1, Name: "Train", Description: "Train", Icon: "fa fa-train nav-icon", ActionName: "Train")]
+        Gateway_Train = 13,
+        [Document(EnmModule: enmModule.Gateway_Booking, DocumentType: enmDocumentType.Create | enmDocumentType.Update, 
+            DisplayOrder: 1, Name: "Holiday Package", Description: "Holiday Package", Icon: "fa fa-binoculars nav-icon", ActionName: "HolidayPackage")]
+        Gateway_Holiday_Package = 14,
+        [Document(EnmModule: enmModule.Gateway_Booking, DocumentType: enmDocumentType.Report,
+            DisplayOrder: 1, Name: "Booking Report", Description: "Booking Report", Icon: "far fa-circle nav-icon", ActionName: "BookingReport")]
+        Gateway_Booking_Report = 19,
 
-        [Document(EnmSubModule: enmSubModule.Departments, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.Report,
-        DisplayOrder: 2, Name: "Sub Department", Description: "Create,Update Subdepartment", EnmParentDocument: enmDocumentMaster.None,
-        Icon: "far fa-circle nav-icon", EnmDocumentPartitionType: enmDocumentPartitionType.None, IsTransactional: false)]
-        SubDepartment = 1002,
+        [Document(EnmModule: enmModule.Gateway_Incentive, DocumentType: enmDocumentType.Report,
+            DisplayOrder: 1, Name: "Statement", Description: "Statement", Icon: "far fa-circle nav-icon", ActionName: "Statement")]
+        Gateway_Statement = 21,
+        [Document(EnmSubModule: enmSubModule.Gateway_Incentive_wallet, DocumentType: enmDocumentType.Report,
+            DisplayOrder: 1, Name: "Wallet Statement", Description: "Wallet Statement", Icon: "far fa-circle nav-icon", ActionName: "WalletStatement")]
+        Gateway_Wallet_Statement = 22,
+        [Document(EnmSubModule: enmSubModule.Gateway_Incentive_wallet, DocumentType: enmDocumentType.Create | enmDocumentType.Update,
+            DisplayOrder: 1, Name: "Add Wallet", Description: "Add Wallet", Icon: "far fa-circle nav-icon", ActionName: "AddWallet")]
+        Gateway_Add_Wallet = 23,
+
+        [Document(EnmModule: enmModule.Gateway_Promotion, DocumentType: enmDocumentType.Create | enmDocumentType.Update,
+            DisplayOrder: 1, Name: "Promotion Details", Description: "Promotion Details", Icon: "far fa-circle nav-icon", ActionName: "PromotionDetails")]
+        Gateway_Promotion_Details = 31,
+
+        [Document(EnmModule: enmModule.Gateway_Team, DocumentType: enmDocumentType.Report,
+            DisplayOrder: 1, Name: "Tree", Description: "Tree", Icon: "far fa-circle nav-icon", ActionName: "Tree")]
+        Gateway_Tree = 41,
+        [Document(EnmModule: enmModule.Gateway_Team, DocumentType: enmDocumentType.Report,
+            DisplayOrder: 1, Name: "Group Billing", Description: "Group Billing", Icon: "far fa-circle nav-icon", ActionName: "GroupBilling")]
+        Gateway_Group_Billing = 42,
+
+        [Document(EnmModule: enmModule.Gateway_Setting, DocumentType: enmDocumentType.Create| enmDocumentType.Update,
+            DisplayOrder: 1, Name: "MarkUp", Description: "MarkUp", Icon: "far fa-circle nav-icon", ActionName: "MarkUp")]
+        Gateway_Markup = 51,
+        [Document(EnmModule: enmModule.Gateway_Setting, DocumentType: enmDocumentType.Create | enmDocumentType.Update,
+            DisplayOrder: 1, Name: "Convenience", Description: "Convenience", Icon: "far fa-circle nav-icon", ActionName: "Convenience")]
+        Gateway_convenience_fee = 52,
+
+        [Document(EnmModule: enmModule.Gateway_Setting, DocumentType: enmDocumentType.Create | enmDocumentType.Update,
+            DisplayOrder: 1, Name: "Change Password", Description: "Change Password", Icon: "far fa-circle nav-icon", ActionName: "ChangePassword")]
+        Gateway_ChangePassword = 52,
+
+
+
+        //[Document(EnmSubModule: enmSubModule.Departments, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.Report,
+        //DisplayOrder: 2, Name: "Sub Department", Description: "Create,Update Subdepartment", EnmParentDocument: enmDocumentMaster.None,
+        //Icon: "far fa-circle nav-icon", EnmDocumentPartitionType: enmDocumentPartitionType.None, IsTransactional: false)]
+        //SubDepartment = 1002,
     }
 
 
@@ -164,6 +231,46 @@ namespace Database
             this.Icon = Icon;
             this.ActionName = ActionName;
         }
+
+        public Document(enmModule EnmModule, enmDocumentType DocumentType, int DisplayOrder, string Name, string Description,
+            string Icon, string ActionName)
+        {
+
+            this.DocumentType = DocumentType;
+            this.DisplayOrder = DisplayOrder;
+            this.Description = Description;
+            this.Name = Name;
+            this.Icon = Icon;
+            this.ActionName = ActionName;
+            this.EnmModule = EnmModule;
+        }
+
+        public Document(enmModule EnmModule, enmSubModule EnmSubModule, enmDocumentType DocumentType, int DisplayOrder, string Name, string Description,
+            string Icon, string ActionName)
+        {
+
+            this.DocumentType = DocumentType;
+            this.DisplayOrder = DisplayOrder;
+            this.Description = Description;
+            this.Name = Name;
+            this.Icon = Icon;
+            this.ActionName = ActionName;
+            this.EnmSubModule = EnmSubModule;
+        }
+        public Document(enmSubModule EnmSubModule, enmDocumentType DocumentType, int DisplayOrder, string Name, string Description,
+            string Icon, string ActionName)
+        {
+
+            this.DocumentType = DocumentType;
+            this.DisplayOrder = DisplayOrder;
+            this.Description = Description;
+            this.Name = Name;
+            this.Icon = Icon;
+            this.ActionName = ActionName;
+            this.EnmModule = EnmModule;
+            this.EnmSubModule = EnmSubModule;
+        }
+
         public virtual int Id { get; set; }
         public enmSubModule? EnmSubModule { get; set; }
         public enmDocumentType DocumentType { get; set; }

@@ -1,5 +1,6 @@
 ﻿using Database;
 using Database.Classes;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -19,6 +20,8 @@ namespace WingGateway.Models
         [DataType(DataType.Password)]
         [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 5)]
         public string Password { get; set; }
+
+        public bool RememberMe { get; set; }
         [Required]
         public mdlCaptcha CaptchaData { get; set; }
     }
@@ -53,6 +56,7 @@ namespace WingGateway.Models
         [StringLength(10,ErrorMessage = "The {0} must be at {2} characters long.", MinimumLength = 10)]
         [RegularExpression("[a-zA-Z0-9]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         [Display(Name = "SponsorId")]
+        [Remote(action: "IsSponsorValid", controller: "Home")]
         public string SpTcId { get; set; }
 
 
@@ -79,8 +83,7 @@ namespace WingGateway.Models
         [RegularExpression("[a-zA-Z]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         public string last_name { get; set; }
 
-        [Required]
-        
+        [Required]        
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 2)]
         [Display(Name = "Husband/Father Name")]
         [RegularExpression("[a-zA-Z]*$", ErrorMessage = "Invalid {0}, no special charcter")]
@@ -88,12 +91,14 @@ namespace WingGateway.Models
         [Required]
         [MaxLength(30)]
         [Display(Name = "Phone No")]
+        [Remote(action: "IsMobileInUse", controller: "Home")]
         [DataType(DataType.PhoneNumber)]
         public string PhoneNo { get; set; }
-        [Required]
-        
+
+        [Required]        
         [Display(Name = "Email")]
         [DataType(DataType.EmailAddress)]
+        [Remote(action: "IsEmailInUse",controller:"Home")]
         public string EmailAddress { get; set; }
 
         [Classes.CustomValidation.MinimumAge(18,ErrorMessage ="Age Should be 18 year")]

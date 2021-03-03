@@ -50,11 +50,33 @@ namespace WingGateway.Controllers
         }
         
         [HttpPost]
-        public IActionResult Login([FromServices] ICaptchaGenratorBase captchaGenratorBase, mdlLogin mdl)
+        public async Task<IActionResult> LoginAsync([FromServices] ICaptchaGenratorBase captchaGenratorBase, mdlLogin mdl,string returnUrl)
         {
             mdlCaptcha mdC = new mdlCaptcha();
-            mdC.GenrateCaptcha(captchaGenratorBase);            
-            return View();
+            if (!captchaGenratorBase.verifyCaptch(mdl.CaptchaData.SaltId, mdl.CaptchaData.CaptchaCode))
+            {
+                ModelState.AddModelError(mdl.CaptchaData.CaptchaCode, "Invalid Captcha");
+            }
+            if (ModelState.IsValid)
+            {
+                var result = await _signInManager.PasswordSignInAsync(mdl.Username, mdl.Password, mdl.RememberMe, true);
+                if (result.Succeeded)
+                {
+                    if (!string.IsNullOrEmpty(returnUrl))
+                    {
+                        return LocalRedirect(returnUrl);
+                    }
+                    else
+                    {
+                        return RedirectToAction("Wing", "Dashboard");
+                    }
+                    
+                }
+                ModelState.AddModelError("", "Invalid login attempts");
+            }
+            
+            
+            return View(mdl);
         }
 
         
@@ -70,7 +92,34 @@ namespace WingGateway.Controllers
             return View(mdl);
         }
 
-        
+        [AcceptVerbs("Get","Post")]
+        public async Task<IActionResult> IsEmailInUse(string EmailAddress)
+        {
+            var users=await _userManager.FindByEmailAsync(EmailAddress);
+            if (users == null)
+            {
+                return Json(true);
+            }
+            else
+            {
+                return Json($"Email {EmailAddress} is already in use");
+            }
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        public IActionResult IsMobileInUse(string PhoneNo)
+        {
+            var users = _context.Users.FirstOrDefault(p => p.PhoneNumber == PhoneNo);            
+            if (users == null)
+            {
+                return Json(true);
+            }
+            else
+            {
+                return Json($"Phone {PhoneNo} is already in use");
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> RegistrationAsync([FromServices] ICaptchaGenratorBase captchaGenratorBase,
                             [FromServices]ISequenceMaster sequenceMaster ,
@@ -96,14 +145,17 @@ namespace WingGateway.Controllers
                     if (result.Succeeded)
                     {
                         await _signInManager.SignInAsync(appuser, isPersistent: false);
-                        return RedirectToAction("Index","home");
+                        transaction.Commit();
+                        return RedirectToAction("Wing", "Dashboard");
                     }
+                    
                     foreach (var error in result.Errors)
                     {
                         ModelState.AddModelError("", error.Description);
                     }
+                    transaction.Rollback();
 
-                    transaction.Commit();
+
                 }
                 catch (Exception ex)
                 {
