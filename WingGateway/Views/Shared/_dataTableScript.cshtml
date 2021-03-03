@@ -1,41 +1,169 @@
-﻿<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+﻿@inject DPBS.Classes.GlobalInterface.ICurrentUsers _currentUsers
+@using DPBS.Classes.Enums
+
+<script src="~/lib/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="~/lib/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="~/lib/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="~/lib/plugins/datatables-buttons/js/buttons.bootstrap4.js"></script>
+<script src="~/lib/plugins/datatables-buttons/js/buttons.flash.min.js"></script>
+<script src="~/lib/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="~/lib/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="~/lib/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<script src="~/lib/plugins/datatables-buttons/js/jszip.min.js"></script>
+<script src="~/lib/plugins/datatables-buttons/js/pdfmake.min.js"></script>
+@if (_currentUsers.currentPermission == enmDocumentType.Approval)
+{
+    <script src="~/lib/plugins/datatables-select/js/select.bootstrap4.js"></script>
+    <script src="~/lib/plugins/datatables-select/js/dataTables.select.js"></script>
+
+    @Html.AntiForgeryToken()
+    <div class="modal fade" id="modal-approval-data">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div id="IDOverlay" class="overlay d-flex justify-content-center align-items-center">
+                    <i class="fas fa-2x fa-sync fa-spin"></i>
+                </div>
+                <div class="modal-header">
+                    <h4 class="modal-title">Processing</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 text-success" id="ddlStatusLogSuccessId"></div>
+                        <div class="col-md-6 text-danger" id="ddlStatusLogFailId"> </div>
+                    </div>
+
+                    <div id="ddlStatusLog"></div>
+                </div>
+                @*<div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>*@
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+}
+
 <script>
+
     $(document).ready(function () {
-            //input type for Switch
-            $("input[data-bootstrap-switch]").each(function(){
-              $(this).bootstrapSwitch('state', $(this).prop('checked'));
-            });
+        $.extend(true, $.fn.dataTable.defaults, {
 
-            //input type for select
-            $('.select2').select2()
-            //Initialize Select2 Elements
-            $('.select2bs4').select2({
-              theme: 'bootstrap4'
-            })
-
-            //Timepicker
-            $('.timepicker').datetimepicker({
-              format: 'LT'
-            })
-            //Date range picker
-           $('.reservation').daterangepicker()
-
-        var ViewBagSaveStatus = parseInt(@ViewBag.SaveStatus);
-            switch (ViewBagSaveStatus) {
-                case 1:
-                    toastr.success("@ViewBag.Message","Success", {timeOut: 2500});
-                    break;
-                case 2:
-                    toastr.error("@ViewBag.Message","Error", {timeOut: 10000});
-                    break;
-                case 3:
-                    toastr.warning("@ViewBag.Message","Warning", {timeOut: 10000});
-                    break;
-                case 4:
-                    toastr.info("@ViewBag.Message","Info", {timeOut: 10000});
-                    break;
-             }
-
+            "scrollX": true,
+            "paging": true,
+            "processing": true, // for show progress bar
+            "serverSide": false, // for process server side
+            "bDestroy": true,
+            "autoWidth": true,
+            "filter": true, // this is for disable filter (search box)
+            "orderMulti": false, // for disable multiple column at once
+            "dom": "<'row'<'col-md-12'B>> <'row'<'col-md-6'l><'col-md-6'f>><'row'<'col-md-12't>>r<'row'<'col-md-6'i><'col-md-6'p>>",//"lBfrtip",//'Bfrtip', //Export
+            "pageLength": "20",
+            "lengthMenu": [[20, 50, 100, -1], [20, 50, 100, "All"]],
+            "fixedHeader": true,
+            "buttons": [
+               @(_currentUsers.currentPermission == enmDocumentType.Approval? Html.Raw("'selectAll','selectNone',{'text': 'Approve',  action: function (e, dt, node, config){ApproveRejectAll(dt,true); },'className': 'btn-success'},{'text': 'Reject',  action: function (e, dt, node, config){ApproveRejectAll(dt,false); },'className': 'btn-danger'},") :null)
+                'excel', 'pdf', 'colvis'//'copy', 'csv',  'print',
+            ],
+            "ajax": {
+                       "dataSrc": "",
+                "type": 'POST',
+            },
+            @(_currentUsers.currentPermission == enmDocumentType.Approval? Html.Raw("'select': { 'style': 'multi'}" ): null)
         });
+    });
+
+    $('#modal-approval-data').on('hidden.bs.modal', function () {
+        location.reload();
+    })
+
+    function ApproveRejectAll(dt,IsApprove)
+    {
+        totalRecord = dt.rows({ selected: true }).count();
+        if (totalRecord == 0) {
+            alert("Please select the record");
+            return;
+        }
+        let remarksData = prompt("Enter Remarks", "");
+
+        let _enmApproval;
+        if (IsApprove) {
+            _enmApproval =@((int)enmApprovalType.Approved);
+         }
+        else {
+            if (remarksData.trim() == "") {
+                alert("Remarks Required");
+                return;
+            }
+            _enmApproval =@((int)enmApprovalType.Rejeceted);
+        }
+
+        $("#modal-approval-data").modal();
+        var logIds = [];
+
+        dt.rows({ selected: true }).every(function (rowIdx, tableLoop, rowLoop) {
+            var data = this.data();
+            logIds.push(data.log_id);
+        });
+
+
+
+        $.ajax({
+            "url": "@(Url.Action())Api",
+            "method": "POST",
+
+            "data": {
+                "remarks": remarksData, "_enmApprovalType": _enmApproval, "logIds": logIds, "__RequestVerificationToken":
+                    $("input[name=__RequestVerificationToken]").val()  }
+        }).done(function (msg) {
+            console.log(msg)
+            var TotalSuccess = 0;
+            var TotalFail = 0;
+            for (index = 0; index < msg.length;index++) {
+                var elemet = document.createElement("p");
+                if (msg[index].status) {
+                    elemet.classList.add("text-success");
+                    elemet.textContent = elemet.textContent +"Request Id= " + msg[index].requestId + ", status=Success, Message= " + msg[index].responseMessage;
+                    TotalSuccess = TotalSuccess + 1;
+                }
+                else {
+                    elemet.classList.add("text-danger");
+                    elemet.textContent = elemet.textContent +"Request Id= " + msg[index].requestId + ", status=Fail, Message= " + msg[index].responseMessage;
+                    TotalFail = TotalFail + 1;
+                }
+                document.getElementById("ddlStatusLog").appendChild(elemet);
+                if (TotalSuccess > 0) {
+                    document.getElementById("ddlStatusLogSuccessId").style.display = "block";
+                    document.getElementById("ddlStatusLogSuccessId").textContent = "Total Success = " + TotalSuccess;
+
+                }
+                else {
+                    document.getElementById("ddlStatusLogSuccessId").style.display = "none";
+                }
+                if (TotalFail > 0) {
+                    document.getElementById("ddlStatusLogFailId").style.display = "block";
+                    document.getElementById("ddlStatusLogFailId").textContent = "Total Fail = " + TotalFail;
+                }
+                else {
+                    document.getElementById("ddlStatusLogFailId").style.display = "none";
+                }
+
+            }
+            var divData = document.getElementById("IDOverlay");
+            divData.remove();
+
+        }).fail(function (jqXHR, textStatus) {
+            document.getElementById("ddlStatusLog").textContent=textStatus;
+            var divData = document.getElementById("IDOverlay");
+            divData.remove();
+            })
+
+
+    }
+
 </script>
+

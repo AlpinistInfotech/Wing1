@@ -41,6 +41,13 @@ namespace Database
         Warning = 3,
         Info = 4,
     }
+    public enum enmApprovalType : byte
+    {
+        Approved = 1,
+        Rejeceted = 2,
+        InProcessing = 4,
+        Pending = 8,
+    }
 
     public enum enmIsKycUpdated
     {
