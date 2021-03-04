@@ -2,6 +2,7 @@ using Database;
 using Database.Classes;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +45,8 @@ namespace WingGateway
 
             #endregion
 
+
+            services.AddScoped<ICurrentUsers>(ctx => new CurrentUsers(ctx.GetRequiredService<IHttpContextAccessor>()));
             services.AddAuthorization(options =>
             {
                 foreach (var name in Enum.GetNames(typeof(enmDocumentMaster)))
