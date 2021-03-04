@@ -37,9 +37,10 @@ namespace Database
         Gateway_Incentive_wallet = 2,
     }
 
-    public enum enmDocumentMaster : int
+    public enum enmDocumentMaster :int
     {
 
+        
         [Document( enmDocumentType.Report,1, "Dashboard", "Dashboard","far fa-circle nav-icon", "Dashboard")]
         Gateway_Dashboard = 1,
         [Document(enmDocumentType.Report, 1, "Notification", "Notifications", "far fa-circle nav-icon", "Notifications")]
@@ -111,7 +112,7 @@ namespace Database
         Gateway_ChangePassword = 52,
 
 
-
+        Emp_Dashboard = 101,
         //[Document(EnmSubModule: enmSubModule.Departments, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.Report,
         //DisplayOrder: 2, Name: "Sub Department", Description: "Create,Update Subdepartment", EnmParentDocument: enmDocumentMaster.None,
         //Icon: "far fa-circle nav-icon", EnmDocumentPartitionType: enmDocumentPartitionType.None, IsTransactional: false)]

@@ -22,6 +22,9 @@ namespace WingGateway
             int.TryParse(temp_TcNid, out _TcNid);
             string temp_TcLevel = httpContext.HttpContext.User.Claims.Where(p => p.Type == "_tcLevel").FirstOrDefault()?.Value;
             int.TryParse(temp_TcLevel, out _TcLevel);
+            _TcName = httpContext.HttpContext.User.Claims.Where(p => p.Type == "_tcName").FirstOrDefault()?.Value;
+            _TcId = httpContext.HttpContext.User.Claims.Where(p => p.Type == "_tcId").FirstOrDefault()?.Value;
+            _TcLevelName = httpContext.HttpContext.User.Claims.Where(p => p.Type == "_tcLevelName").FirstOrDefault()?.Value;
 
         }
 

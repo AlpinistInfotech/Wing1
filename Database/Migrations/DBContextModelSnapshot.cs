@@ -123,7 +123,14 @@ namespace Database.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Capital")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CountryCode")
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<string>("CountryCodeIso2")
                         .HasMaxLength(2)
                         .HasColumnType("nvarchar(2)");
 
@@ -137,6 +144,12 @@ namespace Database.Migrations
                     b.Property<DateTime>("CreatedDt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("CurrencySymbol")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Domain")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -146,10 +159,29 @@ namespace Database.Migrations
                     b.Property<DateTime?>("ModifiedDt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Native")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Region")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("SubRegion")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("currency")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("CountryId");
+
+                    b.HasIndex("CountryName")
+                        .IsUnique()
+                        .HasFilter("[CountryName] IS NOT NULL");
 
                     b.ToTable("tblCountryMaster");
                 });
@@ -278,16 +310,24 @@ namespace Database.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StateCode")
-                        .HasMaxLength(2)
-                        .HasColumnType("nvarchar(2)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("StateName")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<decimal>("latitude")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("longitude")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("StateId");
 
-                    b.HasIndex("CountryId");
+                    b.HasIndex("CountryId", "StateName")
+                        .IsUnique()
+                        .HasFilter("[CountryId] IS NOT NULL AND [StateName] IS NOT NULL");
 
                     b.ToTable("tblStateMaster");
                 });

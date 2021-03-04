@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Database;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using System.Security.Claims;
 
 namespace WingGateway.Controllers
 {
@@ -64,6 +67,44 @@ namespace WingGateway.Controllers
 
             return tblStateMaster;
         }
+
+
+        [HttpGet]
+        [Route("CreateRoleClaims")]
+        public async Task<ActionResult<bool>> CreateRoleClaims([FromServices] RoleManager<IdentityRole> RoleManager)
+        {
+            
+            string[] roleNames = { "TC", "Employee", "Finance","Operation" };
+            IdentityResult roleResult;
+            List<Claim> AllClaim= ClaimStore.GetClaims();
+
+
+            foreach (var roleName in roleNames)
+            {
+                var roleExist = await RoleManager.RoleExistsAsync(roleName);
+                if (!roleExist)
+                {
+                    IdentityRole identityRole = new IdentityRole(roleName);
+                    //create the roles and seed them to the database: Question 1
+                    roleResult = await RoleManager.CreateAsync(identityRole);
+                    if (roleResult.Succeeded)
+                    {
+                        
+                    }
+                }
+            }
+
+            var identityRoleTc = RoleManager.Roles.Where(p => p.Name == "TC").FirstOrDefault();
+            var AlreadyClaims = (await RoleManager.GetClaimsAsync(identityRoleTc)).Select(p => p.Type).ToList();
+            var toBeInserted = AllClaim.Where(p => !AlreadyClaims.Contains(p.Type) && p.Type.IndexOf("Gateway_") >= -1).ToList();
+            foreach (var t in toBeInserted)
+            {
+                var result = await RoleManager.AddClaimAsync(identityRoleTc, t);
+            }
+                
+            return true;
+        }
+
 
         //// PUT: api/Returnapi/5
         //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

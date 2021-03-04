@@ -1,9 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Text;
 
 namespace Database
 {
+    public static class ClaimStore
+    {
+        public static List<Claim> GetClaims()
+        {
+            List<Claim> AllClaim = new List<Claim>();
+            foreach (var value in Enum.GetNames(typeof( enmDocumentMaster)))
+            {
+                AllClaim.Add(new Claim(value,value));
+            }
+            return AllClaim;
+        }
+        
+    }
+
     public interface ICurrentUsers
     {
         public string userId { get;  }

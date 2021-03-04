@@ -37,11 +37,13 @@ namespace WingGateway
                     option.Lockout.MaxFailedAccessAttempts = 4;
                     option.Lockout.DefaultLockoutTimeSpan = new TimeSpan(24, 0, 0);
                 }
-            ).AddEntityFrameworkStores<DBContext>();
-            
+            ).AddEntityFrameworkStores<DBContext>();            
 
             #region ************* Services Registration ************************
             services.AddScoped<ICaptchaGenratorBase>(ctx => new CaptchaGenratorBase(ctx.GetRequiredService<DBContext>()));
+            services.AddScoped<ISequenceMaster>(ctx => new SequenceMaster(ctx.GetRequiredService<DBContext>()));
+            services.AddScoped<IConsolidatorProfile>(ctx => new ConsolidatorProfile(ctx.GetRequiredService<DBContext>()));
+            
 
             #endregion
 
@@ -84,7 +86,7 @@ namespace WingGateway
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Wing}/{action=Index}/{id?}");
             });
         }
     }

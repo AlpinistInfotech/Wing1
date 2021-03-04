@@ -1,6 +1,6 @@
-﻿(function () {
+﻿$(document).ready(function () {
     const DB_NAME = localStorage.getItem("databaseName");
-    const DB_VERSION = localStorage.getItem("databaseName");;
+    const DB_VERSION = localStorage.getItem("databaseVersion");;
     var db;
     var req = indexedDB.open(DB_NAME, DB_VERSION);
     console.log("opendb");
@@ -8,10 +8,15 @@
         // Equal to: db = req.result;
         db = this.result;        
         var countrydropdown = document.getElementById("ddl_country_id");
-        countrydropdown.onchange = LoadState.bind(countrydropdown.value);
+        countrydropdown.onchange = LoadState.bind();
         if (countrydropdown != null) {
             console.log("Remove Drop down");
             removeOptions(countrydropdown);
+
+            var defaultoption = document.createElement("option");
+            defaultoption.text = "Select Country";            
+            countrydropdown.add(defaultoption);
+
             var obstore = db.transaction('tblCountryMaster', 'readwrite').objectStore('tblCountryMaster');
             obstore.openCursor().onsuccess = function (event) {
                 var cursor = event.target.result;
@@ -37,7 +42,9 @@
     }
 
 
-    function LoadState(countryId) {
+    function LoadState() {
+
+        let countryId = parseInt(document.getElementById("ddl_country_id").value);
         var req = indexedDB.open(DB_NAME, DB_VERSION);
         console.log("opendb");
         req.onsuccess = function (evt) {
@@ -47,17 +54,21 @@
             if (statedropdown != null) {
                 console.log("Remove Drop down");
                 removeOptions(statedropdown);
-                var obstore = db.transaction('tblStateMaster', 'readwrite').objectStore('tblStateMaster');
-                var index = objectStore.index("countryId");
+                var defaultstoption = document.createElement("option");
+                defaultstoption.text = "Select State";
+                statedropdown.add(defaultstoption );
 
-                index.get(countryId).onsuccess = function (event) {
+                var obstore = db.transaction('tblStateMaster', 'readwrite').objectStore('tblStateMaster');
+                var index = obstore.index("countryId");
+
+                index.openCursor(countryId).onsuccess = function (event) {
                     var scursor = event.target.result;
                     if (scursor) {
                         var option = document.createElement("option");
-                        option.text = cursor.value.stateCode + " - " + cursor.value.stateName;
-                        option.value = cursor.value.stateId;
+                        option.text = scursor.value.stateCode + " - " + scursor.value.stateName;
+                        option.value = scursor.value.stateId;
                         statedropdown.add(option);
-                        cursor.continue();
+                        scursor.continue();
                     }
                 };
 

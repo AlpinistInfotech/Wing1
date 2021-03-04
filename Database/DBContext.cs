@@ -12,9 +12,12 @@ namespace Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<tblTcSequcence>().HasIndex(p => new { p.Monthyear, p.StateId }).IsUnique();
             modelBuilder.Entity<tblTcSequcence>().Property(p => p.RowVersion).IsConcurrencyToken();
+            modelBuilder.Entity<tblCountryMaster>().HasIndex(c => new { c.CountryName }).IsUnique();
+            modelBuilder.Entity<tblStateMaster>().HasIndex(c => new { c.CountryId, c.StateName }).IsUnique();
         }
         public DbSet<ApplicationUser> ApplicationUser { get; set; }
 
@@ -31,7 +34,12 @@ namespace Database
         public DbSet<tblTree> tblTree { get; set; }
         public DbSet<tblTcRanksDetails> tblTcRanksDetails { get; set; }
         public DbSet<tblTcAddressDetail> tblTcAddressDetail { get; set; }
-        
+
         #endregion
+
+        public void SetBasicData(ModelBuilder modelBuilder)
+        {
+            
+        }
     }
 }

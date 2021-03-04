@@ -12,7 +12,7 @@ namespace WingGateway.Controllers
     public class WingController : Controller
     {
 
-        [Authorize(policy:nameof(enmDocumentMaster.Gateway_Dashboard))]
+        [Authorize(policy:nameof( enmDocumentMaster.Gateway_Dashboard))]
         public IActionResult Index()
         {
             return View();
