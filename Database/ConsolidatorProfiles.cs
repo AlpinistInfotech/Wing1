@@ -97,4 +97,30 @@ namespace Database
         public string ModifiedByName { get; set; }
     }
 
+
+    public class tblKycMaster
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int DetailId { get; set; }
+        [ForeignKey("tblRegistration")]
+        public int? TcNid { get; set; }
+        public tblRegistration tblRegistration { get; set; }
+        public enmIdentityProof IdProofType { get; set; }
+        public string IdDocumentNo { get; set; }
+        public string IdDocumentName { get; set; }
+        public enmAddressProof AddressProofType { get; set; }
+        public string AddressDocumentNo { get; set; }
+        public string AddressDocumentName { get; set; }
+        public enmApprovalType IsApproved { get; set; }        
+        public DateTime CreatedDt { get; set; }
+        public int CreatedBy { get; set; }
+        public string Remarks { get; set; }
+        public int? ApprovedBy { get; set; }
+        public DateTime? ApprovedDt { get; set; }
+        public string ApprovalRemarks { get; set; }
+        public bool Isdeleted { get; set; }
+
+    }
+
 }

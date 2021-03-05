@@ -55,4 +55,22 @@ namespace Database
         Yes=1,
         Partial=2
     }
+
+    public enum enmIdentityProof
+    {   
+        Adhar =1,
+        Passport=2,
+        PANcard=3,
+        DrivingLicense=4,
+        VoterID=5,
+    }
+    public enum enmAddressProof
+    {
+        Adhar = 1,
+        Passport = 2,
+        Passbook = 3,
+        RationCard = 4,
+        Waterbill = 5,
+        ElectricityBill = 6,
+    }
 }

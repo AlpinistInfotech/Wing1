@@ -43,20 +43,20 @@
         return elemet;
     }
     function fncCreateMenuItem(menuname, iconname, linkname, hastree, isactive) {
-        var item = document.createElement("li");
+        let item = document.createElement("li");
 
         item.classList.add("nav-item");
         if (hastree) {
             item.classList.add("has-treeview");
         }
 
-        var itemlink = document.createElement("a");
+        let itemlink = document.createElement("a");
         itemlink.href = linkname;
         itemlink.classList.add("nav-link");
         if (isactive) { itemlink.classList.add("active"); }
         itemlink.appendChild(fncCreateMenuIcon(iconname));
 
-        var itemTxt = document.createElement("p");
+        let itemTxt = document.createElement("p");
         itemTxt.textContent = menuname;
         if (hastree) {
             itemTxt.appendChild(fncCreateMenuIcon("fas fa-angle-left right"));
@@ -66,12 +66,23 @@
         return item;
     }
     function fncAddSideMenu(datas) {
+        let _documentId = 0;
+        let _moduleId = 0;
+        let _submoduleId = 0;
+        try {
+            _documentId = parseInt(document.getElementById("_currentDocument").value);
+            _moduleId = parseInt(document.getElementById("_currentModule").value);
+            _submoduleId = parseInt(document.getElementById("_currentSubModule").value);           
+        } catch (ex) {
+        }
+
         panelSideMenu = document.getElementById("panelSideMenu");
+        panelSideMenu.innerHTML = '';
         var AllModules = datas._module;
         var AllSubModules = datas._subModule;
         var AllDocuments = datas._document;
         //Remove Unnecessary SubModules
-        for (let i = AllSubModules.length; i >= 0; i--) {
+        for (let i = AllSubModules.length-1; i >= 0; i--) {
             let isFound = false;
             for (let j = 0; j < AllDocuments.length; j++) {
                 if (AllDocuments[j].subModuleId == AllSubModules[i].id) {
@@ -85,7 +96,7 @@
         }
         
         //Remove Unnecessary Module
-        for (let i = AllModules.length; i >= 0; i--) {
+        for (let i = AllModules.length-1; i >= 0; i--) {
             let isFound = false;
             for (let j = 0; j < AllDocuments.length; j++) {
                 if (AllDocuments[j].moduleId == AllModules[i].id) {
@@ -106,48 +117,50 @@
             }
         }
 
+        //First Add Those Documet Which have no module or sub module
         
-
-
-
-        for (var i = 0; i < datas.length; i++) {
-            var AppHeader = document.createElement("li"); AppHeader.classList.add("nav-header"); AppHeader.textContent = datas[i].name;
-            panelSideMenu.appendChild(AppHeader);
-            for (var j = 0; j < datas[i].modules.length; j++) {
-                var ModuleItem = fncCreateMenuItem(datas[i].modules[j].name, datas[i].modules[j].icon, "#", true, datas[i].modules[j].id == document.getElementById("_currentModule").value);
-
-                var SubModuleUL = document.createElement("ul"); SubModuleUL.setAttribute("class", "nav nav-treeview");
-                for (var k = 0; k < datas[i].modules[j].subModules.length; k++) {
-
-                    var SubModuleItem = fncCreateMenuItem(datas[i].modules[j].subModules[k].name, datas[i].modules[j].subModules[k].icon, datas[i].modules[j].subModules[k].cntrlName, true, datas[i].modules[j].subModules[k].id == document.getElementById("_currentSubModule").value);
-                    var DocumentUL = document.createElement("ul"); DocumentUL.setAttribute("class", "nav nav-treeview");
-                    for (var l = 0; l < datas[i].modules[j].subModules[k].documents.length; l++) {
-
-                        var documentLink = webRootPath + "/";
-                        if (datas[i].isArea) { documentLink = documentLink + datas[i].areaName + "/"; }
-                        if (datas[i].modules[j].isArea) { documentLink = documentLink + datas[i].modules[j].areaName + "/"; }
-                        //add controller
-                        documentLink = documentLink + datas[i].modules[j].subModules[k].cntrlName + "/";
-                        documentLink = documentLink + datas[i].modules[j].subModules[k].documents[l].actionName;
-                        var DocumentItem = fncCreateMenuItem(datas[i].modules[j].subModules[k].documents[l].name, datas[i].modules[j].subModules[k].documents[l].icon, documentLink, false, datas[i].modules[j].subModules[k].documents[l].id == document.getElementById("_currentDocument").value);
-                        DocumentUL.appendChild(DocumentItem);
-                    }
-                    SubModuleItem.appendChild(DocumentUL);
-                    if (datas[i].modules[j].name == "") {
-                        panelSideMenu.appendChild(SubModuleItem);
-                    }
-                    else {
-                        SubModuleUL.appendChild(SubModuleItem);
-                    }
-
-                }
-                if (datas[i].modules[j].name != "") {
-                    ModuleItem.appendChild(SubModuleUL);
-                    panelSideMenu.appendChild(ModuleItem);
-                }
-
+        for (let i = 0; i < AllDocuments.length; i++) {            
+            if (AllDocuments[i].moduleId == 0 && AllDocuments[i].subModuleId == 0) {                
+                let item = fncCreateMenuItem(AllDocuments[i].name, AllDocuments[i].icon, AllDocuments[i].actionName, false, AllDocuments[i].id == _documentId);                
+                panelSideMenu.appendChild(item);
             }
         }
+        //Get Modules
+        for (let i = 0; i < AllModules.length; i++) {
+            
+            let ModuleItem = fncCreateMenuItem(AllModules[i].name, AllModules[i].icon, "#", true, AllModules[i].id == _moduleId);
+            let ModuleUL = document.createElement("ul");
+            ModuleUL.setAttribute("class", "nav nav-treeview");
+            ModuleItem.appendChild(ModuleUL);
+
+            for (let j = 0; j < AllSubModules.length; j++) {
+                if (AllSubModules[j].moduleId == AllModules[i].id) {
+                   
+                    let SubModuleItem = fncCreateMenuItem(AllSubModules[j].name, AllSubModules[j].icon, "#", true, AllSubModules[j].id == _submoduleId);
+                    let SubModuleUL = document.createElement("ul");
+                    SubModuleUL.setAttribute("class", "nav nav-treeview");
+                    SubModuleItem.appendChild(SubModuleUL);
+                    for (let k = 0; k < AllDocuments.length; k++) {
+                        if (AllDocuments[k].subModuleId == AllSubModules[j].id) {
+                            let item = fncCreateMenuItem(AllDocuments[k].name, AllDocuments[k].icon, AllDocuments[k].actionName, false, AllDocuments[k].id == _documentId);
+                            SubModuleUL.appendChild(item);
+                        }
+                    }
+                    
+                    ModuleUL.appendChild(SubModuleItem);
+                }
+            }
+
+            for (let k = 0; k < AllDocuments.length; k++) {
+                if (AllDocuments[k].moduleId == AllModules[i].id) {
+                    let item = fncCreateMenuItem(AllDocuments[k].name, AllDocuments[k].icon, AllDocuments[k].actionName, false, AllDocuments[k].id == _documentId);
+                    ModuleUL.appendChild(item);
+                }
+            }
+            
+            panelSideMenu.appendChild(ModuleItem);
+        }
+
     }
 
 

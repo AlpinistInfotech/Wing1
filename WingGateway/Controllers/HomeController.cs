@@ -99,5 +99,14 @@ namespace WingGateway.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+
+
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_UploadKyc))]
+        public IActionResult UploadKyc()
+        {
+            return View(new mdlKyc());
+        }
+
     }
 }

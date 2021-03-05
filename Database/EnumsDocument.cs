@@ -42,11 +42,11 @@ namespace Database
     {
 
         
-        [Document( enmDocumentType.Report,1, "Dashboard", "Dashboard","far fa-circle nav-icon", "Dashboard")]
+        [Document( enmDocumentType.Report,1, "Dashboard", "Dashboard","far fa-circle nav-icon", "/Home/Dashboard")]
         Gateway_Dashboard = 1,
         [Document(enmDocumentType.Report, 1, "Notification", "Notifications", "far fa-circle nav-icon", "Notifications")]
         Gateway_Notifications = 2,
-        [Document(EnmSubModule :enmSubModule.Gateway_Personal_Profile, DocumentType:enmDocumentType.Create | enmDocumentType.Update, DisplayOrder:1,Name:"Kyc",Description:"Kyc",Icon:"far fa-circle nav-icon",ActionName:"Kyc")]
+        [Document(EnmSubModule :enmSubModule.Gateway_Personal_Profile, DocumentType:enmDocumentType.Create | enmDocumentType.Update, DisplayOrder:1,Name:"Kyc",Description:"Kyc",Icon:"far fa-circle nav-icon",ActionName: "/Home/UploadKyc")]
         Gateway_UploadKyc = 3,
         [Document(EnmSubModule: enmSubModule.Gateway_Personal_Profile, DocumentType: enmDocumentType.Create | enmDocumentType.Update, DisplayOrder: 1, Name: "Address", Description: "Address", Icon: "far fa-circle nav-icon", ActionName: "Address")]
         Gateway_Address = 4,
@@ -309,21 +309,27 @@ namespace Database
         {
             var type = e.GetType();
             var name = Enum.GetName(type, e);
-            return (Document)type.GetField(name).GetCustomAttributes(typeof(Document), false).FirstOrDefault();
+            var returnData =(Document)type.GetField(name).GetCustomAttributes(typeof(Document), false).FirstOrDefault();
+            returnData.Id = (int)e;
+            return returnData;
         }
 
         public static Module GetModuleDetails(this enmModule e)
         {
             var type = e.GetType();
             var name = Enum.GetName(type, e);
-            return (Module)type.GetField(name).GetCustomAttributes(typeof(Module), false).FirstOrDefault();
+            var returnData=(Module)type.GetField(name).GetCustomAttributes(typeof(Module), false).FirstOrDefault();
+            returnData.Id = (int)e;
+            return returnData;
         }
 
         public static SubModule GetSubModuleDetails(this enmSubModule e)
         {
             var type = e.GetType();
             var name = Enum.GetName(type, e);
-            return (SubModule)type.GetField(name).GetCustomAttributes(typeof(SubModule), false).FirstOrDefault();
+            var returnData = (SubModule)type.GetField(name).GetCustomAttributes(typeof(SubModule), false).FirstOrDefault();
+            returnData.Id = (int)e;
+            return returnData;
         }
     }
 }
