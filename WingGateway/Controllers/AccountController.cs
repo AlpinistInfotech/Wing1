@@ -56,7 +56,7 @@ namespace WingGateway.Controllers
                     }
                     else
                     {
-                        return RedirectToAction("Wing", "Dashboard");
+                        return RedirectToAction("Index", "Home");
                     }
 
                 }
@@ -147,7 +147,10 @@ namespace WingGateway.Controllers
                     {
                         UserName = mdl.TcId,
                         Email = mdl.EmailAddress,
-                        TcNid = mdl.TcNId
+                        TcNid = mdl.TcNId,
+                        PhoneNumber =mdl.PhoneNo,
+                        UserType = enmUserType.Consolidator
+
                     };
                     var result = await _userManager.CreateAsync(appuser, mdl.Password);
                     var role = await RoleManager.FindByNameAsync("TC");
@@ -157,7 +160,7 @@ namespace WingGateway.Controllers
                     }
 
                     if (result.Succeeded)
-                    {
+                    {   
                         await _signInManager.SignInAsync(appuser, isPersistent: false);
                         transaction.Commit();
                         return RedirectToAction("Wing", "Dashboard");
@@ -182,5 +185,13 @@ namespace WingGateway.Controllers
             return View(mdl);
         }
 
+
+        [HttpPost]
+        [Route("Logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();            
+            return RedirectToAction("Login");
+        }
     }
 }

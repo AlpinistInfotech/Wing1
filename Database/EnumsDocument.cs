@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Database
@@ -257,6 +258,7 @@ namespace Database
             this.Icon = Icon;
             this.ActionName = ActionName;
             this.EnmSubModule = EnmSubModule;
+            this.EnmModule = EnmModule;
         }
         public Document(enmSubModule EnmSubModule, enmDocumentType DocumentType, int DisplayOrder, string Name, string Description,
             string Icon, string ActionName)
@@ -267,8 +269,7 @@ namespace Database
             this.Description = Description;
             this.Name = Name;
             this.Icon = Icon;
-            this.ActionName = ActionName;
-            this.EnmModule = EnmModule;
+            this.ActionName = ActionName;            
             this.EnmSubModule = EnmSubModule;
         }
 
@@ -300,5 +301,29 @@ namespace Database
         Yearly,
         Quaterly,
         Monthly,
+    }
+
+    public static class EnmDescription
+    {
+        public static Document GetDocumentDetails(this enmDocumentMaster e)
+        {
+            var type = e.GetType();
+            var name = Enum.GetName(type, e);
+            return (Document)type.GetField(name).GetCustomAttributes(typeof(Document), false).FirstOrDefault();
+        }
+
+        public static Module GetModuleDetails(this enmModule e)
+        {
+            var type = e.GetType();
+            var name = Enum.GetName(type, e);
+            return (Module)type.GetField(name).GetCustomAttributes(typeof(Module), false).FirstOrDefault();
+        }
+
+        public static SubModule GetSubModuleDetails(this enmSubModule e)
+        {
+            var type = e.GetType();
+            var name = Enum.GetName(type, e);
+            return (SubModule)type.GetField(name).GetCustomAttributes(typeof(SubModule), false).FirstOrDefault();
+        }
     }
 }

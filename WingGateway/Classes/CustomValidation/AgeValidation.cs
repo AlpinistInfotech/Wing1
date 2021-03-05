@@ -17,6 +17,10 @@ namespace WingGateway.Classes.CustomValidation
 
         public override bool IsValid(object value)
         {
+            if (value == null)
+            {
+                return true;
+            }
             DateTime date;
             if (DateTime.TryParse(value.ToString(), out date))
             {

@@ -48,7 +48,7 @@ namespace WingGateway
             #endregion
 
 
-            services.AddScoped<ICurrentUsers>(ctx => new CurrentUsers(ctx.GetRequiredService<IHttpContextAccessor>()));
+            services.AddScoped<ICurrentUsers>(ctx => new CurrentUsers(ctx.GetRequiredService<IHttpContextAccessor>(), ctx.GetRequiredService<DBContext>()) );
             services.AddAuthorization(options =>
             {
                 foreach (var name in Enum.GetNames(typeof(enmDocumentMaster)))

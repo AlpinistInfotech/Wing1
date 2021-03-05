@@ -14,12 +14,12 @@
         <div class="card-body login-card-body">
             <p class="login-box-msg">Sign in to start your session</p>
 
-            <form asp-action="Registration">
+            <form asp-action="Login">
                 <div asp-validation-summary="All" class="text-danger"></div>
 
 
                 <input asp-for="CaptchaData.SaltId" class="form-control" type="hidden" />
-
+                <input asp-for="CaptchaData.CaptchaImage" class="form-control" type="hidden" />
 
                 <div class="form-group">
                     <input asp-for="Username" class="form-control" placeholder="Username" />

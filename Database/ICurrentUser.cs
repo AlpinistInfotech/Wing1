@@ -22,11 +22,13 @@ namespace Database
     public interface ICurrentUsers
     {
         public string userId { get;  }
-        public int TcNid { get; }                
-        public int TcLevel { get; }
+        public enmUserType UserType { get; }
+        public int EmpId { get; }
+        public int TcNid { get; }
+        public enmTCRanks TcRanks { get; }
         public string TcId { get; }
-        public string TcName { get; }
-        public string TcLevelName { get; }        
+        public string Name { get; }
+        public string TcRankName { get; }        
         public List<string> Roles { get;  } 
         public Document currentDocument { get; set; }        
         public enmDocumentType? currentPermission { get; set; }
