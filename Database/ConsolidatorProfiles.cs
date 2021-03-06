@@ -109,9 +109,6 @@ namespace Database
         public enmIdentityProof IdProofType { get; set; }
         public string IdDocumentNo { get; set; }
         public string IdDocumentName { get; set; }
-        public enmAddressProof AddressProofType { get; set; }
-        public string AddressDocumentNo { get; set; }
-        public string AddressDocumentName { get; set; }
         public enmApprovalType IsApproved { get; set; }        
         public DateTime CreatedDt { get; set; }
         public int CreatedBy { get; set; }

@@ -48,5 +48,6 @@ namespace Database.Classes
             return _context.tblRegistration.Where(p => p.SpNid == Nid).Count();
         }
 
+
     }
 }

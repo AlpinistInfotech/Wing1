@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -303,8 +305,94 @@ namespace Database
         Monthly,
     }
 
+    public enum enmSaveStatus : byte
+    {
+        none = 0,
+        success = 1,
+        danger = 2,
+        warning = 3,
+        info = 4,
+        primary = 5,
+        secondary = 6,
+    }
+    public enum enmMessage
+    {
+        [Description("Access Denied!!!")]
+        AccessDenied,
+        [Description("Pending for Approval!!!")]
+        PendingApproval,
+        [Description("Save Successfully!!!")]
+        SaveSucessfully,
+        [Description("Update Successfully!!!")]
+        UpdateSucessfully,
+        [Description("Approved Successfully!!!")]
+        ApprovedSucessfully,
+        [Description("Rejected Successfully!!!")]
+        RejectSucessfully,
+        [Description("Enter all Required inputs!!!")]
+        RequiredField,
+        [Description("Invalid Id !!!")]
+        InvalidID,
+        [Description("Invalid Organization !!!")]
+        InvalidOrganization,
+        [Description("Invalid UserId !!!")]
+        InvalidUserID,
+        [Description("Invalid Applicable date !!!")]
+        InvalidApplicableDt,
+        [Description("Invalid Data !!!")]
+        InvalidData,
+        [Description("Invalid User or Password !!!")]
+        InvalidUserOrPassword,
+        [Description("Invalid Operation !!!")]
+        InvalidOperation,
+        [Description("User Blocked !!!")]
+        UserLocked,
+        [Description("Data already exists !!!")]
+        AlreadyExists,
+        [Description("Request already in Processing !!!")]
+        RequestAlreadyInProcessing,
+        [Description("Request already Processed !!!")]
+        RequestAlreadyProcessed,
+        [Description("Data not exists !!!")]
+        DataNotExists,
+        [Description("Concurrency Error !!!")]
+        ConcurrencyError,
+        [Description("Database Error !!!")]
+        DatabaseError,
+        [Description("Undefined Exception!!!")]
+        UndefinedException,
+        [Description("Only one head office can be created!!!")]
+        SingleHeadOfficeException
+    }
+
     public static class EnmDescription
     {
+        public static string GetDescription<T>(this T e) where T : IConvertible
+        {
+            if (e is Enum)
+            {
+                Type type = e.GetType();
+                Array values = System.Enum.GetValues(type);
+
+                foreach (int val in values)
+                {
+                    if (val == e.ToInt32(CultureInfo.InvariantCulture))
+                    {
+                        var memInfo = type.GetMember(type.GetEnumName(val));
+                        var descriptionAttribute = memInfo[0]
+                            .GetCustomAttributes(typeof(DescriptionAttribute), false)
+                            .FirstOrDefault() as DescriptionAttribute;
+
+                        if (descriptionAttribute != null)
+                        {
+                            return descriptionAttribute.Description;
+                        }
+                    }
+                }
+            }
+            return null; // could also return string.Empty
+        }
+
         public static Document GetDocumentDetails(this enmDocumentMaster e)
         {
             var type = e.GetType();

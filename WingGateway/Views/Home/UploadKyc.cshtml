@@ -8,7 +8,7 @@
     <div class="col-md-12">
         <div class="card card-primary">
 
-            <form action="@Url.Action()" method="post">
+            <form action="@Url.Action()" method="post"  enctype="multipart/form-data">
                 @Html.AntiForgeryToken()
                 <div asp-validation-summary="All" class="text-danger"></div>
 
@@ -52,7 +52,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="IdProofType"></label>
+                                <label asp-for="IdProofType"></label>
                                 <select asp-for="IdProofType" class="form-control select2">
                                     <option value="">Select Id Proof</option>
                                     @foreach (var idproof in Enum.GetValues(typeof(enmIdentityProof)))
@@ -77,10 +77,11 @@
                                 <label asp-for="IDDocumentUpload">File input</label>
                                 <div class="input-group">
                                     <div class="custom-file">
-                                        <input asp-for="IDDocumentUpload" type="file" class="custom-file-input" id="IDDocumentUpload">
-                                        <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                                        <input asp-for="IDDocumentUpload"  class="custom-file-input"  accept="image/x-png,image/jpeg" multiple />
+                                        <label class="custom-file-label" asp-for="IDDocumentUpload">Choose file</label>
                                     </div>
                                 </div>
+                                <span asp-validation-for="IDDocumentUpload" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -129,4 +130,5 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script src="~/plugins/bs-custom-file-input/bs-custom-file-input.js"></script>
 }

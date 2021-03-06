@@ -26,8 +26,10 @@ namespace WingGateway.Controllers
             this._signInManager = signInManager;
             _context = context;
         }
-        public IActionResult Login([FromServices] ICaptchaGenratorBase captchaGenratorBase)
+        public IActionResult Login([FromServices] ICaptchaGenratorBase captchaGenratorBase,string ReturnUrl)
         {
+            ViewBag.ReturnUrl = ReturnUrl;
+
             mdlCaptcha mdC = new mdlCaptcha();
             mdC.GenrateCaptcha(captchaGenratorBase);
             mdlLogin mdl = new mdlLogin()
@@ -38,7 +40,7 @@ namespace WingGateway.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> LoginAsync([FromServices] ICaptchaGenratorBase captchaGenratorBase, mdlLogin mdl, string returnUrl)
+        public async Task<IActionResult> LoginAsync([FromServices] ICaptchaGenratorBase captchaGenratorBase, mdlLogin mdl,string? ReturnUrl)
         {
             mdlCaptcha mdC = new mdlCaptcha();
             if (!captchaGenratorBase.verifyCaptch(mdl.CaptchaData.SaltId, mdl.CaptchaData.CaptchaCode))
@@ -50,9 +52,10 @@ namespace WingGateway.Controllers
                 var result = await _signInManager.PasswordSignInAsync(mdl.Username, mdl.Password, mdl.RememberMe, true);
                 if (result.Succeeded)
                 {
-                    if (!string.IsNullOrEmpty(returnUrl))
+                    
+                    if (!string.IsNullOrEmpty(ReturnUrl))
                     {
-                        return LocalRedirect(returnUrl);
+                        return LocalRedirect(ReturnUrl);
                     }
                     else
                     {
@@ -60,6 +63,7 @@ namespace WingGateway.Controllers
                     }
 
                 }
+                mdl.CaptchaData.GenrateCaptcha(captchaGenratorBase);
                 ModelState.AddModelError("", "Invalid login attempts");
             }
 

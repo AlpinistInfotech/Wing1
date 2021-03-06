@@ -18,6 +18,8 @@ namespace Database
             modelBuilder.Entity<tblTcSequcence>().Property(p => p.RowVersion).IsConcurrencyToken();
             modelBuilder.Entity<tblCountryMaster>().HasIndex(c => new { c.CountryName }).IsUnique();
             modelBuilder.Entity<tblStateMaster>().HasIndex(c => new { c.CountryId, c.StateName }).IsUnique();
+            modelBuilder.Entity<tblStateMaster>().Property(o => o.longitude).HasColumnType("decimal(18,14)");
+            modelBuilder.Entity<tblStateMaster>().Property(o => o.latitude).HasColumnType("decimal(18,14)");
         }
         public DbSet<ApplicationUser> ApplicationUser { get; set; }
 
@@ -34,7 +36,7 @@ namespace Database
         public DbSet<tblTree> tblTree { get; set; }
         public DbSet<tblTcRanksDetails> tblTcRanksDetails { get; set; }
         public DbSet<tblTcAddressDetail> tblTcAddressDetail { get; set; }
-
+        public DbSet<tblKycMaster> tblKycMaster { get; set; }
         #endregion
 
         public void SetBasicData(ModelBuilder modelBuilder)

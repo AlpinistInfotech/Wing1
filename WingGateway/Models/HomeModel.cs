@@ -11,8 +11,7 @@ namespace WingGateway.Models
     public class mdlKyc
     {
         [Required]
-        [Display(Name = "Id Type")]
-        [StringLength(200, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 5)]
+        [Display(Name = "Id Type")]        
         public enmIdentityProof IdProofType { get; set; } = enmIdentityProof.Adhar;
 
         [Required]
@@ -24,7 +23,7 @@ namespace WingGateway.Models
         [Display(Name = "Upload(ID)")]
         public List<IFormFile> IDDocumentUpload { set; get; }
 
-        [Required]
+        [RegularExpression("[a-zA-Z0-9,/.\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         [Display(Name = "Remarks")]
         public string Remarks{ set; get; }
 
@@ -34,7 +33,8 @@ namespace WingGateway.Models
         [Display(Name = "Approved Dt")]
         public DateTime? ApprovedDt { get; set; }
 
-        [Required]
+        
+        [RegularExpression("[a-zA-Z0-9,/.\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         [Display(Name = "Approval Remarks")]
         public string ApprovalRemarks { set; get; }
     }

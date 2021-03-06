@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using WingGateway.Models;
@@ -17,13 +19,14 @@ namespace WingGateway.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;        
-        private readonly DBContext _context;        
-        
-        
-        public HomeController(ILogger<HomeController> logger,DBContext context)
+        private readonly DBContext _context;
+        private readonly IConfiguration _config;
+
+        public HomeController(ILogger<HomeController> logger,DBContext context, IConfiguration config)
         {
             _logger = logger;            
             _context = context;
+            _config = config;
         }
 
 
@@ -103,9 +106,100 @@ namespace WingGateway.Controllers
 
 
         [Authorize(policy: nameof(enmDocumentMaster.Gateway_UploadKyc))]
-        public IActionResult UploadKyc()
+        public IActionResult UploadKyc(enmSaveStatus? _enmSaveStatus, enmMessage? _enmMessage)
         {
+            if (_enmSaveStatus != null)
+            {
+                ViewBag.SaveStatus = (int)_enmSaveStatus.Value;
+                ViewBag.Message = _enmMessage?.GetDescription();
+            }
             return View(new mdlKyc());
+        }
+        
+        [HttpPost]
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_UploadKyc))]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadKycAsync([FromServices] ICurrentUsers currentUsers, mdlKyc mdl)
+        {
+            
+            string filePath = _config["FileUpload:Kyc"];
+            
+            var path = Path.Combine(
+                     Directory.GetCurrentDirectory(),
+                     "wwwroot/"+ filePath);
+            if (mdl.IDDocumentUpload == null || mdl.IDDocumentUpload.Count==0 || mdl.IDDocumentUpload[0]==null || mdl.IDDocumentUpload[0].Length==0)
+            {
+                ModelState.AddModelError("IDDocumentUpload", "Invalid Files");
+                ViewBag.SaveStatus = enmSaveStatus.danger;
+                ViewBag.Message = enmMessage.InvalidData.GetDescription();
+            }
+            if (mdl.IdProofType == enmIdentityProof.Adhar)
+            {
+                if (mdl.DocumentNo.Trim().Length != 12)
+                {
+                    ModelState.AddModelError("DocumentNo", "Invalid Adhar Number");
+                    ViewBag.SaveStatus = enmSaveStatus.danger;
+                    ViewBag.Message = enmMessage.InvalidData.GetDescription();
+                }
+                else if (!mdl.DocumentNo.All(char.IsDigit))
+                {
+                    ModelState.AddModelError("DocumentNo", "Invalid Adhar Number");
+                    ViewBag.SaveStatus = enmSaveStatus.danger;
+                    ViewBag.Message = enmMessage.InvalidData.GetDescription();
+                }
+                
+            }
+            if (ModelState.IsValid)
+            {
+                List<string> AllFileName = new List<string>();
+                
+                bool exists = System.IO.Directory.Exists(path);
+                if (!exists)
+                    System.IO.Directory.CreateDirectory(path);
+
+                foreach (var file in mdl.IDDocumentUpload)
+                {
+                    var filename = Guid.NewGuid().ToString()+".jpeg";
+                    using (var stream = new FileStream(string.Concat( path, filename), FileMode.Create))
+                    {
+                        AllFileName.Add(filename);
+                        await file.CopyToAsync(stream);
+                    }
+                }
+
+                var ExistingData=_context.tblKycMaster.FirstOrDefault(p => !p.Isdeleted && p.TcNid == currentUsers.TcNid && p.IsApproved == enmApprovalType.Rejeceted);
+                if (ExistingData != null)
+                {
+                    ExistingData.Isdeleted =true;
+                    _context.tblKycMaster.Update(ExistingData);
+                }
+                if (_context.tblKycMaster.Any(p => p.TcNid == currentUsers.TcNid && !p.Isdeleted))
+                {
+                    ModelState.AddModelError("", "Request Already Submited");
+                    ViewBag.SaveStatus = enmSaveStatus.warning;
+                    ViewBag.Message = enmMessage.AlreadyExists.GetDescription();
+                }
+                else
+                {
+                    _context.tblKycMaster.Add(new tblKycMaster
+                    {
+                        IdProofType = mdl.IdProofType,
+                        IdDocumentNo = mdl.DocumentNo,
+                        IdDocumentName = string.Join<string>(",", AllFileName),
+                        CreatedBy = 0,
+                        CreatedDt = DateTime.Now,
+                        Remarks = mdl.Remarks
+
+                    });
+                    _context.SaveChanges();
+                    return RedirectToAction("UploadKyc",
+                                 new { _enmSaveStatus = enmSaveStatus.success, _enmMessage = enmMessage.UpdateSucessfully });
+                }
+
+
+            }
+
+            return View(mdl);
         }
 
     }

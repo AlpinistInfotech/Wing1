@@ -14,10 +14,11 @@
         <div class="card-body login-card-body">
             <p class="login-box-msg">Sign in to start your session</p>
 
-            <form asp-action="Login">
+            <form asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]"
+  >
                 <div asp-validation-summary="All" class="text-danger"></div>
 
-
+                
                 <input asp-for="CaptchaData.SaltId" class="form-control" type="hidden" />
                 <input asp-for="CaptchaData.CaptchaImage" class="form-control" type="hidden" />
 
