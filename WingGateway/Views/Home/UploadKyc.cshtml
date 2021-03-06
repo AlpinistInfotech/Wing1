@@ -6,98 +6,122 @@
 }
 <div class="row">
     <div class="col-md-12">
-        <div class="card card-primary card-outline card-outline-tabs">
+        <div class="card card-primary">
 
             <form action="@Url.Action()" method="post">
                 @Html.AntiForgeryToken()
                 <div asp-validation-summary="All" class="text-danger"></div>
+
+                @if (Model.IsApproved == null)
+                {
+                    <div class="card card-white">
+                        <div class="card-header">
+                            <h3 class="card-title">Identity Proof (Pending)</h3>
+                        </div>
+                    </div>
+                }
+                @if (Model.IsApproved == enmApprovalType.Pending)
+                {
+                    <div class="card card-info">
+                        <div class="card-header">
+                            <h3 class="card-title">Identity Proof (In Processing)</h3>
+                        </div>
+                    </div>
+                }
+                @if (Model.IsApproved == enmApprovalType.Approved)
+                {
+                    <div class="card card-success">
+                        <div class="card-header">
+                            <h3 class="card-title">Identity Proof (Approved)</h3>
+                        </div>
+                    </div>
+                }
+                @if (Model.IsApproved == enmApprovalType.Rejeceted)
+                {
+                    <div class="card card-danger">
+                        <div class="card-header">
+                            <h3 class="card-title">Identity Proof (Rejected)</h3>
+                        </div>
+                    </div>
+                }
+
+
+
                 <div class="card-body">
+
                     <div class="row">
-                        <div class="form-group col-md-6">
-                            <label asp-for="IdProofType"></label>
-                            <select asp-for="IdProofType" class="form-control select2">
-                                <option value="">Select Id Proof</option>
-                                @foreach (var idproof in Enum.GetValues(typeof(enmIdentityProof)))
-                                {
-                                    <option value="@(idproof)">@(idproof.ToString())</option>
-                                }
-                            </select>
-                            <span asp-validation-for="IdProofType" class="text-danger"></span>
-                        </div>
-
-                        <div class="form-group col-md-6">
-                            <label asp-for="DocumentNo"></label>
-                            <input asp-for="DocumentNo" class="form-control" placeholder="Document No" autofocus />
-                            <span asp-validation-for="DocumentNo" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-md-6">
-                            <label asp-for="IDDocumentUpload"></label>
-                            <input asp-for="IDDocumentUpload" class="form-control" placeholder="Document No" autofocus />
-                            <span asp-validation-for="IDDocumentUpload" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-md-6">
-                            <label asp-for="AddressProofType"></label>
-                            <select asp-for="AddressProofType" class="form-control select2">
-                                <option value="">Select Address Proof</option>
-                                @foreach (var idproof in Enum.GetValues(typeof(enmAddressProof)))
-                                {
-                                    <option value="@(idproof)">@(idproof.ToString())</option>
-                                }
-                            </select>
-                            <span asp-validation-for="AddressProofType" class="text-danger"></span>
-                        </div>
-
-                        <div class="form-group col-md-6">
-                            <label asp-for="AddressDocumentNo"></label>
-                            <input asp-for="AddressDocumentNo" class="form-control" placeholder="Document No" autofocus />
-                            <span asp-validation-for="AddressDocumentNo" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-md-6">
-                            <label asp-for="AddressDocumentUpload"></label>
-                            <input asp-for="AddressDocumentUpload" class="form-control" placeholder="Document No" autofocus />
-                            <span asp-validation-for="AddressDocumentUpload" class="text-danger"></span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="form-group col-md-12">
-                            <label asp-for="Remarks"></label>
-                            <input asp-for="Remarks" class="form-control" placeholder="Document No" autofocus />
-                            <span asp-validation-for="Remarks" class="text-danger"></span>
-                        </div>
-                    </div>
-
-
-                    @if (Model.IsApproved == enmApprovalType.Approved || Model.IsApproved == enmApprovalType.Rejeceted)
-                    {
-                        <div>
-                            <div class="form-group col-md-4">
-                                <label asp-for="IsApproved"></label>
-                                <input asp-for="IsApproved" class="form-control" autofocus />
-                                <span asp-validation-for="ApprovalRemarks" class="text-danger"></span>
-                            </div>
-
-                            <div class="form-group col-md-8">
-                                <label asp-for="ApprovalRemarks"></label>
-                                <input asp-for="ApprovalRemarks" class="form-control" placeholder="Document No" autofocus />
-                                <span asp-validation-for="ApprovalRemarks" class="text-danger"></span>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="IdProofType"></label>
+                                <select asp-for="IdProofType" class="form-control select2">
+                                    <option value="">Select Id Proof</option>
+                                    @foreach (var idproof in Enum.GetValues(typeof(enmIdentityProof)))
+                                    {
+                                        <option value="@(idproof)">@(idproof.ToString())</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="IdProofType" class="text-danger"></span>
                             </div>
                         </div>
-                    }
-                    <div class="card-footer">
-                        @if (Model.IsApproved == enmApprovalType.Pending || Model.IsApproved == enmApprovalType.Rejeceted)
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="DocumentNo"></label>
+                                <input asp-for="DocumentNo" class="form-control" placeholder="Document No" />
+                                <span asp-validation-for="DocumentNo" class="text-danger"></span>
+                            </div>
+                        </div>                        
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="IDDocumentUpload">File input</label>
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        <input asp-for="IDDocumentUpload" type="file" class="custom-file-input" id="IDDocumentUpload">
+                                        <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Remarks"></label>
+                                <input asp-for="Remarks" class="form-control" placeholder="Remarks" />
+                                <span asp-validation-for="Remarks" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                        @if (Model.IsApproved == enmApprovalType.Approved || Model.IsApproved == enmApprovalType.Rejeceted)
                         {
-                            <button type="submit" class="btn btn-primary">Submit</button>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="IsApproved"></label>
+                                    <input asp-for="IsApproved" class="form-control" placeholder="Remarks" />
+                                    <span asp-validation-for="IsApproved" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="ApprovalRemarks"></label>
+                                    <input asp-for="ApprovalRemarks" class="form-control" placeholder="Remarks" />
+                                    <span asp-validation-for="ApprovalRemarks" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                        </div>
                         }
-                    </div>
+
+
                 </div>
-</form>
+                <div class="card-footer">
+                    @if (Model.IsApproved == null || Model.IsApproved == enmApprovalType.Rejeceted)
+                    {
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    }
+                </div>
+            </form>
 
         </div>
     </div>
