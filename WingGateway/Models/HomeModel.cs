@@ -53,7 +53,7 @@ namespace WingGateway.Models
         [Display(Name = "Bank")]
         public int BankId { get; set; }
 
-        [StringLength(11, ErrorMessage = "The {0} must be at most {1} characters long.")]
+        [StringLength(11, ErrorMessage = "The {0} must be at most {1} characters long.",MinimumLength =11)]
         [Required]
         [Display(Name = "IFSCNo")]
         [RegularExpression("[a-zA-Z0-9]*$", ErrorMessage = "Invalid {0}, no special charcter")]

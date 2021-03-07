@@ -53,7 +53,7 @@ namespace WingGateway
         public enmTCRanks TcRanks { get { return _TcRanks; } }
         public string TcId { get { return _TcId; } }
         public string Name { get { return _Name; } }
-        public string TcRankName { get { return _TcRankName; } }
+        public string TcRankName { get  {  return _TcRankName; } }
         public List<string> Roles { get { return _Roles; } }
         public Document currentDocument { get; set; }
         public enmDocumentType? currentPermission { get ; set ; }
