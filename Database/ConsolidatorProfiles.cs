@@ -120,4 +120,34 @@ namespace Database
 
     }
 
+    public class tblTcBankDetails
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int DetailId { get; set; }
+        [ForeignKey("tblRegistration")]
+        public int? TcNid { get; set; }
+        public tblRegistration tblRegistration { get; set; }
+        [ForeignKey("tblBankMaster")]
+        public int? BankId { get; set; }
+        public tblBankMaster tblBankMaster { get; set; }
+        [MaxLength(20)]
+        public string IFSC { get; set; }
+        [MaxLength(20)]
+        public string AccountNo { get; set; }
+        [MaxLength(200)]
+        public string BranchAddress{ get; set; }
+        [MaxLength(200)]
+        public string UploadImages { get; set; }
+        public enmApprovalType IsApproved { get; set; }
+        public DateTime CreatedDt { get; set; }
+        public int CreatedBy { get; set; }
+        public string Remarks { get; set; }
+        public int? ApprovedBy { get; set; }
+        public DateTime? ApprovedDt { get; set; }
+        public string ApprovalRemarks { get; set; }
+        public bool Isdeleted { get; set; }
+    }
+
+
 }

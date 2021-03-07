@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
@@ -106,14 +107,35 @@ namespace WingGateway.Controllers
 
 
         [Authorize(policy: nameof(enmDocumentMaster.Gateway_UploadKyc))]
-        public IActionResult UploadKyc(enmSaveStatus? _enmSaveStatus, enmMessage? _enmMessage)
+        public IActionResult UploadKyc([FromServices] ICurrentUsers currentUsers,enmSaveStatus? _enmSaveStatus, enmMessage? _enmMessage)
         {
+            mdlKyc mdl = new mdlKyc();
             if (_enmSaveStatus != null)
             {
                 ViewBag.SaveStatus = (int)_enmSaveStatus.Value;
                 ViewBag.Message = _enmMessage?.GetDescription();
             }
-            return View(new mdlKyc());
+            string filePath = _config["FileUpload:Kyc"];
+
+            var path = Path.Combine(
+                     Directory.GetCurrentDirectory(),
+                     "wwwroot/" + filePath);
+            var kycMaster = _context.tblKycMaster.Where(p => p.TcNid == currentUsers.TcNid && !p.Isdeleted).FirstOrDefault();
+            if (kycMaster !=null)
+            {
+                mdl.ApprovalRemarks=kycMaster.ApprovalRemarks;
+                mdl.IsApproved = kycMaster.IsApproved;
+                mdl.IdProofType = kycMaster.IdProofType;
+                mdl.DocumentNo = kycMaster.IdDocumentNo;
+                mdl.Remarks = kycMaster.Remarks;
+                mdl.fileData = new List<byte[]>();
+                var files=kycMaster.IdDocumentName.Split(",");
+                foreach (var file in files)
+                {
+                    mdl.fileData.Add(System.IO.File.ReadAllBytes(string.Concat(path, file)));
+                }
+            }
+            return View(mdl);
         }
         
         [HttpPost]
@@ -188,8 +210,11 @@ namespace WingGateway.Controllers
                         IdDocumentName = string.Join<string>(",", AllFileName),
                         CreatedBy = 0,
                         CreatedDt = DateTime.Now,
-                        Remarks = mdl.Remarks
-
+                        Remarks = mdl.Remarks,
+                        IsApproved = enmApprovalType.Pending,
+                        Isdeleted = false,
+                        TcNid=currentUsers.TcNid,
+                        ApprovalRemarks=""
                     });
                     _context.SaveChanges();
                     return RedirectToAction("UploadKyc",
@@ -202,5 +227,134 @@ namespace WingGateway.Controllers
             return View(mdl);
         }
 
+
+        [AcceptVerbs("Get", "Post")]
+        public IActionResult IsAccountNoInUse(string AccountNo, int BankId)
+        {
+            var users =  _context.tblTcBankDetails.Where(p=>p.BankId== BankId && p.AccountNo==AccountNo && !p.Isdeleted).FirstOrDefault();
+            if (users == null)
+            {
+                return Json(true);
+            }
+            else
+            {
+                return Json($"Account No {AccountNo} is already in use");
+            }
+        }
+
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Bank))]
+        public IActionResult Bank([FromServices] ICurrentUsers currentUsers, enmSaveStatus? _enmSaveStatus, enmMessage? _enmMessage)
+        {
+            mdlBank mdl = new mdlBank();
+            if (_enmSaveStatus != null)
+            {
+                ViewBag.SaveStatus = (int)_enmSaveStatus.Value;
+                ViewBag.Message = _enmMessage?.GetDescription();
+            }
+            string filePath = _config["FileUpload:Bank"];
+
+            var path = Path.Combine(
+                     Directory.GetCurrentDirectory(),
+                     "wwwroot/" + filePath);
+            var masterData = _context.tblTcBankDetails.Where(p => p.TcNid == currentUsers.TcNid && !p.Isdeleted).FirstOrDefault();
+            if (masterData != null)
+            {
+                mdl.ApprovalRemarks = masterData.ApprovalRemarks;
+                mdl.IsApproved = masterData.IsApproved;
+                mdl.BankId = masterData.BankId.HasValue? masterData.BankId.Value:0;
+                mdl.IFSC = masterData.IFSC;
+                mdl.AccountNo = masterData.AccountNo;
+                mdl.Remarks = masterData.Remarks;
+                mdl.BranchAddress = masterData.BranchAddress;
+                mdl.fileData = new List<byte[]>();
+
+                var files = masterData.UploadImages.Split(",");
+                foreach (var file in files)
+                {
+                    mdl.fileData.Add(System.IO.File.ReadAllBytes(string.Concat(path, file)));
+                }
+                ViewBag.BankList = new SelectList(mdl.GetBanks(_context,false), "BankId", "BankName", mdl.BankId);
+            }
+            else
+            {
+                ViewBag.BankList = new SelectList(mdl.GetBanks(_context, true), "BankId", "BankName");
+            }
+            return View(mdl);
+        }
+
+        [HttpPost]
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Bank))]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BankAsync([FromServices] ICurrentUsers currentUsers, mdlBank mdl)
+        {
+
+            string filePath = _config["FileUpload:Bank"];
+
+            var path = Path.Combine(
+                     Directory.GetCurrentDirectory(),
+                     "wwwroot/" + filePath);
+            if (mdl.UploadImages == null || mdl.UploadImages.Count == 0 || mdl.UploadImages[0] == null || mdl.UploadImages[0].Length == 0)
+            {
+                ModelState.AddModelError("IDDocumentUpload", "Invalid Files");
+                ViewBag.SaveStatus = enmSaveStatus.danger;
+                ViewBag.Message = enmMessage.InvalidData.GetDescription();
+            }            
+            if (ModelState.IsValid)
+            {
+                List<string> AllFileName = new List<string>();
+
+                bool exists = System.IO.Directory.Exists(path);
+                if (!exists)
+                    System.IO.Directory.CreateDirectory(path);
+
+                foreach (var file in mdl.UploadImages)
+                {
+                    var filename = Guid.NewGuid().ToString() + ".jpeg";
+                    using (var stream = new FileStream(string.Concat(path, filename), FileMode.Create))
+                    {
+                        AllFileName.Add(filename);
+                        await file.CopyToAsync(stream);
+                    }
+                }
+
+                var ExistingData = _context.tblTcBankDetails.FirstOrDefault(p => !p.Isdeleted && p.TcNid == currentUsers.TcNid && p.IsApproved == enmApprovalType.Rejeceted);
+                if (ExistingData != null)
+                {
+                    ExistingData.Isdeleted = true;
+                    _context.tblTcBankDetails.Update(ExistingData);
+                }
+                if (_context.tblTcBankDetails.Any(p => p.TcNid == currentUsers.TcNid && !p.Isdeleted))
+                {
+                    ModelState.AddModelError("", "Request Already Submited");
+                    ViewBag.SaveStatus = enmSaveStatus.warning;
+                    ViewBag.Message = enmMessage.AlreadyExists.GetDescription();
+                }
+                else
+                {
+                    _context.tblTcBankDetails.Add(new tblTcBankDetails
+                    {
+                        BankId = mdl.BankId,
+                        IFSC = mdl.IFSC,
+                        AccountNo = mdl.AccountNo,
+                        UploadImages = string.Join<string>(",", AllFileName),
+                        CreatedBy = 0,
+                        CreatedDt = DateTime.Now,
+                        Remarks = mdl.Remarks,
+                        IsApproved = enmApprovalType.Pending,
+                        Isdeleted = false,
+                        TcNid = currentUsers.TcNid,
+                        ApprovalRemarks = "",
+                        BranchAddress = mdl.BranchAddress
+                    }) ;
+                    _context.SaveChanges();
+                    return RedirectToAction("Bank",
+                                 new { _enmSaveStatus = enmSaveStatus.success, _enmMessage = enmMessage.UpdateSucessfully });
+                }
+
+            }
+
+            ViewBag.BankList = new SelectList(mdl.GetBanks(_context, true), "BankId", "BankName");
+            return View(mdl);
+        }
     }
 }

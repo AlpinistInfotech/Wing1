@@ -133,4 +133,13 @@ namespace Database
         public byte[] RowVersion { get; set; }
     }
 
+    public class tblBankMaster
+    {
+        [Key]
+        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
+        public int BankId { get; set; }
+        public string BankName { get; set; }
+        public bool IsActive { get; set; }
+    }
+
 }

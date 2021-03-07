@@ -28,7 +28,7 @@ namespace Database
         public DbSet<tblCountryMaster> tblCountryMaster { get; set; }
         public DbSet<tblStateMaster> tblStateMaster { get; set; }
         public DbSet<tblTcSequcence> tblTcSequcence { get; set; }
-        
+        public DbSet<tblBankMaster> tblBankMaster { get; set; }
         #endregion
 
         #region ********************** Consolidator Profile*************************
@@ -37,6 +37,7 @@ namespace Database
         public DbSet<tblTcRanksDetails> tblTcRanksDetails { get; set; }
         public DbSet<tblTcAddressDetail> tblTcAddressDetail { get; set; }
         public DbSet<tblKycMaster> tblKycMaster { get; set; }
+        public DbSet<tblTcBankDetails> tblTcBankDetails { get; set; }
         #endregion
 
         public void SetBasicData(ModelBuilder modelBuilder)
