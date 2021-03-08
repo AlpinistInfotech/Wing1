@@ -149,5 +149,32 @@ namespace Database
         public bool Isdeleted { get; set; }
     }
 
+    public class tblTcPANDetails
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int DetailId { get; set; }
+        [ForeignKey("tblRegistration")]
+        public int? TcNid { get; set; }
+        public tblRegistration tblRegistration { get; set; }
+        [ForeignKey("tblPANMaster")]
+        public int? PANId { get; set; }
+        public tblPANMaster tblPANMaster { get; set; }
+        [MaxLength(100)]
+        public string PANName { get; set; }
+        [MaxLength(10)]
+        public string PANNo { get; set; }
+       
+        [MaxLength(200)]
+        public string UploadImages { get; set; }
+        public enmApprovalType IsApproved { get; set; }
+        public DateTime CreatedDt { get; set; }
+        public int CreatedBy { get; set; }
+        public string Remarks { get; set; }
+        public int? ApprovedBy { get; set; }
+        public DateTime? ApprovedDt { get; set; }
+        public string ApprovalRemarks { get; set; }
+        public bool Isdeleted { get; set; }
+    }
 
 }

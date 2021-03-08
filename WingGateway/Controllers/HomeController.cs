@@ -159,13 +159,13 @@ namespace WingGateway.Controllers
             {
                 if (mdl.DocumentNo.Trim().Length != 12)
                 {
-                    ModelState.AddModelError("DocumentNo", "Invalid Adhar Number");
+                    ModelState.AddModelError("DocumentNo", "Invalid Aadhar Number");
                     ViewBag.SaveStatus = enmSaveStatus.danger;
                     ViewBag.Message = enmMessage.InvalidData.GetDescription();
                 }
                 else if (!mdl.DocumentNo.All(char.IsDigit))
                 {
-                    ModelState.AddModelError("DocumentNo", "Invalid Adhar Number");
+                    ModelState.AddModelError("DocumentNo", "Invalid Aadhar Number");
                     ViewBag.SaveStatus = enmSaveStatus.danger;
                     ViewBag.Message = enmMessage.InvalidData.GetDescription();
                 }
@@ -356,5 +356,134 @@ namespace WingGateway.Controllers
             ViewBag.BankList = new SelectList(mdl.GetBanks(_context, true), "BankId", "BankName");
             return View(mdl);
         }
+
+        #region PAN
+        [AcceptVerbs("Get", "Post")]
+        public IActionResult IsPANNoInUse(string PANNo, int PANId)
+        {
+            var users = _context.tblTcPANDetails.Where(p => p.PANId == PANId && p.PANNo == PANNo && !p.Isdeleted).FirstOrDefault();
+            if (users == null)
+            {
+                return Json(true);
+            }
+            else
+            {
+                return Json($"PAN No {PANNo} is already in use");
+            }
+        }
+
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_PAN))]
+        public IActionResult PAN([FromServices] ICurrentUsers currentUsers, enmSaveStatus? _enmSaveStatus, enmMessage? _enmMessage)
+        {
+            mdlPAN mdl = new mdlPAN();
+            if (_enmSaveStatus != null)
+            {
+                ViewBag.SaveStatus = (int)_enmSaveStatus.Value;
+                ViewBag.Message = _enmMessage?.GetDescription();
+            }
+            string filePath = _config["FileUpload:PAN"];
+
+            var path = Path.Combine(
+                     Directory.GetCurrentDirectory(),
+                     "wwwroot/" + filePath);
+            var masterData = _context.tblTcPANDetails.Where(p => p.TcNid == currentUsers.TcNid && !p.Isdeleted).FirstOrDefault();
+            if (masterData != null)
+            {
+                mdl.ApprovalRemarks = masterData.ApprovalRemarks;
+                mdl.IsApproved = masterData.IsApproved;
+                mdl.PANId = masterData.PANId.HasValue ? masterData.PANId.Value : 0;
+                mdl.PANNo = masterData.PANNo;
+                mdl.Remarks = masterData.Remarks;
+                mdl.PANName = masterData.PANName;
+                mdl.fileData = new List<byte[]>();
+
+                var files = masterData.UploadImages.Split(",");
+                foreach (var file in files)
+                {
+                    mdl.fileData.Add(System.IO.File.ReadAllBytes(string.Concat(path, file)));
+                }
+               
+            }
+            
+            return View(mdl);
+        }
+
+        [HttpPost]
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_PAN))]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PANAsync([FromServices] ICurrentUsers currentUsers, mdlPAN mdl)
+        {
+
+            string filePath = _config["FileUpload:PAN"];
+
+            var path = Path.Combine(
+                     Directory.GetCurrentDirectory(),
+                     "wwwroot/" + filePath);
+            if (mdl.UploadImages == null || mdl.UploadImages.Count == 0 || mdl.UploadImages[0] == null || mdl.UploadImages[0].Length == 0)
+            {
+                ModelState.AddModelError("IDDocumentUpload", "Invalid Files");
+                ViewBag.SaveStatus = enmSaveStatus.danger;
+                ViewBag.Message = enmMessage.InvalidData.GetDescription();
+            }
+            if (ModelState.IsValid)
+            {
+                List<string> AllFileName = new List<string>();
+
+                bool exists = System.IO.Directory.Exists(path);
+                if (!exists)
+                    System.IO.Directory.CreateDirectory(path);
+
+                foreach (var file in mdl.UploadImages)
+                {
+                    var filename = Guid.NewGuid().ToString() + ".jpeg";
+                    using (var stream = new FileStream(string.Concat(path, filename), FileMode.Create))
+                    {
+                        AllFileName.Add(filename);
+                        await file.CopyToAsync(stream);
+                    }
+                }
+
+                var ExistingData = _context.tblTcPANDetails.FirstOrDefault(p => !p.Isdeleted && p.TcNid == currentUsers.TcNid && p.IsApproved == enmApprovalType.Rejeceted);
+                if (ExistingData != null)
+                {
+                    ExistingData.Isdeleted = true;
+                    _context.tblTcPANDetails.Update(ExistingData);
+                }
+                if (_context.tblTcPANDetails.Any(p => p.TcNid == currentUsers.TcNid && !p.Isdeleted))
+                {
+                    ModelState.AddModelError("", "Request Already Submited");
+                    ViewBag.SaveStatus = enmSaveStatus.warning;
+                    ViewBag.Message = enmMessage.AlreadyExists.GetDescription();
+                }
+                else
+                {
+                    _context.tblTcPANDetails.Add(new tblTcPANDetails
+                    {
+                        PANId = mdl.PANId,
+                        PANNo = mdl.PANNo,
+                        PANName = mdl.PANName,
+                        UploadImages = string.Join<string>(",", AllFileName),
+                        CreatedBy = 0,
+                        CreatedDt = DateTime.Now,
+                        Remarks = mdl.Remarks,
+                        IsApproved = enmApprovalType.Pending,
+                        Isdeleted = false,
+                        TcNid = currentUsers.TcNid,
+                        ApprovalRemarks = ""
+                       
+                    });
+                    _context.SaveChanges();
+                    return RedirectToAction("PAN",
+                                 new { _enmSaveStatus = enmSaveStatus.success, _enmMessage = enmMessage.UpdateSucessfully });
+                }
+
+            }
+
+            return View(mdl);
+        }
+
+
+        #endregion
+
     }
 }
