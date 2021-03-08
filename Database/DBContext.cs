@@ -29,6 +29,9 @@ namespace Database
         public DbSet<tblStateMaster> tblStateMaster { get; set; }
         public DbSet<tblTcSequcence> tblTcSequcence { get; set; }
         public DbSet<tblBankMaster> tblBankMaster { get; set; }
+
+        public DbSet<tblPANMaster> tblPANMaster { get; set; }
+
         #endregion
 
         #region ********************** Consolidator Profile*************************

@@ -55,7 +55,7 @@ namespace WingGateway.Models
 
         [StringLength(11, ErrorMessage = "The {0} must be at most {1} characters long.",MinimumLength =11)]
         [Required]
-        [Display(Name = "IFSCNo")]
+        [Display(Name = "IFSC Code")]
         [RegularExpression("[a-zA-Z0-9]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         public string IFSC { get; set; }
 
@@ -67,7 +67,7 @@ namespace WingGateway.Models
         public string AccountNo { get; set; }
 
         [Required]
-        [Display(Name = "Upload Passbook/Chequee")]
+        [Display(Name = "Upload Passbook/Cancelled Cheque")]
         public List<IFormFile> UploadImages { set; get; }
 
         [RegularExpression("[a-zA-Z0-9,/.\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
@@ -84,7 +84,7 @@ namespace WingGateway.Models
         [Display(Name = "Is Approved")]
         public enmApprovalType? IsApproved { get; set; } = null;
 
-        [Display(Name = "Approved Dt")]
+        [Display(Name = "Approved Date")]
         public DateTime? ApprovedDt { get; set; }
 
 
@@ -108,4 +108,62 @@ namespace WingGateway.Models
             
         }
     }
+
+
+    public class mdlPAN
+    {
+        [Required]
+        [Display(Name = "PAN")]
+        public int PANId { get; set; }
+
+        [StringLength(100, ErrorMessage = "The {0} must be at most {1} characters long.", MinimumLength = 3)]
+        [Required]
+        [Display(Name = "Name (as on PAN Card)")]
+        public string PANName { get; set; }
+
+        [Required]
+        [Display(Name = "PAN No")]
+        [StringLength(10, ErrorMessage = "The {0} must be at most {1} characters long.",MinimumLength =10)]
+        [Remote(action: "IsPANNoInUse", controller: "Home", AdditionalFields = "PANId")]
+        public string PANNo { get; set; }
+
+        [Required]
+        [Display(Name = "Upload PAN Card")]
+        public List<IFormFile> UploadImages { set; get; }
+
+        
+
+        [RegularExpression("[a-zA-Z0-9,/.\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
+        [Display(Name = "Remarks")]
+        [StringLength(200, ErrorMessage = "The {0} must be at most {1} characters long.")]
+        public string Remarks { set; get; }
+
+        [Display(Name = "Is Approved")]
+        public enmApprovalType? IsApproved { get; set; } = null;
+
+        [Display(Name = "Approved Date")]
+        public DateTime? ApprovedDt { get; set; }
+
+
+        [StringLength(20, ErrorMessage = "The {0} must be at most {1} characters long.")]
+        [RegularExpression("[a-zA-Z0-9,/.\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
+        [Display(Name = "Approval Remarks")]
+        public string ApprovalRemarks { set; get; }
+
+        public List<byte[]> fileData { set; get; }
+
+        public List<tblPANMaster> GetPAN(DBContext context, bool OnlyActive)
+        {
+            if (OnlyActive)
+            {
+                return context.tblPANMaster.Where(p => p.IsActive).ToList();
+            }
+            else
+            {
+                return context.tblPANMaster.ToList();
+            }
+
+        }
+    }
+
 }

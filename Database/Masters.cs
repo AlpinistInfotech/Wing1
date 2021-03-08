@@ -142,4 +142,13 @@ namespace Database
         public bool IsActive { get; set; }
     }
 
+    public class tblPANMaster
+    {
+        [Key]
+        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
+        public int PANId { get; set; }
+        public string PANName { get; set; }
+        public bool IsActive { get; set; }
+    }
+
 }
