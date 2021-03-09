@@ -30,5 +30,5 @@ namespace WingGateway.Models
         public string ApproverName { get; set; }
     }
 
-    public class mdl
+    
 }
