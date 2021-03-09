@@ -32,6 +32,6 @@ namespace Database
         public List<string> Roles { get;  } 
         public Document currentDocument { get; set; }        
         public enmDocumentType? currentPermission { get; set; }
-
+        public List<enmDocumentMaster> UserAllClaim { get;  }
     }
 }

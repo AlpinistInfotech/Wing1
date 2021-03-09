@@ -17,7 +17,7 @@ namespace Database.Classes
 
     public class ConsolidatorProfile : IConsolidatorProfile
     {
-        private readonly DBContext _context;
+        protected readonly DBContext _context;
         public ConsolidatorProfile(DBContext context)
         {
             _context = context;

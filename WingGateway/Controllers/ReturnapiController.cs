@@ -101,7 +101,14 @@ namespace WingGateway.Controllers
             {
                 var result = await RoleManager.AddClaimAsync(identityRoleTc, t);
             }
-                
+
+            var identityRoleEmployee = RoleManager.Roles.Where(p => p.Name == "Employee").FirstOrDefault();            
+            var toBeInsertedEmp = AllClaim.Where(p => !AlreadyClaims.Contains(p.Type) && p.Type.IndexOf("Emp_") >= -1).ToList();
+            foreach (var t in toBeInsertedEmp)
+            {
+                var result = await RoleManager.AddClaimAsync(identityRoleEmployee, t);
+            }
+
             return true;
         }
 

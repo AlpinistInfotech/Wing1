@@ -13,14 +13,17 @@ namespace WingGateway
     public class CurrentUsers : ICurrentUsers
     {
 
-        
+        IHttpContextAccessor _httpContext;
         private enmUserType _UserType;
         private enmTCRanks _TcRanks;
         private string _userId, _TcId, _Name, _TcRankName;
         private int _TcNid, _EmpId;
         private List<string> _Roles;
+        List<enmDocumentMaster> _UserAllClaim;
+        
         public CurrentUsers(IHttpContextAccessor httpContext, DBContext _context)
-        {   
+        {
+            _httpContext = httpContext;
             string tempUserId = httpContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (tempUserId != null)
             {
@@ -44,6 +47,8 @@ namespace WingGateway
                     }
                 }
             }
+            
+
         }
 
         public string userId { get { return _userId; } }
@@ -57,5 +62,26 @@ namespace WingGateway
         public List<string> Roles { get { return _Roles; } }
         public Document currentDocument { get; set; }
         public enmDocumentType? currentPermission { get ; set ; }
+        public List<enmDocumentMaster> UserAllClaim { get {
+                if (_UserAllClaim != null)
+                {
+                    return _UserAllClaim;
+                }
+                else
+                {
+                    _UserAllClaim = new List<enmDocumentMaster>();
+                    _httpContext.HttpContext.User.Claims.ToList().ForEach(
+                p => {
+                    enmDocumentMaster myStatus;
+                    Enum.TryParse("Active", out myStatus);
+                    _UserAllClaim.Add(myStatus);
+
+                    }
+                    );
+                    return _UserAllClaim;
+                }
+            } }
+
+        
     }
 }

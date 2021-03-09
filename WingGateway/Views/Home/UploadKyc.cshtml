@@ -1,7 +1,7 @@
 ﻿@model WingGateway.Models.mdlKyc
 @using Database
 @{
-    ViewData["Title"] = "Upload Kyc";
+    ViewData["Title"] = Database.enmDocumentMaster.Gateway_UploadKyc.GetDocumentDetails().Name;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div class="row">

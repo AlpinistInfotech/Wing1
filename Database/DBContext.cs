@@ -29,8 +29,8 @@ namespace Database
         public DbSet<tblStateMaster> tblStateMaster { get; set; }
         public DbSet<tblTcSequcence> tblTcSequcence { get; set; }
         public DbSet<tblBankMaster> tblBankMaster { get; set; }
+        public DbSet<tblEmpMaster> tblEmpMaster { get; set; }
 
-        public DbSet<tblPANMaster> tblPANMaster { get; set; }
 
         #endregion
 
@@ -41,7 +41,7 @@ namespace Database
         public DbSet<tblTcAddressDetail> tblTcAddressDetail { get; set; }
         public DbSet<tblKycMaster> tblKycMaster { get; set; }
         public DbSet<tblTcBankDetails> tblTcBankDetails { get; set; }
-        public DbSet<tblTcPANDetails> tblTcPANDetails { get; set; }
+        public DbSet<tblTcPanDetails> TblTcPanDetails { get; set; }
 
 
         #endregion

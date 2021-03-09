@@ -1,4 +1,6 @@
-﻿@{
+﻿@using Database
+@{
+    ViewData["Title"] = Database.enmDocumentMaster.Gateway_Dashboard.GetDocumentDetails().Name;
     ViewData["Title"] = "Home Page";
 }
 

@@ -1,40 +1,110 @@
-﻿@model WingGateway.Models.mdlTcApprovalModel
+﻿@model WingGateway.Models.mdlFilterModel
 @using Database;
-<form action="@Url.Action()" method="post">
-    @Html.AntiForgeryToken()
-    <div asp-validation-summary="All" class="text-danger"></div>
 
-    <div class="form-group row">
-        <label asp-for="FromDt" class="col-sm-2 col-form-label"></label>
-        <div class="col-sm-10">
-            <input asp-for="FromDt" class="form-control" type="date" />
-            <span asp-validation-for="FromDt" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="form-group row">
-        <label asp-for="ToDt" class="col-sm-2 col-form-label"></label>
-        <div class="col-sm-10">
-            <input asp-for="ToDt" class="form-control" type="date" />
-            <span asp-validation-for="ToDt" class="text-danger"></span>
-        </div>
-    </div>
+@if (Model.IsReport)
+{
+    <div class="col-12 col-md-12">
+        <div class="card card-primary card-outline card-outline-tabs">
+            <div class="card-header p-0 border-bottom-0">
+                <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill" href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home" aria-selected="true">Date Filter</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="custom-tabs-three-profile-tab" data-toggle="pill" href="#custom-tabs-three-profile" role="tab" aria-controls="custom-tabs-three-profile" aria-selected="false">Id Filter</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content" id="custom-tabs-three-tabContent">
+                    <div class="tab-pane fade show active" id="custom-tabs-three-home" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
+                        <form action="@Url.Action()" method="post">
+                            @Html.AntiForgeryToken()
+                            <div asp-validation-summary="All" class="text-danger"></div>
+
+                            <div class="form-group row">
+                                <label asp-for="dateFilter.FromDt" class="col-sm-2 col-form-label"></label>
+                                <div class="col-sm-10">
+                                    <input asp-for="dateFilter.FromDt" class="form-control" type="date" />
+                                    <span asp-validation-for="dateFilter.FromDt" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label asp-for="dateFilter.ToDt" class="col-sm-2 col-form-label"></label>
+                                <div class="col-sm-10">
+                                    <input asp-for="dateFilter.ToDt" class="form-control" type="date" />
+                                    <span asp-validation-for="dateFilter.ToDt" class="text-danger"></span>
+                                </div>
+                            </div>
 
 
-    <div class="form-group row">
-        <label asp-for="approvalType" class="col-sm-2 col-form-label"></label>
-        <div class="col-sm-10">
-            <select asp-for="approvalType" class="form-control select2">
-                @foreach (var data in Enum.GetValues(typeof(enmApprovalType)))
-                {
-                    <option value="@(data)">@data.ToString() </option>
-                }
-            </select>
-            <span asp-validation-for="approvalType" class="text-danger"></span>
+                            <div class="form-group row">
+                                <label asp-for="dateFilter.approvalType" class="col-sm-2 col-form-label"></label>
+                                <div class="col-sm-10">
+                                    <select asp-for="dateFilter.approvalType" class="form-control select2">
+                                        <option value="@(enmApprovalType.Approved | enmApprovalType.Pending | enmApprovalType.Rejeceted | enmApprovalType.InProcessing)">ALL </option>
+                                        @foreach (var data in Enum.GetValues(typeof(enmApprovalType)))
+                                        {
+                                            <option value="@(data)">@data.ToString() </option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="dateFilter.approvalType" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-12">
+                                    <button type="submit" name="submitdata" value="@enmLoadData.ByDateFilter)" class="btn btn-primary">Load Data</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="custom-tabs-three-profile" role="tabpanel" aria-labelledby="custom-tabs-three-profile-tab">
+                        <form action="@Url.Action()" method="post">
+                            @Html.AntiForgeryToken()
+                            <div asp-validation-summary="All" class="text-danger"></div>
+                            <div class="form-group row">
+                                <label asp-for="idFilter.TcId" class="col-sm-2 col-form-label"></label>
+                                <div class="col-sm-10">
+                                    <input asp-for="idFilter.TcId" class="form-control" required />
+                                    <span asp-validation-for="idFilter.TcId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-12">
+                                    <button type="submit" name="submitdata" value="@enmLoadData.ByID" class="btn btn-primary">Load Data</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card -->
         </div>
     </div>
-    <div class="form-group row">        
-        <div class="col-sm-12">
-            <input type="submit" value="Load Data" class="btn btn-primary" />
-        </div>
+}
+else
+{
+<div class="col-12 col-md-12">
+    <div class="card-body">
+        <form action="@Url.Action()" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group row">
+                <label asp-for="idFilter.TcId" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-10">
+                    <input asp-for="idFilter.TcId" class="form-control" required />
+                    <span asp-validation-for="idFilter.TcId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-12">
+                    <button type="submit" name="submitdata" value="@enmLoadData.ByID" class="btn btn-primary">Load Data</button>
+                </div>
+            </div>
+        </form>
     </div>
-</form>
+</div>
+    }
+
+
+

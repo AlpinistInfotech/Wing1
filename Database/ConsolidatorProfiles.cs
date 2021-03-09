@@ -149,7 +149,7 @@ namespace Database
         public bool Isdeleted { get; set; }
     }
 
-    public class tblTcPANDetails
+    public class tblTcPanDetails
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -157,9 +157,7 @@ namespace Database
         [ForeignKey("tblRegistration")]
         public int? TcNid { get; set; }
         public tblRegistration tblRegistration { get; set; }
-        [ForeignKey("tblPANMaster")]
-        public int? PANId { get; set; }
-        public tblPANMaster tblPANMaster { get; set; }
+        
         [MaxLength(100)]
         public string PANName { get; set; }
         [MaxLength(10)]

@@ -73,4 +73,10 @@ namespace Database
         Waterbill = 5,
         ElectricityBill = 6,
     }
+    public enum enmLoadData
+    {
+        ByID=1,
+        ByNid=2,
+        ByDateFilter=3
+    }
 }

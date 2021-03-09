@@ -1,7 +1,7 @@
 ﻿@model WingGateway.Models.mdlBank
 @using Database
 @{
-    ViewData["Title"] = "Upload Bank";
+    ViewData["Title"] = Database.enmDocumentMaster.Gateway_Bank.GetDocumentDetails().Name;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div class="row">
