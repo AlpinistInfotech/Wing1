@@ -55,8 +55,8 @@ namespace Database
         [Document(EnmSubModule: enmSubModule.Gateway_Personal_Profile, DocumentType: enmDocumentType.Create | enmDocumentType.Update, DisplayOrder: 1, Name: "Contact", Description: "Contact", Icon: "far fa-circle nav-icon", ActionName: "Contact")]
         Gateway_Contact = 5,
         [Document(EnmModule: enmModule.Gateway_Profile, DocumentType: enmDocumentType.Create | enmDocumentType.Update,
-            DisplayOrder: 1, Name: "Pan", Description: "Pan", Icon: "far fa-circle nav-icon", ActionName: "Pan")]
-        Gateway_Pan = 6,
+            DisplayOrder: 1, Name: "Pan", Description: "Pan", Icon: "far fa-circle nav-icon", ActionName: "PAN")]
+        Gateway_PAN = 6,
         [Document(EnmModule: enmModule.Gateway_Profile, DocumentType: enmDocumentType.Create | enmDocumentType.Update,
             DisplayOrder: 1, Name: "Bank", Description: "Bank", Icon: "far fa-circle nav-icon", ActionName: "Bank")]
         Gateway_Bank = 7,
