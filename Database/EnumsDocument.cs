@@ -114,7 +114,8 @@ namespace Database
             DisplayOrder: 1, Name: "Change Password", Description: "Change Password", Icon: "far fa-circle nav-icon", ActionName: "ChangePassword")]
         Gateway_ChangePassword = 53,
 
-
+        [Document(EnmModule: enmModule.Gateway_Setting, DocumentType: enmDocumentType.Create | enmDocumentType.Update,
+            DisplayOrder: 1, Name: "Change Password", Description: "Change Password", Icon: "far fa-circle nav-icon", ActionName: "ChangePassword")]
         Emp_Dashboard = 101,
 
         Emp_Tc_BankDetails = 110,
