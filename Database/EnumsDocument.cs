@@ -44,7 +44,7 @@ namespace Database
     {
 
         
-        [Document( enmDocumentType.Report,1, "Dashboard", "Dashboard","far fa-circle nav-icon", "/Home/Dashboard")]
+        [Document( enmDocumentType.Report,1, "Dashboard", "Dashboard","far fa-circle nav-icon", "/Home/Index")]
         Gateway_Dashboard = 1,
         [Document(enmDocumentType.Report, 1, "Notification", "Notifications", "far fa-circle nav-icon", "Notifications")]
         Gateway_Notifications = 2,
@@ -112,10 +112,14 @@ namespace Database
 
         [Document(EnmModule: enmModule.Gateway_Setting, DocumentType: enmDocumentType.Create | enmDocumentType.Update,
             DisplayOrder: 1, Name: "Change Password", Description: "Change Password", Icon: "far fa-circle nav-icon", ActionName: "ChangePassword")]
-        Gateway_ChangePassword = 52,
+        Gateway_ChangePassword = 53,
 
 
         Emp_Dashboard = 101,
+
+        Emp_Tc_BankDetails = 110,
+        Emp_Tc_BankUpdate = 111,
+        Emp_Tc_BankApproval = 112,
         //[Document(EnmSubModule: enmSubModule.Departments, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.Report,
         //DisplayOrder: 2, Name: "Sub Department", Description: "Create,Update Subdepartment", EnmParentDocument: enmDocumentMaster.None,
         //Icon: "far fa-circle nav-icon", EnmDocumentPartitionType: enmDocumentPartitionType.None, IsTransactional: false)]

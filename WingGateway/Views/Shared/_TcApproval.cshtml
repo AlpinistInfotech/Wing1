@@ -1,0 +1,40 @@
+﻿@model WingGateway.Models.mdlTcApprovalModel
+@using Database;
+<form action="@Url.Action()" method="post">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group row">
+        <label asp-for="FromDt" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <input asp-for="FromDt" class="form-control" type="date" />
+            <span asp-validation-for="FromDt" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label asp-for="ToDt" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <input asp-for="ToDt" class="form-control" type="date" />
+            <span asp-validation-for="ToDt" class="text-danger"></span>
+        </div>
+    </div>
+
+
+    <div class="form-group row">
+        <label asp-for="approvalType" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <select asp-for="approvalType" class="form-control select2">
+                @foreach (var data in Enum.GetValues(typeof(enmApprovalType)))
+                {
+                    <option value="@(data)">@data.ToString() </option>
+                }
+            </select>
+            <span asp-validation-for="approvalType" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">        
+        <div class="col-sm-12">
+            <input type="submit" value="Load Data" class="btn btn-primary" />
+        </div>
+    </div>
+</form>

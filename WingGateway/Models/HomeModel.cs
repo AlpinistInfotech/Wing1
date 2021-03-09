@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 
 namespace WingGateway.Models
 {
+  
+
     public class mdlKyc
     {
         [Required]
@@ -40,10 +42,7 @@ namespace WingGateway.Models
         [RegularExpression("[a-zA-Z0-9,/.\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         [Display(Name = "Approval Remarks")]
         public string ApprovalRemarks { set; get; }
-
-        public List<byte[]> fileData { set; get; }
-
-       
+        public List<byte[]> fileData { set; get; }       
     }
 
 
