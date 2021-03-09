@@ -43,7 +43,8 @@ namespace WingGateway
             services.AddScoped<ICaptchaGenratorBase>(ctx => new CaptchaGenratorBase(ctx.GetRequiredService<DBContext>()));
             services.AddScoped<ISequenceMaster>(ctx => new SequenceMaster(ctx.GetRequiredService<DBContext>()));
             services.AddScoped<IConsolidatorProfile>(ctx => new ConsolidatorProfile(ctx.GetRequiredService<DBContext>()));
-            
+            services.AddScoped<ITcMaster>(ctx => new TcMaster(ctx.GetRequiredService<DBContext>()));
+
 
             #endregion
 

@@ -11,11 +11,33 @@ namespace WingGateway.Controllers
     [Authorize]
     public class WingController : Controller
     {
+        private readonly DBContext _context;
 
-        [Authorize(policy:nameof( enmDocumentMaster.Gateway_Dashboard))]
+        public WingController(DBContext context)
+        {
+            _context = context;
+        }
+
+        [Authorize(policy:nameof( enmDocumentMaster.Emp_Dashboard))]
         public IActionResult Index()
         {
             return View();
         }
+
+
+        [Authorize(policy: nameof(enmDocumentMaster.Emp_Tc_BankDetails))]
+        public IActionResult BankDetails()
+        {   
+            return View();
+        }
+        [HttpPost]
+        [Authorize(policy: nameof(enmDocumentMaster.Emp_Tc_BankDetails))]
+        public IActionResult BankDetails(enmApprovalType approvalType)
+        {
+
+            return View();
+        }
+
+
     }
 }
