@@ -59,7 +59,7 @@ namespace WingGateway.Classes
                     TcBankName = p.tblBankMaster.BankName,
                     TcId=p.tblRegistration.Id,
                     TcName =
-                string.Concat(p.tblRegistration.FirstName ?? "", " ", p.tblRegistration.MiddleName ?? "", " ", p.tblRegistration.MiddleName ?? ""),
+                string.Concat(p.tblRegistration.FirstName ?? "", " ", p.tblRegistration.MiddleName ?? "", " ", p.tblRegistration.LastName ?? ""),
                     AccountNo = p.AccountNo,
                     IFSC = p.IFSC,
                     IsApproved = p.IsApproved,
@@ -82,7 +82,7 @@ namespace WingGateway.Classes
                     TcBankName = p.tblBankMaster.BankName,
                     TcId = p.tblRegistration.Id,
                     TcName =
-                string.Concat(p.tblRegistration.FirstName ?? "", " ", p.tblRegistration.MiddleName ?? "", " ", p.tblRegistration.MiddleName ?? ""),
+                string.Concat(p.tblRegistration.FirstName ?? "", " ", p.tblRegistration.MiddleName ?? "", " ", p.tblRegistration.LastName ?? ""),
                     AccountNo = p.AccountNo,
                     IFSC = p.IFSC,
                     IsApproved = p.IsApproved,

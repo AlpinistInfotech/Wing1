@@ -86,11 +86,10 @@ namespace WingGateway.Controllers
                     
 
                 }
-                mdl.CaptchaData.GenrateCaptcha(captchaGenratorBase);
+                
                 ModelState.AddModelError("", "Invalid login attempts");
             }
-
-
+            mdl.CaptchaData.GenrateCaptcha(captchaGenratorBase);
             return View(mdl);
         }
 
@@ -180,17 +179,17 @@ namespace WingGateway.Controllers
 
                     };
                     var result = await _userManager.CreateAsync(appuser, mdl.Password);
-                    var role = await RoleManager.FindByNameAsync("TC");
-                    if (role != null)
-                    {
-                        await _userManager.AddToRoleAsync(appuser, "TC");
-                    }
-
                     if (result.Succeeded)
-                    {   
+                    {
+                        var role = await RoleManager.FindByNameAsync("TC");
+                        if (role != null)
+                        {
+                            await _userManager.AddToRoleAsync(appuser, "TC");
+                        }
+
                         await _signInManager.SignInAsync(appuser, isPersistent: false);
                         transaction.Commit();
-                        return RedirectToAction("Home", "Index");
+                        return RedirectToAction("Index","Home");
                     }
 
                     foreach (var error in result.Errors)
@@ -209,12 +208,12 @@ namespace WingGateway.Controllers
 
 
             }
+            mdl.CaptchaData.GenrateCaptcha(captchaGenratorBase);
             return View(mdl);
         }
 
 
-        [HttpPost]
-        [Route("Logout")]
+        [HttpPost]        
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();            

@@ -1,5 +1,5 @@
 ﻿@model WingGateway.Models.mdlFilterModel
-@using Database;
+@using Database
 
 @if (Model.IsReport)
 {
@@ -19,59 +19,82 @@
                 <div class="tab-content" id="custom-tabs-three-tabContent">
                     <div class="tab-pane fade show active" id="custom-tabs-three-home" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
                         <form action="@Url.Action()" method="post">
+
                             @Html.AntiForgeryToken()
                             <div asp-validation-summary="All" class="text-danger"></div>
 
-                            <div class="form-group row">
-                                <label asp-for="dateFilter.FromDt" class="col-sm-2 col-form-label"></label>
-                                <div class="col-sm-10">
-                                    <input asp-for="dateFilter.FromDt" class="form-control" type="date" />
-                                    <span asp-validation-for="dateFilter.FromDt" class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label asp-for="dateFilter.ToDt" class="col-sm-2 col-form-label"></label>
-                                <div class="col-sm-10">
-                                    <input asp-for="dateFilter.ToDt" class="form-control" type="date" />
-                                    <span asp-validation-for="dateFilter.ToDt" class="text-danger"></span>
-                                </div>
-                            </div>
+                            <input type="hidden" asp-for="IsReport" />
 
-
-                            <div class="form-group row">
-                                <label asp-for="dateFilter.approvalType" class="col-sm-2 col-form-label"></label>
-                                <div class="col-sm-10">
-                                    <select asp-for="dateFilter.approvalType" class="form-control select2">
-                                        <option value="@(enmApprovalType.Approved | enmApprovalType.Pending | enmApprovalType.Rejeceted | enmApprovalType.InProcessing)">ALL </option>
-                                        @foreach (var data in Enum.GetValues(typeof(enmApprovalType)))
-                                        {
-                                            <option value="@(data)">@data.ToString() </option>
-                                        }
-                                    </select>
-                                    <span asp-validation-for="dateFilter.approvalType" class="text-danger"></span>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <label asp-for="dateFilter.FromDt" class="col-sm-2 col-form-label"></label>
+                                        <div class="col-sm-10">
+                                            <input asp-for="dateFilter.FromDt" class="form-control" type="date" />
+                                            <span asp-validation-for="dateFilter.FromDt" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <label asp-for="dateFilter.ToDt" class="col-sm-2 col-form-label"></label>
+                                        <div class="col-sm-10">
+                                            <input asp-for="dateFilter.ToDt" class="form-control" type="date" />
+                                            <span asp-validation-for="dateFilter.ToDt" class="text-danger"></span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <div class="col-sm-12">
-                                    <button type="submit" name="submitdata" value="@enmLoadData.ByDateFilter)" class="btn btn-primary">Load Data</button>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <label asp-for="dateFilter.approvalType" class="col-sm-2 col-form-label"></label>
+                                        <div class="col-sm-10">
+                                            <select asp-for="dateFilter.approvalType" class="form-control select2">
+                                                <option value="@(enmApprovalType.Approved | enmApprovalType.Pending | enmApprovalType.Rejeceted | enmApprovalType.InProcessing)">ALL </option>
+                                                @foreach (var data in Enum.GetValues(typeof(enmApprovalType)))
+                                                {
+                                                    <option value="@(data)">@data.ToString() </option>
+                                                }
+                                            </select>
+                                            <span asp-validation-for="dateFilter.approvalType" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <div class="col-sm-12">                                            
+                                            <button type="submit" name="submitdata" value="@enmLoadData.ByDateFilter" class="btn btn-primary">Load Data</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                            
+                            
                         </form>
                     </div>
                     <div class="tab-pane fade" id="custom-tabs-three-profile" role="tabpanel" aria-labelledby="custom-tabs-three-profile-tab">
                         <form action="@Url.Action()" method="post">
+                            <input type="hidden" asp-for="IsReport" />
                             @Html.AntiForgeryToken()
                             <div asp-validation-summary="All" class="text-danger"></div>
-                            <div class="form-group row">
-                                <label asp-for="idFilter.TcId" class="col-sm-2 col-form-label"></label>
-                                <div class="col-sm-10">
-                                    <input asp-for="idFilter.TcId" class="form-control" required />
-                                    <span asp-validation-for="idFilter.TcId" class="text-danger"></span>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <label asp-for="idFilter.TcId" class="col-sm-2 col-form-label"></label>
+                                        <div class="col-sm-10">
+                                            <input asp-for="idFilter.TcId" class="form-control" required />
+                                            <span asp-validation-for="idFilter.TcId" class="text-danger"></span>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-sm-12">
-                                    <button type="submit" name="submitdata" value="@enmLoadData.ByID" class="btn btn-primary">Load Data</button>
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <div class="col-sm-12">
+                                            <button type="submit" name="submitdata" value="@enmLoadData.ByID" class="btn btn-primary">Load Data</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </form>
@@ -87,18 +110,25 @@ else
 <div class="col-12 col-md-12">
     <div class="card-body">
         <form action="@Url.Action()" method="post">
+            <input type="hidden" asp-for="IsReport" />
             @Html.AntiForgeryToken()
             <div asp-validation-summary="All" class="text-danger"></div>
-            <div class="form-group row">
-                <label asp-for="idFilter.TcId" class="col-sm-2 col-form-label"></label>
-                <div class="col-sm-10">
-                    <input asp-for="idFilter.TcId" class="form-control" required />
-                    <span asp-validation-for="idFilter.TcId" class="text-danger"></span>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group row">
+                        <label asp-for="idFilter.TcId" class="col-sm-2 col-form-label"></label>
+                        <div class="col-sm-10">
+                            <input asp-for="idFilter.TcId" class="form-control" required />
+                            <span asp-validation-for="idFilter.TcId" class="text-danger"></span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group row">
-                <div class="col-sm-12">
-                    <button type="submit" name="submitdata" value="@enmLoadData.ByID" class="btn btn-primary">Load Data</button>
+                <div class="col-md-6">
+                    <div class="form-group row">
+                        <div class="col-sm-12">
+                            <button type="submit" name="submitdata" value="@enmLoadData.ByID" class="btn btn-primary">Load Data</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>

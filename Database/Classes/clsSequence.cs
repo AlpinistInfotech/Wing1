@@ -30,8 +30,8 @@ namespace Database.Classes
             var tblTcSequcence = _context.tblTcSequcence.Where(p => p.Monthyear == Monthyear && p.StateId == StateId).FirstOrDefault();
             if (tblTcSequcence != null)
             {
-                SeqNo = tblTcSequcence.TcSequcence;
-                tblTcSequcence.TcSequcence = tblTcSequcence.TcSequcence + 1;
+                SeqNo = tblTcSequcence.CurrentSeq+1;
+                tblTcSequcence.CurrentSeq = tblTcSequcence.CurrentSeq + 1;
                 _context.tblTcSequcence.Update(tblTcSequcence);
                 _context.SaveChanges();
             }

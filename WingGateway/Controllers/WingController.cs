@@ -42,12 +42,20 @@ namespace WingGateway.Controllers
         public IActionResult BankDetails(mdlFilterModel mdl, enmLoadData submitdata)
         {
             mdlTcBankReportWraper returnData = new mdlTcBankReportWraper();
+            if (mdl.dateFilter == null)
+            {
+                mdl.dateFilter = new mdlDateFilter();
+            }
+            if (mdl.idFilter == null)
+            {
+                mdl.idFilter = new mdlIdFilter();
+            }
             mdl.dateFilter.FromDt =Convert.ToDateTime( mdl.dateFilter.FromDt.ToString("dd-MMM-yyyy"));
             mdl.dateFilter.ToDt = Convert.ToDateTime(mdl.dateFilter.ToDt.AddDays(1).ToString("dd-MMM-yyyy"));
             WingGateway.Classes.ConsProfile consProfile = new Classes.ConsProfile(_context, _config);
             returnData.TcBankWrapers = consProfile.GetBankDetails(submitdata, mdl, 0, false);
             returnData.FilterModel = mdl;
-            return View();
+            return View(returnData);
         }
 
 

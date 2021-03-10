@@ -9,14 +9,13 @@
     <div class="col-md-12">
         <div class="card card-primary card-outline card-outline-tabs">
             <div class="card-header p-0 border-bottom-0">
-                @await Html.PartialAsync("_TcApproval", Model.FilterModel);
+                @await Html.PartialAsync("_TcApproval", Model.FilterModel)
             </div>
             <div class="card-body">
                 <table id="tblBankDetails" class="table table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th style="display:none">Edit</th>
-                            <th>Detail Id</th>
+                            <th style="display:none">Edit</th>                            
                             <th>ID</th>
                             <th style="width:200px">Name</th>
                             <th style="width:200px">Bank Name</th>
@@ -38,11 +37,11 @@
                         <tr>
 
                             <td style="display:none"><a href="javascript:DoPost(@Model.TcBankWrapers[i].TcId)" data-toggle="tooltip" title="Edit Record !"><i class="nav-icon fas fa-edit"></i></a></td>
-                            <td>(@Model.TcBankWrapers[i].TcId</td>
-                            <td>(@Model.TcBankWrapers[i].TcName</td>
-                            <td>(@Model.TcBankWrapers[i].TcBankName</td>
-                            <td>(@Model.TcBankWrapers[i].IFSC</td>
-                            <td>(@Model.TcBankWrapers[i].AccountNo</td>
+                            <td>@Model.TcBankWrapers[i].TcId</td>
+                            <td>@Model.TcBankWrapers[i].TcName</td>
+                            <td>@Model.TcBankWrapers[i].TcBankName</td>
+                            <td>@Model.TcBankWrapers[i].IFSC</td>
+                            <td>@Model.TcBankWrapers[i].AccountNo</td>
                             <td>
                                 <span class=" @(Model.TcBankWrapers[i].IsApproved== enmApprovalType.Approved?"text-success":
                                 Model.TcBankWrapers[i].IsApproved== enmApprovalType.Rejeceted?"text-danger":"text-info")">
@@ -53,10 +52,10 @@
                             </td>
                             <td>@Model.TcBankWrapers[i].Remarks</td>
 
-                            <td>@Model.TcBankWrapers[i].RequestDate.ToString("dd-MMM-yyyy hh:mm tt")</td>
-                            <td>@Model.TcBankWrapers[i].ApprovedDt?.ToString("dd-MMM-yyyy hh:mm tt")</td>
-                            <td>@Model.TcBankWrapers[i].ApprovedBy??""</td>
-                            <td>@Model.TcBankWrapers[i].ApprovalRemarks??""</td>
+                            <td>@(Model.TcBankWrapers[i].RequestDate.ToString("dd-MMM-yyyy hh:mm tt"))</td>
+                            <td>@(Model.TcBankWrapers[i].ApprovedDt?.ToString("dd-MMM-yyyy hh:mm tt"))</td>
+                            <td>@(Model.TcBankWrapers[i].ApproverName??"")</td>
+                            <td>@(Model.TcBankWrapers[i].ApprovalRemarks??"")</td>
                         </tr>
                         }
                     </tbody>
