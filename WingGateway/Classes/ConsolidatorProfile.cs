@@ -152,8 +152,8 @@ namespace WingGateway.Classes
             mdltreeWraper.Isterminate = reg.IsTerminate;
             mdltreeWraper.LegId = reg.SpLegNumber;
             mdltreeWraper.Name = string.Concat(reg.FirstName, " ", reg.MiddleName, " ", reg.LastName);
-            mdltreeWraper.text = string.Format($"{reg.Id} - {mdltreeWraper.Name}");
-            mdltreeWraper.icon = "{{'icon':'fa fa-user'}}";
+            mdltreeWraper.text = string.Format($"{reg.Id} - {mdltreeWraper.Name},<span class='badge badge-success'> Rank : {mdltreeWraper.Rank}</span>");
+            mdltreeWraper.icon = "fas fa-user";
             List<mdlTree> mdlTrees = base.GetAllDownline(NID);
             BindWithTree(mdlTrees, mdltreeWraper);
             return mdltreeWraper;
@@ -177,14 +177,14 @@ namespace WingGateway.Classes
                 };
                 if (mdl.Isterminate)
                 {
-                    mdl.icon = "{{'icon':'fa fa-ban'}}";
+                    mdl.icon = "fas fa-ban";
                 }
                 else
                 {
-                    mdl.icon = "{{'icon':'fa fa-user'}}";
+                    mdl.icon = "fas fa-user";
                 }
 
-                mdl.text = string.Format($"{mdl.LegId}) {mdl.LegId} - {mdl.Name}");
+                mdl.text = string.Format($"{mdl.LegId}) {mdl.TcId} - {mdl.Name},<span class='badge badge-success'> Rank : {mdl.Rank}</span>");
                 BindWithTree(mdlTrees, mdl);
                 if (mdltreeWraper.children == null)
                 {
