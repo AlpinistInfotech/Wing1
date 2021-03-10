@@ -481,6 +481,13 @@ namespace WingGateway.Controllers
         }
 
 
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Tree))]
+        public IActionResult Tree()
+        {
+            return View();
+        }
+
+
         #endregion
 
     }

@@ -1,4 +1,6 @@
 ﻿using Database;
+using Database.Classes;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -15,30 +17,37 @@ namespace WingGateway.Classes
         public string UserName { get; set; }
     }
 
-    public class ConsProfile : Database.Classes.ConsolidatorProfile
+    public interface IConsProfile
+    {
+        int GetNId(string Id, bool OnlyUnterminated = false);
+        mdlTreeWraper GetAllDownline(int NID);
+        List<mdlTcBankWraper> GetBankDetails(enmLoadData loadType, mdlFilterModel mdl, int Nid, bool LoadImage);
+        List<mdlUserInfo> GetUserName(List<int> UserId, bool IsEmployee = true);
+    }
+
+    public class ConsProfile : Database.Classes.ConsolidatorProfile, IConsProfile
     {
 
         private readonly IConfiguration _config;
 
-        public ConsProfile(DBContext context, IConfiguration config) :base(context)
+        public ConsProfile(DBContext context, IConfiguration config) : base(context)
         {
             _config = config;
         }
 
-        public List<mdlUserInfo> GetUserName(List<int> UserId, bool IsEmployee=true)
+        public List<mdlUserInfo> GetUserName(List<int> UserId, bool IsEmployee = true)
         {
             List<mdlUserInfo> mdlUserInfos = new List<mdlUserInfo>();
             if (IsEmployee)
             {
                 mdlUserInfos = _context.tblEmpMaster.Where(p => UserId.Contains(p.EmpId)).Select(p => new mdlUserInfo { UserId = p.EmpId, UserName = p.EmpCode }).ToList();
             }
-            
+
 
             return mdlUserInfos;
         }
 
-
-        public List<mdlTcBankWraper> GetBankDetails(enmLoadData loadType, mdlFilterModel mdl,int Nid , bool LoadImage)
+        public List<mdlTcBankWraper> GetBankDetails(enmLoadData loadType, mdlFilterModel mdl, int Nid, bool LoadImage)
         {
             List<mdlTcBankWraper> returnData = new List<mdlTcBankWraper>();
             if (loadType == enmLoadData.ByID)
@@ -57,7 +66,7 @@ namespace WingGateway.Classes
                     DetailId = p.DetailId,
                     BankId = p.BankId ?? 0,
                     TcBankName = p.tblBankMaster.BankName,
-                    TcId=p.tblRegistration.Id,
+                    TcId = p.tblRegistration.Id,
                     TcName =
                 string.Concat(p.tblRegistration.FirstName ?? "", " ", p.tblRegistration.MiddleName ?? "", " ", p.tblRegistration.LastName ?? ""),
                     AccountNo = p.AccountNo,
@@ -67,17 +76,17 @@ namespace WingGateway.Classes
                     ApprovedDt = p.ApprovedDt,
                     Remarks = p.Remarks,
                     ApprovalRemarks = p.ApprovalRemarks,
-                    BranchAddress=p.BranchAddress,
-                    UploadImageName=p.UploadImages,
+                    BranchAddress = p.BranchAddress,
+                    UploadImageName = p.UploadImages,
                     ApprovedBy = p.ApprovedBy ?? 0
                 }).ToList();
             }
             else
             {
-                returnData = _context.tblTcBankDetails.Where(p => p.TcNid==Nid )
+                returnData = _context.tblTcBankDetails.Where(p => p.TcNid == Nid)
                 .Select(p => new mdlTcBankWraper
                 {
-                    DetailId=p.DetailId,
+                    DetailId = p.DetailId,
                     BankId = p.BankId ?? 0,
                     TcBankName = p.tblBankMaster.BankName,
                     TcId = p.tblRegistration.Id,
@@ -91,7 +100,8 @@ namespace WingGateway.Classes
                     Remarks = p.Remarks,
                     ApprovalRemarks = p.ApprovalRemarks,
                     BranchAddress = p.BranchAddress,
-                    UploadImageName = p.UploadImages,ApprovedBy=p.ApprovedBy??0
+                    UploadImageName = p.UploadImages,
+                    ApprovedBy = p.ApprovedBy ?? 0
                 }).ToList();
             }
 
@@ -99,7 +109,8 @@ namespace WingGateway.Classes
             var UserIds = returnData.Where(p => p.ApprovedBy > 0).Select(p => p.ApprovedBy).Distinct().ToList();
             var UserNames = GetUserName(UserIds, true);
             returnData.ForEach(
-                p => {
+                p =>
+                {
                     p.ApproverName = UserNames.FirstOrDefault(q => q.UserId == p.ApprovedBy)?.UserName;
                 }
                 );
@@ -111,7 +122,8 @@ namespace WingGateway.Classes
                          Directory.GetCurrentDirectory(),
                          "wwwroot/" + filePath);
                 returnData.ForEach(
-                p => {
+                p =>
+                {
                     var files = p.UploadImageName.Split(",");
                     foreach (var file in files)
                     {
@@ -123,6 +135,63 @@ namespace WingGateway.Classes
 
             return returnData;
 
+        }
+
+        new public mdlTreeWraper GetAllDownline(int NID)
+        {
+            mdlTreeWraper mdltreeWraper = new mdlTreeWraper();
+            var reg = _context.tblRegistration.Where(p => p.Nid == NID).FirstOrDefault();
+            if (reg == null)
+            {
+                return mdltreeWraper;
+            }
+            mdltreeWraper.id = reg.Nid;
+            mdltreeWraper.TcId = reg.Id;
+            mdltreeWraper.Nid = reg.Nid;
+            mdltreeWraper.Rank = reg.TCRanks;
+            mdltreeWraper.Isterminate = reg.IsTerminate;
+            mdltreeWraper.LegId = reg.SpLegNumber;
+            mdltreeWraper.Name = string.Concat(reg.FirstName, " ", reg.MiddleName, " ", reg.LastName);
+            mdltreeWraper.text = string.Format($"{reg.Id} - {mdltreeWraper.Name}");
+            mdltreeWraper.icon = "{{'icon':'fa fa-user'}}";
+            List<mdlTree> mdlTrees = base.GetAllDownline(NID);
+            BindWithTree(mdlTrees, mdltreeWraper);
+            return mdltreeWraper;
+        }
+
+        private void BindWithTree(IEnumerable<mdlTree> mdlTrees, mdlTreeWraper mdltreeWraper)
+        {
+            var tempdatas = mdlTrees.Where(p => p.SpNid == mdltreeWraper.Nid).OrderBy(p => p.LegId);
+            foreach (var tempdata in tempdatas)
+            {
+                mdlTreeWraper mdl = new mdlTreeWraper()
+                {
+                    id = tempdata.Nid,
+                    TcId = tempdata.TcId,
+                    Nid = tempdata.Nid,
+                    Rank = tempdata.Rank,
+                    Isterminate = tempdata.Isterminate,
+                    LegId = tempdata.LegId,
+                    Name = tempdata.Name
+
+                };
+                if (mdl.Isterminate)
+                {
+                    mdl.icon = "{{'icon':'fa fa-ban'}}";
+                }
+                else
+                {
+                    mdl.icon = "{{'icon':'fa fa-user'}}";
+                }
+
+                mdl.text = string.Format($"{mdl.LegId}) {mdl.LegId} - {mdl.Name}");
+                BindWithTree(mdlTrees, mdl);
+                if (mdltreeWraper.children == null)
+                {
+                    mdltreeWraper.children = new List<mdlTreeWraper>();
+                }
+                mdltreeWraper.children.Add(mdl);
+            }
         }
     }
 }

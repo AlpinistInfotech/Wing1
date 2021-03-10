@@ -1,0 +1,22 @@
+﻿@using Database
+@inject Database.ICurrentUsers _currentUsers
+@{
+    ViewData["Title"] = Database.enmDocumentMaster.Gateway_Tree.GetDocumentDetails().Name;
+}
+
+<div id="ajaxIdTree"></div>
+
+@section Scripts {
+ 
+    <script>
+        // ajax demo
+        $('#ajaxIdTree').jstree({
+            'core': {
+                'data': {
+                    "url": "/api/Returnapi/GetTree/@(_currentUsers.TcId)",
+                    "dataType": "json" // needed only if you do not supply JSON headers
+                }
+            }
+        });
+    </script>
+}

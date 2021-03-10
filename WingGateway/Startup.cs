@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WingGateway.Classes;
 
 namespace WingGateway
 {
@@ -44,7 +45,7 @@ namespace WingGateway
             services.AddScoped<ISequenceMaster>(ctx => new SequenceMaster(ctx.GetRequiredService<DBContext>()));
             services.AddScoped<IConsolidatorProfile>(ctx => new ConsolidatorProfile(ctx.GetRequiredService<DBContext>()));
             services.AddScoped<ITcMaster>(ctx => new TcMaster(ctx.GetRequiredService<DBContext>()));
-
+            services.AddScoped<IConsProfile>(ctx => new ConsProfile(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
 
             #endregion
 

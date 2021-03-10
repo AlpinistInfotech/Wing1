@@ -1,4 +1,5 @@
 ﻿using Database;
+using Database.Classes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -9,7 +10,13 @@ using System.Threading.Tasks;
 
 namespace WingGateway.Models
 {
-  
+    public class mdlTreeWraper: mdlTree
+    {
+        public int id { get; set; }
+        public string text { get; set; }
+        public List<mdlTreeWraper> children { get; set; }
+        public string icon { get; set; }
+    }
 
     public class mdlKyc
     {
