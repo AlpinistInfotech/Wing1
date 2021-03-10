@@ -29,6 +29,10 @@ namespace Database
         Gateway_Team = 5,
         [Module(EnmApplication: enmApplication.Gateway, IsArea: false, DisplayOrder: 0, Name: "Setting", Description: "", Icon: "nav-icon far fa-plus-square", AreaName: "", CntrlName: "Setting")]
         Gateway_Setting = 6,
+
+
+        [Module(EnmApplication: enmApplication.CRM, IsArea: false, DisplayOrder: 0, Name: "Profile", Description: "TC, bank, Pan, address contact etc", Icon: "nav-icon far fa-plus-square", AreaName: "", CntrlName: "Wing")]
+        CRM_Tc_Profile = 11,
         
     }
 
@@ -38,6 +42,17 @@ namespace Database
         Gateway_Personal_Profile = 1,
         [SubModule(EnmModule: enmModule.Gateway_Incentive, DisplayOrder: 2, Name: "Wallet", Description: "Add Wallet Money,See Ledger", Icon: "nav-icon fas fa-file", CntrlName: "Wallet")]
         Gateway_Incentive_wallet = 2,
+
+        [SubModule(EnmModule: enmModule.Gateway_Incentive, DisplayOrder: 2, Name: "KYC", Description: "", Icon: "nav-icon fas fa-file", CntrlName: "Wing")]
+        CRM_TcProfile_kyc = 11,
+        [SubModule(EnmModule: enmModule.Gateway_Incentive, DisplayOrder: 2, Name: "Bank", Description: "Add Wallet Money,See Ledger", Icon: "nav-icon fas fa-landmark", CntrlName: "Wing")]
+        CRM_TcProfile_Bank = 12,
+        [SubModule(EnmModule: enmModule.Gateway_Incentive, DisplayOrder: 2, Name: "Pan", Description: "Add Wallet Money,See Ledger", Icon: "nav-icon fas fa-file-signature", CntrlName: "Wing")]
+        CRM_TcProfile_Pan = 13,
+        [SubModule(EnmModule: enmModule.Gateway_Incentive, DisplayOrder: 2, Name: "Address", Description: "Add Wallet Money,See Ledger", Icon: "nav-icon fas fa-id-card", CntrlName: "Wing")]
+        CRM_TcProfile_Address = 14,
+        [SubModule(EnmModule: enmModule.Gateway_Incentive, DisplayOrder: 2, Name: "Contact", Description: "Add Wallet Money,See Ledger", Icon: "nav-icon fa fa-phone", CntrlName: "Wing")]
+        CRM_TcProfile_contact = 15,
     }
 
     public enum enmDocumentMaster :int
@@ -115,11 +130,17 @@ namespace Database
         Gateway_ChangePassword = 53,
 
         [Document(EnmModule: enmModule.Gateway_Setting, DocumentType: enmDocumentType.Create | enmDocumentType.Update,
-            DisplayOrder: 1, Name: "Change Password", Description: "Change Password", Icon: "far fa-circle nav-icon", ActionName: "ChangePassword")]
+            DisplayOrder: 1, Name: "Dashboard", Description: "Employee Dash board", Icon: "far fa-circle nav-icon", ActionName: "/Wing/Index")]
         Emp_Dashboard = 101,
 
+        [Document(EnmSubModule: enmSubModule.CRM_TcProfile_Bank, DocumentType: enmDocumentType.Create ,
+            DisplayOrder: 1, Name: "Bank Details", Description: "Bank Details", Icon: "far fa-circle nav-icon", ActionName: "/Wing/BankDetails")]
         Emp_Tc_BankDetails = 110,
+        [Document(EnmSubModule: enmSubModule.CRM_TcProfile_Bank, DocumentType: enmDocumentType.Create,
+            DisplayOrder: 1, Name: "Bank Update", Description: "Bank Update", Icon: "far fa-circle nav-icon", ActionName: "/Wing/BankUpdate")]
         Emp_Tc_BankUpdate = 111,
+        [Document(EnmSubModule: enmSubModule.CRM_TcProfile_Bank, DocumentType: enmDocumentType.Create,
+            DisplayOrder: 1, Name: "Bank Approval", Description: "Bank Approval", Icon: "far fa-circle nav-icon", ActionName: "/Wing/BankApproval")]
         Emp_Tc_BankApproval = 112,
         //[Document(EnmSubModule: enmSubModule.Departments, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.Report,
         //DisplayOrder: 2, Name: "Sub Department", Description: "Create,Update Subdepartment", EnmParentDocument: enmDocumentMaster.None,

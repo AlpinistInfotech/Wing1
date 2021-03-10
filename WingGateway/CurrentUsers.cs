@@ -31,10 +31,9 @@ namespace WingGateway
                 if (currentUser != null)
                 {
                     _UserType = currentUser.UserType;
+                    _userId = currentUser.Id;
                     if (_UserType == enmUserType.Consolidator)
-                    {
-                        _userId = currentUser.Id;
-                        _TcId = currentUser.tblRegistration.Id;
+                    {   _TcId = currentUser.tblRegistration.Id;
                         _TcNid = currentUser.tblRegistration.Nid;
                         _Name = Convert.ToString(currentUser.tblRegistration.FirstName) + " " + Convert.ToString(currentUser.tblRegistration.MiddleName) + " " + Convert.ToString(currentUser.tblRegistration.LastName);
                         _TcRanks = currentUser.tblRegistration.TCRanks;

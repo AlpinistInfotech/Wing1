@@ -104,8 +104,10 @@
     @RenderSection("_ValidationScriptsPartial", required: false)
     <script src="~/js/MasterDatabase.js"></script>
     <script src="~/js/customeWorker.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
     <script src="~/js/SideMenu.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

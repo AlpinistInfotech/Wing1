@@ -52,15 +52,38 @@ namespace WingGateway.Controllers
                 var result = await _signInManager.PasswordSignInAsync(mdl.Username, mdl.Password, mdl.RememberMe, true);
                 if (result.Succeeded)
                 {
+                    var user = await _signInManager.UserManager.FindByNameAsync(mdl.Username);
+                    if (user != null)
+                    {
+                        if (user.UserType == enmUserType.Consolidator)
+                        {
+                            if (!string.IsNullOrEmpty(ReturnUrl))
+                            {
+                                return LocalRedirect(ReturnUrl);
+                            }
+                            else
+                            {
+                                return RedirectToAction("Index", "Home");
+                            }
+                        }
+                        else
+                        {
+                            if (ReturnUrl == "/")
+                            {
+                                return RedirectToAction("Index", "Wing");
+                            }
+                            if (!string.IsNullOrEmpty(ReturnUrl))
+                            {
+                                return LocalRedirect(ReturnUrl);
+                            }
+                            else
+                            {
+                                return RedirectToAction("Index", "Wing");
+                            }
+                        }
+                        
+                    }
                     
-                    if (!string.IsNullOrEmpty(ReturnUrl))
-                    {
-                        return LocalRedirect(ReturnUrl);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
 
                 }
                 mdl.CaptchaData.GenrateCaptcha(captchaGenratorBase);
@@ -167,7 +190,7 @@ namespace WingGateway.Controllers
                     {   
                         await _signInManager.SignInAsync(appuser, isPersistent: false);
                         transaction.Commit();
-                        return RedirectToAction("Wing", "Dashboard");
+                        return RedirectToAction("Home", "Index");
                     }
 
                     foreach (var error in result.Errors)
