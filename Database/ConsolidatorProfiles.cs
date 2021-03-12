@@ -137,6 +137,11 @@ namespace Database
         public string AccountNo { get; set; }
         [MaxLength(200)]
         public string BranchAddress{ get; set; }
+
+        [MaxLength(200)]
+        public string NameasonBank { get; set; }
+
+
         [MaxLength(200)]
         public string UploadImages { get; set; }
         public enmApprovalType IsApproved { get; set; }

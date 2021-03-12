@@ -155,7 +155,7 @@ namespace WingGateway.Controllers
                 ViewBag.SaveStatus = enmSaveStatus.danger;
                 ViewBag.Message = enmMessage.InvalidData.GetDescription();
             }
-            if (mdl.IdProofType == enmIdentityProof.Adhar)
+            if (mdl.IdProofType == enmIdentityProof.Aadhar)
             {
                 if (mdl.DocumentNo.Trim().Length != 12)
                 {
@@ -238,7 +238,7 @@ namespace WingGateway.Controllers
             }
             else
             {
-                return Json($"Account No {AccountNo} is already in use");
+                return Json($"Account No. {AccountNo} is already in use");
             }
         }
 
@@ -266,6 +266,7 @@ namespace WingGateway.Controllers
                 mdl.AccountNo = masterData.AccountNo;
                 mdl.Remarks = masterData.Remarks;
                 mdl.BranchAddress = masterData.BranchAddress;
+                mdl.NameasonBank = masterData.NameasonBank;
                 mdl.fileData = new List<byte[]>();
 
                 var files = masterData.UploadImages.Split(",");
@@ -344,7 +345,8 @@ namespace WingGateway.Controllers
                         Isdeleted = false,
                         TcNid = currentUsers.TcNid,
                         ApprovalRemarks = "",
-                        BranchAddress = mdl.BranchAddress
+                        BranchAddress = mdl.BranchAddress,
+                        NameasonBank=mdl.NameasonBank
                     }) ;
                     _context.SaveChanges();
                     return RedirectToAction("Bank",
@@ -391,7 +393,8 @@ namespace WingGateway.Controllers
             {
                 mdl.ApprovalRemarks = masterData.ApprovalRemarks;
                 mdl.IsApproved = masterData.IsApproved;
-                
+                mdl.PanName= masterData.PANName;
+
                 mdl.PANNo = masterData.PANNo;
                 mdl.Remarks = masterData.Remarks;                
                 mdl.fileData = new List<byte[]>();
@@ -457,7 +460,7 @@ namespace WingGateway.Controllers
                 {
                     _context.TblTcPanDetails.Add(new tblTcPanDetails
                     {
-                        DetailId = mdl.PANId,
+
                         PANNo = mdl.PANNo,
                         PANName = mdl.PanName,
                         UploadImages = string.Join<string>(",", AllFileName),

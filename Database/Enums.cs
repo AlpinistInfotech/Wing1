@@ -58,7 +58,7 @@ namespace Database
 
     public enum enmIdentityProof
     {   
-        Adhar =1,
+        Aadhar =1,
         Passport=2,
         PANcard=3,
         DrivingLicense=4,
@@ -66,7 +66,7 @@ namespace Database
     }
     public enum enmAddressProof
     {
-        Adhar = 1,
+        Aadhar = 1,
         Passport = 2,
         Passbook = 3,
         RationCard = 4,

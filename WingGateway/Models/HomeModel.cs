@@ -16,16 +16,17 @@ namespace WingGateway.Models
         public string text { get; set; }
         public List<mdlTreeWraper> children { get; set; }
         public string icon { get; set; }
+
     }
 
     public class mdlKyc
     {
         [Required]
-        [Display(Name = "Id Type")]        
-        public enmIdentityProof IdProofType { get; set; } = enmIdentityProof.Adhar;
+        [Display(Name = "Id Proof Type")]        
+        public enmIdentityProof IdProofType { get; set; } = enmIdentityProof.Aadhar;
 
         [Required]
-        [Display(Name = "Document No")]
+        [Display(Name = "Document No.")]
         [StringLength(50, ErrorMessage = "The {0} must be at most {1} characters long.")]
         [RegularExpression("[a-zA-Z0-9]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         public string DocumentNo { get; set; }
@@ -56,8 +57,9 @@ namespace WingGateway.Models
     public class mdlBank
     {
         [Required]
-        [Display(Name = "Bank")]
+        [Display(Name = "Select Bank Name")]
         public int BankId { get; set; }
+
 
         [StringLength(11, ErrorMessage = "The {0} must be at most {1} characters long.",MinimumLength =11)]
         [Required]
@@ -66,26 +68,37 @@ namespace WingGateway.Models
         public string IFSC { get; set; }
 
         [Required]
-        [Display(Name = "Account No")]
+        [Display(Name = "Account No.")]
         [RegularExpression("[a-zA-Z0-9]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         [StringLength(20, ErrorMessage = "The {0} must be at most {1} characters long.")]
         [Remote(action: "IsAccountNoInUse", controller: "Home",AdditionalFields = "BankId")]
         public string AccountNo { get; set; }
+        
+        [Required]
+        [RegularExpression("[a-zA-Z0-9,/.\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
+        [Display(Name = "Name (as on Bank)")]
+        [StringLength(100, ErrorMessage = "The {0} must be at most {1} characters long.")]
+        public string NameasonBank { set; get; }
+
 
         [Required]
-        [Display(Name = "Upload Passbook/Cancelled Cheque")]
-        public List<IFormFile> UploadImages { set; get; }
-
         [RegularExpression("[a-zA-Z0-9,/.\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         [Display(Name = "Branch Address")]
         [StringLength(100, ErrorMessage = "The {0} must be at most {1} characters long.")]
         public string BranchAddress { set; get; }
 
 
+    
+
         [RegularExpression("[a-zA-Z0-9,/.\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         [Display(Name = "Remarks")]
         [StringLength(200, ErrorMessage = "The {0} must be at most {1} characters long.")]
         public string Remarks { set; get; }
+
+        [Required]
+        [Display(Name = "Upload Passbook/Cancelled Cheque")]
+        public List<IFormFile> UploadImages { set; get; }
+
 
         [Display(Name = "Is Approved")]
         public enmApprovalType? IsApproved { get; set; } = null;
@@ -118,17 +131,13 @@ namespace WingGateway.Models
 
     public class mdlPAN
     {
-        [Required]
-        [Display(Name = "PAN")]
-        public int PANId { get; set; }
-
         [StringLength(100, ErrorMessage = "The {0} must be at most {1} characters long.", MinimumLength = 3)]
         [Required]
         [Display(Name = "Name (as on PAN Card)")]
         public string PanName { get; set; }
 
         [Required]
-        [Display(Name = "PAN No")]
+        [Display(Name = "PAN No.")]
         [StringLength(10, ErrorMessage = "The {0} must be at most {1} characters long.",MinimumLength =10)]
         [Remote(action: "IsPANNoInUse", controller: "Home", AdditionalFields = "PANId")]
         public string PANNo { get; set; }

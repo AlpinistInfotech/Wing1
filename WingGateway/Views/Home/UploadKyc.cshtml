@@ -54,7 +54,7 @@
                             <div class="form-group">
                                 <label asp-for="IdProofType"></label>
                                 <select asp-for="IdProofType" class="form-control select2">
-                                    <option value="">Select Id Proof</option>
+                                    <option value="">Select ID Proof</option>
                                     @foreach (var idproof in Enum.GetValues(typeof(enmIdentityProof)))
                                     {
                                         <option value="@(idproof)">@(idproof.ToString())</option>
@@ -66,7 +66,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label asp-for="DocumentNo"></label>
-                                <input asp-for="DocumentNo" class="form-control" placeholder="Document No" />
+                                <input asp-for="DocumentNo" class="form-control" placeholder="Document No." />
                                 <span asp-validation-for="DocumentNo" class="text-danger"></span>
                             </div>
                         </div>
@@ -74,7 +74,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label asp-for="IDDocumentUpload">File input</label>
+                                <label asp-for="IDDocumentUpload">Please Choose KYC Document</label>
                                 <div class="input-group">
                                     <div class="custom-file">
                                         <input asp-for="IDDocumentUpload" class="custom-file-input" accept="image/x-png,image/jpeg" multiple />
