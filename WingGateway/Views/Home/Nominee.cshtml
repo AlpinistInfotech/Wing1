@@ -1,0 +1,78 @@
+﻿@model WingGateway.Models.mdlNominee
+@using Database
+@{
+    ViewData["Title"] = Database.enmDocumentMaster.Gateway_Nominee.GetDocumentDetails().Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary">
+
+            <form action="@Url.Action()" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+
+
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="NomineeName"></label>
+                                <input asp-for="NomineeName" class="form-control" placeholder="Nominee Name" />
+                                <span asp-validation-for="NomineeName" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="NomineeRelation"></label>
+                                <select asp-for="NomineeRelation" class="form-control select2">
+                                    <option value="">Nominee Relation</option>
+                                    @foreach (var idproof in Enum.GetValues(typeof(enmNomineeRelation)))
+                                    {
+                                        <option value="@(idproof)">@(idproof.ToString())</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="NomineeRelation" class="text-danger"></span>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Remarks"></label>
+                                <input asp-for="Remarks" class="form-control" placeholder="Remarks" />
+                                <span asp-validation-for="Remarks" class="text-danger"></span>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="card-footer">
+
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+
+</form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {    
+    <script src="~/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+    <script>
+        $(document).ready(function () {
+        bsCustomFileInput.init();
+        });
+    </script>
+}

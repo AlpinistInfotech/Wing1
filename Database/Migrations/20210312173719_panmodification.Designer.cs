@@ -4,14 +4,16 @@ using Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Database.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20210312173719_panmodification")]
+    partial class panmodification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -525,42 +527,6 @@ namespace Database.Migrations
                     b.ToTable("tblTcBankDetails");
                 });
 
-            modelBuilder.Entity("Database.tblTcNominee", b =>
-                {
-                    b.Property<int>("DetailId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedDt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Isdeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("NomineeName")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("NomineeRelation")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Remarks")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("TcNid")
-                        .HasColumnType("int");
-
-                    b.HasKey("DetailId");
-
-                    b.HasIndex("TcNid");
-
-                    b.ToTable("TblTcNominee");
-                });
-
             modelBuilder.Entity("Database.tblTcPanDetails", b =>
                 {
                     b.Property<int>("DetailId")
@@ -908,15 +874,6 @@ namespace Database.Migrations
                         .HasForeignKey("TcNid");
 
                     b.Navigation("tblBankMaster");
-
-                    b.Navigation("tblRegistration");
-                });
-
-            modelBuilder.Entity("Database.tblTcNominee", b =>
-                {
-                    b.HasOne("Database.tblRegistration", "tblRegistration")
-                        .WithMany()
-                        .HasForeignKey("TcNid");
 
                     b.Navigation("tblRegistration");
                 });

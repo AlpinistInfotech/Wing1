@@ -70,22 +70,19 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="AccountNo"></label>
-                            <input asp-for="AccountNo" class="form-control" placeholder="IFSC" />
+                            <input asp-for="AccountNo" class="form-control" placeholder="Account No." />
                             <span asp-validation-for="AccountNo" class="text-danger"></span>
                         </div>
                     </div>
+
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="UploadImages">File input</label>
-                            <div class="input-group">
-                                <div class="custom-file">
-                                    <input asp-for="UploadImages" class="custom-file-input" accept="image/x-png,image/jpeg" multiple />
-                                    <label class="custom-file-label" asp-for="UploadImages">Choose file</label>
-                                </div>
-                            </div>
-                            <span asp-validation-for="UploadImages" class="text-danger"></span>
+                            <label asp-for="NameasonBank"></label>
+                            <input asp-for="NameasonBank" class="form-control" placeholder="Please enter Name (as on bank passbook)" />
+                            <span asp-validation-for="NameasonBank" class="text-danger"></span>
                         </div>
                     </div>
+
                 </div>
 
                 <div class="row">
@@ -93,7 +90,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="BranchAddress"></label>
-                            <input asp-for="BranchAddress" class="form-control" placeholder="Remarks" />
+                            <input asp-for="BranchAddress" class="form-control" placeholder="Branch Address" />
                             <span asp-validation-for="BranchAddress" class="text-danger"></span>
                         </div>
                     </div>
@@ -104,6 +101,23 @@
                             <span asp-validation-for="Remarks" class="text-danger"></span>
                         </div>
                     </div>
+
+                    <div class="row">
+
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label asp-for="UploadImages">Please Select Cancelled Cheque/PassBook</label>
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        <input asp-for="UploadImages" class="custom-file-input" accept="image/x-png,image/jpeg" multiple />
+                                        <label class="custom-file-label" asp-for="UploadImages">Choose file</label>
+                                    </div>
+                                </div>
+                                <span asp-validation-for="UploadImages" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
                         @if (Model.IsApproved == enmApprovalType.Approved || Model.IsApproved == enmApprovalType.Rejeceted)
                         {

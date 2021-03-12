@@ -155,7 +155,7 @@ namespace WingGateway.Controllers
                 ViewBag.SaveStatus = enmSaveStatus.danger;
                 ViewBag.Message = enmMessage.InvalidData.GetDescription();
             }
-            if (mdl.IdProofType == enmIdentityProof.Adhar)
+            if (mdl.IdProofType == enmIdentityProof.Aadhar)
             {
                 if (mdl.DocumentNo.Trim().Length != 12)
                 {
@@ -238,7 +238,7 @@ namespace WingGateway.Controllers
             }
             else
             {
-                return Json($"Account No {AccountNo} is already in use");
+                return Json($"Account No. {AccountNo} is already in use");
             }
         }
 
@@ -266,6 +266,7 @@ namespace WingGateway.Controllers
                 mdl.AccountNo = masterData.AccountNo;
                 mdl.Remarks = masterData.Remarks;
                 mdl.BranchAddress = masterData.BranchAddress;
+                mdl.NameasonBank = masterData.NameasonBank;
                 mdl.fileData = new List<byte[]>();
 
                 var files = masterData.UploadImages.Split(",");
@@ -344,7 +345,8 @@ namespace WingGateway.Controllers
                         Isdeleted = false,
                         TcNid = currentUsers.TcNid,
                         ApprovalRemarks = "",
-                        BranchAddress = mdl.BranchAddress
+                        BranchAddress = mdl.BranchAddress,
+                        NameasonBank=mdl.NameasonBank
                     }) ;
                     _context.SaveChanges();
                     return RedirectToAction("Bank",
@@ -391,7 +393,8 @@ namespace WingGateway.Controllers
             {
                 mdl.ApprovalRemarks = masterData.ApprovalRemarks;
                 mdl.IsApproved = masterData.IsApproved;
-                
+                mdl.PanName= masterData.PANName;
+
                 mdl.PANNo = masterData.PANNo;
                 mdl.Remarks = masterData.Remarks;                
                 mdl.fileData = new List<byte[]>();
@@ -457,7 +460,7 @@ namespace WingGateway.Controllers
                 {
                     _context.TblTcPanDetails.Add(new tblTcPanDetails
                     {
-                        DetailId = mdl.PANId,
+
                         PANNo = mdl.PANNo,
                         PANName = mdl.PanName,
                         UploadImages = string.Join<string>(",", AllFileName),
@@ -486,6 +489,80 @@ namespace WingGateway.Controllers
         {
             return View();
         }
+
+
+        #endregion
+
+        #region Nominee
+        
+
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Nominee))]
+        public IActionResult Nominee([FromServices] ICurrentUsers currentUsers, enmSaveStatus? _enmSaveStatus, enmMessage? _enmMessage)
+        {
+            mdlNominee mdl = new mdlNominee();
+            if (_enmSaveStatus != null)
+            {
+                ViewBag.SaveStatus = (int)_enmSaveStatus.Value;
+                ViewBag.Message = _enmMessage?.GetDescription();
+            }
+            
+            var masterData = _context.TblTcNominee.Where(p => p.TcNid == currentUsers.TcNid && !p.Isdeleted).FirstOrDefault();
+            if (masterData != null)
+            {
+                mdl.NomineeName = masterData.NomineeName;
+                mdl.NomineeRelation = masterData.NomineeRelation;
+                mdl.Remarks = masterData.Remarks;
+                
+            }
+
+            return View(mdl);
+        }
+
+        [HttpPost]
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Nominee))]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> NomineeAsync([FromServices] ICurrentUsers currentUsers, mdlNominee mdl)
+        {
+            if (ModelState.IsValid)
+            {
+            
+                var ExistingData = _context.TblTcNominee.FirstOrDefault(p => !p.Isdeleted && p.TcNid == currentUsers.TcNid );
+                if (ExistingData != null)
+                {
+                    ExistingData.Isdeleted = true;
+                    _context.TblTcNominee.Update(ExistingData);
+                }
+                if (_context.TblTcNominee.Any(p => p.TcNid == currentUsers.TcNid && !p.Isdeleted))
+                {
+                    ModelState.AddModelError("", "Request Already Submited");
+                    ViewBag.SaveStatus = enmSaveStatus.warning;
+                    ViewBag.Message = enmMessage.AlreadyExists.GetDescription();
+                }
+                else
+                {
+                    _context.TblTcNominee.Add(new tblTcNominee
+                    {
+
+                        NomineeName = mdl.NomineeName,
+                        NomineeRelation = mdl.NomineeRelation,
+                        CreatedBy = 0,
+                        CreatedDt = DateTime.Now,
+                        Remarks = mdl.Remarks,
+                        Isdeleted = false,
+                        TcNid = currentUsers.TcNid,
+                        
+                    });
+                    _context.SaveChanges();
+                    return RedirectToAction("Nominee",
+                                 new { _enmSaveStatus = enmSaveStatus.success, _enmMessage = enmMessage.UpdateSucessfully });
+                }
+
+            }
+
+            return View(mdl);
+        }
+
+
 
 
         #endregion

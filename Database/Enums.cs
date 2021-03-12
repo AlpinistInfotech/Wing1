@@ -58,15 +58,27 @@ namespace Database
 
     public enum enmIdentityProof
     {   
-        Adhar =1,
+        Aadhar =1,
         Passport=2,
         PANcard=3,
         DrivingLicense=4,
         VoterID=5,
     }
+
+    public enum enmNomineeRelation
+    {
+        Father = 1,
+        Mother = 2,
+        Husband = 3,
+        Wife = 4,
+        Son = 5,
+        Daughter=6,
+    }
+
+
     public enum enmAddressProof
     {
-        Adhar = 1,
+        Aadhar = 1,
         Passport = 2,
         Passbook = 3,
         RationCard = 4,

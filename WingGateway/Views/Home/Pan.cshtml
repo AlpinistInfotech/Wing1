@@ -49,34 +49,31 @@
 
             <div class="card-body">
 
+                
                 <div class="row">
+
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="PANId"></label>
-                            <select asp-for="PANId" class="form-control select2" asp-items="ViewBag.PANList">
-                            </select>
-                            <span asp-validation-for="PANId" class="text-danger"></span>
+                            <label asp-for="PanName"></label>
+                            <input asp-for="PanName" class="form-control" placeholder="Name (as on PAN)" />
+                            <span asp-validation-for="PanName" class="text-danger"></span>
                         </div>
                     </div>
-                    @*<div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="PANName"></label>
-                            <input asp-for="PANName" class="form-control" placeholder="IFSC" />
-                            <span asp-validation-for="PANName" class="text-danger"></span>
-                        </div>
-                    </div>*@
-                </div>
-                <div class="row">
+
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="PANNo"></label>
-                            <input asp-for="PANNo" class="form-control" placeholder="IFSC" />
+                            <input asp-for="PANNo" class="form-control" placeholder="PAN No." />
                             <span asp-validation-for="PANNo" class="text-danger"></span>
                         </div>
                     </div>
+                </div>
+
+                <div class="row">
+
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="UploadImages">File input</label>
+                            <label asp-for="UploadImages">Please Upload PAN Document</label>
                             <div class="input-group">
                                 <div class="custom-file">
                                     <input asp-for="UploadImages" class="custom-file-input" accept="image/x-png,image/jpeg" multiple />
@@ -86,9 +83,6 @@
                             <span asp-validation-for="UploadImages" class="text-danger"></span>
                         </div>
                     </div>
-                </div>
-
-                <div class="row">
 
                     <div class="col-md-6">
                         <div class="form-group">

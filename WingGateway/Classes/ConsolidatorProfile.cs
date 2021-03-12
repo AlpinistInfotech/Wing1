@@ -177,7 +177,7 @@ namespace WingGateway.Classes
                 };
                 if (mdl.Isterminate)
                 {
-                    mdl.icon = "fas fa-ban";
+                   mdl.icon = "fas fa-ban";
                 }
                 else
                 {

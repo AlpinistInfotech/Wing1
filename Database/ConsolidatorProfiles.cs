@@ -137,6 +137,11 @@ namespace Database
         public string AccountNo { get; set; }
         [MaxLength(200)]
         public string BranchAddress{ get; set; }
+
+        [MaxLength(200)]
+        public string NameasonBank { get; set; }
+
+
         [MaxLength(200)]
         public string UploadImages { get; set; }
         public enmApprovalType IsApproved { get; set; }
@@ -172,6 +177,28 @@ namespace Database
         public int? ApprovedBy { get; set; }
         public DateTime? ApprovedDt { get; set; }
         public string ApprovalRemarks { get; set; }
+        public bool Isdeleted { get; set; }
+    }
+
+
+    public class tblTcNominee
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int DetailId { get; set; }
+        [ForeignKey("tblRegistration")]
+        public int? TcNid { get; set; }
+        public tblRegistration tblRegistration { get; set; }
+
+        [MaxLength(100)]
+        public string NomineeName { get; set; }
+
+        public enmNomineeRelation NomineeRelation { get; set; }
+
+        public DateTime CreatedDt { get; set; }
+        public int CreatedBy { get; set; }
+
+        public string Remarks { get; set; }
         public bool Isdeleted { get; set; }
     }
 
