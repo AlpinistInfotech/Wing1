@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WingGateway", "WingGateway\WingGateway.csproj", "{E0989A37-81B6-4BC4-8244-BBD0FA12D8D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WingGateway", "WingGateway\WingGateway.csproj", "{E0989A37-81B6-4BC4-8244-BBD0FA12D8D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database", "Database\Database.csproj", "{227FBFF5-9E84-49C6-A4A5-7B998F92900D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Database", "Database\Database.csproj", "{227FBFF5-9E84-49C6-A4A5-7B998F92900D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WingApi", "WingApi\WingApi.csproj", "{26359AB3-A1A9-4745-81B5-16FCEB98614F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{227FBFF5-9E84-49C6-A4A5-7B998F92900D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{227FBFF5-9E84-49C6-A4A5-7B998F92900D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{227FBFF5-9E84-49C6-A4A5-7B998F92900D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26359AB3-A1A9-4745-81B5-16FCEB98614F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26359AB3-A1A9-4745-81B5-16FCEB98614F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26359AB3-A1A9-4745-81B5-16FCEB98614F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26359AB3-A1A9-4745-81B5-16FCEB98614F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

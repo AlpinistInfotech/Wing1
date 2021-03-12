@@ -361,7 +361,7 @@ namespace WingGateway.Controllers
         [AcceptVerbs("Get", "Post")]
         public IActionResult IsPANNoInUse(string PANNo, int PANId)
         {
-            var users = _context.tblTcPANDetails.Where(p => p.PANId == PANId && p.PANNo == PANNo && !p.Isdeleted).FirstOrDefault();
+            var users = _context.TblTcPanDetails.Where(p => p.PANNo == PANNo && !p.Isdeleted).FirstOrDefault();
             if (users == null)
             {
                 return Json(true);
@@ -386,17 +386,15 @@ namespace WingGateway.Controllers
             var path = Path.Combine(
                      Directory.GetCurrentDirectory(),
                      "wwwroot/" + filePath);
-            var masterData = _context.tblTcPANDetails.Where(p => p.TcNid == currentUsers.TcNid && !p.Isdeleted).FirstOrDefault();
+            var masterData = _context.TblTcPanDetails.Where(p => p.TcNid == currentUsers.TcNid && !p.Isdeleted).FirstOrDefault();
             if (masterData != null)
             {
                 mdl.ApprovalRemarks = masterData.ApprovalRemarks;
                 mdl.IsApproved = masterData.IsApproved;
-                mdl.PANId = masterData.PANId.HasValue ? masterData.PANId.Value : 0;
+                
                 mdl.PANNo = masterData.PANNo;
-                mdl.Remarks = masterData.Remarks;
-                mdl.PANName = masterData.PANName;
+                mdl.Remarks = masterData.Remarks;                
                 mdl.fileData = new List<byte[]>();
-
                 var files = masterData.UploadImages.Split(",");
                 foreach (var file in files)
                 {
@@ -443,13 +441,13 @@ namespace WingGateway.Controllers
                     }
                 }
 
-                var ExistingData = _context.tblTcPANDetails.FirstOrDefault(p => !p.Isdeleted && p.TcNid == currentUsers.TcNid && p.IsApproved == enmApprovalType.Rejeceted);
+                var ExistingData = _context.TblTcPanDetails.FirstOrDefault(p => !p.Isdeleted && p.TcNid == currentUsers.TcNid && p.IsApproved == enmApprovalType.Rejeceted);
                 if (ExistingData != null)
                 {
                     ExistingData.Isdeleted = true;
-                    _context.tblTcPANDetails.Update(ExistingData);
+                    _context.TblTcPanDetails.Update(ExistingData);
                 }
-                if (_context.tblTcPANDetails.Any(p => p.TcNid == currentUsers.TcNid && !p.Isdeleted))
+                if (_context.TblTcPanDetails.Any(p => p.TcNid == currentUsers.TcNid && !p.Isdeleted))
                 {
                     ModelState.AddModelError("", "Request Already Submited");
                     ViewBag.SaveStatus = enmSaveStatus.warning;
@@ -457,11 +455,11 @@ namespace WingGateway.Controllers
                 }
                 else
                 {
-                    _context.tblTcPANDetails.Add(new tblTcPANDetails
+                    _context.TblTcPanDetails.Add(new tblTcPanDetails
                     {
-                        PANId = mdl.PANId,
+                        DetailId = mdl.PANId,
                         PANNo = mdl.PANNo,
-                        PANName = mdl.PANName,
+                        PANName = mdl.PanName,
                         UploadImages = string.Join<string>(",", AllFileName),
                         CreatedBy = 0,
                         CreatedDt = DateTime.Now,
@@ -480,6 +478,13 @@ namespace WingGateway.Controllers
             }
 
             return View(mdl);
+        }
+
+
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Tree))]
+        public IActionResult Tree()
+        {
+            return View();
         }
 
 

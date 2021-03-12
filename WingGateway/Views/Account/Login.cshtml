@@ -19,7 +19,7 @@
                 <div asp-validation-summary="All" class="text-danger"></div>
 
                 
-                <input asp-for="CaptchaData.SaltId" class="form-control" type="hidden" />
+                <input name="CaptchaData.SaltId" value="@Model.CaptchaData.SaltId" class="form-control" type="hidden" />
                 <input asp-for="CaptchaData.CaptchaImage" class="form-control" type="hidden" />
 
                 <div class="form-group">

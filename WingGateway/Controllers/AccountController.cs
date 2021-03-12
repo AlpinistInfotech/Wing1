@@ -52,22 +52,44 @@ namespace WingGateway.Controllers
                 var result = await _signInManager.PasswordSignInAsync(mdl.Username, mdl.Password, mdl.RememberMe, true);
                 if (result.Succeeded)
                 {
+                    var user = await _signInManager.UserManager.FindByNameAsync(mdl.Username);
+                    if (user != null)
+                    {
+                        if (user.UserType == enmUserType.Consolidator)
+                        {
+                            if (!string.IsNullOrEmpty(ReturnUrl))
+                            {
+                                return LocalRedirect(ReturnUrl);
+                            }
+                            else
+                            {
+                                return RedirectToAction("Index", "Home");
+                            }
+                        }
+                        else
+                        {
+                            if (ReturnUrl == "/")
+                            {
+                                return RedirectToAction("Index", "Wing");
+                            }
+                            if (!string.IsNullOrEmpty(ReturnUrl))
+                            {
+                                return LocalRedirect(ReturnUrl);
+                            }
+                            else
+                            {
+                                return RedirectToAction("Index", "Wing");
+                            }
+                        }
+                        
+                    }
                     
-                    if (!string.IsNullOrEmpty(ReturnUrl))
-                    {
-                        return LocalRedirect(ReturnUrl);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
 
                 }
-                mdl.CaptchaData.GenrateCaptcha(captchaGenratorBase);
+                
                 ModelState.AddModelError("", "Invalid login attempts");
             }
-
-
+            mdl.CaptchaData.GenrateCaptcha(captchaGenratorBase);
             return View(mdl);
         }
 
@@ -157,17 +179,17 @@ namespace WingGateway.Controllers
 
                     };
                     var result = await _userManager.CreateAsync(appuser, mdl.Password);
-                    var role = await RoleManager.FindByNameAsync("TC");
-                    if (role != null)
-                    {
-                        await _userManager.AddToRoleAsync(appuser, "TC");
-                    }
-
                     if (result.Succeeded)
-                    {   
+                    {
+                        var role = await RoleManager.FindByNameAsync("TC");
+                        if (role != null)
+                        {
+                            await _userManager.AddToRoleAsync(appuser, "TC");
+                        }
+
                         await _signInManager.SignInAsync(appuser, isPersistent: false);
                         transaction.Commit();
-                        return RedirectToAction("Wing", "Dashboard");
+                        return RedirectToAction("Index","Home");
                     }
 
                     foreach (var error in result.Errors)
@@ -186,12 +208,12 @@ namespace WingGateway.Controllers
 
 
             }
+            mdl.CaptchaData.GenrateCaptcha(captchaGenratorBase);
             return View(mdl);
         }
 
 
-        [HttpPost]
-        [Route("Logout")]
+        [HttpPost]        
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();            

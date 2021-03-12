@@ -19,9 +19,9 @@
 
                 <input asp-for="TcNId" class="form-control" type="hidden" />
                 <input asp-for="TcId" class="form-control" type="hidden" />
-                <input asp-for="CaptchaData.SaltId" class="form-control" type="hidden" />
+                <input name="CaptchaData.SaltId" value="@Model.CaptchaData.SaltId" class="form-control" type="hidden" />
                 <input asp-for="CaptchaData.CaptchaImage" class="form-control" type="hidden" />
-                
+
                 <div class="row">
                     <div class="form-group col-md-6">
                         <input asp-for="SpTcId" class="form-control" placeholder="SponsorId" autofocus />
@@ -127,7 +127,7 @@
                     </div>
                     <div class="form-group col-md-6">
                         <img src="@string.Format("data:image/png;base64,{0}", Convert.ToBase64String(Model.CaptchaData.CaptchaImage))" />
-                        <a asp-action="Registration"><img src="~/dist/img/refresh.png" style="width:40px;height:40px" /> </a>
+                        @*<a asp-action="Registration"><img src="~/dist/img/refresh.png" style="width:40px;height:40px" /> </a>*@
                     </div>
 
                 </div>

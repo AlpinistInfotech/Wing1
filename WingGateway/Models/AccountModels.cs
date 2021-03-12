@@ -170,7 +170,7 @@ namespace WingGateway.Models
             {
                 Id = TcId,
                 FirstName = first_name,
-                MiddleName = middle_name,
+                MiddleName = middle_name??"",
                 LastName = last_name,
                 Husband_father_name = husband_father_name,
                 Gender = gender,

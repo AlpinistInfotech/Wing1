@@ -31,6 +31,9 @@
     <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+
+    <!-- JStree Theme-->
+    <link href="~/dist/themes/default/style.css" rel="stylesheet" />
     <!-- Custom CSS -->
     <link rel="stylesheet" href="~/css/site.css" />
 
@@ -82,7 +85,8 @@
     <script src="~/plugins/jquery/jquery.min.js"></script>
     <!-- Bootstrap 4 -->
     <script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-    @RenderSection("dataTableScripts", required: false)
+    @await Html.PartialAsync("_dataTableScript")
+
     <!-- Select2 -->
     <script src="~/plugins/select2/js/select2.full.min.js"></script>
     <!-- Bootstrap4 Duallistbox -->
@@ -101,11 +105,14 @@
     <script src="~/dist/js/adminlte.min.js"></script>
     <!-- Toastr -->
     <script src="~/plugins/toastr/toastr.min.js"></script>
-    @RenderSection("_ValidationScriptsPartial", required: false)
+    <script src="~/dist/jstree.js"></script>
+    @await Html.PartialAsync("_ValidationScriptsPartial")    
     <script src="~/js/MasterDatabase.js"></script>
     <script src="~/js/customeWorker.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
     <script src="~/js/SideMenu.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

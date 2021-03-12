@@ -9,6 +9,9 @@ using Database;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System.Security.Claims;
+using Microsoft.Extensions.Configuration;
+using WingGateway.Classes;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WingGateway.Controllers
 {
@@ -69,6 +72,8 @@ namespace WingGateway.Controllers
         }
 
 
+
+
         [HttpGet]
         [Route("CreateRoleClaims")]
         public async Task<ActionResult<bool>> CreateRoleClaims([FromServices] RoleManager<IdentityRole> RoleManager)
@@ -101,8 +106,26 @@ namespace WingGateway.Controllers
             {
                 var result = await RoleManager.AddClaimAsync(identityRoleTc, t);
             }
-                
+
+            var identityRoleEmployee = RoleManager.Roles.Where(p => p.Name == "Employee").FirstOrDefault();            
+            var toBeInsertedEmp = AllClaim.Where(p => !AlreadyClaims.Contains(p.Type) && p.Type.IndexOf("Emp_") >= -1).ToList();
+            foreach (var t in toBeInsertedEmp)
+            {
+                var result = await RoleManager.AddClaimAsync(identityRoleEmployee, t);
+            }
+
             return true;
+        }
+
+        [Authorize]
+        [Route("GetTree/{Id}")]
+        public  ActionResult<Models.mdlTreeWraper> GetTree([FromServices] IConsProfile cons, string Id)
+        {
+            
+            int Nid=cons.GetNId(Id);            
+            return  cons.GetAllDownline(Nid);
+            
+            
         }
 
 

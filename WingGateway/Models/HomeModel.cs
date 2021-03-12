@@ -1,4 +1,5 @@
 ﻿using Database;
+using Database.Classes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -9,7 +10,13 @@ using System.Threading.Tasks;
 
 namespace WingGateway.Models
 {
-  
+    public class mdlTreeWraper: mdlTree
+    {
+        public int id { get; set; }
+        public string text { get; set; }
+        public List<mdlTreeWraper> children { get; set; }
+        public string icon { get; set; }
+    }
 
     public class mdlKyc
     {
@@ -118,7 +125,7 @@ namespace WingGateway.Models
         [StringLength(100, ErrorMessage = "The {0} must be at most {1} characters long.", MinimumLength = 3)]
         [Required]
         [Display(Name = "Name (as on PAN Card)")]
-        public string PANName { get; set; }
+        public string PanName { get; set; }
 
         [Required]
         [Display(Name = "PAN No")]
@@ -151,18 +158,7 @@ namespace WingGateway.Models
 
         public List<byte[]> fileData { set; get; }
 
-        public List<tblPANMaster> GetPAN(DBContext context, bool OnlyActive)
-        {
-            if (OnlyActive)
-            {
-                return context.tblPANMaster.Where(p => p.IsActive).ToList();
-            }
-            else
-            {
-                return context.tblPANMaster.ToList();
-            }
-
-        }
+        
     }
 
 }

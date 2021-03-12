@@ -1,7 +1,7 @@
 ﻿@model WingGateway.Models.mdlPAN
 @using Database
 @{
-    ViewData["Title"] = "Upload PAN";
+    ViewData["Title"] = Database.enmDocumentMaster.Gateway_PAN.GetDocumentDetails().Name;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div class="row">
@@ -58,13 +58,13 @@
                             <span asp-validation-for="PANId" class="text-danger"></span>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    @*<div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="PANName"></label>
                             <input asp-for="PANName" class="form-control" placeholder="IFSC" />
                             <span asp-validation-for="PANName" class="text-danger"></span>
                         </div>
-                    </div>
+                    </div>*@
                 </div>
                 <div class="row">
                     <div class="col-md-6">
@@ -146,8 +146,7 @@
     </div>
 </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+@section Scripts {    
     <script src="~/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
     <script>
         $(document).ready(function () {
