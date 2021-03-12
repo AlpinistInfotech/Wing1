@@ -493,5 +493,79 @@ namespace WingGateway.Controllers
 
         #endregion
 
+        #region Nominee
+        
+
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Nominee))]
+        public IActionResult Nominee([FromServices] ICurrentUsers currentUsers, enmSaveStatus? _enmSaveStatus, enmMessage? _enmMessage)
+        {
+            mdlNominee mdl = new mdlNominee();
+            if (_enmSaveStatus != null)
+            {
+                ViewBag.SaveStatus = (int)_enmSaveStatus.Value;
+                ViewBag.Message = _enmMessage?.GetDescription();
+            }
+            
+            var masterData = _context.TblTcNominee.Where(p => p.TcNid == currentUsers.TcNid && !p.Isdeleted).FirstOrDefault();
+            if (masterData != null)
+            {
+                mdl.NomineeName = masterData.NomineeName;
+                mdl.NomineeRelation = masterData.NomineeRelation;
+                mdl.Remarks = masterData.Remarks;
+                
+            }
+
+            return View(mdl);
+        }
+
+        [HttpPost]
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Nominee))]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> NomineeAsync([FromServices] ICurrentUsers currentUsers, mdlNominee mdl)
+        {
+            if (ModelState.IsValid)
+            {
+            
+                var ExistingData = _context.TblTcNominee.FirstOrDefault(p => !p.Isdeleted && p.TcNid == currentUsers.TcNid );
+                if (ExistingData != null)
+                {
+                    ExistingData.Isdeleted = true;
+                    _context.TblTcNominee.Update(ExistingData);
+                }
+                if (_context.TblTcNominee.Any(p => p.TcNid == currentUsers.TcNid && !p.Isdeleted))
+                {
+                    ModelState.AddModelError("", "Request Already Submited");
+                    ViewBag.SaveStatus = enmSaveStatus.warning;
+                    ViewBag.Message = enmMessage.AlreadyExists.GetDescription();
+                }
+                else
+                {
+                    _context.TblTcNominee.Add(new tblTcNominee
+                    {
+
+                        NomineeName = mdl.NomineeName,
+                        NomineeRelation = mdl.NomineeRelation,
+                        CreatedBy = 0,
+                        CreatedDt = DateTime.Now,
+                        Remarks = mdl.Remarks,
+                        Isdeleted = false,
+                        TcNid = currentUsers.TcNid,
+                        
+                    });
+                    _context.SaveChanges();
+                    return RedirectToAction("Nominee",
+                                 new { _enmSaveStatus = enmSaveStatus.success, _enmMessage = enmMessage.UpdateSucessfully });
+                }
+
+            }
+
+            return View(mdl);
+        }
+
+
+
+
+        #endregion
+
     }
 }

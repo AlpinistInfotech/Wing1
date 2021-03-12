@@ -43,6 +43,7 @@ namespace Database
         public DbSet<tblTcBankDetails> tblTcBankDetails { get; set; }
         public DbSet<tblTcPanDetails> TblTcPanDetails { get; set; }
 
+        public DbSet<tblTcNominee> TblTcNominee { get; set; }
 
         #endregion
 

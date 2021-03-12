@@ -64,6 +64,18 @@ namespace Database
         DrivingLicense=4,
         VoterID=5,
     }
+
+    public enum enmNomineeRelation
+    {
+        Father = 1,
+        Mother = 2,
+        Husband = 3,
+        Wife = 4,
+        Son = 5,
+        Daughter=6,
+    }
+
+
     public enum enmAddressProof
     {
         Aadhar = 1,

@@ -170,4 +170,27 @@ namespace WingGateway.Models
         
     }
 
+    public class mdlNominee
+    {
+
+
+        [Required]
+        [Display(Name = "Nominee Name")]
+        public string NomineeName { get; set; }
+
+
+        [Required]
+        [Display(Name = "Nominee Relation")]
+        public enmNomineeRelation NomineeRelation { get; set; } 
+
+        [RegularExpression("[a-zA-Z0-9,/.\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
+        [Display(Name = "Remarks")]
+        [StringLength(200, ErrorMessage = "The {0} must be at most {1} characters long.")]
+        public string Remarks { set; get; }
+
+        
+        
+    }
+
+
 }
