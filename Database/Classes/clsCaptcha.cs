@@ -20,6 +20,7 @@ namespace Database.Classes
 
     public class CaptchaGenratorBase : ICaptchaGenratorBase
     {
+        
         private readonly DBContext _context;
         public CaptchaGenratorBase(DBContext context)
         {

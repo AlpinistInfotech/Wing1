@@ -9,8 +9,10 @@ using System.Threading.Tasks;
 
 namespace WingGateway.Models
 {
-    public class mdlLogin
+    public class mdlLogin 
     {
+
+        
         [Required]
         [Display(Name = "UserName")]        
         [StringLength(200, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 5)]
@@ -54,6 +56,7 @@ namespace WingGateway.Models
 
     public class mdlRegistration
     {
+        
         [StringLength(10,ErrorMessage = "The {0} must be at {2} characters long.", MinimumLength = 10)]
         [RegularExpression("[a-zA-Z0-9]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         [Display(Name = "SponsorId")]
