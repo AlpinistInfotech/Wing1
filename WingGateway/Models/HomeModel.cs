@@ -192,5 +192,32 @@ namespace WingGateway.Models
         
     }
 
+    public class mdlContact
+    {
+
+
+        [Required]
+        [MaxLength(10)]
+        [Display(Name = "Permanent Mobile No.")]
+        [DataType(DataType.PhoneNumber)]
+        [RegularExpression("^[0-9]{10}$", ErrorMessage = "Invalid {0}")]
+        [Remote(action: "ValidateContactNo", controller: "Home")]
+        public string MobileNo { get; set; }
+
+        [Required]
+        [MaxLength(6)]
+        [Display(Name = "OTP")]
+        [RegularExpression("^[0-9]{10}$", ErrorMessage = "Invalid {0}")]
+        public string OTP { get; set; }
+
+
+        [Display(Name = "Alternate Mobile No.")]
+        [MaxLength(10)]
+        [DataType(DataType.PhoneNumber)]
+        [RegularExpression("^[0-9]{10}$", ErrorMessage = "Invalid {0}")]
+        public string AlternateMobileNo { get; set; }
+
+        
+    }
 
 }

@@ -4,14 +4,16 @@ using Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Database.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20210313120431_nominee_table_alter")]
+    partial class nominee_table_alter
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -525,46 +527,6 @@ namespace Database.Migrations
                     b.ToTable("tblTcBankDetails");
                 });
 
-            modelBuilder.Entity("Database.tblTcContact", b =>
-                {
-                    b.Property<int>("DetailId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("AlternateMobileNo")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedDt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Isdeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastModifieddate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("MobileNo")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<int?>("TcNid")
-                        .HasColumnType("int");
-
-                    b.Property<int>("lastModifiedBy")
-                        .HasColumnType("int");
-
-                    b.HasKey("DetailId");
-
-                    b.HasIndex("TcNid");
-
-                    b.ToTable("TblTcContact");
-                });
-
             modelBuilder.Entity("Database.tblTcNominee", b =>
                 {
                     b.Property<int>("DetailId")
@@ -954,15 +916,6 @@ namespace Database.Migrations
                         .HasForeignKey("TcNid");
 
                     b.Navigation("tblBankMaster");
-
-                    b.Navigation("tblRegistration");
-                });
-
-            modelBuilder.Entity("Database.tblTcContact", b =>
-                {
-                    b.HasOne("Database.tblRegistration", "tblRegistration")
-                        .WithMany()
-                        .HasForeignKey("TcNid");
 
                     b.Navigation("tblRegistration");
                 });

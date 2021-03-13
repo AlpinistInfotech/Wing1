@@ -148,6 +148,8 @@ namespace WingGateway.Controllers
             }
         }
 
+
+
         [HttpPost]
         public async Task<IActionResult> RegistrationAsync([FromServices] ICaptchaGenratorBase captchaGenratorBase,
                             [FromServices] ISequenceMaster sequenceMaster,
