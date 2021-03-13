@@ -24,8 +24,8 @@
                             <th>Status</th>
                             <th style="width:200px">Remarks</th>
 
-                            <th style="width:150px">Request Dt</th>
-                            <th style="width:150px">Approval Dt</th>
+                            <th style="width:150px">Request Date</th>
+                            <th style="width:150px">Approval Date</th>
                             <th >Approval By</th>
                             <th style="width:150px">Approval Remarks</th>
 
@@ -44,7 +44,7 @@
                             <td>@Model.TcBankWrapers[i].AccountNo</td>
                             <td>
                                 <span class=" @(Model.TcBankWrapers[i].IsApproved== enmApprovalType.Approved?"text-success":
-                                Model.TcBankWrapers[i].IsApproved== enmApprovalType.Rejeceted?"text-danger":"text-info")">
+                                Model.TcBankWrapers[i].IsApproved== enmApprovalType.Rejected?"text-danger":"text-info")">
                                     <a href="javascript:DoPostApproval(@Model.TcBankWrapers[i].TcId)" data-toggle="tooltip" title="Edit Record !">
                                         @Model.TcBankWrapers[i].IsApproved
                                      </a>

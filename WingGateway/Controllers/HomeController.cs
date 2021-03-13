@@ -189,7 +189,7 @@ namespace WingGateway.Controllers
                     }
                 }
 
-                var ExistingData=_context.tblKycMaster.FirstOrDefault(p => !p.Isdeleted && p.TcNid == currentUsers.TcNid && p.IsApproved == enmApprovalType.Rejeceted);
+                var ExistingData=_context.tblKycMaster.FirstOrDefault(p => !p.Isdeleted && p.TcNid == currentUsers.TcNid && p.IsApproved == enmApprovalType.Rejected);
                 if (ExistingData != null)
                 {
                     ExistingData.Isdeleted =true;
@@ -318,7 +318,7 @@ namespace WingGateway.Controllers
                     }
                 }
 
-                var ExistingData = _context.tblTcBankDetails.FirstOrDefault(p => !p.Isdeleted && p.TcNid == currentUsers.TcNid && p.IsApproved == enmApprovalType.Rejeceted);
+                var ExistingData = _context.tblTcBankDetails.FirstOrDefault(p => !p.Isdeleted && p.TcNid == currentUsers.TcNid && p.IsApproved == enmApprovalType.Rejected);
                 if (ExistingData != null)
                 {
                     ExistingData.Isdeleted = true;
@@ -444,7 +444,7 @@ namespace WingGateway.Controllers
                     }
                 }
 
-                var ExistingData = _context.TblTcPanDetails.FirstOrDefault(p => !p.Isdeleted && p.TcNid == currentUsers.TcNid && p.IsApproved == enmApprovalType.Rejeceted);
+                var ExistingData = _context.TblTcPanDetails.FirstOrDefault(p => !p.Isdeleted && p.TcNid == currentUsers.TcNid && p.IsApproved == enmApprovalType.Rejected);
                 if (ExistingData != null)
                 {
                     ExistingData.Isdeleted = true;
