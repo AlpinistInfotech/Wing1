@@ -231,4 +231,30 @@ namespace Database
 
     }
 
+    public class tblTcEmail
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int DetailId { get; set; }
+
+        [ForeignKey("tblRegistration")]
+        public int? TcNid { get; set; }
+        public tblRegistration tblRegistration { get; set; }
+
+        [MaxLength(80)]
+        public string EmailID { get; set; }
+
+        [MaxLength(80)]
+        public string AlternateEmailID { get; set; }
+
+        public DateTime CreatedDt { get; set; }
+        public int CreatedBy { get; set; }
+
+        public bool Isdeleted { get; set; }
+
+        public DateTime LastModifieddate { get; set; }
+        public int lastModifiedBy { get; set; }
+
+    }
+
 }

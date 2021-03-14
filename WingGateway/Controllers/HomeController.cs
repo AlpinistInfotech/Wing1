@@ -667,5 +667,94 @@ namespace WingGateway.Controllers
 
         #endregion
 
+
+        #region Email
+
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> ValidateEmailID(string emailid, [FromServices] ICurrentUsers currentuser)
+        {
+            var users = _context.TblTcEmail.FirstOrDefault(p => p.EmailID == emailid && p.TcNid != currentuser.TcNid);
+            if (users == null)
+            {
+                return Json(true);
+            }
+            else
+            {
+                return Json($"Email ID {emailid} is already in use");
+            }
+
+        }
+
+
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Contact))]
+        public IActionResult Email([FromServices] ICurrentUsers currentUsers, enmSaveStatus? _enmSaveStatus, enmMessage? _enmMessage)
+        {
+            mdlEmail mdl = new mdlEmail();
+            if (_enmSaveStatus != null)
+            {
+                ViewBag.SaveStatus = (int)_enmSaveStatus.Value;
+                ViewBag.Message = _enmMessage?.GetDescription();
+            }
+
+            var masterData = _context.TblTcEmail.Where(p => p.TcNid == currentUsers.TcNid && !p.Isdeleted).FirstOrDefault();
+            if (masterData != null)
+            {
+                mdl.EmailID = masterData.EmailID;
+                mdl.AlternateEmailID = masterData.AlternateEmailID;
+            }
+
+
+            return View(mdl);
+        }
+
+        [HttpPost]
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Email))]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EmailAsync([FromServices] ICurrentUsers currentUsers, mdlEmail mdl)
+        {
+            if (ModelState.IsValid)
+            {
+
+                var ExistingData = _context.TblTcEmail.FirstOrDefault(p => !p.Isdeleted && p.TcNid == currentUsers.TcNid);
+                if (ExistingData != null) // for update the data
+                {
+                    ExistingData.EmailID= mdl.EmailID;
+                    ExistingData.AlternateEmailID= mdl.AlternateEmailID;
+                    ExistingData.lastModifiedBy = currentUsers.TcNid;
+                    ExistingData.LastModifieddate = DateTime.Now;
+                    _context.TblTcEmail.Update(ExistingData);
+                    _context.SaveChanges();
+                    return RedirectToAction("Email",
+                                     new { _enmSaveStatus = enmSaveStatus.success, _enmMessage = enmMessage.UpdateSucessfully });
+
+                }
+
+                else
+                {
+                    _context.TblTcEmail.Add(new tblTcEmail
+                    {
+
+                        EmailID = mdl.EmailID,
+                        AlternateEmailID = mdl.AlternateEmailID,
+                        CreatedBy = currentUsers.TcNid,
+                        CreatedDt = DateTime.Now,
+                        Isdeleted = false,
+                        TcNid = currentUsers.TcNid,
+
+                    });
+                    _context.SaveChanges();
+                    return RedirectToAction("Email",
+                                 new { _enmSaveStatus = enmSaveStatus.success, _enmMessage = enmMessage.SaveSucessfully });
+                }
+
+            }
+
+            return View(mdl);
+        }
+
+
+
+        #endregion
+
     }
 }

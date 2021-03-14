@@ -220,4 +220,26 @@ namespace WingGateway.Models
         
     }
 
+
+    public class mdlEmail
+    {
+
+
+        [Required]
+        [MaxLength(80)]
+        [Display(Name = "Permanent Email ID")]
+        [DataType(DataType.EmailAddress)]
+        [Remote(action: "ValidateEmailID", controller: "Home")]
+        public string EmailID { get; set; }
+
+        
+
+        [Display(Name = "Alternate Email ID")]
+        [MaxLength(80)]
+        [DataType(DataType.EmailAddress)]
+        public string AlternateEmailID { get; set; }
+
+
+    }
+
 }

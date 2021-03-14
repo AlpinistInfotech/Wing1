@@ -54,6 +54,8 @@ namespace Database
         CRM_TcProfile_Address = 14,
         [SubModule(EnmModule: enmModule.Gateway_Incentive, DisplayOrder: 2, Name: "Contact", Description: "Add Wallet Money,See Ledger", Icon: "nav-icon fa fa-phone", CntrlName: "Wing")]
         CRM_TcProfile_contact = 15,
+        [SubModule(EnmModule: enmModule.Gateway_Incentive, DisplayOrder: 2, Name: "Email", Description: "Add Wallet Money,See Ledger", Icon: "nav-icon fa fa-phone", CntrlName: "Wing")]
+        CRM_TcProfile_Email = 16,
     }
 
     public enum enmDocumentMaster :int
@@ -70,15 +72,19 @@ namespace Database
         Gateway_Address = 4,
         [Document(EnmSubModule: enmSubModule.Gateway_Personal_Profile, DocumentType: enmDocumentType.Create | enmDocumentType.Update, DisplayOrder: 1, Name: "Contact", Description: "Contact", Icon: "far fa-circle nav-icon", ActionName: "/Home/Contact")]
         Gateway_Contact = 5,
+
+        [Document(EnmSubModule: enmSubModule.Gateway_Personal_Profile, DocumentType: enmDocumentType.Create | enmDocumentType.Update, DisplayOrder: 1, Name: "Email", Description: "Email", Icon: "far fa-circle nav-icon", ActionName: "/Home/Email")]
+        Gateway_Email = 6,
+
         [Document(EnmModule: enmModule.Gateway_Profile, DocumentType: enmDocumentType.Create | enmDocumentType.Update,
             DisplayOrder: 1, Name: "Pan", Description: "Pan", Icon: "far fa-circle nav-icon", ActionName: "/Home/PAN")]
-        Gateway_PAN = 6,
+        Gateway_PAN = 7,
         [Document(EnmModule: enmModule.Gateway_Profile, DocumentType: enmDocumentType.Create | enmDocumentType.Update,
             DisplayOrder: 1, Name: "Bank", Description: "Bank", Icon: "far fa-circle nav-icon", ActionName: "/Home/Bank")]
-        Gateway_Bank = 7,
+        Gateway_Bank = 8,
         [Document(EnmModule: enmModule.Gateway_Profile, DocumentType: enmDocumentType.Create | enmDocumentType.Update,
             DisplayOrder: 1, Name: "Nominee", Description: "Nominee", Icon: "far fa-circle nav-icon", ActionName: "/Home/Nominee")]
-        Gateway_Nominee = 8,
+        Gateway_Nominee = 9,
         [Document(EnmModule: enmModule.Gateway_Booking, DocumentType: enmDocumentType.Create | enmDocumentType.Update, 
             DisplayOrder: 1, Name: "Flight", Description: "Flight", Icon: "fa fa-plane nav-icon", ActionName: "Flight")]
         Gateway_Flight = 10,
