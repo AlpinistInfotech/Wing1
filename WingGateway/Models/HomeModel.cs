@@ -242,4 +242,46 @@ namespace WingGateway.Models
 
     }
 
+
+    public class mdlAddress
+    {
+
+
+        [Required]
+        [MaxLength(100)]
+        [Display(Name = "Address Line1")]
+        public string Address1 { get; set; }
+
+        [MaxLength(100)]
+        [Display(Name = "Address Line2")]
+        public string Address2 { get; set; }
+
+        [MaxLength(100)]
+        [Display(Name = "LandMark")]
+        public string Landmark { get; set; }
+
+
+        [Required]
+        [Display(Name = "Country")]
+        public int country_id { get; set; }
+
+
+        [Required]
+        [Display(Name = "State")]
+        public int state_id { get; set; }
+
+        [Required]
+        [Display(Name = "City")]
+        public int city_id { get; set; }
+
+
+        [Required]
+        [Display(Name = "Pincode")]
+        [MaxLength(20)]
+        [StringLength(20, ErrorMessage = "The {0} must be at most {1} characters long.")]
+        [DataType(DataType.PostalCode)]
+        public string Pincode { get; set; }
+
+    }
+
 }

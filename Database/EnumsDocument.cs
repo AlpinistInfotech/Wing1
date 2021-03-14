@@ -150,6 +150,17 @@ namespace Database
             DisplayOrder: 1, Name: "Bank Approval", Description: "Bank Approval", Icon: "far fa-circle nav-icon", ActionName: "/Wing/BankApproval")]
         Emp_Tc_BankApproval = 112,
 
+
+        [Document(EnmSubModule: enmSubModule.CRM_TcProfile_Pan, DocumentType: enmDocumentType.Create,
+            DisplayOrder: 1, Name: "PAN Details", Description: "PAN Details", Icon: "far fa-circle nav-icon", ActionName: "/Wing/PANDetails")]
+        Emp_Tc_PANDetails = 113,
+        [Document(EnmSubModule: enmSubModule.CRM_TcProfile_Pan, DocumentType: enmDocumentType.Create,
+            DisplayOrder: 1, Name: "PAN Update", Description: "PAN Update", Icon: "far fa-circle nav-icon", ActionName: "/Wing/PANUpdate")]
+        Emp_Tc_PANUpdate = 114,
+        [Document(EnmSubModule: enmSubModule.CRM_TcProfile_Pan, DocumentType: enmDocumentType.Create,
+            DisplayOrder: 1, Name: "PAN Approval", Description: "PAN Approval", Icon: "far fa-circle nav-icon", ActionName: "/Wing/PANApproval")]
+        Emp_Tc_PANApproval = 115,
+
         //[Document(EnmSubModule: enmSubModule.Departments, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.Report,
         //DisplayOrder: 2, Name: "Sub Department", Description: "Create,Update Subdepartment", EnmParentDocument: enmDocumentMaster.None,
         //Icon: "far fa-circle nav-icon", EnmDocumentPartitionType: enmDocumentPartitionType.None, IsTransactional: false)]

@@ -45,6 +45,7 @@ namespace WingGateway.Models
         public int DetailId { get; set; }
         public string TcId { get; set; }
         public string TcName { get; set; }
+        public string TcNameasonBank { get; set; }
         public string TcBankName { get; set; }
         public int ApprovedBy { get; set; }
         public string ApproverName { get; set; }
@@ -58,6 +59,26 @@ namespace WingGateway.Models
         public List<mdlTcBankWraper> TcBankWrapers { get; set; }
     }
 
+    public class mdlTcPANReportWraper
+    {
+        public mdlFilterModel FilterModel { get; set; }
+        public List<mdlTcPANWraper> TcPANWrapers { get; set; }
+    }
+
+    public class mdlTcPANWraper : mdlBank
+    {
+        public int DetailId { get; set; }
+        public string TcId { get; set; }
+        public string TcName { get; set; }
+        public string TcPANNo { get; set; }
+
+        public string TcNameasonPAN { get; set; }
+        public int ApprovedBy { get; set; }
+        public string ApproverName { get; set; }
+        public DateTime RequestDate { get; set; }
+        public string UploadImageName { get; set; }
+
+    }
 
 
 }

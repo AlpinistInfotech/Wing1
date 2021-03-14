@@ -15,9 +15,11 @@
                 <table id="tblBankDetails" class="table table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th style="display:none">Edit</th>                            
+                            <th style="display:none">Edit</th>
                             <th>ID</th>
                             <th style="width:200px">Name</th>
+                            <th style="width:200px">Name (as on BANK)</th>
+
                             <th style="width:200px">Bank Name</th>
                             <th>IFSC</th>
                             <th>Account</th>
@@ -26,7 +28,7 @@
 
                             <th style="width:150px">Request Date</th>
                             <th style="width:150px">Approval Date</th>
-                            <th >Approval By</th>
+                            <th>Approval By</th>
                             <th style="width:150px">Approval Remarks</th>
 
                         </tr>
@@ -39,6 +41,7 @@
                             <td style="display:none"><a href="javascript:DoPost(@Model.TcBankWrapers[i].TcId)" data-toggle="tooltip" title="Edit Record !"><i class="nav-icon fas fa-edit"></i></a></td>
                             <td>@Model.TcBankWrapers[i].TcId</td>
                             <td>@Model.TcBankWrapers[i].TcName</td>
+                            <td>@Model.TcBankWrapers[i].TcNameasonBank</td>
                             <td>@Model.TcBankWrapers[i].TcBankName</td>
                             <td>@Model.TcBankWrapers[i].IFSC</td>
                             <td>@Model.TcBankWrapers[i].AccountNo</td>
@@ -47,7 +50,7 @@
                                 Model.TcBankWrapers[i].IsApproved== enmApprovalType.Rejected?"text-danger":"text-info")">
                                     <a href="javascript:DoPostApproval(@Model.TcBankWrapers[i].TcId)" data-toggle="tooltip" title="Edit Record !">
                                         @Model.TcBankWrapers[i].IsApproved
-                                     </a>
+                                    </a>
                                 </span>
                             </td>
                             <td>@Model.TcBankWrapers[i].Remarks</td>
