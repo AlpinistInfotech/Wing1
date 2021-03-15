@@ -1,5 +1,6 @@
 ﻿using Database;
 using Database.Classes;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -91,6 +92,14 @@ namespace WingGateway.Controllers
             }
             mdl.CaptchaData.GenrateCaptcha(captchaGenratorBase);
             return View(mdl);
+        }
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ForgotPassword()
+        {
+            return View();
         }
 
 

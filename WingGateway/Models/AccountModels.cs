@@ -28,6 +28,17 @@ namespace WingGateway.Models
         public mdlCaptcha CaptchaData { get; set; }
     }
 
+
+    public class mdlForgotPassword
+    {
+
+
+        [Required]
+        [Display(Name = "Email ID")]
+        [DataType(DataType.EmailAddress)]
+        public string EmailAddress { get; set; }
+        }
+
     public class mdlCaptcha
     {
         [Required]
