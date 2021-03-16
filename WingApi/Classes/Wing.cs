@@ -5,6 +5,20 @@ using System.Threading.Tasks;
 
 namespace WingApi.Classes
 {
+
+
+    public enum enmJourneyType
+    { 
+        OneWay=1, Return=2, MultiStop=3, AdvanceSearch=4, SpecialReturn=5
+    }
+
+    public enum enmServiceProvider
+    { 
+        TBO=1,
+        TripJack=2,
+        Kafila=3
+    }
+
     public enum enmTaxandFeeType
     {
         OtherCharges,//OT
@@ -39,6 +53,7 @@ namespace WingApi.Classes
         //PremiumBusiness=5,
         First=6
     }
+
     public enum enmPreferredDepartureTime
     {
         AnyTime=1,
@@ -70,102 +85,223 @@ namespace WingApi.Classes
         public int Status { get; set; }
     }
 
-    public class mdlRouteInfo
-    { 
-        public string FromClity { get; set; }
-        public string ToClity { get; set; }
-        /// <summary>
-        /// In case of Multiple City/ or Return Type We can Display Mark 1 , and for Return the Segment will be 2 and 
-        /// if multiple City thenIt could be Marked as 1 and 2
-        /// </summary>
-        public int SegmentId { get; set; }
-        public DateTime TravelDate { get; set; }
-        
-    }
+    #region ************************* Search Classes ***************************
+
+
+
 
     public class mdlSearchRequest
-    {   
+    {
+        public string EndUserIp { get; set; }
+        public string TokenId { get; set; }
         public int AdultCount { get; set; }
         public int ChildCount { get; set; }
         public int InfantCount { get; set; }
         public bool DirectFlight { get; set; }
-        public enmCabinClass CabinClass { get; set; }
-        public List<mdlRouteInfo> RouteInfo { get; set; }
-        public enmPreferredDepartureTime PreferredDepartureTime { get; set; }
-        public List<string> PreferredAirlines { get; set; }
+        //public string OneStopFlight { get; set; }
+        public enmJourneyType JourneyType { get; set; }
+        public string[] PreferredAirlines { get; set; }
+        public SegmentRequest[] Segments { get; set; }
+        public string[] Sources { get; set; }        
     }
 
-    public class mdlAirport 
+    public class SegmentRequest
     {
-        public string Code { get; set; }
-        public string Name { get; set; }
-        public string CityCode { get; set; }
-        public string City{ get; set; }
-        public string CountryCode { get; set; }
-        public string CountryName { get; set; }
-    }
-
-    public class mdlAirline
-    {
-        public string Code { get; set; }
-        public string Name { get; set; }
-        public bool IsLCC { get; set; }
-    }
-
-
-    public class mdlFareDetails
-    {
-        public enmPassengerType PassengerType { get; set; }
-        public int PassengerCount { get; set; }
-        public double BaseFare { get; set; }
-        public double Tax{ get; set; }
-        public List<mdlFareBreakup> TaxBreakup { get; set; }
-    }
-
-    public class mdlFareBreakup
-    {
-        public enmTaxandFeeType FbKey { get; set; }
-        public double FbValue { get; set; }
-    }
-
-    public class mdlFare { 
-        public string CurrencyCode { get; set; }
-        public double BaseFare { get; set; }
-        public double Taxes { get; set; }
-        public List<mdlFareBreakup> TaxBreakup { get; set; }        
-        public double OtherCharges { get; set; }
-        public List<mdlFareBreakup> OChargeBu { get; set; }//Other Charges Breakup
-    }
-
-    public class mdlFlightDetail 
-    {
-        public mdlAirline Airline { get; set; }
-        public string FlightNumber{ get; set; }
-        public DateTime DepTime { get; set; }        
-        public mdlAirport Origin { get; set; }
-        public string OrTerminal { get; set; }//Origin Terminal
-        public mdlAirport Destination { get; set; }
-        public string DesTerminal { get; set; }//Destination Terminal
-        public DateTime ArrTime { get; set; }
-        public int Duration { get; set; }
-        public int SegmentId { get; set; }
-        public int TripId { get; set; }        
-        public enmCabinClass CabinClass { get; set; }
-        public string Baggage { get; set; }
-        public string CabinBaggage { get; set; }
-        
+        public string Origin { get; set; }
+        public string Destination { get; set; }
+        public enmCabinClass FlightCabinClass { get; set; }
+        public enmPreferredDepartureTime PreferredDeparture { get; set; }
+        public enmPreferredDepartureTime PreferredArrivalTim { get; set; }
     }
 
 
     public class mdlSearchResponse
     {
+        public int ResponseStatus { get; set; }
+        public Error Error { get; set; }
+        public enmServiceProvider ServiceProvider { get; set; }
         public string TraceId { get; set; }
-        public ApiError Error { get; set; }
+        public string Origin { get; set; }
+        public string Destination { get; set; }
+        public SearchResult[][] Results { get; set; }
     }
+
+    public class Error
+    {
+        public int ErrorCode { get; set; }
+        public string ErrorMessage { get; set; }
+    }
+
+    public class SearchResult
+    {
+        public bool IsHoldAllowedWithSSR { get; set; }
+        public string ResultIndex { get; set; }
+        public int Source { get; set; }
+        public bool IsLCC { get; set; }
+        public bool IsRefundable { get; set; }
+        public bool IsPanRequiredAtBook { get; set; }
+        public bool IsPanRequiredAtTicket { get; set; }
+        public bool IsPassportRequiredAtBook { get; set; }
+        public bool IsPassportRequiredAtTicket { get; set; }
+        public bool GSTAllowed { get; set; }
+        public bool IsCouponAppilcable { get; set; }
+        public bool IsGSTMandatory { get; set; }
+        public string AirlineRemark { get; set; }
+        public string ResultFareType { get; set; }
+        public Fare Fare { get; set; }
+        public Farebreakdown[] FareBreakdown { get; set; }
+        public SegmentResponse[][] Segments { get; set; }
+        public DateTime? LastTicketDate { get; set; }
+        public string TicketAdvisory { get; set; }
+        public Farerule[] FareRules { get; set; }
+        public string AirlineCode { get; set; }
+        public string ValidatingAirline { get; set; }
+        public bool IsUpsellAllowed { get; set; }
+        public Penaltycharges PenaltyCharges { get; set; }
+    }
+
+    public class Fare
+    {
+        public string Currency { get; set; }
+        public double BaseFare { get; set; }
+        public double Tax { get; set; }
+        public Taxbreakup[] TaxBreakup { get; set; }
+        public double YQTax { get; set; }
+        public double AdditionalTxnFeeOfrd { get; set; }
+        public double AdditionalTxnFeePub { get; set; }
+        public double PGCharge { get; set; }
+        public double OtherCharges { get; set; }
+        public Chargebu[] ChargeBU { get; set; }
+        public double Discount { get; set; }
+        public double PublishedFare { get; set; }
+        public double CommissionEarned { get; set; }
+        public double PLBEarned { get; set; }
+        public double IncentiveEarned { get; set; }
+        public double OfferedFare { get; set; }
+        public double TdsOnCommission { get; set; }
+        public double TdsOnPLB { get; set; }
+        public double TdsOnIncentive { get; set; }
+        public double ServiceFee { get; set; }
+        public double TotalBaggageCharges { get; set; }
+        public double TotalMealCharges { get; set; }
+        public double TotalSeatCharges { get; set; }
+        public double TotalSpecialServiceCharges { get; set; }
+    }
+
+    public class Taxbreakup
+    {
+        public string key { get; set; }
+        public double value { get; set; }
+    }
+
+    public class Chargebu
+    {
+        public string key { get; set; }
+        public double value { get; set; }
+    }
+
+    public class Penaltycharges
+    {
+        public double ReissueCharge { get; set; }
+        public double CancellationCharge { get; set; }
+    }
+
+    public class Farebreakdown
+    {
+        public string Currency { get; set; }
+        public enmPassengerType PassengerType { get; set; }
+        public int PassengerCount { get; set; }
+        public double BaseFare { get; set; }
+        public double Tax { get; set; }
+        public Taxbreakup[] TaxBreakUp { get; set; }
+        public double YQTax { get; set; }
+        public double AdditionalTxnFeeOfrd { get; set; }
+        public double AdditionalTxnFeePub { get; set; }
+        public double PGCharge { get; set; }
+        public double SupplierReissueCharges { get; set; }
+    }
+
+
+    public class SegmentResponse
+    {
+        public string Baggage { get; set; }
+        public object CabinBaggage { get; set; }
+        public int CabinClass { get; set; }
+        public int TripIndicator { get; set; }
+        public int SegmentIndicator { get; set; }
+        public Airline Airline { get; set; }
+        public int NoOfSeatAvailable { get; set; }
+        public Origin Origin { get; set; }
+        public Destination Destination { get; set; }
+        public int Duration { get; set; }
+        public int GroundTime { get; set; }
+        public int Mile { get; set; }
+        public bool StopOver { get; set; }
+        public string FlightInfoIndex { get; set; }
+        public string StopPoint { get; set; }
+        public DateTime? StopPointArrivalTime { get; set; }
+        public DateTime? StopPointDepartureTime { get; set; }
+        public string Craft { get; set; }
+        public object Remark { get; set; }
+        public bool IsETicketEligible { get; set; }
+        public string FlightStatus { get; set; }
+        public string Status { get; set; }
+        public int AccumulatedDuration { get; set; }
+    }
+
+    public class Airline
+    {
+        public string AirlineCode { get; set; }
+        public string AirlineName { get; set; }
+        public string FlightNumber { get; set; }
+        public string FareClass { get; set; }
+        public string OperatingCarrier { get; set; }
+    }
+
+    public class Origin
+    {
+        public Airport Airport { get; set; }
+        public DateTime DepTime { get; set; }
+    }
+
+    public class Airport
+    {
+        public string AirportCode { get; set; }
+        public string AirportName { get; set; }
+        public string Terminal { get; set; }
+        public string CityCode { get; set; }
+        public string CityName { get; set; }
+        public string CountryCode { get; set; }
+        public string CountryName { get; set; }
+    }
+
+    public class Destination
+    {
+        public Airport Airport { get; set; }
+        public DateTime ArrTime { get; set; }
+    }
+
+
+
+    public class Farerule
+    {
+        public string Origin { get; set; }
+        public string Destination { get; set; }
+        public string Airline { get; set; }
+        public string FareBasisCode { get; set; }
+        public string[] FareRuleDetail { get; set; }
+        public string FareRestriction { get; set; }
+        public string FareFamilyCode { get; set; }
+        public string FareRuleIndex { get; set; }
+    }
+
+    #endregion
 
     public interface IWing
     {
         public AuthenticateResponse Login();
-        
+        public mdlSearchResponse Search(mdlSearchRequest request);
+
+
     }
 }
