@@ -4,14 +4,16 @@ using Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Database.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20210313131925_create_table_contact")]
+    partial class create_table_contact
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -132,59 +134,6 @@ namespace Database.Migrations
                     b.HasKey("SaltId");
 
                     b.ToTable("tblCaptcha");
-                });
-
-            modelBuilder.Entity("Database.tblCityMaster", b =>
-                {
-                    b.Property<int>("CityId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CityName")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int?>("CountryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedDt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsUT")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ModifiedDt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Remarks")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("StateId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("latitude")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("longitude")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("CityId");
-
-                    b.HasIndex("CountryId");
-
-                    b.HasIndex("StateId");
-
-                    b.ToTable("tblCityMaster");
                 });
 
             modelBuilder.Entity("Database.tblCountryMaster", b =>
@@ -463,9 +412,6 @@ namespace Database.Migrations
                     b.Property<int>("AddressType")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CityId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("CountryId")
                         .HasColumnType("int");
 
@@ -487,6 +433,9 @@ namespace Database.Migrations
                     b.Property<string>("Pincode")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("StateId")
                         .HasColumnType("int");
 
@@ -501,12 +450,7 @@ namespace Database.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("landMark")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("DetailId");
-
-                    b.HasIndex("CityId");
 
                     b.HasIndex("CountryId");
 
@@ -590,9 +534,9 @@ namespace Database.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("AlternateMobileNo")
+                    b.Property<int>("AlternateMobileNo")
                         .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("int");
 
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
@@ -606,9 +550,9 @@ namespace Database.Migrations
                     b.Property<DateTime>("LastModifieddate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("MobileNo")
+                    b.Property<int>("MobileNo")
                         .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("int");
 
                     b.Property<int?>("TcNid")
                         .HasColumnType("int");
@@ -621,46 +565,6 @@ namespace Database.Migrations
                     b.HasIndex("TcNid");
 
                     b.ToTable("TblTcContact");
-                });
-
-            modelBuilder.Entity("Database.tblTcEmail", b =>
-                {
-                    b.Property<int>("DetailId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("AlternateEmailID")
-                        .HasMaxLength(80)
-                        .HasColumnType("nvarchar(80)");
-
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedDt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("EmailID")
-                        .HasMaxLength(80)
-                        .HasColumnType("nvarchar(80)");
-
-                    b.Property<bool>("Isdeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastModifieddate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("TcNid")
-                        .HasColumnType("int");
-
-                    b.Property<int>("lastModifiedBy")
-                        .HasColumnType("int");
-
-                    b.HasKey("DetailId");
-
-                    b.HasIndex("TcNid");
-
-                    b.ToTable("TblTcEmail");
                 });
 
             modelBuilder.Entity("Database.tblTcNominee", b =>
@@ -987,21 +891,6 @@ namespace Database.Migrations
                     b.Navigation("tblRegistration");
                 });
 
-            modelBuilder.Entity("Database.tblCityMaster", b =>
-                {
-                    b.HasOne("Database.tblCountryMaster", "tblCountryMaster")
-                        .WithMany()
-                        .HasForeignKey("CountryId");
-
-                    b.HasOne("Database.tblStateMaster", "tblStateMaster")
-                        .WithMany()
-                        .HasForeignKey("StateId");
-
-                    b.Navigation("tblCountryMaster");
-
-                    b.Navigation("tblStateMaster");
-                });
-
             modelBuilder.Entity("Database.tblKycMaster", b =>
                 {
                     b.HasOne("Database.tblRegistration", "tblRegistration")
@@ -1037,10 +926,6 @@ namespace Database.Migrations
 
             modelBuilder.Entity("Database.tblTcAddressDetail", b =>
                 {
-                    b.HasOne("Database.tblCityMaster", "tblCityMaster")
-                        .WithMany()
-                        .HasForeignKey("CityId");
-
                     b.HasOne("Database.tblCountryMaster", "tblCountryMaster")
                         .WithMany()
                         .HasForeignKey("CountryId");
@@ -1052,8 +937,6 @@ namespace Database.Migrations
                     b.HasOne("Database.tblRegistration", "tblRegistration")
                         .WithMany()
                         .HasForeignKey("TcNid");
-
-                    b.Navigation("tblCityMaster");
 
                     b.Navigation("tblCountryMaster");
 
@@ -1078,15 +961,6 @@ namespace Database.Migrations
                 });
 
             modelBuilder.Entity("Database.tblTcContact", b =>
-                {
-                    b.HasOne("Database.tblRegistration", "tblRegistration")
-                        .WithMany()
-                        .HasForeignKey("TcNid");
-
-                    b.Navigation("tblRegistration");
-                });
-
-            modelBuilder.Entity("Database.tblTcEmail", b =>
                 {
                     b.HasOne("Database.tblRegistration", "tblRegistration")
                         .WithMany()

@@ -1,5 +1,6 @@
 ﻿using Database;
 using Database.Classes;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -93,6 +94,79 @@ namespace WingGateway.Controllers
             return View(mdl);
         }
 
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        
+        public IActionResult ForgotPasswordConfirmation()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(mdlForgotPassword mdlForgot)
+        {
+            if (!ModelState.IsValid)
+                return View(mdlForgot);
+
+            var user = await _userManager.FindByEmailAsync(mdlForgot.EmailAddress);
+            if (user == null)
+                return RedirectToAction(nameof(ForgotPasswordConfirmation));
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            var passwordresetlink = Url.Action("ResetPassword", "Account", new { email = mdlForgot.EmailAddress, token = token }, Request.Scheme);
+
+           
+            
+            return RedirectToAction(nameof(ForgotPasswordConfirmation));
+        }
+
+
+        [HttpGet]
+        public IActionResult ResetPassword(string token, string email)
+        {
+            var model = new mdlResetPassword { Token = token, Email = email };
+            return View(model);
+        }
+
+        
+
+        [HttpGet]
+        public IActionResult ResetPasswordConfirmation()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(mdlResetPassword resetPasswordModel)
+        {
+            if (!ModelState.IsValid)
+                return View(resetPasswordModel);
+
+            var user = await _userManager.FindByEmailAsync(resetPasswordModel.Email);
+            if (user == null)
+                RedirectToAction(nameof(ResetPasswordConfirmation));
+
+            var resetPassResult = await _userManager.ResetPasswordAsync(user, resetPasswordModel.Token, resetPasswordModel.Password);
+            if (!resetPassResult.Succeeded)
+            {
+                foreach (var error in resetPassResult.Errors)
+                {
+                    ModelState.TryAddModelError(error.Code, error.Description);
+                }
+
+                return View();
+            }
+
+            return RedirectToAction(nameof(ResetPasswordConfirmation));
+        }
 
         [HttpGet]
         public IActionResult Registration([FromServices] ICaptchaGenratorBase captchaGenratorBase)
@@ -147,6 +221,8 @@ namespace WingGateway.Controllers
                 return Json($"Phone {PhoneNo} is already in use");
             }
         }
+
+
 
         [HttpPost]
         public async Task<IActionResult> RegistrationAsync([FromServices] ICaptchaGenratorBase captchaGenratorBase,

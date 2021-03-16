@@ -59,5 +59,38 @@ namespace WingGateway.Controllers
         }
 
 
+
+
+        [Authorize(policy: nameof(enmDocumentMaster.Emp_Tc_PANDetails))]
+        public IActionResult PANDetails()
+        {
+            mdlTcPANReportWraper returnDataMdl = new mdlTcPANReportWraper();
+            returnDataMdl.FilterModel = new mdlFilterModel() { dateFilter = new mdlDateFilter(), idFilter = new mdlIdFilter(), IsReport = true };
+            returnDataMdl.TcPANWrapers = new List<mdlTcPANWraper>();
+            return View(returnDataMdl);
+        }
+        [HttpPost]
+        [Authorize(policy: nameof(enmDocumentMaster.Emp_Tc_PANDetails))]
+        public IActionResult PANDetails(mdlFilterModel mdl, enmLoadData submitdata)
+        {
+            mdlTcPANReportWraper returnData = new mdlTcPANReportWraper();
+            if (mdl.dateFilter == null)
+            {
+                mdl.dateFilter = new mdlDateFilter();
+            }
+            if (mdl.idFilter == null)
+            {
+                mdl.idFilter = new mdlIdFilter();
+            }
+            mdl.dateFilter.FromDt = Convert.ToDateTime(mdl.dateFilter.FromDt.ToString("dd-MMM-yyyy"));
+            mdl.dateFilter.ToDt = Convert.ToDateTime(mdl.dateFilter.ToDt.AddDays(1).ToString("dd-MMM-yyyy"));
+            WingGateway.Classes.ConsProfile consProfile = new Classes.ConsProfile(_context, _config);
+            returnData.TcPANWrapers = consProfile.GetPANDetails(submitdata, mdl, 0, false);
+            returnData.FilterModel = mdl;
+            return View(returnData);
+        }
+
+
+
     }
 }

@@ -1,0 +1,110 @@
+﻿@model WingGateway.Models.mdlAddress
+@using Database
+@{
+    ViewData["Title"] = Database.enmDocumentMaster.Gateway_Address.GetDocumentDetails().Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary">
+
+            <form action="@Url.Action()" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+
+
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Address1"></label>
+                                <input asp-for="Address1" class="form-control" placeholder="Address Line1" />
+                                <span asp-validation-for="Address1" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Address2"></label>
+                                <input asp-for="Address2" class="form-control" placeholder="Address Line2" />
+                                <span asp-validation-for="Address2" class="text-danger"></span>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Landmark"></label>
+                                <input asp-for="Landmark" class="form-control" placeholder="LandMark" />
+                                <span asp-validation-for="Landmark" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <select id="ddl_country_id" asp-for="country_id" class="form-control select2">
+                                </select>
+                                <span asp-validation-for="country_id" class="text-danger"></span>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <select id="ddl_state_id" asp-for="state_id" class="form-control select2">
+                                    <option value="">Select State</option>
+                                </select>
+                                <span asp-validation-for="state_id" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <select id="ddl_state_id" asp-for="city_id" class="form-control select2">
+                                    <option value="">Select City</option>
+                                </select>
+                                <span asp-validation-for="city_id" class="text-danger"></span>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Pincode"></label>
+                                <input asp-for="Pincode" class="form-control" placeholder="Pincode" />
+                                <span asp-validation-for="Pincode" class="text-danger"></span>
+                            </div>
+                        </div>
+</div>
+                        <div class="card-footer">
+
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+
+</form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {    
+    <script src="~/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+    <script>
+        $(document).ready(function () {
+        bsCustomFileInput.init();
+        });
+    </script>
+}

@@ -192,5 +192,96 @@ namespace WingGateway.Models
         
     }
 
+    public class mdlContact
+    {
+
+
+        [Required]
+        [MaxLength(10)]
+        [Display(Name = "Permanent Mobile No.")]
+        [DataType(DataType.PhoneNumber)]
+        [RegularExpression("^[0-9]{10}$", ErrorMessage = "Invalid {0}")]
+        [Remote(action: "ValidateContactNo", controller: "Home")]
+        public string MobileNo { get; set; }
+
+        [Required]
+        [MaxLength(6)]
+        [Display(Name = "OTP")]
+        [RegularExpression("^[0-9]{10}$", ErrorMessage = "Invalid {0}")]
+        public string OTP { get; set; }
+
+
+        [Display(Name = "Alternate Mobile No.")]
+        [MaxLength(10)]
+        [DataType(DataType.PhoneNumber)]
+        [RegularExpression("^[0-9]{10}$", ErrorMessage = "Invalid {0}")]
+        public string AlternateMobileNo { get; set; }
+
+        
+    }
+
+
+    public class mdlEmail
+    {
+
+
+        [Required]
+        [MaxLength(80)]
+        [Display(Name = "Permanent Email ID")]
+        [DataType(DataType.EmailAddress)]
+        [Remote(action: "ValidateEmailID", controller: "Home")]
+        public string EmailID { get; set; }
+
+        
+
+        [Display(Name = "Alternate Email ID")]
+        [MaxLength(80)]
+        [DataType(DataType.EmailAddress)]
+        public string AlternateEmailID { get; set; }
+
+
+    }
+
+
+    public class mdlAddress
+    {
+
+
+        [Required]
+        [MaxLength(100)]
+        [Display(Name = "Address Line1")]
+        public string Address1 { get; set; }
+
+        [MaxLength(100)]
+        [Display(Name = "Address Line2")]
+        public string Address2 { get; set; }
+
+        [MaxLength(100)]
+        [Display(Name = "LandMark")]
+        public string Landmark { get; set; }
+
+
+        [Required]
+        [Display(Name = "Country")]
+        public int country_id { get; set; }
+
+
+        [Required]
+        [Display(Name = "State")]
+        public int state_id { get; set; }
+
+        [Required]
+        [Display(Name = "City")]
+        public int city_id { get; set; }
+
+
+        [Required]
+        [Display(Name = "Pincode")]
+        [MaxLength(20)]
+        [StringLength(20, ErrorMessage = "The {0} must be at most {1} characters long.")]
+        [DataType(DataType.PostalCode)]
+        public string Pincode { get; set; }
+
+    }
 
 }

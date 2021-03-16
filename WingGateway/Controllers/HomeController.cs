@@ -189,7 +189,7 @@ namespace WingGateway.Controllers
                     }
                 }
 
-                var ExistingData=_context.tblKycMaster.FirstOrDefault(p => !p.Isdeleted && p.TcNid == currentUsers.TcNid && p.IsApproved == enmApprovalType.Rejeceted);
+                var ExistingData=_context.tblKycMaster.FirstOrDefault(p => !p.Isdeleted && p.TcNid == currentUsers.TcNid && p.IsApproved == enmApprovalType.Rejected);
                 if (ExistingData != null)
                 {
                     ExistingData.Isdeleted =true;
@@ -318,7 +318,7 @@ namespace WingGateway.Controllers
                     }
                 }
 
-                var ExistingData = _context.tblTcBankDetails.FirstOrDefault(p => !p.Isdeleted && p.TcNid == currentUsers.TcNid && p.IsApproved == enmApprovalType.Rejeceted);
+                var ExistingData = _context.tblTcBankDetails.FirstOrDefault(p => !p.Isdeleted && p.TcNid == currentUsers.TcNid && p.IsApproved == enmApprovalType.Rejected);
                 if (ExistingData != null)
                 {
                     ExistingData.Isdeleted = true;
@@ -444,7 +444,7 @@ namespace WingGateway.Controllers
                     }
                 }
 
-                var ExistingData = _context.TblTcPanDetails.FirstOrDefault(p => !p.Isdeleted && p.TcNid == currentUsers.TcNid && p.IsApproved == enmApprovalType.Rejeceted);
+                var ExistingData = _context.TblTcPanDetails.FirstOrDefault(p => !p.Isdeleted && p.TcNid == currentUsers.TcNid && p.IsApproved == enmApprovalType.Rejected);
                 if (ExistingData != null)
                 {
                     ExistingData.Isdeleted = true;
@@ -527,17 +527,27 @@ namespace WingGateway.Controllers
             {
             
                 var ExistingData = _context.TblTcNominee.FirstOrDefault(p => !p.Isdeleted && p.TcNid == currentUsers.TcNid );
-                if (ExistingData != null)
+                if (ExistingData != null) // for update the data
                 {
-                    ExistingData.Isdeleted = true;
+                    //ExistingData.Isdeleted = true;
+                    ExistingData.NomineeName = mdl.NomineeName;
+                    ExistingData.NomineeRelation = mdl.NomineeRelation;
+                    ExistingData.Remarks = mdl.Remarks;
+                    ExistingData.lastModifiedBy = currentUsers.TcNid;
+                    ExistingData.LastModifieddate = DateTime.Now;
                     _context.TblTcNominee.Update(ExistingData);
+                    _context.SaveChanges();
+                    return RedirectToAction("Nominee",
+                                     new { _enmSaveStatus = enmSaveStatus.success, _enmMessage = enmMessage.UpdateSucessfully });
+
                 }
-                if (_context.TblTcNominee.Any(p => p.TcNid == currentUsers.TcNid && !p.Isdeleted))
-                {
-                    ModelState.AddModelError("", "Request Already Submited");
-                    ViewBag.SaveStatus = enmSaveStatus.warning;
-                    ViewBag.Message = enmMessage.AlreadyExists.GetDescription();
-                }
+
+                //if (_context.TblTcNominee.Any(p => p.TcNid == currentUsers.TcNid && !p.Isdeleted))
+                //{
+                //    ModelState.AddModelError("", "request already submited");
+                //    ViewBag.savestatus = enmSaveStatus.warning;
+                //    ViewBag.message = enmMessage.AlreadyExists.GetDescription();
+                //}
                 else
                 {
                     _context.TblTcNominee.Add(new tblTcNominee
@@ -545,7 +555,7 @@ namespace WingGateway.Controllers
 
                         NomineeName = mdl.NomineeName,
                         NomineeRelation = mdl.NomineeRelation,
-                        CreatedBy = 0,
+                        CreatedBy = currentUsers.TcNid,
                         CreatedDt = DateTime.Now,
                         Remarks = mdl.Remarks,
                         Isdeleted = false,
@@ -554,7 +564,7 @@ namespace WingGateway.Controllers
                     });
                     _context.SaveChanges();
                     return RedirectToAction("Nominee",
-                                 new { _enmSaveStatus = enmSaveStatus.success, _enmMessage = enmMessage.UpdateSucessfully });
+                                 new { _enmSaveStatus = enmSaveStatus.success, _enmMessage = enmMessage.SaveSucessfully });
                 }
 
             }
@@ -562,6 +572,185 @@ namespace WingGateway.Controllers
             return View(mdl);
         }
 
+
+
+
+        #endregion
+
+
+        #region Contact
+
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> ValidateContactNo(string MobileNo, [FromServices] ICurrentUsers currentuser)
+        {
+            var users = _context.TblTcContact.FirstOrDefault(p => p.MobileNo == MobileNo && p.TcNid != currentuser.TcNid);
+            if (users == null)
+            {
+                return Json(true);
+            }
+            else
+            {
+                return Json($"Mobile No. {MobileNo} is already in use");
+            }
+            
+        }
+
+
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Contact))]
+        public IActionResult Contact([FromServices] ICurrentUsers currentUsers, enmSaveStatus? _enmSaveStatus, enmMessage? _enmMessage)
+        {
+            mdlContact mdl = new mdlContact();
+            if (_enmSaveStatus != null)
+            {
+                ViewBag.SaveStatus = (int)_enmSaveStatus.Value;
+                ViewBag.Message = _enmMessage?.GetDescription();
+            }
+
+            var masterData = _context.TblTcContact.Where(p => p.TcNid == currentUsers.TcNid && !p.Isdeleted).FirstOrDefault();
+            if (masterData != null)
+            {
+                mdl.MobileNo = masterData.MobileNo;
+                mdl.AlternateMobileNo = masterData.AlternateMobileNo;
+            }
+            
+
+            return View(mdl);
+        }
+
+        [HttpPost]
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Contact))]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ContactAsync([FromServices] ICurrentUsers currentUsers, mdlContact mdl)
+        {
+            if (ModelState.IsValid)
+            {
+
+                var ExistingData = _context.TblTcContact.FirstOrDefault(p => !p.Isdeleted && p.TcNid == currentUsers.TcNid);
+                if (ExistingData != null) // for update the data
+                {
+                    //ExistingData.Isdeleted = true;
+                    ExistingData.MobileNo = mdl.MobileNo;
+                    ExistingData.AlternateMobileNo = mdl.AlternateMobileNo;
+                    ExistingData.lastModifiedBy = currentUsers.TcNid;
+                    ExistingData.LastModifieddate = DateTime.Now;
+                    _context.TblTcContact.Update(ExistingData);
+                    _context.SaveChanges();
+                    return RedirectToAction("Contact",
+                                     new { _enmSaveStatus = enmSaveStatus.success, _enmMessage = enmMessage.UpdateSucessfully });
+
+                }
+
+                else
+                {
+                    _context.TblTcContact.Add(new tblTcContact
+                    {
+
+                        MobileNo = mdl.MobileNo,
+                        AlternateMobileNo = mdl.AlternateMobileNo,
+                        CreatedBy = currentUsers.TcNid,
+                        CreatedDt = DateTime.Now,
+                        Isdeleted = false,
+                        TcNid = currentUsers.TcNid,
+
+                    });
+                    _context.SaveChanges();
+                    return RedirectToAction("Contact",
+                                 new { _enmSaveStatus = enmSaveStatus.success, _enmMessage = enmMessage.SaveSucessfully });
+                }
+
+            }
+
+            return View(mdl);
+        }
+
+
+
+        #endregion
+
+
+        #region Email
+
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> ValidateEmailID(string emailid, [FromServices] ICurrentUsers currentuser)
+        {
+            var users = _context.TblTcEmail.FirstOrDefault(p => p.EmailID == emailid && p.TcNid != currentuser.TcNid);
+            if (users == null)
+            {
+                return Json(true);
+            }
+            else
+            {
+                return Json($"Email ID {emailid} is already in use");
+            }
+
+        }
+
+
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Contact))]
+        public IActionResult Email([FromServices] ICurrentUsers currentUsers, enmSaveStatus? _enmSaveStatus, enmMessage? _enmMessage)
+        {
+            mdlEmail mdl = new mdlEmail();
+            if (_enmSaveStatus != null)
+            {
+                ViewBag.SaveStatus = (int)_enmSaveStatus.Value;
+                ViewBag.Message = _enmMessage?.GetDescription();
+            }
+
+            var masterData = _context.TblTcEmail.Where(p => p.TcNid == currentUsers.TcNid && !p.Isdeleted).FirstOrDefault();
+            if (masterData != null)
+            {
+                mdl.EmailID = masterData.EmailID;
+                mdl.AlternateEmailID = masterData.AlternateEmailID;
+            }
+
+
+            return View(mdl);
+        }
+
+        [HttpPost]
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Email))]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EmailAsync([FromServices] ICurrentUsers currentUsers, mdlEmail mdl)
+        {
+            if (ModelState.IsValid)
+            {
+
+                var ExistingData = _context.TblTcEmail.FirstOrDefault(p => !p.Isdeleted && p.TcNid == currentUsers.TcNid);
+                if (ExistingData != null) // for update the data
+                {
+                    ExistingData.EmailID= mdl.EmailID;
+                    ExistingData.AlternateEmailID= mdl.AlternateEmailID;
+                    ExistingData.lastModifiedBy = currentUsers.TcNid;
+                    ExistingData.LastModifieddate = DateTime.Now;
+                    _context.TblTcEmail.Update(ExistingData);
+                    _context.SaveChanges();
+                    return RedirectToAction("Email",
+                                     new { _enmSaveStatus = enmSaveStatus.success, _enmMessage = enmMessage.UpdateSucessfully });
+
+                }
+
+                else
+                {
+                    _context.TblTcEmail.Add(new tblTcEmail
+                    {
+
+                        EmailID = mdl.EmailID,
+                        AlternateEmailID = mdl.AlternateEmailID,
+                        CreatedBy = currentUsers.TcNid,
+                        CreatedDt = DateTime.Now,
+                        Isdeleted = false,
+                        TcNid = currentUsers.TcNid,
+
+                    });
+                    _context.SaveChanges();
+                    return RedirectToAction("Email",
+                                 new { _enmSaveStatus = enmSaveStatus.success, _enmMessage = enmMessage.SaveSucessfully });
+                }
+
+            }
+
+            return View(mdl);
+        }
 
 
 

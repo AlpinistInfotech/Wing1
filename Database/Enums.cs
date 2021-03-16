@@ -44,7 +44,7 @@ namespace Database
     public enum enmApprovalType : byte
     {
         Approved = 1,
-        Rejeceted = 2,
+        Rejected = 2,
         InProcessing = 4,
         Pending = 8,
     }

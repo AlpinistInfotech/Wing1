@@ -45,6 +45,10 @@ namespace Database
 
         public DbSet<tblTcNominee> TblTcNominee { get; set; }
 
+        public DbSet<tblTcContact> TblTcContact { get; set; }
+
+        public DbSet<tblTcEmail> TblTcEmail { get; set; }
+
         #endregion
 
         public void SetBasicData(ModelBuilder modelBuilder)

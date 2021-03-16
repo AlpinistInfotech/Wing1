@@ -28,6 +28,33 @@ namespace WingGateway.Models
         public mdlCaptcha CaptchaData { get; set; }
     }
 
+
+    public class mdlForgotPassword
+    {
+
+
+        [Required]
+        [Display(Name = "Email ID")]
+        [DataType(DataType.EmailAddress)]
+        public string EmailAddress { get; set; }
+        }
+
+    public class mdlResetPassword
+    {
+            [Required]
+            [DataType(DataType.Password)]
+            public string Password { get; set; }
+
+            [DataType(DataType.Password)]
+            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            public string ConfirmPassword { get; set; }
+
+            public string Email { get; set; }
+            public string Token { get; set; }
+        
+        }
+
+
     public class mdlCaptcha
     {
         [Required]

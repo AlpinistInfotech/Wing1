@@ -40,6 +40,7 @@ namespace Database
     {
         [SubModule(EnmModule: enmModule.Gateway_Profile, DisplayOrder: 1, Name: "Personal", Description: "Address,Email, Contact", Icon: "nav-icon fas fa-file", CntrlName: "Profile")]
         Gateway_Personal_Profile = 1,
+
         [SubModule(EnmModule: enmModule.Gateway_Incentive, DisplayOrder: 2, Name: "Wallet", Description: "Add Wallet Money,See Ledger", Icon: "nav-icon fas fa-file", CntrlName: "Wallet")]
         Gateway_Incentive_wallet = 2,
 
@@ -53,6 +54,8 @@ namespace Database
         CRM_TcProfile_Address = 14,
         [SubModule(EnmModule: enmModule.Gateway_Incentive, DisplayOrder: 2, Name: "Contact", Description: "Add Wallet Money,See Ledger", Icon: "nav-icon fa fa-phone", CntrlName: "Wing")]
         CRM_TcProfile_contact = 15,
+        [SubModule(EnmModule: enmModule.Gateway_Incentive, DisplayOrder: 2, Name: "Email", Description: "Add Wallet Money,See Ledger", Icon: "nav-icon fa fa-phone", CntrlName: "Wing")]
+        CRM_TcProfile_Email = 16,
     }
 
     public enum enmDocumentMaster :int
@@ -69,15 +72,19 @@ namespace Database
         Gateway_Address = 4,
         [Document(EnmSubModule: enmSubModule.Gateway_Personal_Profile, DocumentType: enmDocumentType.Create | enmDocumentType.Update, DisplayOrder: 1, Name: "Contact", Description: "Contact", Icon: "far fa-circle nav-icon", ActionName: "/Home/Contact")]
         Gateway_Contact = 5,
+
+        [Document(EnmSubModule: enmSubModule.Gateway_Personal_Profile, DocumentType: enmDocumentType.Create | enmDocumentType.Update, DisplayOrder: 1, Name: "Email", Description: "Email", Icon: "far fa-circle nav-icon", ActionName: "/Home/Email")]
+        Gateway_Email = 6,
+
         [Document(EnmModule: enmModule.Gateway_Profile, DocumentType: enmDocumentType.Create | enmDocumentType.Update,
             DisplayOrder: 1, Name: "Pan", Description: "Pan", Icon: "far fa-circle nav-icon", ActionName: "/Home/PAN")]
-        Gateway_PAN = 6,
+        Gateway_PAN = 7,
         [Document(EnmModule: enmModule.Gateway_Profile, DocumentType: enmDocumentType.Create | enmDocumentType.Update,
             DisplayOrder: 1, Name: "Bank", Description: "Bank", Icon: "far fa-circle nav-icon", ActionName: "/Home/Bank")]
-        Gateway_Bank = 7,
+        Gateway_Bank = 8,
         [Document(EnmModule: enmModule.Gateway_Profile, DocumentType: enmDocumentType.Create | enmDocumentType.Update,
             DisplayOrder: 1, Name: "Nominee", Description: "Nominee", Icon: "far fa-circle nav-icon", ActionName: "/Home/Nominee")]
-        Gateway_Nominee = 8,
+        Gateway_Nominee = 9,
         [Document(EnmModule: enmModule.Gateway_Booking, DocumentType: enmDocumentType.Create | enmDocumentType.Update, 
             DisplayOrder: 1, Name: "Flight", Description: "Flight", Icon: "fa fa-plane nav-icon", ActionName: "Flight")]
         Gateway_Flight = 10,
@@ -142,6 +149,18 @@ namespace Database
         [Document(EnmSubModule: enmSubModule.CRM_TcProfile_Bank, DocumentType: enmDocumentType.Create,
             DisplayOrder: 1, Name: "Bank Approval", Description: "Bank Approval", Icon: "far fa-circle nav-icon", ActionName: "/Wing/BankApproval")]
         Emp_Tc_BankApproval = 112,
+
+
+        [Document(EnmSubModule: enmSubModule.CRM_TcProfile_Pan, DocumentType: enmDocumentType.Create,
+            DisplayOrder: 1, Name: "PAN Details", Description: "PAN Details", Icon: "far fa-circle nav-icon", ActionName: "/Wing/PANDetails")]
+        Emp_Tc_PANDetails = 113,
+        [Document(EnmSubModule: enmSubModule.CRM_TcProfile_Pan, DocumentType: enmDocumentType.Create,
+            DisplayOrder: 1, Name: "PAN Update", Description: "PAN Update", Icon: "far fa-circle nav-icon", ActionName: "/Wing/PANUpdate")]
+        Emp_Tc_PANUpdate = 114,
+        [Document(EnmSubModule: enmSubModule.CRM_TcProfile_Pan, DocumentType: enmDocumentType.Create,
+            DisplayOrder: 1, Name: "PAN Approval", Description: "PAN Approval", Icon: "far fa-circle nav-icon", ActionName: "/Wing/PANApproval")]
+        Emp_Tc_PANApproval = 115,
+
         //[Document(EnmSubModule: enmSubModule.Departments, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.Report,
         //DisplayOrder: 2, Name: "Sub Department", Description: "Create,Update Subdepartment", EnmParentDocument: enmDocumentMaster.None,
         //Icon: "far fa-circle nav-icon", EnmDocumentPartitionType: enmDocumentPartitionType.None, IsTransactional: false)]

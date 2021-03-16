@@ -1,0 +1,59 @@
+﻿@model WingGateway.Models.mdlEmail
+@using Database
+@{
+    ViewData["Title"] = Database.enmDocumentMaster.Gateway_Email.GetDocumentDetails().Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary">
+
+            <form action="@Url.Action()" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+
+
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="EmailID"></label>
+                                <input asp-for="EmailID" class="form-control" placeholder="Permanent Email ID" />
+                                <span asp-validation-for="EmailID" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="AlternateEmailID"></label>
+                                <input asp-for="AlternateEmailID" class="form-control" placeholder="Alternate Email ID" />
+                                <span asp-validation-for="AlternateEmailID" class="text-danger"></span>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="card-footer">
+
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+
+</form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {    
+    <script src="~/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+    <script>
+        $(document).ready(function () {
+        bsCustomFileInput.init();
+        });
+    </script>
+}

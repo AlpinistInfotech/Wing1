@@ -72,6 +72,7 @@ namespace Database
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int DetailId { get; set; }
+    
         [ForeignKey("tblRegistration")]
         public int? TcNid { get; set; }
         public tblRegistration tblRegistration { get; set; }
@@ -80,21 +81,29 @@ namespace Database
         public string address_line1 { get; set; }
         [MaxLength(200)]
         public string address_line2 { get; set; }
-        [ForeignKey("tblStateMaster")]
-        public int? StateId { get; set; }
-        public tblStateMaster tblStateMaster { get; set; }
+
         [ForeignKey("tblCountryMaster")]
         public int? CountryId { get; set; }
         public tblCountryMaster tblCountryMaster { get; set; }
+
+        [ForeignKey("tblStateMaster")]
+        public int? StateId { get; set; }
+        public tblStateMaster tblStateMaster { get; set; }
+
+        [ForeignKey("tblCityMaster")]
+        public int? CityId { get; set; }
+        public tblCityMaster tblCityMaster { get; set; }
+
+
+
         public string Pincode { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime CreatedDt { get; set; }
         public int CreatedBy { get; set; }
-        public string Remarks { get; set; }
+        public string landMark { get; set; }
         public int? ModifiedBy { get; set; }
         public DateTime? ModifiedDt { get; set; }
-        [NotMapped]
-        public string ModifiedByName { get; set; }
+        
     }
 
 
@@ -200,6 +209,61 @@ namespace Database
 
         public string Remarks { get; set; }
         public bool Isdeleted { get; set; }
+
+        public DateTime LastModifieddate { get; set; }
+        public int lastModifiedBy { get; set; }
+
+    }
+
+    public class tblTcContact
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int DetailId { get; set; }
+        [ForeignKey("tblRegistration")]
+        public int? TcNid { get; set; }
+        public tblRegistration tblRegistration { get; set; }
+
+        [MaxLength(10)]
+        public string MobileNo { get; set; }
+
+        [MaxLength(10)]
+        public string AlternateMobileNo { get; set; }
+
+        public DateTime CreatedDt { get; set; }
+        public int CreatedBy { get; set; }
+
+        public bool Isdeleted { get; set; }
+
+        public DateTime LastModifieddate { get; set; }
+        public int lastModifiedBy { get; set; }
+
+    }
+
+    public class tblTcEmail
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int DetailId { get; set; }
+
+        [ForeignKey("tblRegistration")]
+        public int? TcNid { get; set; }
+        public tblRegistration tblRegistration { get; set; }
+
+        [MaxLength(80)]
+        public string EmailID { get; set; }
+
+        [MaxLength(80)]
+        public string AlternateEmailID { get; set; }
+
+        public DateTime CreatedDt { get; set; }
+        public int CreatedBy { get; set; }
+
+        public bool Isdeleted { get; set; }
+
+        public DateTime LastModifieddate { get; set; }
+        public int lastModifiedBy { get; set; }
+
     }
 
 }
