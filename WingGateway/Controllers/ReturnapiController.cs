@@ -20,10 +20,11 @@ namespace WingGateway.Controllers
     public class ReturnapiController : ControllerBase
     {
         private readonly DBContext _context;
-
-        public ReturnapiController(DBContext context)
+        private readonly IConfiguration _config;
+        public ReturnapiController(DBContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
         }
 
         // GET: api/Returnapi

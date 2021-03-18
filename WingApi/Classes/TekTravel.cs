@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -13,13 +14,16 @@ using WingApi.Classes.Database;
 
 namespace WingApi.Classes.TekTravel
 {
+   
 
-    
     public class TekTravel : IWing
     {
         private readonly DBContext _context;
-        public TekTravel(DBContext context) {
+        private readonly IConfiguration _config;
+        public TekTravel(DBContext context, IConfiguration config)
+        {
             _context = context;
+            _config = config;
         }
 
         private string GetResponse(string requestData, string url)
@@ -55,38 +59,55 @@ namespace WingApi.Classes.TekTravel
                 String responseMessage = new StreamReader(stream).ReadToEnd();
                 return responseMessage;
             }
-          
+
         }
 
-
-        public AuthenticateResponse Login()
+        private async Task<mdlAuthenticateResponse> LoginAsync()
         {
-            throw new NotImplementedException();
+            mdlAuthenticateRequest request = new mdlAuthenticateRequest();
+            request.ClinetId = _config["TBO:Credential:ClientId"];
+            request.UserName = _config["TBO:Credential:UserName"];
+            request.Password = _config["TBO:Credential:Password"];
+            string tboUrl = _config["TBO:API:Login"];
+            string jsonString = System.Text.Json.JsonSerializer.Serialize(request);
+            var mdl = System.Text.Json.JsonSerializer.Deserialize<mdlAuthenticateResponse>(GetResponse(jsonString, tboUrl));
+            if (mdl.Status == 0)
+            {
+                _context.tblTboTokenDetails.Add(new tblTboTokenDetails() { TokenId = mdl.TokenId, AgencyId = mdl.Member.AgencyId.ToString(), MemberId = mdl.Member.MemberId.ToString(), GenrationDt = DateTime.Now });
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new Exception("Invalid Login");
+            }
+            return mdl;
         }
 
-        public mdlSearchResponse Search(mdlSearchRequest request)
+        public async Task<mdlSearchResponse> SearchAsync(mdlSearchRequest request)
         {
             mdlSearchResponse response = null;
-            if (request.JourneyType == enmJourneyType.OneWay )//only Journey TYpe is one way then Fetch from DB else Fetch from tbo
+            if (request.JourneyType == enmJourneyType.OneWay)//only Journey TYpe is one way then Fetch from DB else Fetch from tbo
             {
                 response = SearchFromDb(request);
                 if (response == null)//no data found in Db
                 {
-                    response = SearchFromTbo(request);
+                    response = await SearchFromTboAsync(request);
                 }
             }
             else
             {
-                response = SearchFromTbo(request);
+                response = await SearchFromTboAsync(request);
             }
             return response;
         }
 
-        private async Task<bool> Search_SaveAsync(mdlSearchRequest request, string _TokenId,int ExpirationMinute ,string _TraceId, SearchResult[] response)
+        private async Task<bool> Search_SaveAsync(mdlSearchRequest request, string _TokenId, string _TraceId, SearchResult[] response)
         {
 
+            int ExpirationMinute = 14;
+            int.TryParse(_config["TBO:TraceIdExpiryTime"], out ExpirationMinute);
             double minFare = 0;
-            if (response != null && response.Length>0 )
+            if (response != null && response.Length > 0)
             {
                 minFare = response.Min(p => p.Fare.PublishedFare);
             }
@@ -105,22 +126,127 @@ namespace WingApi.Classes.TekTravel
                 AdultCount = request.AdultCount,
                 ChildCount = request.ChildCount,
                 InfantCount = request.InfantCount,
-                GenrationDt= TickGeration,
-                ExpireDt= TickGeration.AddMinutes(ExpirationMinute),
-                tblTboTravelDetailResult =response.Select(p => new tblTboTravelDetailResult { ResultIndex = p.ResultIndex, ResultType = (p.ResultIndex.Contains("OB") ? "OB" : "IB"), OfferedFare = p.Fare.OfferedFare, PublishedFare = p.Fare.PublishedFare, JsonData = System.Text.Json.JsonSerializer.Serialize(p)}).ToList(),
+                GenrationDt = TickGeration,
+                ExpireDt = TickGeration.AddMinutes(ExpirationMinute),
+                tblTboTravelDetailResult = response.Select(p => new tblTboTravelDetailResult { ResultIndex = p.ResultIndex, ResultType = (p.ResultIndex.Contains("OB") ? "OB" : "IB"), OfferedFare = p.Fare.OfferedFare, PublishedFare = p.Fare.PublishedFare, JsonData = System.Text.Json.JsonSerializer.Serialize(p) }).ToList(),
             };
             _context.tblTboTravelDetail.Add(td);
             await _context.SaveChangesAsync();
             return true;
         }
 
-        private mdlSearchResponse SearchFromTbo(mdlSearchRequest request)
+        private async Task<mdlSearchResponse> SearchFromTboAsync(mdlSearchRequest request)
         {
-            throw new NotImplementedException();
+
+            int MaxLoginAttempt = 1, LoginAttempt = 0;
+            int.TryParse(_config["TBO:MaxLoginAttempt"], out MaxLoginAttempt);
+            mdlSearchResponse mdlS = null;
+            SearchResponse mdl = null;
+            string tboUrl = _config["TBO:API:Search"];
+
+            StartSendRequest:
+            //Load tokken ID 
+            var TokenDetails = _context.tblTboTokenDetails.OrderByDescending(p => p.GenrationDt).FirstOrDefault();
+            if (TokenDetails == null)
+            {
+                var AuthenticateResponse = await LoginAsync();
+                if (AuthenticateResponse.Status == 1)
+                {
+                    goto StartSendRequest;
+                }
+            }
+            string jsonString = System.Text.Json.JsonSerializer.Serialize(request);
+            mdl = System.Text.Json.JsonSerializer.Deserialize<SearchResponse>(GetResponse(jsonString, tboUrl));
+            if (mdl != null)
+            {
+                if (mdl.ResponseStatus == 3 && LoginAttempt < MaxLoginAttempt)//failure
+                {
+                    LoginAttempt++;
+                    var AuthenticateResponse = await LoginAsync();
+                    if (AuthenticateResponse.Status == 1)
+                    {
+                        goto StartSendRequest;
+                    }
+                    mdlS = new mdlSearchResponse()
+                    {
+                        ResponseStatus = 3,
+                        Error = new mdlError()
+                        {
+                            ErrorCode = mdl.Error.ErrorCode,
+                            ErrorMessage = mdl.Error.ErrorMessage,
+                        }
+                    };
+                }
+                else if (mdl.ResponseStatus == 1)//success
+                {
+                    var tempdata = mdl.Results.SelectMany(p => p).ToArray();
+                    var result = Search_SaveAsync(request, request.TokenId, mdl.TraceId, tempdata);
+                    List<mdlSearchResult[]> AllResults = new List<mdlSearchResult[]>();
+                    List<mdlSearchResult> ResultOB = new List<mdlSearchResult>();
+                    List<mdlSearchResult> ResultIB = new List<mdlSearchResult>();
+                    foreach (var dt in tempdata)
+                    {
+                        if (dt.ResultIndex.Contains("OB"))
+                        {
+                            ResultOB.Add(SearchResultMap(dt));
+                        }
+                        else
+                        {
+                            ResultIB.Add(SearchResultMap(dt));
+                        }
+                    }
+                    AllResults.Add(ResultOB.ToArray());
+                    AllResults.Add(ResultIB.ToArray());
+
+                    mdlS = new mdlSearchResponse()
+                    {
+                        ServiceProvider = enmServiceProvider.TBO,
+                        TraceId = mdl.TraceId,
+                        ResponseStatus = 1,
+                        Error = new mdlError()
+                        {
+                            ErrorCode = 0,
+                            ErrorMessage = "-"
+                        },
+                        Origin = mdl.Origin,
+                        Destination = mdl.Destination,
+                        Results = AllResults.ToArray()
+                    };
+                    await result;
+                }
+                else
+                {
+                    mdlS = new mdlSearchResponse()
+                    {
+                        ResponseStatus = 3,
+                        Error = new mdlError()
+                        {
+                            ErrorCode = mdl.Error.ErrorCode,
+                            ErrorMessage = mdl.Error.ErrorMessage,
+                        }
+                    };
+                }
+
+            }
+            else
+            {
+                mdlS = new mdlSearchResponse()
+                {
+                    ResponseStatus = 100,
+                    Error = new mdlError()
+                    {
+                        ErrorCode = 100,
+                        ErrorMessage = "Unable to Process",
+                    }
+                };
+            }
+
+            return mdlS;
         }
+
         private mdlSearchResult SearchResultMap(SearchResult sr)
         {
-            mdlSearchResult mdl = new mdlSearchResult();           
+            mdlSearchResult mdl = new mdlSearchResult();
             mdl.IsHoldAllowedWithSSR = sr.IsHoldAllowedWithSSR;
             mdl.ResultIndex = sr.ResultIndex;
             mdl.Source = sr.Source;
@@ -142,17 +268,17 @@ namespace WingApi.Classes.TekTravel
             mdl.LastTicketDate = sr.LastTicketDate;
             mdl.Fare = new mdlFare();
             if (sr.Fare != null)
-            {   
+            {
                 mdl.Fare.Currency = sr.Fare.Currency;
                 mdl.Fare.BaseFare = sr.Fare.BaseFare;
                 mdl.Fare.Tax = sr.Fare.Tax;
-                mdl.Fare.TaxBreakup = sr.Fare.TaxBreakup.Select(p=>new mdlTaxbreakup {key= p.key,value=p.value }).ToArray();
+                mdl.Fare.TaxBreakup = sr.Fare.TaxBreakup.Select(p => new mdlTaxbreakup { key = p.key, value = p.value }).ToArray();
                 mdl.Fare.YQTax = sr.Fare.YQTax;
                 mdl.Fare.AdditionalTxnFeeOfrd = sr.Fare.AdditionalTxnFeeOfrd;
                 mdl.Fare.AdditionalTxnFeePub = sr.Fare.AdditionalTxnFeePub;
                 mdl.Fare.PGCharge = sr.Fare.PGCharge;
                 mdl.Fare.OtherCharges = sr.Fare.OtherCharges;
-                mdl.Fare.ChargeBU = sr.Fare.ChargeBU.Select(p => new mdlChargebu { key = p.key, value = p.value }).ToArray(); 
+                mdl.Fare.ChargeBU = sr.Fare.ChargeBU.Select(p => new mdlChargebu { key = p.key, value = p.value }).ToArray();
                 mdl.Fare.Discount = sr.Fare.Discount;
                 mdl.Fare.PublishedFare = sr.Fare.PublishedFare;
                 mdl.Fare.CommissionEarned = sr.Fare.CommissionEarned;
@@ -166,17 +292,22 @@ namespace WingApi.Classes.TekTravel
                 mdl.Fare.TotalBaggageCharges = sr.Fare.TotalBaggageCharges;
                 mdl.Fare.TotalMealCharges = sr.Fare.TotalMealCharges;
                 mdl.Fare.TotalSeatCharges = sr.Fare.TotalSeatCharges;
-                mdl.Fare.TotalSpecialServiceCharges = sr.Fare.TotalSpecialServiceCharges; 
-             }
+                mdl.Fare.TotalSpecialServiceCharges = sr.Fare.TotalSpecialServiceCharges;
+            }
 
-            mdl.FareBreakdown = sr.FareBreakdown.Select(p=>new mdlFarebreakdown { Currency=p.Currency, PassengerType=p.PassengerType, PassengerCount = p.PassengerCount, 
-                BaseFare=p.BaseFare,Tax=p.Tax,
-                YQTax =p.YQTax,
-                AdditionalTxnFeeOfrd=p.AdditionalTxnFeeOfrd,
-                AdditionalTxnFeePub=p.AdditionalTxnFeePub,
-                PGCharge=p.PGCharge,
-                SupplierReissueCharges=p.SupplierReissueCharges,
-                TaxBreakUp=p.TaxBreakUp.Select(q=>new mdlTaxbreakup { key= q.key, value=q.value}).ToArray()
+            mdl.FareBreakdown = sr.FareBreakdown.Select(p => new mdlFarebreakdown
+            {
+                Currency = p.Currency,
+                PassengerType = p.PassengerType,
+                PassengerCount = p.PassengerCount,
+                BaseFare = p.BaseFare,
+                Tax = p.Tax,
+                YQTax = p.YQTax,
+                AdditionalTxnFeeOfrd = p.AdditionalTxnFeeOfrd,
+                AdditionalTxnFeePub = p.AdditionalTxnFeePub,
+                PGCharge = p.PGCharge,
+                SupplierReissueCharges = p.SupplierReissueCharges,
+                TaxBreakUp = p.TaxBreakUp.Select(q => new mdlTaxbreakup { key = q.key, value = q.value }).ToArray()
             }).ToArray();
 
             List<mdlSegmentResponse[]> SegmentsResponse = new List<mdlSegmentResponse[]>();
@@ -244,7 +375,9 @@ namespace WingApi.Classes.TekTravel
 
             }
             mdl.Segments = SegmentsResponse.ToArray();
-            mdl.FareRules = sr.FareRules.Select(p => new mdlFarerule { Origin = p.Origin,
+            mdl.FareRules = sr.FareRules.Select(p => new mdlFarerule
+            {
+                Origin = p.Origin,
                 Destination = p.Destination,
                 Airline = p.Airline,
                 FareBasisCode = p.FareBasisCode,
@@ -265,24 +398,23 @@ namespace WingApi.Classes.TekTravel
             return mdl;
 
 
-    }
-
+        }
 
         private mdlSearchResponse SearchFromDb(mdlSearchRequest request)
         {
             mdlSearchResponse mdlSearchResponse = null;
             DateTime CurrentTime = DateTime.Now;
             tblTboTravelDetail Data = null;
-            if (request.JourneyType == enmJourneyType.OneWay )
+            if (request.JourneyType == enmJourneyType.OneWay)
             {
-                Data=_context.tblTboTravelDetail.Where(p => p.Origin == request.Segments[0].Origin && p.Destination == request.Segments[0].Destination
-                && request.AdultCount == p.AdultCount && p.ChildCount == request.ChildCount && p.InfantCount == request.InfantCount && p.CabinClass == request.Segments[0].FlightCabinClass
-                && p.TravelDate == request.Segments[0].TravelDt
-                && p.ExpireDt > CurrentTime
+                Data = _context.tblTboTravelDetail.Where(p => p.Origin == request.Segments[0].Origin && p.Destination == request.Segments[0].Destination
+                  && request.AdultCount == p.AdultCount && p.ChildCount == request.ChildCount && p.InfantCount == request.InfantCount && p.CabinClass == request.Segments[0].FlightCabinClass
+                  && p.TravelDate == request.Segments[0].TravelDt
+                  && p.ExpireDt > CurrentTime
                 ).Include(p => p.tblTboTravelDetailResult).OrderByDescending(p => p.ExpireDt).FirstOrDefault();
                 if (Data != null)
                 {
-                    List< List<mdlSearchResult>> AllResults = new List<List<mdlSearchResult>>();
+                    List<mdlSearchResult[]> AllResults = new List<mdlSearchResult[]>();
 
                     List<mdlSearchResult> ResultOB = new List<mdlSearchResult>();
                     List<mdlSearchResult> ResultIB = new List<mdlSearchResult>();
@@ -296,9 +428,10 @@ namespace WingApi.Classes.TekTravel
                         {
                             ResultIB.Add(SearchResultMap(System.Text.Json.JsonSerializer.Deserialize<SearchResult>(dt.JsonData)));
                         }
-                        
-                    }
 
+                    }
+                    AllResults.Add(ResultOB.ToArray());
+                    AllResults.Add(ResultIB.ToArray());
                     mdlSearchResponse = new mdlSearchResponse()
                     {
                         ServiceProvider = enmServiceProvider.TBO,
@@ -310,13 +443,15 @@ namespace WingApi.Classes.TekTravel
                             ErrorMessage = "-"
                         },
                         Origin = Data.Origin,
-                        Destination = Data.Destination
-                    };                   
-                    
+                        Destination = Data.Destination,
+                        Results = AllResults.ToArray()
+
+                    };
+
                 }
             }
-            
-            
+
+
             return mdlSearchResponse;
 
 

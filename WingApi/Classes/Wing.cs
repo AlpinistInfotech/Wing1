@@ -9,15 +9,15 @@ namespace WingApi.Classes
 
 
     public enum enmJourneyType
-    { 
-        OneWay=1, Return=2, MultiStop=3, AdvanceSearch=4, SpecialReturn=5
+    {
+        OneWay = 1, Return = 2, MultiStop = 3, AdvanceSearch = 4, SpecialReturn = 5
     }
 
     public enum enmServiceProvider
-    { 
-        TBO=1,
-        TripJack=2,
-        Kafila=3
+    {
+        TBO = 1,
+        TripJack = 2,
+        Kafila = 3
     }
 
     public enum enmTaxandFeeType
@@ -33,38 +33,38 @@ namespace WingApi.Classes
 
     public enum enmPassengerType
     {
-        Adult =1,
-        Child =2,
+        Adult = 1,
+        Child = 2,
         Infant = 3,
     }
 
     public enum enmRefundableType
     {
-        NonRefundable=0,
-        Refundable=1,
-        PartialRefundable=2
+        NonRefundable = 0,
+        Refundable = 1,
+        PartialRefundable = 2
     }
 
     public enum enmCabinClass
     {
         //ALL=1,
-        Economy=2,
-        PremiumEconomy=3,
-        Business=4,
+        Economy = 2,
+        PremiumEconomy = 3,
+        Business = 4,
         //PremiumBusiness=5,
-        First=6
+        First = 6
     }
 
     public enum enmPreferredDepartureTime
     {
-        AnyTime=1,
-        Morning=2,
-        AfterNoon=3,
-        Evening=4,
-        Night=5
+        AnyTime = 1,
+        Morning = 2,
+        AfterNoon = 3,
+        Evening = 4,
+        Night = 5
     }
 
-    public class AuthenticateRequestModel
+    public class mdlAuthenticateRequest
     {
         public string ClinetId { get; set; }
         public string UserName { get; set; }
@@ -72,19 +72,34 @@ namespace WingApi.Classes
         public string EndUserIp { get; set; }
     }
 
-    public class ApiError
-    { 
+    
+    public class mdlAuthenticateResponse
+    {
+        public int Status { get; set; }
+        public string TokenId { get; set; }
+        public Error Error { get; set; }
+        public Member Member { get; set; }
+    }
+
+    public class Error
+    {
         public int ErrorCode { get; set; }
         public string ErrorMessage { get; set; }
     }
 
-    public class AuthenticateResponse
+    public class Member
     {
-        public string  UserName { get; set; }
-        public ApiError Error { get; set; }
-        public string TokenId { get; set; }
-        public int Status { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public int MemberId { get; set; }
+        public int AgencyId { get; set; }
+        public string LoginName { get; set; }
+        public string LoginDetails { get; set; }
+        public bool isPrimaryAgent { get; set; }
     }
+
+
 
     #region ************************* Search Classes ***************************
 
@@ -104,7 +119,7 @@ namespace WingApi.Classes
         public string[] PreferredAirlines { get; set; }
         [Required]
         public mdlSegmentRequest[] Segments { get; set; }
-        public string[] Sources { get; set; }        
+        public string[] Sources { get; set; }
     }
 
     public class mdlSegmentRequest
@@ -302,9 +317,6 @@ namespace WingApi.Classes
 
     public interface IWing
     {
-        public AuthenticateResponse Login();
-        public mdlSearchResponse Search(mdlSearchRequest request);
-
-
+        Task<mdlSearchResponse> SearchAsync(mdlSearchRequest request);
     }
 }

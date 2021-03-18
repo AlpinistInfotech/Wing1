@@ -7,6 +7,17 @@ using System.Threading.Tasks;
 
 namespace WingApi.Classes.Database
 {
+    public class tblTboTokenDetails
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        public string TokenId { get; set; }
+        public string MemberId { get; set; }
+        public string AgencyId { get; set; }
+        public DateTime GenrationDt { get; set; }
+    }
+
     public class tblTboTravelDetail
     {
         [Key]
