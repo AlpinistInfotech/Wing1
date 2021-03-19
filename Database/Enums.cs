@@ -49,13 +49,15 @@ namespace Database
         Pending = 8,
     }
 
+
+
     public enum enmIsKycUpdated
     {
         No=0,
         Yes=1,
         Partial=2
     }
-
+   
     public enum enmIdentityProof
     {   
         Aadhar =1,

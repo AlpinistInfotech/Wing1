@@ -1,0 +1,113 @@
+﻿@model WingGateway.Models.mdlTcReportWraper
+@using Database;
+@inject Database.ICurrentUsers _currentUsers
+@{
+    ViewData["Title"] = Database.enmDocumentMaster.Emp_Tc_Details.GetDocumentDetails().Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline card-outline-tabs">
+            <div class="card-header p-0 border-bottom-0">
+                @await Html.PartialAsync("_TcApproval", Model.FilterModel)
+            </div>
+            <div class="card-body">
+                <table id="tblTCDetails" class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th style="display:none">Edit</th>
+                            <th>ID</th>
+                            <th style="width:200px">TC ID</th>
+                            <th style="width:200px">Name </th>
+                            <th style="width:200px">Sponsor ID</th>
+                            <th>Gender</th>
+                            <th>Father/Husband Name</th>
+                            <th style="width:200px">Phone No.</th>
+                            <th style="width:200px">Email ID</th>
+                            <th style="width:200px">DOB</th>
+                            <th style="width:200px">Address</th>
+                            <th style="width:200px">Country</th>
+                            <th style="width:200px">State</th>
+                            <th style="width:200px">Pincode</th>
+
+
+                            <th>Status</th>
+
+                            <th style="width:150px">Request Date</th>
+                            <th style="width:150px">Approval Date</th>
+                            <th>Approval By</th>
+                            <th style="width:150px">Approval Remarks</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.TcWrapers.Count(); i++)
+                        {
+                        <tr>
+
+                            <td style="display:none"><a href="javascript:DoPost(@Model.TcWrapers[i].TCID)" data-toggle="tooltip" title="Edit Record !"><i class="nav-icon fas fa-edit"></i></a></td>
+                            <td>@Model.TcWrapers[i].TCID</td>
+                            <td>@Model.TcWrapers[i].FirstName @Model.TcWrapers[i].MiddleName @Model.TcWrapers[i].LastName</td>
+                            <td>@Model.TcWrapers[i].tcspid</td>
+                            <td>@Model.TcWrapers[i].gender</td>
+                            <td>@Model.TcWrapers[i].husband_wifename</td>
+                            <td>@Model.TcWrapers[i].mobileno</td>
+                            <td>@Model.TcWrapers[i].emailid</td>
+                            <td>@Model.TcWrapers[i].DOB</td>
+                            <td>@Model.TcWrapers[i].Address1 @Model.TcWrapers[i].Address2</td>
+                            <td>@Model.TcWrapers[i].countryname</td>
+                            <td>@Model.TcWrapers[i].statename</td>
+                            <td>@Model.TcWrapers[i].pincode</td>
+
+                            <td>
+                                <span class=" @(Model.TcWrapers[i].isactive== enmApprovalType.Approved?"text-success":
+                                Model.TcWrapers[i].isactive== enmApprovalType.Rejected?"text-danger":"text-info")">
+                                    <a href="javascript:DoPostApproval(@Model.TcWrapers[i].TCID)" data-toggle="tooltip" title="Edit Record !">
+                                        @Model.TcWrapers[i].isactive
+                                    </a>
+                                </span>
+                            </td>
+                            
+                            <td>@Model.TcWrapers[i].JoiningDate</td>
+                            <td>@Model.TcWrapers[i].approve_datetime</td>
+                            <td>@Model.TcWrapers[i].approve_by??"")</td>
+                            <td>@Model.TcWrapers[i].approve_remarks??"")</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<form name="updateData" action="@(enmDocumentMaster.Emp_Tc_Update.GetDocumentDetails().ActionName)" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="idFilter.TcId" id="tcId1" />
+    <input type="hidden" name="submitdata" value="@(enmLoadData.ByID)" />
+</form>
+<form name="approveData" action="@(enmDocumentMaster.Emp_Tc_Update.GetDocumentDetails().ActionName)" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="idFilter.TcId" id="tcId2" />
+    <input type="hidden" name="submitdata" value="@(enmLoadData.ByID)" />
+</form>
+
+
+@section Scripts {
+    <script>
+    function DoPost(id) {
+        document.getElementById("tcId1").value = id;
+        document.forms["updateData"].submit();
+        }
+        function DoPostApproval(id) {
+            document.getElementById("tcId2").value = id;
+            document.forms["approveData"].submit();
+        }
+
+    $(document).ready(function () {
+        $("#tblBankDetails").DataTable({ "ajax":null});
+    });
+    </script>
+
+}

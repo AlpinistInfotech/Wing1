@@ -24,6 +24,7 @@ namespace WingGateway.Models
         [Display(Name = "Approval Type")]
         public enmApprovalType approvalType { get; set; } = enmApprovalType.Pending;
     }
+
     public class mdlIdFilter
     {
         [Display(Name = "TcId")]
@@ -40,6 +41,7 @@ namespace WingGateway.Models
         public bool IsReport { get; set; } = false;
     }
 
+    
     public class mdlTcBankWraper : mdlBank
     {
         public int DetailId { get; set; }
@@ -59,13 +61,20 @@ namespace WingGateway.Models
         public List<mdlTcBankWraper> TcBankWrapers { get; set; }
     }
 
+    public class mdlTcReportWraper
+    {
+        public mdlFilterModel FilterModel { get; set; }
+        public List<ProcRegistrationSearch> TcWrapers { get; set; }
+    }
+
+
     public class mdlTcPANReportWraper
     {
         public mdlFilterModel FilterModel { get; set; }
         public List<mdlTcPANWraper> TcPANWrapers { get; set; }
     }
 
-    public class mdlTcPANWraper : mdlBank
+    public class mdlTcPANWraper : mdlPAN
     {
         public int DetailId { get; set; }
         public string TcId { get; set; }

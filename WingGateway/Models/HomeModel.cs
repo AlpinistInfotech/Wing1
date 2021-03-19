@@ -113,7 +113,7 @@ namespace WingGateway.Models
         public string ApprovalRemarks { set; get; }
 
         public List<byte[]> fileData { set; get; }
-
+            
         public List<tblBankMaster> GetBanks(DBContext context, bool OnlyActive)
         {
             if (OnlyActive)
