@@ -48,11 +48,11 @@ namespace WingApi.Classes
     public enum enmCabinClass
     {
         //ALL=1,
-        Economy = 2,
-        PremiumEconomy = 3,
-        Business = 4,
+        ECONOMY = 2,
+        PREMIUM_ECONOMY = 3,
+        BUSINESS = 4,
         //PremiumBusiness=5,
-        First = 6
+        FIRST = 6
     }
 
     public enum enmPreferredDepartureTime
@@ -197,6 +197,7 @@ namespace WingApi.Classes
         public double PLBEarned { get; set; }
         public double IncentiveEarned { get; set; }
         public double OfferedFare { get; set; }
+        public double NetFare { get; set; }
         public double TdsOnCommission { get; set; }
         public double TdsOnPLB { get; set; }
         public double TdsOnIncentive { get; set; }

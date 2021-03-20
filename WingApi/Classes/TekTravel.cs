@@ -333,6 +333,8 @@ namespace WingApi.Classes.TekTravel
                 mdl.Fare.TdsOnCommission = sr.Fare.TdsOnCommission;
                 mdl.Fare.TdsOnPLB = sr.Fare.TdsOnPLB;
                 mdl.Fare.TdsOnIncentive = sr.Fare.TdsOnIncentive;
+                mdl.Fare.NetFare = sr.Fare.PublishedFare - (sr.Fare.CommissionEarned + sr.Fare.IncentiveEarned + sr.Fare.PLBEarned + sr.Fare.AdditionalTxnFeeOfrd + sr.Fare.AdditionalTxnFeePub) +
+                    (sr.Fare.TdsOnCommission + sr.Fare.TdsOnIncentive + sr.Fare.TdsOnPLB);
                 mdl.Fare.ServiceFee = sr.Fare.ServiceFee;
                 mdl.Fare.TotalBaggageCharges = sr.Fare.TotalBaggageCharges;
                 mdl.Fare.TotalMealCharges = sr.Fare.TotalMealCharges;
