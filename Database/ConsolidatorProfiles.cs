@@ -38,6 +38,8 @@ namespace Database
         public DateTime JoiningDt { get; set; }
         public int SpLegNumber { get; set; }        
         public enmTCRanks TCRanks { get; set; }
+        public int is_active { get; set; }
+
     }
 
     [Index(nameof(TcNid))]
@@ -94,7 +96,7 @@ namespace Database
         public int? CityId { get; set; }
         public tblCityMaster tblCityMaster { get; set; }
 
-
+        public string remarks { get; set; }
 
         public string Pincode { get; set; }
         public bool IsDeleted { get; set; }

@@ -1,9 +1,11 @@
 ﻿using Database;
 using Database.Classes;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -223,6 +225,96 @@ namespace WingGateway.Classes
             return returnData;
 
         }
+
+        public List<ProcRegistrationSearch> GetTCDetails(enmLoadData loadType, mdlFilterModel mdl, int Nid,int spmode, bool LoadImage)
+        {
+            List<ProcRegistrationSearch> returnData = new List<ProcRegistrationSearch>();
+            if (loadType == enmLoadData.ByID)
+            {
+                Nid = GetNId(mdl.idFilter.TcId, false);
+                if (Nid == 0)
+                {
+                    throw new Exception("Invalid TC ID");
+                }
+            }
+
+            DateTime datefrom = DateTime.Now;
+            DateTime datetto = DateTime.Now;
+            string tcid = "";
+            int status = 0;
+
+            if (mdl.dateFilter != null)
+            {
+                datefrom = mdl.dateFilter.FromDt;
+                datetto= mdl.dateFilter.ToDt;
+                status = Convert.ToInt32( mdl.dateFilter.approvalType);
+                spmode = 1;
+            }
+
+            if (mdl.idFilter != null)
+            {
+                tcid = mdl.idFilter.TcId;
+                spmode = 2;
+            }
+
+            using (SqlConnection sqlconnection = new SqlConnection(_config["ConnectionStrings:DefaultConnection"]))
+            {
+                using (SqlCommand sqlcmd = new SqlCommand("proc_registration_search", sqlconnection))
+                {
+                    sqlcmd.CommandType = CommandType.StoredProcedure;
+                    sqlcmd.Parameters.Add(new SqlParameter("datefrom",  datefrom));
+                    sqlcmd.Parameters.Add(new SqlParameter("dateto", datetto));
+                    sqlcmd.Parameters.Add(new SqlParameter("is_active", status));
+                    sqlcmd.Parameters.Add(new SqlParameter("tcid", tcid));
+                    sqlcmd.Parameters.Add(new SqlParameter("session_nid", Nid));
+                    sqlcmd.Parameters.Add(new SqlParameter("spmode", spmode));
+
+
+                    sqlconnection.Open();
+                    SqlDataReader rd = sqlcmd.ExecuteReader();
+                    while (rd.Read())
+                    {
+                        returnData.Add(new ProcRegistrationSearch()
+                        {
+
+                            FirstName = Convert.ToString(rd["firstname"]),
+                            MiddleName = Convert.ToString(rd["middlename"]),
+                            LastName = Convert.ToString(rd["lastname"]),
+                            husband_wifename =Convert.ToString(rd["Husband_father_name"]),
+                            DOB =Convert.ToString(rd["DOB"]),
+                            blockname = Convert.ToString(rd["block_name"]),
+                            terminatename = Convert.ToString(rd["terminate_name"]),
+                            activename = Convert.ToString(rd["active_name"]),
+                            JoiningDate = Convert.ToString(rd["joining_date"]),
+                            Address1 = Convert.ToString(rd["address_line1"]),
+                            Address2 = Convert.ToString(rd["address_line2"]),
+                            pincode = Convert.ToString(rd["pincode"]),
+                            landmark = Convert.ToString(rd["landmark"]),
+                            mobileno = Convert.ToString(rd["mobileno"]),
+                            emailid = Convert.ToString(rd["emailid"]),
+                            statename = Convert.ToString(rd["statename"]),
+                            cityname = Convert.ToString(rd["cityname"]),
+                            countryname = Convert.ToString(rd["countryname"]),
+                            tcspid = Convert.ToString(rd["spid"]),
+                            tcspname = Convert.ToString(rd["spname"]),
+                            block = Convert.ToBoolean(rd["isblock"]),
+                            terminate = Convert.ToBoolean(rd["isterminate"]),
+                            //isactive = (rd["isactive"]),
+                            stateid = Convert.ToInt32(rd["stateid"]),
+                            cityid = Convert.ToInt32(rd["cityid"]),
+                            countryid = Convert.ToInt32(rd["countryid"]),
+                            gender_id = Convert.ToInt32(rd["gender"]),
+                            
+                        });
+                        }
+                        }
+
+                    }
+
+            return returnData;
+
+        }
+
 
         new public mdlTreeWraper GetAllDownline(int NID)
         {

@@ -91,6 +91,39 @@ namespace WingGateway.Controllers
         }
 
 
+        [Authorize(policy: nameof(enmDocumentMaster.Emp_Tc_Details))]
+        public IActionResult TCDetails()
+        {
+            mdlTcReportWraper returnDataMdl = new mdlTcReportWraper();
+            returnDataMdl.FilterModel = new mdlFilterModel() { dateFilter = new mdlDateFilter(), idFilter = new mdlIdFilter(), IsReport = true };
+            returnDataMdl.TcWrapers = new List<ProcRegistrationSearch>();
+            return View(returnDataMdl);
+        }
+
+        
+
+
+        [HttpPost]
+        [Authorize(policy: nameof(enmDocumentMaster.Emp_Tc_Details))]
+        public IActionResult TCDetails(mdlFilterModel mdl, enmLoadData submitdata)
+        {
+            mdlTcReportWraper returnData = new mdlTcReportWraper();
+            //if (mdl.dateFilter == null)
+            //{
+            //    mdl.dateFilter = new mdlDateFilter();
+            //}
+            //if (mdl.idFilter == null)
+            //{
+            //    mdl.idFilter = new mdlIdFilter();
+            //}
+            //mdl.dateFilter.FromDt = Convert.ToDateTime(mdl.dateFilter.FromDt.ToString("dd-MMM-yyyy"));
+            //mdl.dateFilter.ToDt = Convert.ToDateTime(mdl.dateFilter.ToDt.AddDays(1).ToString("dd-MMM-yyyy"));
+            WingGateway.Classes.ConsProfile consProfile = new Classes.ConsProfile(_context, _config);
+            returnData.TcWrapers = consProfile.GetTCDetails(submitdata, mdl, 0,0, false);
+            returnData.FilterModel = mdl;
+            return View(returnData);
+        }
+
 
     }
 }

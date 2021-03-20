@@ -175,6 +175,23 @@ namespace WingGateway.Models
         [Compare(nameof(Password),ErrorMessage ="Password & confirm Password do not match")]
         public string ConfirmPassword { get; set; }
 
+        [Display(Name = "Is Approved")]
+        public enmApprovalType? IsApproved { get; set; } = null;
+
+
+        [Display(Name = "Approved Date")]
+        public DateTime? ApprovedDt { get; set; }
+
+
+        [StringLength(20, ErrorMessage = "The {0} must be at most {1} characters long.")]
+        [RegularExpression("[a-zA-Z0-9,/.\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
+        [Display(Name = "Approval Remarks")]
+        public string ApprovalRemarks { set; get; }
+
+        public tblTcAddressDetail addressDetail { get; set; }
+        public tblTcEmail emaildetails { get; set; }
+        public  tblTcContact contatcdetails { get; set; }
+
         public bool GenrateRegistration(ISequenceMaster sequenceMaster,IConsolidatorProfile consolidatorProfile, DBContext context)
         {
             DateTime CurrentDatetime = DateTime.Now;
@@ -207,10 +224,12 @@ namespace WingGateway.Models
                 SpId = SpTcId,
                 Isblock = false,
                 IsTerminate = false,
-                IsKycUpdated=enmIsKycUpdated.No,
+                is_active = 0,
+                IsKycUpdated = enmIsKycUpdated.No,
                 JoiningDt = CurrentDatetime,
                 SpLegNumber = SpNid.HasValue?(consolidatorProfile.GetNidLegCount(SpNid.Value) + 1):1,
                 TCRanks = enmTCRanks.Level1
+
             };
             context.tblRegistration.Add(tr);
             context.SaveChanges();
@@ -225,6 +244,7 @@ namespace WingGateway.Models
                 CountryId = this.country_id,
                 TcNid = TcNId,
                 IsDeleted = false,
+                CityId=0,
                 CreatedBy = 0,
                 CreatedDt = CurrentDatetime,
                 ModifiedBy = 0,
@@ -241,6 +261,31 @@ namespace WingGateway.Models
                 Isdeleted = false
             };
             context.tblTcRanksDetails.Add(tblTcRanksDetails);
+
+            tblTcEmail tblTCEmail = new tblTcEmail()
+            {
+                EmailID = this.EmailAddress,
+                TcNid = TcNId,
+                Isdeleted = false,
+                CreatedBy = 0,
+                CreatedDt = CurrentDatetime,
+                lastModifiedBy = 0,
+                LastModifieddate = CurrentDatetime
+            };
+            context.TblTcEmail.Add(tblTCEmail);
+
+            tblTcContact tblTCContact = new tblTcContact()
+            {
+                MobileNo = this.PhoneNo,
+                TcNid = TcNId,
+                Isdeleted = false,
+                CreatedBy = 0,
+                CreatedDt = CurrentDatetime,
+                lastModifiedBy = 0,
+                LastModifieddate = CurrentDatetime
+            };
+            context.TblTcContact.Add(tblTCContact);
+
             context.SaveChanges();
             return true;
 
