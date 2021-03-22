@@ -10,9 +10,13 @@ using System.Text;
 using System.Threading.Tasks;
 using WingApi.Classes.Database;
 
-namespace WingApi.Classes
+namespace WingApi.Classes.TripJack
 {
-    public class TripJack : IWing
+    public interface ITripJack : IWing
+    {
+    }
+
+    public class TripJack : ITripJack
     {
 
         private readonly DBContext _context;
@@ -125,19 +129,29 @@ namespace WingApi.Classes
                     List<mdlSearchResult> ResultOB = new List<mdlSearchResult>();
                     List<mdlSearchResult> ResultIB = new List<mdlSearchResult>();
                     if (mdl.searchResult.tripInfos != null)
-                    {   
-                        foreach (var dt in mdl.searchResult.tripInfos.ONWARD)
+                    {
+                        if (mdl.searchResult.tripInfos.ONWARD != null)
                         {
-                            ResultOB.AddRange(SearchResultMap(request,dt,"OB"));
-                        }
-                        foreach (var dt in mdl.searchResult.tripInfos.RETURN)
+                            foreach (var dt in mdl.searchResult.tripInfos.ONWARD)
+                            {
+                                ResultOB.AddRange(SearchResultMap(request, dt, "OB"));
+                            }
+                        }                        
+                        if (mdl.searchResult.tripInfos.RETURN != null)
                         {
-                            ResultIB.AddRange(SearchResultMap(request,dt,"IB"));
+                            foreach (var dt in mdl.searchResult.tripInfos.RETURN)
+                            {
+                                ResultIB.AddRange(SearchResultMap(request, dt, "IB"));
+                            }
                         }
-                        foreach (var dt in mdl.searchResult.tripInfos.COMBO)
+                        if (mdl.searchResult.tripInfos.COMBO != null)
                         {
-                            ResultOB.AddRange (SearchResultMap(request,dt,"OB"));
+                            foreach (var dt in mdl.searchResult.tripInfos.COMBO)
+                            {
+                                ResultOB.AddRange(SearchResultMap(request, dt, "OB"));
+                            }
                         }
+                        
                     }
                     AllResults.Add(ResultOB.ToArray());
                     AllResults.Add(ResultIB.ToArray());
@@ -333,11 +347,11 @@ namespace WingApi.Classes
                     segmentsRespons.SegmentIndicator = sg.sN;
                     segmentsRespons.Airline = new mdlAirline()
                     {
-                        AirlineCode = sg.fD.aI.code,
-                        AirlineName = sg.fD.aI.name,
-                        FlightNumber = sg.fD.fN,
-                        FareClass = price.fd.ADULT.cB,
-                        OperatingCarrier = sg.oB.name,
+                        AirlineCode = sg?.fD?.aI?.code,
+                        AirlineName = sg?.fD?.aI?.name,
+                        FlightNumber = sg?.fD?.fN,
+                        FareClass = price?.fd?.ADULT?.cB,
+                        OperatingCarrier = sg?.oB?.name,
                     };
                     segmentsRespons.NoOfSeatAvailable = price.fd.ADULT.sR;
 
@@ -347,13 +361,13 @@ namespace WingApi.Classes
                     {
                         Airport = new mdlAirport()
                         {
-                            AirportCode = sg.da.code,
-                            AirportName = sg.da.name,
-                            Terminal = sg.da.terminal,
-                            CityCode = sg.da.cityCode,
-                            CityName = sg.da.city,
-                            CountryCode = sg.da.countryCode,
-                            CountryName = sg.da.country,
+                            AirportCode = sg?.da?.code,
+                            AirportName = sg?.da?.name,
+                            Terminal = sg?.da?.terminal,
+                            CityCode = sg?.da?.cityCode,
+                            CityName = sg?.da?.city,
+                            CountryCode = sg?.da?.countryCode,
+                            CountryName = sg?.da?.country,
                         },
                         DepTime = _DepTime,
                     };
@@ -363,13 +377,13 @@ namespace WingApi.Classes
                     {
                         Airport = new mdlAirport()
                         {
-                            AirportCode = sg.da.code,
-                            AirportName = sg.da.name,
-                            Terminal = sg.da.terminal,
-                            CityCode = sg.da.cityCode,
-                            CityName = sg.da.city,
-                            CountryCode = sg.da.countryCode,
-                            CountryName = sg.da.country,
+                            AirportCode = sg?.da?.code,
+                            AirportName = sg?.da?.name,
+                            Terminal = sg?.da?.terminal,
+                            CityCode = sg?.da?.cityCode,
+                            CityName = sg?.da?.city,
+                            CountryCode = sg?.da?.countryCode,
+                            CountryName = sg?.da?.country,
                         },
                         ArrTime = _ArrTime
                     };

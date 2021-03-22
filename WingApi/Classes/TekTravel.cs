@@ -15,9 +15,12 @@ using WingApi.Classes.Database;
 
 namespace WingApi.Classes.TekTravel
 {
-   
 
-    public class TekTravel : IWing
+    public interface ITekTravel : IWing
+    {
+    }
+
+    public class TekTravel : ITekTravel
     {
         private readonly DBContext _context;
         private readonly IConfiguration _config;
@@ -473,7 +476,7 @@ namespace WingApi.Classes.TekTravel
 
             SegmentRequest[] sr= request.Segments.Select(p => new SegmentRequest { Origin = p.Origin, Destination = p.Destination, FlightCabinClass = p.FlightCabinClass,
                 PreferredDepartureTime = PreferredTimeConversion(p.PreferredDeparture, p.TravelDt),
-                PreferredArrivalTime = PreferredTimeConversion(p.PreferredArrival, p.TravelDt)
+                PreferredArrivalTime =  PreferredTimeConversion(p.PreferredDeparture> p.PreferredArrival? p.PreferredDeparture : p.PreferredArrival, p.TravelDt)
             }).ToArray();
             SearchRequest mdl = new SearchRequest()
             {

@@ -10,6 +10,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using WingApi.Classes.Database;
 using Microsoft.EntityFrameworkCore;
+using WingApi.Classes.TekTravel;
+using WingApi.Classes;
+using WingApi.Classes.TripJack;
 
 namespace WingApi
 {
@@ -25,7 +28,13 @@ namespace WingApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<DBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")),ServiceLifetime.Transient);
+            #region ************* Services Registration ************************
+            services.AddScoped<ITekTravel>(ctx => new TekTravel(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
+            services.AddScoped<ITripJack>(ctx => new TripJack(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
+            #endregion
+
+
             services.AddControllersWithViews();
         }
 
