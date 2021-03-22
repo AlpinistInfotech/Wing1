@@ -233,11 +233,15 @@ namespace WingApi.Classes.TekTravel
                     {
                         if (dt.ResultIndex.Contains("OB"))
                         {
-                            ResultOB.Add(SearchResultMap(dt));
+                            ResultOB.Add(SearchResultMap(dt, "OB"));
+                        }
+                        else if (dt.ResultIndex.Contains("IB"))
+                        {
+                            ResultIB.Add(SearchResultMap(dt, "IB"));
                         }
                         else
                         {
-                            ResultIB.Add(SearchResultMap(dt));
+                            ResultOB.Add(SearchResultMap(dt, "OB"));
                         }
                     }
                     AllResults.Add(ResultOB.ToArray());
@@ -289,11 +293,12 @@ namespace WingApi.Classes.TekTravel
             return mdlS;
         }
 
-        private mdlSearchResult SearchResultMap(SearchResult sr)
+        private mdlSearchResult SearchResultMap(SearchResult sr,string ResultType )
         {
             mdlSearchResult mdl = new mdlSearchResult();
             mdl.IsHoldAllowedWithSSR = sr.IsHoldAllowedWithSSR;
             mdl.ResultIndex = sr.ResultIndex;
+            mdl.ResultType = ResultType;
             mdl.Source = sr.Source;
             mdl.IsLCC = sr.IsLCC;
             mdl.IsRefundable = sr.IsRefundable;
@@ -508,13 +513,16 @@ namespace WingApi.Classes.TekTravel
                     {
                         if (dt.ResultType == "OB")
                         {
-                            ResultOB.Add(SearchResultMap(System.Text.Json.JsonSerializer.Deserialize<SearchResult>(dt.JsonData)));
+                            ResultOB.Add(SearchResultMap(System.Text.Json.JsonSerializer.Deserialize<SearchResult>(dt.JsonData), "OB"));
+                        }
+                        else if (dt.ResultType == "IB")
+                        {
+                            ResultIB.Add(SearchResultMap(System.Text.Json.JsonSerializer.Deserialize<SearchResult>(dt.JsonData), "IB"));
                         }
                         else
                         {
-                            ResultIB.Add(SearchResultMap(System.Text.Json.JsonSerializer.Deserialize<SearchResult>(dt.JsonData)));
+                            ResultOB.Add(SearchResultMap(System.Text.Json.JsonSerializer.Deserialize<SearchResult>(dt.JsonData), "OB"));
                         }
-
                     }
                     AllResults.Add(ResultOB.ToArray());
                     AllResults.Add(ResultIB.ToArray());

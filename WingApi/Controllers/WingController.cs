@@ -28,8 +28,10 @@ namespace WingApi.Controllers
         public async Task<ActionResult<IEnumerable<mdlSearchResponse>>> GettblCountryMaster(mdlSearchRequest mdlRq)
         {
             List<mdlSearchResponse> mdlRs = new List<mdlSearchResponse>();
-            IWing wing = new TekTravel(_context, _config);
-            mdlRs.Add(await wing.SearchAsync(mdlRq));
+            IWing wing1 = new TekTravel(_context, _config);
+            mdlRs.Add(await wing1.SearchAsync(mdlRq));
+            IWing wing2 = new TripJack(_context, _config);
+            mdlRs.Add(await wing2.SearchAsync(mdlRq));
             return mdlRs;
         }
 

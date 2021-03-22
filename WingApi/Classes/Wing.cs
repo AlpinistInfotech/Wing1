@@ -155,6 +155,7 @@ namespace WingApi.Classes
     {
         public bool IsHoldAllowedWithSSR { get; set; }
         public string ResultIndex { get; set; }
+        public string ResultType { get; set; }
         public int Source { get; set; }
         public bool IsLCC { get; set; }
         public bool IsRefundable { get; set; }

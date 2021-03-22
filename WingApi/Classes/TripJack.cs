@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,7 +28,7 @@ namespace WingApi.Classes
             mdlSearchResponse response = null;
             if (request.JourneyType == enmJourneyType.OneWay)//only Journey TYpe is one way then Fetch from DB else Fetch from tbo
             {
-                //response = SearchFromDb(request);
+                response = SearchFromDb(request);
                 if (response == null)//no data found in Db
                 {
                     response = await SearchFromTripJackAsync(request);
@@ -40,6 +41,66 @@ namespace WingApi.Classes
             return response;
         }
 
+        private mdlSearchResponse SearchFromDb(mdlSearchRequest request)
+        {
+            mdlSearchResponse mdlSearchResponse = null;
+            DateTime CurrentTime = DateTime.Now;
+            tblTripJackTravelDetail Data = null;
+            if (request.JourneyType == enmJourneyType.OneWay)
+            {
+                Data = _context.tblTripJackTravelDetail.Where(p => p.Origin == request.Segments[0].Origin && p.Destination == request.Segments[0].Destination
+                  && request.AdultCount == p.AdultCount && p.ChildCount == request.ChildCount && p.InfantCount == request.InfantCount && p.CabinClass == request.Segments[0].FlightCabinClass
+                  && p.TravelDate == request.Segments[0].TravelDt
+                  && p.ExpireDt > CurrentTime
+                ).Include(p => p.tblTripJackTravelDetailResult).OrderByDescending(p => p.ExpireDt).FirstOrDefault();
+                if (Data != null)
+                {
+                    List<mdlSearchResult[]> AllResults = new List<mdlSearchResult[]>();
+                    List<mdlSearchResult> ResultOB = new List<mdlSearchResult>();
+                    List<mdlSearchResult> ResultIB = new List<mdlSearchResult>();
+                    foreach (var dt in Data.tblTripJackTravelDetailResult)
+                    {
+                        if (dt.ResultType == "OB")
+                        {
+                            ResultOB.Add(System.Text.Json.JsonSerializer.Deserialize<mdlSearchResult>(dt.JsonData));
+                        }
+                        else if (dt.ResultType == "IB")
+                        {
+                            ResultIB.Add(System.Text.Json.JsonSerializer.Deserialize<mdlSearchResult>(dt.JsonData)); ;
+                        }
+                        
+                    }
+                    AllResults.Add(ResultOB.ToArray());
+                    AllResults.Add(ResultIB.ToArray());
+                    mdlSearchResponse = new mdlSearchResponse()
+                    {
+                        ServiceProvider = enmServiceProvider.TripJack,
+                        TraceId = Data.TraceId.ToString(),
+                        ResponseStatus = 1,
+                        Error = new mdlError()
+                        {
+                            ErrorCode = 0,
+                            ErrorMessage = "-"
+                        },
+                        Origin = Data.Origin,
+                        Destination = Data.Destination,
+                        Results = AllResults.ToArray()
+
+                    };
+
+                }
+            }
+
+
+            return mdlSearchResponse;
+
+
+
+
+        }
+
+
+
 
         private async Task<mdlSearchResponse> SearchFromTripJackAsync(mdlSearchRequest request)
         {
@@ -47,7 +108,7 @@ namespace WingApi.Classes
             mdlSearchResponse mdlS = null;
             string tboUrl = _config["TripJack:API:Search"];
             
-            StartSendRequest:
+            StartSendRequest:            
             string jsonString = System.Text.Json.JsonSerializer.Serialize(SearchRequestMap(request));
             var HaveResponse = GetResponse(jsonString, tboUrl);
             if (HaveResponse.ErrorCode == 0)
@@ -59,7 +120,7 @@ namespace WingApi.Classes
             {
                  if (mdl.status.success)//success
                 {
-                    //var result = Search_SaveAsync(request, request.TokenId, mdl.TraceId, tempdata);
+                    
                     List<mdlSearchResult[]> AllResults = new List<mdlSearchResult[]>();
                     List<mdlSearchResult> ResultOB = new List<mdlSearchResult>();
                     List<mdlSearchResult> ResultIB = new List<mdlSearchResult>();
@@ -67,15 +128,15 @@ namespace WingApi.Classes
                     {   
                         foreach (var dt in mdl.searchResult.tripInfos.ONWARD)
                         {
-                            ResultOB.AddRange(SearchResultMap(request,dt));
+                            ResultOB.AddRange(SearchResultMap(request,dt,"OB"));
                         }
                         foreach (var dt in mdl.searchResult.tripInfos.RETURN)
                         {
-                            ResultIB.AddRange(SearchResultMap(request,dt));
+                            ResultIB.AddRange(SearchResultMap(request,dt,"IB"));
                         }
                         foreach (var dt in mdl.searchResult.tripInfos.COMBO)
                         {
-                            ResultOB.AddRange (SearchResultMap(request,dt));
+                            ResultOB.AddRange (SearchResultMap(request,dt,"OB"));
                         }
                     }
                     AllResults.Add(ResultOB.ToArray());
@@ -95,7 +156,8 @@ namespace WingApi.Classes
                         Destination = request.Segments[0].Destination,
                         Results = AllResults.ToArray()
                     };
-                   // await result;
+                    var result = Search_SaveAsync(request, ResultOB.ToArray(), ResultIB.ToArray());
+                     await result;
                 }
                 else
                 {
@@ -128,7 +190,7 @@ namespace WingApi.Classes
         }
 
 
-        private mdlSearchResult[] SearchResultMap(mdlSearchRequest request, ONWARD_RETURN_COMBO sr)
+        private mdlSearchResult[] SearchResultMap(mdlSearchRequest request, ONWARD_RETURN_COMBO sr,string ResultType)
         {
 
             List<mdlSearchResult> mdls = new List<mdlSearchResult>();
@@ -139,6 +201,7 @@ namespace WingApi.Classes
                 mdlSearchResult mdl = new mdlSearchResult();
                 mdl.IsHoldAllowedWithSSR = false;
                 mdl.ResultIndex = price.id;
+                mdl.ResultType = ResultType;
                 mdl.Source = 0;
                 if (price.fd.ADULT == null)
                 {
@@ -328,30 +391,13 @@ namespace WingApi.Classes
                     SegmentsResponse.Add(segmentsRespons);
                 }
 
-              //  mdl.Segments =  SegmentsResponse.ToArray();
-                
-                //mdl.FareRules =  passengers.Select(p => new mdlFarerule
-                //{
-                //    Origin = request.Sources[],
-                //    Destination = p.Destination,
-                //    Airline = p.Airline,
-                //    FareBasisCode = p.FareBasisCode,
-                //    FareRuleDetail = p.FareRuleDetail,
-                //    FareRestriction = p.FareRestriction,
-                //    FareFamilyCode = p.FareFamilyCode,
-                //    FareRuleIndex = p.FareRuleIndex
-                //}).ToArray();
-
-                
-
+                List<mdlSegmentResponse[]> _mdlSegmentResponses = new List<mdlSegmentResponse[]>();
+                _mdlSegmentResponses.Add(SegmentsResponse.ToArray());
+                mdl.Segments = _mdlSegmentResponses.ToArray();                
+                mdls.Add(mdl);
             }
 
-
-
-
-
-
-            return null;// mdls;
+            return mdls.ToArray();// mdls;
 
 
         }
@@ -474,6 +520,50 @@ namespace WingApi.Classes
             return mdlW;
         }
 
+
+        private async Task<bool> Search_SaveAsync(mdlSearchRequest request,  mdlSearchResult[] OBresponse, mdlSearchResult[] IBresponse)
+        {
+
+            int ExpirationMinute = 14;
+            int.TryParse(_config["TripJack:TraceIdExpiryTime"], out ExpirationMinute);
+            double minFare = 0;
+            List<tblTripJackTravelDetailResult> mdlDetail = new List<tblTripJackTravelDetailResult>();
+            if (OBresponse != null && OBresponse.Length > 0)
+            {
+                minFare = OBresponse.Min(p => p.Fare.PublishedFare);
+                mdlDetail.AddRange(OBresponse.Select(p => new tblTripJackTravelDetailResult { ResultIndex = p.ResultIndex, ResultType = p.ResultType, OfferedFare = p.Fare.OfferedFare, PublishedFare = p.Fare.PublishedFare, JsonData = System.Text.Json.JsonSerializer.Serialize(p) }).ToList());
+            }
+            if (IBresponse != null && IBresponse.Length > 0)
+            {
+                minFare = minFare + OBresponse.Min(p => p.Fare.PublishedFare);
+                mdlDetail.AddRange(IBresponse.Select(p => new tblTripJackTravelDetailResult { ResultIndex = p.ResultIndex, ResultType = p.ResultType, OfferedFare = p.Fare.OfferedFare, PublishedFare = p.Fare.PublishedFare, JsonData = System.Text.Json.JsonSerializer.Serialize(p) }).ToList());
+            }
+            DateTime TickGeration = DateTime.Now;
+
+             
+
+            tblTripJackTravelDetail td = new tblTripJackTravelDetail()
+            {
+                TravelDate = request.Segments[0].TravelDt,
+                CabinClass = request.Segments[0].FlightCabinClass,
+                Origin = request.Segments[0].Origin,
+                Destination = request.Segments[0].Destination,                
+                MinPublishFare = minFare,
+                JourneyType = request.JourneyType,
+                AdultCount = request.AdultCount,
+                ChildCount = request.ChildCount,
+                InfantCount = request.InfantCount,
+                GenrationDt = TickGeration,
+                ExpireDt = TickGeration.AddMinutes(ExpirationMinute),
+                tblTripJackTravelDetailResult = mdlDetail,
+            };
+            _context.tblTripJackTravelDetail.Add(td);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+
+
         #region *******************Search Class***************************
         #region ****************** Request ******************************
 
@@ -526,6 +616,17 @@ namespace WingApi.Classes
             public Searchresult searchResult { get; set; }
             public Status status { get; set; }
             public Metainfo metaInfo { get; set; }
+        }
+
+        public class SearchresultWraperMulticity
+        {
+            public SearchresultMulticity searchResult { get; set; }
+            public Status status { get; set; }
+            public Metainfo metaInfo { get; set; }
+        }
+        public class SearchresultMulticity
+        {
+            public ONWARD_RETURN_COMBO[][] tripInfos { get; set; }
         }
 
         public class Searchresult
