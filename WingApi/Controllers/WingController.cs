@@ -29,9 +29,11 @@ namespace WingApi.Controllers
         {
             List<mdlSearchResponse> mdlRs = new List<mdlSearchResponse>();
             IWing wing1 = new TekTravel(_context, _config);
-            mdlRs.Add(await wing1.SearchAsync(mdlRq));
             IWing wing2 = new TripJack(_context, _config);
-            mdlRs.Add(await wing2.SearchAsync(mdlRq));
+            var mdlTekTravel = wing1.SearchAsync(mdlRq);
+            var mdlTripJack = wing2.SearchAsync(mdlRq);
+            mdlRs.Add(await mdlTekTravel);            
+            mdlRs.Add(await mdlTripJack);
             return mdlRs;
         }
 
