@@ -48,11 +48,11 @@ namespace WingApi.Classes
     public enum enmCabinClass
     {
         //ALL=1,
-        Economy = 2,
-        PremiumEconomy = 3,
-        Business = 4,
+        ECONOMY = 2,
+        PREMIUM_ECONOMY = 3,
+        BUSINESS = 4,
         //PremiumBusiness=5,
-        First = 6
+        FIRST = 6
     }
 
     public enum enmPreferredDepartureTime
@@ -66,7 +66,7 @@ namespace WingApi.Classes
 
     public class mdlAuthenticateRequest
     {
-        public string ClinetId { get; set; }
+        public string ClientId { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
         public string EndUserIp { get; set; }
@@ -129,7 +129,7 @@ namespace WingApi.Classes
         public enmCabinClass FlightCabinClass { get; set; }
         public DateTime TravelDt { get; set; }
         public enmPreferredDepartureTime PreferredDeparture { get; set; }
-        public enmPreferredDepartureTime PreferredArrivalTim { get; set; }
+        public enmPreferredDepartureTime PreferredArrival{ get; set; }
     }
 
 
@@ -148,12 +148,14 @@ namespace WingApi.Classes
     {
         public int ErrorCode { get; set; }
         public string ErrorMessage { get; set; }
+        public string Message { get; set; }
     }
 
     public class mdlSearchResult
     {
         public bool IsHoldAllowedWithSSR { get; set; }
         public string ResultIndex { get; set; }
+        public string ResultType { get; set; }
         public int Source { get; set; }
         public bool IsLCC { get; set; }
         public bool IsRefundable { get; set; }
@@ -169,7 +171,7 @@ namespace WingApi.Classes
         public mdlFare Fare { get; set; }
         public mdlFarebreakdown[] FareBreakdown { get; set; }
         public mdlSegmentResponse[][] Segments { get; set; }
-        public DateTime? LastTicketDate { get; set; }
+        //public DateTime LastTicketDate { get; set; }
         public string TicketAdvisory { get; set; }
         public mdlFarerule[] FareRules { get; set; }
         public string AirlineCode { get; set; }
@@ -196,6 +198,7 @@ namespace WingApi.Classes
         public double PLBEarned { get; set; }
         public double IncentiveEarned { get; set; }
         public double OfferedFare { get; set; }
+        public double NetFare { get; set; }
         public double TdsOnCommission { get; set; }
         public double TdsOnPLB { get; set; }
         public double TdsOnIncentive { get; set; }
@@ -220,8 +223,8 @@ namespace WingApi.Classes
 
     public class mdlPenaltycharges
     {
-        public double ReissueCharge { get; set; }
-        public double CancellationCharge { get; set; }
+        public dynamic ReissueCharge { get; set; }
+        public dynamic CancellationCharge { get; set; }
     }
 
     public class mdlFarebreakdown
@@ -307,7 +310,7 @@ namespace WingApi.Classes
         public string Destination { get; set; }
         public string Airline { get; set; }
         public string FareBasisCode { get; set; }
-        public string[] FareRuleDetail { get; set; }
+        public string FareRuleDetail { get; set; }
         public string FareRestriction { get; set; }
         public string FareFamilyCode { get; set; }
         public string FareRuleIndex { get; set; }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,9 +15,12 @@ using WingApi.Classes.Database;
 
 namespace WingApi.Classes.TekTravel
 {
-   
 
-    public class TekTravel : IWing
+    public interface ITekTravel : IWing
+    {
+    }
+
+    public class TekTravel : ITekTravel
     {
         private readonly DBContext _context;
         private readonly IConfiguration _config;
@@ -26,11 +30,25 @@ namespace WingApi.Classes.TekTravel
             _config = config;
         }
 
-        private string GetResponse(string requestData, string url)
+        private mdlError GetResponse(string requestData, string url)
         {
-            string responseXML = string.Empty;
+            mdlError mdl = new mdlError();
+            mdl.ErrorCode = 1;            
+            mdl.Message = string.Empty;
             try
             {
+                //var client = new RestClient(url);
+                //client.Timeout = -1;
+                //var request = new RestRequest(Method.POST);
+                //request.AddHeader("Content-Type", "application/json");
+                ////request.AddHeader("Accept-Encoding", "gzip");
+                //request.AddParameter("application/json", requestData);
+                //IRestResponse response = client.Execute(request);
+                //if (response.IsSuccessful)
+                //{
+                //    responseXML = response.Content;
+                //}
+
                 byte[] data = Encoding.UTF8.GetBytes(requestData);
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                 request.Method = "POST";
@@ -43,43 +61,62 @@ namespace WingApi.Classes.TekTravel
                 var rsp = webResponse.GetResponseStream();
                 if (rsp == null)
                 {
+                    mdl.Message = "No Response Found";
                     throw new Exception("No Response Found");
                 }
                 using (StreamReader readStream = new StreamReader(new GZipStream(rsp, CompressionMode.Decompress)))
                 {
-                    responseXML = JsonConvert.DeserializeXmlNode(readStream.ReadToEnd()).InnerXml;
+                    mdl.ErrorCode = 0;
+                    mdl.Message = readStream.ReadToEnd();//JsonConvert.DeserializeXmlNode(readStream.ReadToEnd(), "root").InnerXml;
                 }
-                return responseXML;
+                return mdl;
             }
             catch (WebException webEx)
             {
+                mdl.ErrorCode = 1;
                 //get the response stream
                 WebResponse response = webEx.Response;
                 Stream stream = response.GetResponseStream();
                 String responseMessage = new StreamReader(stream).ReadToEnd();
-                return responseMessage;
+                mdl.Message = responseMessage;                 
             }
-
+            catch (Exception ex)
+            {
+                mdl.ErrorCode = 1;
+                mdl.Message = ex.Message;
+            }
+            return mdl;
         }
 
         private async Task<mdlAuthenticateResponse> LoginAsync()
         {
+            mdlAuthenticateResponse mdl = new mdlAuthenticateResponse();
             mdlAuthenticateRequest request = new mdlAuthenticateRequest();
-            request.ClinetId = _config["TBO:Credential:ClientId"];
+            request.ClientId = _config["TBO:Credential:ClientId"];
             request.UserName = _config["TBO:Credential:UserName"];
             request.Password = _config["TBO:Credential:Password"];
-            string tboUrl = _config["TBO:API:Login"];
-            string jsonString = System.Text.Json.JsonSerializer.Serialize(request);
-            var mdl = System.Text.Json.JsonSerializer.Deserialize<mdlAuthenticateResponse>(GetResponse(jsonString, tboUrl));
-            if (mdl.Status == 0)
+            request.EndUserIp = "::1";
+            string tboUrl = _config["TBO:API:Login"];            
+            string jsonString = JsonConvert.SerializeObject(request);
+            var HaveResponse= GetResponse(jsonString, tboUrl);
+            if (HaveResponse.ErrorCode == 0)
             {
-                _context.tblTboTokenDetails.Add(new tblTboTokenDetails() { TokenId = mdl.TokenId, AgencyId = mdl.Member.AgencyId.ToString(), MemberId = mdl.Member.MemberId.ToString(), GenrationDt = DateTime.Now });
-                await _context.SaveChangesAsync();
+                mdl = System.Text.Json.JsonSerializer.Deserialize<mdlAuthenticateResponse>(HaveResponse.Message);
+                if (mdl.Status == 1)
+                {
+                    _context.tblTboTokenDetails.Add(new tblTboTokenDetails() { TokenId = mdl.TokenId, AgencyId = mdl.Member.AgencyId.ToString(), MemberId = mdl.Member.MemberId.ToString(), GenrationDt = DateTime.Now });
+                    await _context.SaveChangesAsync();
+                }
             }
             else
             {
-                throw new Exception("Invalid Login");
+                mdl.Error = new Classes.Error()
+                {
+                    ErrorCode = 1,
+                    ErrorMessage = "Invalid Login",
+                };
             }
+            
             return mdl;
         }
 
@@ -140,8 +177,9 @@ namespace WingApi.Classes.TekTravel
 
             int MaxLoginAttempt = 1, LoginAttempt = 0;
             int.TryParse(_config["TBO:MaxLoginAttempt"], out MaxLoginAttempt);
-            mdlSearchResponse mdlS = null;
+            mdlSearchResponse mdlS = null;            
             SearchResponse mdl = null;
+            SearchResponseWraper mdlTemp = null;
             string tboUrl = _config["TBO:API:Search"];
 
             StartSendRequest:
@@ -150,13 +188,23 @@ namespace WingApi.Classes.TekTravel
             if (TokenDetails == null)
             {
                 var AuthenticateResponse = await LoginAsync();
-                if (AuthenticateResponse.Status == 1)
+                if (AuthenticateResponse.Status == 1 && LoginAttempt < MaxLoginAttempt)
                 {
+                    LoginAttempt++;
                     goto StartSendRequest;
                 }
             }
-            string jsonString = System.Text.Json.JsonSerializer.Serialize(request);
-            mdl = System.Text.Json.JsonSerializer.Deserialize<SearchResponse>(GetResponse(jsonString, tboUrl));
+            string jsonString = System.Text.Json.JsonSerializer.Serialize(SearchRequestMap( request, TokenDetails.TokenId));
+            var HaveResponse = GetResponse(jsonString, tboUrl);
+            if (HaveResponse.ErrorCode == 0)
+            {
+                mdlTemp = (System.Text.Json.JsonSerializer.Deserialize<SearchResponseWraper>(HaveResponse.Message));
+                if (mdlTemp != null)
+                {
+                    mdl = mdlTemp.Response;
+                }
+            }
+            
             if (mdl != null)
             {
                 if (mdl.ResponseStatus == 3 && LoginAttempt < MaxLoginAttempt)//failure
@@ -188,11 +236,15 @@ namespace WingApi.Classes.TekTravel
                     {
                         if (dt.ResultIndex.Contains("OB"))
                         {
-                            ResultOB.Add(SearchResultMap(dt));
+                            ResultOB.Add(SearchResultMap(dt, "OB"));
+                        }
+                        else if (dt.ResultIndex.Contains("IB"))
+                        {
+                            ResultIB.Add(SearchResultMap(dt, "IB"));
                         }
                         else
                         {
-                            ResultIB.Add(SearchResultMap(dt));
+                            ResultOB.Add(SearchResultMap(dt, "OB"));
                         }
                     }
                     AllResults.Add(ResultOB.ToArray());
@@ -244,11 +296,12 @@ namespace WingApi.Classes.TekTravel
             return mdlS;
         }
 
-        private mdlSearchResult SearchResultMap(SearchResult sr)
+        private mdlSearchResult SearchResultMap(SearchResult sr,string ResultType )
         {
             mdlSearchResult mdl = new mdlSearchResult();
             mdl.IsHoldAllowedWithSSR = sr.IsHoldAllowedWithSSR;
             mdl.ResultIndex = sr.ResultIndex;
+            mdl.ResultType = ResultType;
             mdl.Source = sr.Source;
             mdl.IsLCC = sr.IsLCC;
             mdl.IsRefundable = sr.IsRefundable;
@@ -265,7 +318,7 @@ namespace WingApi.Classes.TekTravel
             mdl.AirlineCode = sr.AirlineCode;
             mdl.ValidatingAirline = sr.ValidatingAirline;
             mdl.IsUpsellAllowed = sr.IsUpsellAllowed;
-            mdl.LastTicketDate = sr.LastTicketDate;
+            //mdl.LastTicketDate = sr.LastTicketDate;
             mdl.Fare = new mdlFare();
             if (sr.Fare != null)
             {
@@ -288,6 +341,8 @@ namespace WingApi.Classes.TekTravel
                 mdl.Fare.TdsOnCommission = sr.Fare.TdsOnCommission;
                 mdl.Fare.TdsOnPLB = sr.Fare.TdsOnPLB;
                 mdl.Fare.TdsOnIncentive = sr.Fare.TdsOnIncentive;
+                mdl.Fare.NetFare = sr.Fare.PublishedFare - (sr.Fare.CommissionEarned + sr.Fare.IncentiveEarned + sr.Fare.PLBEarned + sr.Fare.AdditionalTxnFeeOfrd + sr.Fare.AdditionalTxnFeePub) +
+                    (sr.Fare.TdsOnCommission + sr.Fare.TdsOnIncentive + sr.Fare.TdsOnPLB);
                 mdl.Fare.ServiceFee = sr.Fare.ServiceFee;
                 mdl.Fare.TotalBaggageCharges = sr.Fare.TotalBaggageCharges;
                 mdl.Fare.TotalMealCharges = sr.Fare.TotalMealCharges;
@@ -307,7 +362,7 @@ namespace WingApi.Classes.TekTravel
                 AdditionalTxnFeePub = p.AdditionalTxnFeePub,
                 PGCharge = p.PGCharge,
                 SupplierReissueCharges = p.SupplierReissueCharges,
-                TaxBreakUp = p.TaxBreakUp.Select(q => new mdlTaxbreakup { key = q.key, value = q.value }).ToArray()
+                //TaxBreakUp = p.TaxBreakUp.Select(q => new mdlTaxbreakup { key = q.key, value = q.value }).ToArray()
             }).ToArray();
 
             List<mdlSegmentResponse[]> SegmentsResponse = new List<mdlSegmentResponse[]>();
@@ -400,6 +455,45 @@ namespace WingApi.Classes.TekTravel
 
         }
 
+        private DateTime PreferredTimeConversion(enmPreferredDepartureTime enm,DateTime travelDate)
+        {
+            switch (enm)
+            {
+                case enmPreferredDepartureTime.Morning:
+                    travelDate = travelDate.AddHours(8);
+                    break;
+                case enmPreferredDepartureTime.AfterNoon:
+                    travelDate = travelDate.AddHours(14);
+                    break;
+                case enmPreferredDepartureTime.Evening:
+                    travelDate = travelDate.AddHours(19);
+                    break;
+            }
+            return travelDate;
+        }
+
+        private SearchRequest SearchRequestMap(mdlSearchRequest request, string TokenId) {
+
+            SegmentRequest[] sr= request.Segments.Select(p => new SegmentRequest { Origin = p.Origin, Destination = p.Destination, FlightCabinClass = p.FlightCabinClass,
+                PreferredDepartureTime = PreferredTimeConversion(p.PreferredDeparture, p.TravelDt),
+                PreferredArrivalTime =  PreferredTimeConversion(p.PreferredDeparture> p.PreferredArrival? p.PreferredDeparture : p.PreferredArrival, p.TravelDt)
+            }).ToArray();
+            SearchRequest mdl = new SearchRequest()
+            {
+                EndUserIp = request.EndUserIp,
+                TokenId = TokenId,
+                AdultCount = request.AdultCount,
+                ChildCount = request.ChildCount,
+                InfantCount = request.InfantCount,
+                DirectFlight = request.DirectFlight,
+                JourneyType = request.JourneyType,
+                PreferredAirlines = request.PreferredAirlines,
+                Segments = sr,
+                Sources = request.Sources
+            };
+            return mdl;
+        }
+
         private mdlSearchResponse SearchFromDb(mdlSearchRequest request)
         {
             mdlSearchResponse mdlSearchResponse = null;
@@ -422,13 +516,16 @@ namespace WingApi.Classes.TekTravel
                     {
                         if (dt.ResultType == "OB")
                         {
-                            ResultOB.Add(SearchResultMap(System.Text.Json.JsonSerializer.Deserialize<SearchResult>(dt.JsonData)));
+                            ResultOB.Add(SearchResultMap(System.Text.Json.JsonSerializer.Deserialize<SearchResult>(dt.JsonData), "OB"));
+                        }
+                        else if (dt.ResultType == "IB")
+                        {
+                            ResultIB.Add(SearchResultMap(System.Text.Json.JsonSerializer.Deserialize<SearchResult>(dt.JsonData), "IB"));
                         }
                         else
                         {
-                            ResultIB.Add(SearchResultMap(System.Text.Json.JsonSerializer.Deserialize<SearchResult>(dt.JsonData)));
+                            ResultOB.Add(SearchResultMap(System.Text.Json.JsonSerializer.Deserialize<SearchResult>(dt.JsonData), "OB"));
                         }
-
                     }
                     AllResults.Add(ResultOB.ToArray());
                     AllResults.Add(ResultIB.ToArray());
@@ -490,6 +587,11 @@ namespace WingApi.Classes.TekTravel
         }
 
 
+        public class SearchResponseWraper
+        {
+            public SearchResponse Response { get; set; }
+        }
+
         public class SearchResponse
         {
             public int ResponseStatus { get; set; }
@@ -525,7 +627,7 @@ namespace WingApi.Classes.TekTravel
             public Fare Fare { get; set; }
             public Farebreakdown[] FareBreakdown { get; set; }
             public SegmentResponse[][] Segments { get; set; }
-            public DateTime? LastTicketDate { get; set; }
+            //public DateTime LastTicketDate { get; set; }
             public string TicketAdvisory { get; set; }
             public Farerule[] FareRules { get; set; }
             public string AirlineCode { get; set; }
@@ -576,8 +678,8 @@ namespace WingApi.Classes.TekTravel
 
         public class Penaltycharges
         {
-            public double ReissueCharge { get; set; }
-            public double CancellationCharge { get; set; }
+            public dynamic ReissueCharge { get; set; }
+            public dynamic CancellationCharge { get; set; }
         }
 
         public class Farebreakdown
@@ -663,7 +765,7 @@ namespace WingApi.Classes.TekTravel
             public string Destination { get; set; }
             public string Airline { get; set; }
             public string FareBasisCode { get; set; }
-            public string[] FareRuleDetail { get; set; }
+            public string FareRuleDetail { get; set; }
             public string FareRestriction { get; set; }
             public string FareFamilyCode { get; set; }
             public string FareRuleIndex { get; set; }

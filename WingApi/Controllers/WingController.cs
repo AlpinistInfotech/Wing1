@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using WingApi.Classes;
 using WingApi.Classes.Database;
 using WingApi.Classes.TekTravel;
+using WingApi.Classes.TripJack;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -25,11 +26,14 @@ namespace WingApi.Controllers
         }
         [HttpPost]
         [Route("Search")]
-        public async Task<ActionResult<IEnumerable<mdlSearchResponse>>> GettblCountryMaster(mdlSearchRequest mdlRq)
+        public async Task<ActionResult<IEnumerable<mdlSearchResponse>>> SearchFlight([FromServices] ITekTravel tekTravel,
+            [FromServices] ITripJack tripJack, mdlSearchRequest mdlRq)
         {
             List<mdlSearchResponse> mdlRs = new List<mdlSearchResponse>();
-            IWing wing = new TekTravel(_context, _config);
-            mdlRs.Add(await wing.SearchAsync(mdlRq));
+            var mdlTekTravel = tekTravel.SearchAsync(mdlRq) ;
+            var mdlTripJack = tripJack.SearchAsync(mdlRq);
+            mdlRs.Add(await mdlTekTravel);            
+            mdlRs.Add(await mdlTripJack);
             return mdlRs;
         }
 
