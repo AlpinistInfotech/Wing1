@@ -19,12 +19,17 @@ namespace WingGateway.Classes
         public string UserName { get; set; }
     }
 
+    
     public interface IConsProfile
     {
-        int GetNId(string Id, bool OnlyUnterminated = false);
         mdlTreeWraper GetAllDownline(int NID);
         List<mdlTcBankWraper> GetBankDetails(enmLoadData loadType, mdlFilterModel mdl, int Nid, bool LoadImage);
+        Task<List<mdlTcMarkUpWraper>> GetMarkUpDetails(int tcnid);
+        List<mdlTcPANWraper> GetPANDetails(enmLoadData loadType, mdlFilterModel mdl, int Nid, bool LoadImage);
+        List<ProcRegistrationSearch> GetTCDetails(enmLoadData loadType, mdlFilterModel mdl, int Nid, int spmode, bool LoadImage);
         List<mdlUserInfo> GetUserName(List<int> UserId, bool IsEmployee = true);
+        int GetNId(string Id, bool OnlyUnterminated = false);
+        
     }
 
     public class ConsProfile : Database.Classes.ConsolidatorProfile, IConsProfile
@@ -44,8 +49,6 @@ namespace WingGateway.Classes
             {
                 mdlUserInfos = _context.tblEmpMaster.Where(p => UserId.Contains(p.EmpId)).Select(p => new mdlUserInfo { UserId = p.EmpId, UserName = p.EmpCode }).ToList();
             }
-
-
             return mdlUserInfos;
         }
 
@@ -77,7 +80,7 @@ namespace WingGateway.Classes
                     RequestDate = p.CreatedDt,
                     ApprovedDt = p.ApprovedDt,
                     Remarks = p.Remarks,
-                    NameasonBank=p.NameasonBank,
+                    NameasonBank = p.NameasonBank,
                     ApprovalRemarks = p.ApprovalRemarks,
                     BranchAddress = p.BranchAddress,
                     UploadImageName = p.UploadImages,
@@ -101,7 +104,7 @@ namespace WingGateway.Classes
                     RequestDate = p.CreatedDt,
                     ApprovedDt = p.ApprovedDt,
                     Remarks = p.Remarks,
-                    NameasonBank=p.NameasonBank,
+                    NameasonBank = p.NameasonBank,
                     ApprovalRemarks = p.ApprovalRemarks,
                     BranchAddress = p.BranchAddress,
                     UploadImageName = p.UploadImages,
@@ -226,7 +229,7 @@ namespace WingGateway.Classes
 
         }
 
-        public List<ProcRegistrationSearch> GetTCDetails(enmLoadData loadType, mdlFilterModel mdl, int Nid,int spmode, bool LoadImage)
+        public List<ProcRegistrationSearch> GetTCDetails(enmLoadData loadType, mdlFilterModel mdl, int Nid, int spmode, bool LoadImage)
         {
             List<ProcRegistrationSearch> returnData = new List<ProcRegistrationSearch>();
             if (loadType == enmLoadData.ByID)
@@ -246,8 +249,8 @@ namespace WingGateway.Classes
             if (mdl.dateFilter != null)
             {
                 datefrom = mdl.dateFilter.FromDt;
-                datetto= mdl.dateFilter.ToDt;
-                status = Convert.ToInt32( mdl.dateFilter.approvalType);
+                datetto = mdl.dateFilter.ToDt;
+                status = Convert.ToInt32(mdl.dateFilter.approvalType);
                 spmode = 1;
             }
 
@@ -262,7 +265,7 @@ namespace WingGateway.Classes
                 using (SqlCommand sqlcmd = new SqlCommand("proc_registration_search", sqlconnection))
                 {
                     sqlcmd.CommandType = CommandType.StoredProcedure;
-                    sqlcmd.Parameters.Add(new SqlParameter("datefrom",  datefrom));
+                    sqlcmd.Parameters.Add(new SqlParameter("datefrom", datefrom));
                     sqlcmd.Parameters.Add(new SqlParameter("dateto", datetto));
                     sqlcmd.Parameters.Add(new SqlParameter("is_active", status));
                     sqlcmd.Parameters.Add(new SqlParameter("tcid", tcid));
@@ -276,13 +279,13 @@ namespace WingGateway.Classes
                     {
                         returnData.Add(new ProcRegistrationSearch()
                         {
-                            TCID=Convert.ToString(rd["tcid"]),
+                            TCID = Convert.ToString(rd["tcid"]),
                             tcnid = Convert.ToInt32(rd["tcnid"]),
                             FirstName = Convert.ToString(rd["firstname"]),
                             MiddleName = Convert.ToString(rd["middlename"]),
                             LastName = Convert.ToString(rd["lastname"]),
-                            husband_wifename =Convert.ToString(rd["Husband_father_name"]),
-                            DOB =Convert.ToString(rd["DOB"]),
+                            husband_wifename = Convert.ToString(rd["Husband_father_name"]),
+                            DOB = Convert.ToString(rd["DOB"]),
                             JoiningDate = Convert.ToString(rd["joining_date"]),
                             Address1 = Convert.ToString(rd["address_line1"]),
                             Address2 = Convert.ToString(rd["address_line2"]),
@@ -295,21 +298,21 @@ namespace WingGateway.Classes
                             countryname = Convert.ToString(rd["countryname"]),
                             tcspid = Convert.ToString(rd["spid"]),
                             tcspname = Convert.ToString(rd["spname"]),
-                            tcspnid=Convert.ToInt32(rd["tcspnid"]),
-                            block =  (enmIsKycUpdated)Convert.ToInt32(rd["isblock"]),
+                            tcspnid = Convert.ToInt32(rd["tcspnid"]),
+                            block = (enmIsKycUpdated)Convert.ToInt32(rd["isblock"]),
                             terminate = (enmIsKycUpdated)Convert.ToInt32(rd["isterminate"]),
                             stateid = Convert.ToInt32(rd["stateid"]),
-                            isactive= (enmApprovalType)Convert.ToInt32(rd["IsActive"]),
+                            isactive = (enmApprovalType)Convert.ToInt32(rd["IsActive"]),
                             cityid = Convert.ToInt32(rd["cityid"]),
                             countryid = Convert.ToInt32(rd["countryid"]),
                             gender_id = (enmGender)Convert.ToInt32(rd["gender"]),
-                            
-                            
-                        });
-                        }
-                        }
 
+
+                        });
                     }
+                }
+
+            }
 
             return returnData;
 
@@ -356,7 +359,7 @@ namespace WingGateway.Classes
                 };
                 if (mdl.Isterminate)
                 {
-                   mdl.icon = "fas fa-ban";
+                    mdl.icon = "fas fa-ban";
                 }
                 else
                 {
@@ -373,11 +376,11 @@ namespace WingGateway.Classes
             }
         }
 
-        public List<mdlTcMarkUpWraper> GetMarkUpDetails(int tcnid)
+        public async Task <List<mdlTcMarkUpWraper>> GetMarkUpDetails(int tcnid)
         {
             List<mdlTcMarkUpWraper> returnData = new List<mdlTcMarkUpWraper>();
-            {
-                returnData = _context.TblTcMarkUp.Where(p => p.TcNid >= tcnid)
+            
+                returnData = await _context.TblTcMarkUp.Where(p => p.TcNid >= tcnid)
                 .Select(p => new mdlTcMarkUpWraper
                 {
                     DetailId = p.DetailId,
@@ -386,12 +389,10 @@ namespace WingGateway.Classes
                     TcId = p.tblRegistration.Id,
                     RequestDate = p.CreatedDt,
                     ModifiedDate = p.LastModifieddate
-                }).ToList();
-            }
-
+                }).ToListAsync();
             return returnData;
         }
 
     }
 
-    }
+}

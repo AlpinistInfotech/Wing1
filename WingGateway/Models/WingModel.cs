@@ -69,12 +69,8 @@ namespace WingGateway.Models
         public mdlFilterModel FilterModel { get; set; }
         public List<mdlTcBankWraper> TcBankWrapers { get; set; }
     }
-    public class mdlTcMarkUpReportWraper
-    {
-        public List<mdlTcMarkUpWraper> TcMarkUpWrapers { get; set; }
-    }
-
-
+    
+    
     public class mdlTcBankApprovalWraper : mdlBank
     {
         public mdlApprovalForm approval { get; set; }

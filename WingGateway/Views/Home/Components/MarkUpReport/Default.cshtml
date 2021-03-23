@@ -1,4 +1,4 @@
-﻿@model WingGateway.Models.mdlMarkUp
+﻿@model List<mdlTcMarkUpWraper>
 
 <div class="card-body">
     <table id="tblMarkUpDetails" class="table table-bordered table-hover">
@@ -13,26 +13,18 @@
             </tr>
         </thead>
         <tbody>
-            @for (int i = 0; i < Model.TcMarkUpWrapers.Count(); i++)
+            @for (int i = 0; i < Model.Count(); i++)
             {
                 <tr>
 
-                    <td style="display:none"><a href="javascript:DoPost(@Model.TcMarkUpWrapers[i].TcId)" data-toggle="tooltip" title="Edit Record !"><i class="nav-icon fas fa-edit"></i></a></td>
-                    <td>@Model.TcMarkUpWrapers[i].BookingType</td>
-                    <td>@Model.TcMarkUpWrapers[i].MarkUpValue</td>
+                    <td style="display:none"><a href="javascript:DoPost(@Model[i].TcId)" data-toggle="tooltip" title="Edit Record !"><i class="nav-icon fas fa-edit"></i></a></td>
+                    <td>@Model[i].BookingType</td>
+                    <td>@Model[i].MarkUpValue</td>
 
-                    <td>@(Model.TcMarkUpWrapers[i].RequestDate.ToString("dd-MMM-yyyy hh:mm tt"))</td>
-                    <td>@(Model.TcMarkUpWrapers[i].ModifiedDate.ToString("dd-MMM-yyyy hh:mm tt"))</td>
+                    <td>@(Model[i].RequestDate.ToString("dd-MMM-yyyy hh:mm tt"))</td>
+                    <td>@(Model[i].ModifiedDate.ToString("dd-MMM-yyyy hh:mm tt"))</td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
-@section Scripts {
-    <script src="~/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            bsCustomFileInput.init();
-        });
-    </script>
-}

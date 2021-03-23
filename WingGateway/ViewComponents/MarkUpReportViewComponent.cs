@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using WingGateway.Models;
 using Microsoft.Extensions.Configuration;
+using WingGateway.Classes;
 
 namespace WingGateway.ViewComponents
 {
@@ -14,17 +15,17 @@ namespace WingGateway.ViewComponents
     {
         private readonly DBContext _context;
         private readonly IConfiguration _config;
-        public MarkUpReportViewComponent(DBContext context, IConfiguration config)
+        private readonly ICurrentUsers _currentUsers;
+        public MarkUpReportViewComponent(DBContext context, IConfiguration config, ICurrentUsers currentUsers)
         {
             _context = context;
             _config = config;
+            _currentUsers = currentUsers;
         }
-        public async Task<IViewComponentResult> InvokeAsync(int TcNid)
+        public async Task<IViewComponentResult> InvokeAsync([FromServices] IConsProfile consProfile)
         {
-            mdlTcMarkUpReportWraper returnData = new mdlTcMarkUpReportWraper();
-            WingGateway.Classes.ConsProfile consProfile = new Classes.ConsProfile(_context, _config);
-            returnData.TcMarkUpWrapers = consProfile.GetMarkUpDetails(TcNid);
-            return View(returnData);
+            var result = await consProfile.GetMarkUpDetails(_currentUsers.TcNid);
+            return  View(result);
         }
 
     }
