@@ -37,5 +37,23 @@ namespace WingApi.Controllers
             return mdlRs;
         }
 
+        [HttpPost]
+        [Route("FareQuote")]
+        public async Task<ActionResult<mdlFareQuotResponse>> FareQuote([FromServices] ITekTravel tekTravel,
+            [FromServices] ITripJack tripJack, mdlFareQuotRequest mdlRq)
+        {
+            mdlFareQuotResponse mdlRs = new mdlFareQuotResponse();
+            switch (mdlRq.Provider) 
+            {
+                case enmServiceProvider.TBO:
+                    mdlRs =await tekTravel.FareQuoteAsync(mdlRq);
+                    break;
+                case enmServiceProvider.TripJack:
+                    mdlRs = await tripJack.FareQuoteAsync(mdlRq);
+                    break;
+            }
+            return mdlRs;
+        }
+
     }
 }

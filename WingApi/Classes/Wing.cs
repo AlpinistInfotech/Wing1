@@ -318,8 +318,41 @@ namespace WingApi.Classes
 
     #endregion
 
+
+    #region *********************** Fare Quotation **********************
+
+        public class mdlFareQuotRequest
+        {
+            public string EndUserIp { get; set; }            
+            public string TraceId { get; set; }
+            public string []ResultIndex { get; set; }
+            public enmServiceProvider Provider { get; set; }
+        }
+
+        public class mdlFareQuotResponseWraper
+        {
+            public mdlFareQuotResponse Response { get; set; }
+        }
+        public class mdlFareQuotResponse
+        {
+            public int ResponseStatus { get; set; }
+            public enmServiceProvider ServiceProvider { get; set; }
+            public bool IsPriceChanged { get; set; }
+            public mdlError Error { get; set; }
+            public string TraceId { get; set; }
+            public string Origin { get; set; }
+            public string Destination { get; set; }
+            public mdlSearchResult[][] Results { get; set; }
+        }
+
+    #endregion
+
+
+
     public interface IWing
     {
         Task<mdlSearchResponse> SearchAsync(mdlSearchRequest request);
+        Task<mdlFareQuotResponse> FareQuoteAsync(mdlFareQuotRequest request);
+        
     }
 }

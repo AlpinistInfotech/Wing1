@@ -72,7 +72,7 @@ namespace WingApi.Classes.TripJack
                         {
                             ResultIB.Add(System.Text.Json.JsonSerializer.Deserialize<mdlSearchResult>(dt.JsonData)); ;
                         }
-                        
+
                     }
                     AllResults.Add(ResultOB.ToArray());
                     AllResults.Add(ResultIB.ToArray());
@@ -111,20 +111,20 @@ namespace WingApi.Classes.TripJack
             SearchresultWraper mdl = null;
             mdlSearchResponse mdlS = null;
             string tboUrl = _config["TripJack:API:Search"];
-            
-            StartSendRequest:            
+
+            StartSendRequest:
             string jsonString = System.Text.Json.JsonSerializer.Serialize(SearchRequestMap(request));
             var HaveResponse = GetResponse(jsonString, tboUrl);
             if (HaveResponse.ErrorCode == 0)
             {
-                mdl = (System.Text.Json.JsonSerializer.Deserialize<SearchresultWraper>(HaveResponse.Message));                
+                mdl = (System.Text.Json.JsonSerializer.Deserialize<SearchresultWraper>(HaveResponse.Message));
             }
 
             if (mdl != null)
             {
-                 if (mdl.status.success)//success
+                if (mdl.status.success)//success
                 {
-                    
+
                     List<mdlSearchResult[]> AllResults = new List<mdlSearchResult[]>();
                     List<mdlSearchResult> ResultOB = new List<mdlSearchResult>();
                     List<mdlSearchResult> ResultIB = new List<mdlSearchResult>();
@@ -134,24 +134,24 @@ namespace WingApi.Classes.TripJack
                         {
                             foreach (var dt in mdl.searchResult.tripInfos.ONWARD)
                             {
-                                ResultOB.AddRange(SearchResultMap(request, dt, "OB"));
+                                ResultOB.AddRange(SearchResultMap(request.AdultCount, request.ChildCount,request.InfantCount, dt, "OB"));
                             }
-                        }                        
+                        }
                         if (mdl.searchResult.tripInfos.RETURN != null)
                         {
                             foreach (var dt in mdl.searchResult.tripInfos.RETURN)
                             {
-                                ResultIB.AddRange(SearchResultMap(request, dt, "IB"));
+                                ResultIB.AddRange(SearchResultMap(request.AdultCount, request.ChildCount, request.InfantCount, dt, "IB"));
                             }
                         }
                         if (mdl.searchResult.tripInfos.COMBO != null)
                         {
                             foreach (var dt in mdl.searchResult.tripInfos.COMBO)
                             {
-                                ResultOB.AddRange(SearchResultMap(request, dt, "OB"));
+                                ResultOB.AddRange(SearchResultMap(request.AdultCount, request.ChildCount, request.InfantCount, dt, "OB"));
                             }
                         }
-                        
+
                     }
                     AllResults.Add(ResultOB.ToArray());
                     AllResults.Add(ResultIB.ToArray());
@@ -159,7 +159,7 @@ namespace WingApi.Classes.TripJack
                     mdlS = new mdlSearchResponse()
                     {
                         ServiceProvider = enmServiceProvider.TripJack,
-                        TraceId = "",
+                        TraceId = Guid.NewGuid().ToString(),
                         ResponseStatus = 1,
                         Error = new mdlError()
                         {
@@ -170,8 +170,8 @@ namespace WingApi.Classes.TripJack
                         Destination = request.Segments[0].Destination,
                         Results = AllResults.ToArray()
                     };
-                    var result = Search_SaveAsync(request, ResultOB.ToArray(), ResultIB.ToArray());
-                     await result;
+                    var result = Search_SaveAsync(request, mdlS.TraceId, ResultOB.ToArray(), ResultIB.ToArray());
+                    await result;
                 }
                 else
                 {
@@ -204,12 +204,12 @@ namespace WingApi.Classes.TripJack
         }
 
 
-        private mdlSearchResult[] SearchResultMap(mdlSearchRequest request, ONWARD_RETURN_COMBO sr,string ResultType)
+        private mdlSearchResult[] SearchResultMap(int AdultCount,int ChildCount,int InfantCount, ONWARD_RETURN_COMBO sr, string ResultType)
         {
 
             List<mdlSearchResult> mdls = new List<mdlSearchResult>();
 
-            var FirstSegment =sr.sI.FirstOrDefault();
+            var FirstSegment = sr.sI.FirstOrDefault();
             foreach (var price in sr.totalPriceList)
             {
                 mdlSearchResult mdl = new mdlSearchResult();
@@ -224,11 +224,11 @@ namespace WingApi.Classes.TripJack
                 if (FirstSegment != null)
                 {
                     mdl.IsLCC = FirstSegment.fD.aI.isLcc;
-                    mdl.IsRefundable = (price.fd.ADULT.rT==1 || price.fd.ADULT.rT == 2)?true:false;
+                    mdl.IsRefundable = (price.fd.ADULT.rT == 1 || price.fd.ADULT.rT == 2) ? true : false;
                 }
                 mdl.IsPanRequiredAtBook = false;
                 mdl.IsPanRequiredAtTicket = false;
-                mdl.IsPassportRequiredAtBook =  false;
+                mdl.IsPassportRequiredAtBook = false;
                 mdl.IsPassportRequiredAtTicket = false;
                 mdl.GSTAllowed = false;
                 mdl.IsCouponAppilcable = false;
@@ -241,98 +241,98 @@ namespace WingApi.Classes.TripJack
                 mdl.IsUpsellAllowed = false;
                 mdl.Fare = new mdlFare();
 
-                
-                    List<mdlFarebreakdown> mdlFarebreakdowns = new List<mdlFarebreakdown>();
-                    mdlFarebreakdown AdultFare = new mdlFarebreakdown()
+
+                List<mdlFarebreakdown> mdlFarebreakdowns = new List<mdlFarebreakdown>();
+                mdlFarebreakdown AdultFare = new mdlFarebreakdown()
+                {
+                    Currency = "INR",
+                    PassengerType = enmPassengerType.Adult,
+                    PassengerCount = AdultCount,
+                    BaseFare = price.fd.ADULT.fC.BF,
+                    Tax = price.fd.ADULT.fC.TAF,
+                    YQTax = price.fd.ADULT.afC.TAF.YQ,
+                    AdditionalTxnFeeOfrd = 0,
+                    AdditionalTxnFeePub = 0,
+                    PGCharge = 0,
+                    SupplierReissueCharges = 0,
+                };
+                mdlFarebreakdowns.Add(AdultFare);
+                if (price.fd.CHILD != null)
+                {
+                    mdlFarebreakdown ChildFare = new mdlFarebreakdown()
                     {
                         Currency = "INR",
-                        PassengerType = enmPassengerType.Adult,
-                        PassengerCount = request.AdultCount,
-                        BaseFare = price.fd.ADULT.fC.BF,
-                        Tax = price.fd.ADULT.fC.TAF,
-                        YQTax= price.fd.ADULT.afC.TAF.YQ,
+                        PassengerType = enmPassengerType.Child,
+                        PassengerCount = ChildCount,
+                        BaseFare = price.fd.CHILD.fC.BF,
+                        Tax = price.fd.CHILD.fC.TAF,
+                        YQTax = price.fd.CHILD.afC.TAF.YQ,
                         AdditionalTxnFeeOfrd = 0,
                         AdditionalTxnFeePub = 0,
                         PGCharge = 0,
                         SupplierReissueCharges = 0,
                     };
-                    mdlFarebreakdowns.Add(AdultFare);
-                    if (price.fd.CHILD != null)
+                }
+                if (price.fd.INFANT != null)
+                {
+                    mdlFarebreakdown InfantFare = new mdlFarebreakdown()
                     {
-                        mdlFarebreakdown ChildFare = new mdlFarebreakdown()
-                        {
-                            Currency = "INR",
-                            PassengerType = enmPassengerType.Child,
-                            PassengerCount = request.ChildCount,
-                            BaseFare = price.fd.CHILD.fC.BF,
-                            Tax = price.fd.CHILD.fC.TAF,
-                            YQTax = price.fd.CHILD.afC.TAF.YQ,
-                            AdditionalTxnFeeOfrd = 0,
-                            AdditionalTxnFeePub = 0,
-                            PGCharge = 0,
-                            SupplierReissueCharges = 0,
-                        };
-                    }
-                    if (price.fd.INFANT != null)
-                    {
-                        mdlFarebreakdown InfantFare = new mdlFarebreakdown()
-                        {
-                            Currency = "INR",
-                            PassengerType = enmPassengerType.Infant,
-                            PassengerCount = request.InfantCount,
-                            BaseFare = price.fd.INFANT.fC.BF,
-                            Tax = price.fd.INFANT.fC.TAF,
-                            YQTax = price.fd.INFANT.afC.TAF.YQ,
-                            AdditionalTxnFeeOfrd = 0,
-                            AdditionalTxnFeePub = 0,
-                            PGCharge = 0,
-                            SupplierReissueCharges = 0,
-                        };
-                    }
+                        Currency = "INR",
+                        PassengerType = enmPassengerType.Infant,
+                        PassengerCount = InfantCount,
+                        BaseFare = price.fd.INFANT.fC.BF,
+                        Tax = price.fd.INFANT.fC.TAF,
+                        YQTax = price.fd.INFANT.afC.TAF.YQ,
+                        AdditionalTxnFeeOfrd = 0,
+                        AdditionalTxnFeePub = 0,
+                        PGCharge = 0,
+                        SupplierReissueCharges = 0,
+                    };
+                }
 
-                    mdl.FareBreakdown = mdlFarebreakdowns.ToArray();
+                mdl.FareBreakdown = mdlFarebreakdowns.ToArray();
 
-                    List<Passenger> passengers = new List<Passenger>();
-                    passengers.Add(price.fd.ADULT);
-                    passengers.Add(price.fd.CHILD);
-                    passengers.Add(price.fd.INFANT);
+                List<Passenger> passengers = new List<Passenger>();
+                passengers.Add(price.fd.ADULT);
+                passengers.Add(price.fd.CHILD);
+                passengers.Add(price.fd.INFANT);
 
-                    List<mdlTaxbreakup> mdlTaxbreakups = new List<mdlTaxbreakup>();
-                    mdlTaxbreakups.Add(new mdlTaxbreakup() { key="MF", value=passengers.Select(p => p.afC.TAF.MF).Sum() });
-                    mdlTaxbreakups.Add(new mdlTaxbreakup() { key = "OT", value = passengers.Select(p => p.afC.TAF.OT).Sum() });
-                    mdlTaxbreakups.Add(new mdlTaxbreakup() { key = "MFT", value = passengers.Select(p => p.afC.TAF.MFT).Sum() });
-                    mdlTaxbreakups.Add(new mdlTaxbreakup() { key = "AGST", value = passengers.Select(p => p.afC.TAF.AGST).Sum() });
-                    mdlTaxbreakups.Add(new mdlTaxbreakup() { key = "YQ", value = passengers.Select(p => p.afC.TAF.YQ).Sum() });
-                    mdlTaxbreakups.Add(new mdlTaxbreakup() { key = "YR", value = passengers.Select(p => p.afC.TAF.YR).Sum() });
-                    mdlTaxbreakups.Add(new mdlTaxbreakup() { key = "WO", value = passengers.Select(p => p.afC.TAF.WO).Sum() });
+                List<mdlTaxbreakup> mdlTaxbreakups = new List<mdlTaxbreakup>();
+                mdlTaxbreakups.Add(new mdlTaxbreakup() { key = "MF", value = passengers.Select(p => p.afC.TAF.MF).Sum() });
+                mdlTaxbreakups.Add(new mdlTaxbreakup() { key = "OT", value = passengers.Select(p => p.afC.TAF.OT).Sum() });
+                mdlTaxbreakups.Add(new mdlTaxbreakup() { key = "MFT", value = passengers.Select(p => p.afC.TAF.MFT).Sum() });
+                mdlTaxbreakups.Add(new mdlTaxbreakup() { key = "AGST", value = passengers.Select(p => p.afC.TAF.AGST).Sum() });
+                mdlTaxbreakups.Add(new mdlTaxbreakup() { key = "YQ", value = passengers.Select(p => p.afC.TAF.YQ).Sum() });
+                mdlTaxbreakups.Add(new mdlTaxbreakup() { key = "YR", value = passengers.Select(p => p.afC.TAF.YR).Sum() });
+                mdlTaxbreakups.Add(new mdlTaxbreakup() { key = "WO", value = passengers.Select(p => p.afC.TAF.WO).Sum() });
 
 
 
-                    mdl.Fare.Currency = "INR";
-                    mdl.Fare.BaseFare = mdlFarebreakdowns.Select(p=>p.BaseFare).Sum();
-                    mdl.Fare.Tax = mdlFarebreakdowns.Select(p => p.Tax).Sum(); 
-                    mdl.Fare.TaxBreakup = mdlTaxbreakups.ToArray();
-                    mdl.Fare.YQTax = mdlFarebreakdowns.Select(p => p.YQTax).Sum();
-                    mdl.Fare.AdditionalTxnFeeOfrd = 0;
-                    mdl.Fare.AdditionalTxnFeePub = 0;
-                    mdl.Fare.PGCharge = 0;
-                    mdl.Fare.OtherCharges = 0;
-                    mdl.Fare.ChargeBU = null;
-                    mdl.Fare.Discount = 0;
-                    mdl.Fare.PublishedFare = passengers.Select(p=>p.fC.TF).Sum();
-                    mdl.Fare.CommissionEarned = passengers.Select(p => p.fC.NCM).Sum(); 
-                    mdl.Fare.PLBEarned = 0;
-                    mdl.Fare.IncentiveEarned = 0;
-                    mdl.Fare.OfferedFare = passengers.Select(p => p.fC.NF).Sum();
+                mdl.Fare.Currency = "INR";
+                mdl.Fare.BaseFare = mdlFarebreakdowns.Select(p => p.BaseFare).Sum();
+                mdl.Fare.Tax = mdlFarebreakdowns.Select(p => p.Tax).Sum();
+                mdl.Fare.TaxBreakup = mdlTaxbreakups.ToArray();
+                mdl.Fare.YQTax = mdlFarebreakdowns.Select(p => p.YQTax).Sum();
+                mdl.Fare.AdditionalTxnFeeOfrd = 0;
+                mdl.Fare.AdditionalTxnFeePub = 0;
+                mdl.Fare.PGCharge = 0;
+                mdl.Fare.OtherCharges = 0;
+                mdl.Fare.ChargeBU = null;
+                mdl.Fare.Discount = 0;
+                mdl.Fare.PublishedFare = passengers.Select(p => p.fC.TF).Sum();
+                mdl.Fare.CommissionEarned = passengers.Select(p => p.fC.NCM).Sum();
+                mdl.Fare.PLBEarned = 0;
+                mdl.Fare.IncentiveEarned = 0;
+                mdl.Fare.OfferedFare = passengers.Select(p => p.fC.NF).Sum();
 
-                    mdl.Fare.TdsOnCommission = 0;
-                    mdl.Fare.TdsOnPLB = 0;
-                    mdl.Fare.TdsOnIncentive =0;
-                    mdl.Fare.ServiceFee = 0;
-                    mdl.Fare.TotalBaggageCharges = passengers.Select(p=>p.fC.SSRP).Sum();
-                    mdl.Fare.TotalMealCharges = 0;
-                    mdl.Fare.TotalSeatCharges = 0;
-                    mdl.Fare.TotalSpecialServiceCharges = 0;
+                mdl.Fare.TdsOnCommission = 0;
+                mdl.Fare.TdsOnPLB = 0;
+                mdl.Fare.TdsOnIncentive = 0;
+                mdl.Fare.ServiceFee = 0;
+                mdl.Fare.TotalBaggageCharges = passengers.Select(p => p.fC.SSRP).Sum();
+                mdl.Fare.TotalMealCharges = 0;
+                mdl.Fare.TotalSeatCharges = 0;
+                mdl.Fare.TotalSpecialServiceCharges = 0;
                 //mdl.LastTicketDate = sr.LastTicketDate;            
                 List<mdlSegmentResponse> SegmentsResponse = new List<mdlSegmentResponse>();
                 foreach (var sg in sr.sI)
@@ -340,9 +340,9 @@ namespace WingApi.Classes.TripJack
                     mdlSegmentResponse segmentsRespons = new mdlSegmentResponse();
                     segmentsRespons.Baggage = price.fd.ADULT.bI.iB;
                     segmentsRespons.Baggage = price.fd.ADULT.bI.cB;
-                    
-                    segmentsRespons.CabinClass = (enmCabinClass) Enum.Parse(typeof(enmCabinClass), price.fd.ADULT.cc,true);
-                    
+
+                    segmentsRespons.CabinClass = (enmCabinClass)Enum.Parse(typeof(enmCabinClass), price.fd.ADULT.cc, true);
+
                     segmentsRespons.TripIndicator = 1;
                     segmentsRespons.SegmentIndicator = sg.sN;
                     segmentsRespons.Airline = new mdlAirline()
@@ -407,7 +407,7 @@ namespace WingApi.Classes.TripJack
 
                 List<mdlSegmentResponse[]> _mdlSegmentResponses = new List<mdlSegmentResponse[]>();
                 _mdlSegmentResponses.Add(SegmentsResponse.ToArray());
-                mdl.Segments = _mdlSegmentResponses.ToArray();                
+                mdl.Segments = _mdlSegmentResponses.ToArray();
                 mdls.Add(mdl);
             }
 
@@ -449,7 +449,7 @@ namespace WingApi.Classes.TripJack
                 var rsp = webResponse.GetResponseStream();
                 if (rsp == null)
                 {
-                    mdl.Message = "No Response Found";                    
+                    mdl.Message = "No Response Found";
                 }
                 using (StreamReader readStream = new StreamReader(new GZipStream(rsp, CompressionMode.Decompress)))
                 {
@@ -509,33 +509,34 @@ namespace WingApi.Classes.TripJack
             Searchquery mdl = new Searchquery()
             {
                 cabinClass = enmCabin.ToString(),
-                paxInfo= new Paxinfo() { 
-                    ADULT= request.AdultCount,
-                    CHILD=request.ChildCount,
-                    INFANT=request.InfantCount
-                },    
-                routeInfos= routeinfos.ToArray(),
-                searchModifiers = new Searchmodifiers(){
-                    isDirectFlight=true,
-                    isConnectingFlight= !request.DirectFlight
+                paxInfo = new Paxinfo() {
+                    ADULT = request.AdultCount,
+                    CHILD = request.ChildCount,
+                    INFANT = request.InfantCount
                 },
-               
+                routeInfos = routeinfos.ToArray(),
+                searchModifiers = new Searchmodifiers() {
+                    isDirectFlight = true,
+                    isConnectingFlight = !request.DirectFlight
+                },
+
             };
 
             if (request.PreferredAirlines != null)
-            {                
-                mdl.preferredAirline=request.PreferredAirlines.Select(p => new cityorairport { code = p }).ToArray();
+            {
+                mdl.preferredAirline = request.PreferredAirlines.Select(p => new cityorairport { code = p }).ToArray();
             }
 
             SearchqueryWraper mdlW = new SearchqueryWraper()
             {
-                searchQuery=mdl
+                searchQuery = mdl
             };
             return mdlW;
         }
 
+        
 
-        private async Task<bool> Search_SaveAsync(mdlSearchRequest request,  mdlSearchResult[] OBresponse, mdlSearchResult[] IBresponse)
+        private async Task<bool> Search_SaveAsync(mdlSearchRequest request, string TraceId, mdlSearchResult[] OBresponse, mdlSearchResult[] IBresponse)
         {
 
             int ExpirationMinute = 14;
@@ -554,26 +555,162 @@ namespace WingApi.Classes.TripJack
             }
             DateTime TickGeration = DateTime.Now;
 
-             
+
 
             tblTripJackTravelDetail td = new tblTripJackTravelDetail()
             {
                 TravelDate = request.Segments[0].TravelDt,
                 CabinClass = request.Segments[0].FlightCabinClass,
                 Origin = request.Segments[0].Origin,
-                Destination = request.Segments[0].Destination,                
+                Destination = request.Segments[0].Destination,
                 MinPublishFare = minFare,
                 JourneyType = request.JourneyType,
                 AdultCount = request.AdultCount,
                 ChildCount = request.ChildCount,
                 InfantCount = request.InfantCount,
                 GenrationDt = TickGeration,
+                TraceId = TraceId,
                 ExpireDt = TickGeration.AddMinutes(ExpirationMinute),
                 tblTripJackTravelDetailResult = mdlDetail,
             };
             _context.tblTripJackTravelDetail.Add(td);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+
+        private async Task RemoveFromDb(mdlFareQuotRequest request)
+        {
+            DateTime currentDate = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));
+            var Existing = _context.tblTripJackTravelDetail.Where(p => p.TraceId == request.TraceId && p.ExpireDt > currentDate).FirstOrDefault();
+            if (Existing != null)
+            {
+                _context.Database.ExecuteSqlRaw("delete from tblTripJackTravelDetailResult where TravelDetailId=@p0", parameters: new[] { Existing.TravelDetailId });
+                _context.Database.ExecuteSqlRaw("delete from tblTripJackTravelDetail where TravelDetailId=@p0", parameters: new[] { Existing.TravelDetailId });
+                await _context.SaveChangesAsync();
+            }
+        }
+
+
+        public async Task<mdlFareQuotResponse> FareQuoteAsync(mdlFareQuotRequest request)
+        {
+            mdlFareQuotResponse mdl = await FareQuoteFromTripJacAsync(request);
+            if (mdl.IsPriceChanged)
+            {
+                await RemoveFromDb(request);
+            }
+            return mdl;
+        }
+
+
+        private FareQuotRequest FareQuoteRequestMap(mdlFareQuotRequest request)
+        {
+
+            FareQuotRequest mdl = new FareQuotRequest()
+            {
+                priceIds= request.ResultIndex
+            };
+            return mdl;
+        }
+
+        private async Task<mdlFareQuotResponse> FareQuoteFromTripJacAsync(mdlFareQuotRequest request)
+        {
+
+            mdlFareQuotResponse mdlS = null;
+            Searchresult mdl = null;
+
+            string tboUrl = _config["TripJack:API:FareQuote"];            
+            string jsonString = System.Text.Json.JsonSerializer.Serialize(FareQuoteRequestMap(request));
+            var HaveResponse = GetResponse(jsonString, tboUrl);
+            if (HaveResponse.ErrorCode == 0)
+            {
+                mdl = (System.Text.Json.JsonSerializer.Deserialize<Searchresult>(HaveResponse.Message));
+            }
+
+            if (mdl != null)
+            {
+                if (mdl.status.success)//success
+                {
+                    List<mdlSearchResult[]> AllResults = new List<mdlSearchResult[]>();
+                    List<mdlSearchResult> ResultOB = new List<mdlSearchResult>();
+                    List<mdlSearchResult> ResultIB = new List<mdlSearchResult>();
+
+                    if (mdl.tripInfos != null)
+                    {
+                        int AdultCount = 0,ChildCount=0,InfantCount=0;
+                        AdultCount = mdl.searchQuery?.paxInfo?.ADULT??0;
+                        ChildCount = mdl.searchQuery?.paxInfo?.CHILD ?? 0;
+                        InfantCount = mdl.searchQuery?.paxInfo?.INFANT ?? 0;
+
+                        if (mdl.tripInfos.ONWARD != null)
+                        {
+                            foreach (var dt in mdl.tripInfos.ONWARD)
+                            {
+                                ResultOB.AddRange(SearchResultMap(AdultCount,ChildCount,InfantCount, dt, "OB"));
+                            }
+                        }
+                        if (mdl.tripInfos.RETURN != null)
+                        {
+                            foreach (var dt in mdl.tripInfos.RETURN)
+                            {
+                                ResultIB.AddRange(SearchResultMap(AdultCount, ChildCount, InfantCount, dt, "IB"));
+                            }
+                        }
+                        if (mdl.tripInfos.COMBO != null)
+                        {
+                            foreach (var dt in mdl.tripInfos.COMBO)
+                            {
+                                ResultOB.AddRange(SearchResultMap(AdultCount, ChildCount, InfantCount, dt, "OB"));
+                            }
+                        }
+
+                    }
+                    AllResults.Add(ResultOB.ToArray());
+                    AllResults.Add(ResultIB.ToArray());
+
+                    mdlS = new mdlFareQuotResponse()
+                    {
+                        ServiceProvider = enmServiceProvider.TripJack,
+                        TraceId = Guid.NewGuid().ToString(),
+                        ResponseStatus = 1,
+                        Error = new mdlError()
+                        {
+                            ErrorCode = 0,
+                            ErrorMessage = "Unable to Process"
+                        },
+                        Origin = mdl.searchQuery.routeInfos.FirstOrDefault()?.fromCityOrAirport.code,
+                        Destination = mdl.searchQuery.routeInfos.FirstOrDefault()?.toCityOrAirport.code,
+                        Results = AllResults.ToArray()
+                    };
+                }
+                else
+                {
+                    mdlS = new mdlFareQuotResponse()
+                    {
+                        ResponseStatus = 3,
+                        Error = new mdlError()
+                        {
+                            ErrorCode = mdl.status.httpStatus,
+                            ErrorMessage = "Unable to Process",
+                        }
+                    };
+                }
+
+            }
+            else
+            {
+                mdlS = new mdlFareQuotResponse()
+                {
+                    ResponseStatus = 100,
+                    Error = new mdlError()
+                    {
+                        ErrorCode = 100,
+                        ErrorMessage = "Unable to Process",
+                    }
+                };
+            }
+
+            return mdlS;
         }
 
 
@@ -646,6 +783,12 @@ namespace WingApi.Classes.TripJack
         public class Searchresult
         {
             public Tripinfos tripInfos { get; set; }
+            public Alert[] alerts { get; set; }
+            public Searchquery searchQuery { get; set; }
+            public string bookingId { get; set; }
+            public Totalpriceinfo totalPriceInfo { get; set; }
+            public Status status { get; set; }
+            public Conditions conditions { get; set; }
         }
 
         public class Tripinfos
@@ -675,6 +818,7 @@ namespace WingApi.Classes.TripJack
             public bool iand { get; set; }
             public int sN { get; set; }
             public Ob oB { get; set; }
+            public SsrInfo ssrInfo { get; set; }
         }
 
         public class Fd
@@ -767,7 +911,7 @@ namespace WingApi.Classes.TripJack
             public double IGST { get; set; }
             public double NCM { get; set; }
             public double SSRP { get; set; }
-            
+
         }
 
         public class Afc
@@ -778,7 +922,7 @@ namespace WingApi.Classes.TripJack
         public class NCM
         {
             public double TDS { get; set; }
-            public double OC { get; set; }            
+            public double OC { get; set; }
         }
         public class TAF
         {
@@ -807,11 +951,79 @@ namespace WingApi.Classes.TripJack
         {
         }
 
+        public class SsrInfo
+        {
+            public SsrServices[] SEAT { get; set; }
+            public SsrServices[] MEAL { get; set; }
+            public SsrServices[] EXTRASERVICES { get; set; }
+        }
+        public class SsrServices
+        {
+            public string code { get; set; }
+            public double amount { get; set; }
+            public string desc { get; set; }
+
+        }
+
+        public class Alert
+        {
+            public double oldFare { get; set; }
+            public double newFare { get; set; }
+            public string type { get; set; }
+        }
+        public class Pc
+        {
+            public string code { get; set; }
+            public string name { get; set; }
+            public bool isLcc { get; set; }
+        }
+        public class Conditions
+        {
+            public object[] ffas { get; set; }
+            public bool isa { get; set; }
+            public Dob dob { get; set; }
+            public bool isBA { get; set; }
+            public int st { get; set; }
+            public DateTime sct { get; set; }
+            public Gst gst { get; set; }
+        }
+        public class Dob
+        {
+            public bool adobr { get; set; }
+            public bool cdobr { get; set; }
+            public bool idobr { get; set; }
+        }
+
+        public class Gst
+        {
+            public bool gstappl { get; set; }
+            public bool igm { get; set; }
+        }
+
+        public class Totalpriceinfo
+        {
+            public Totalfaredetail totalFareDetail { get; set; }
+        }
+
+        public class Totalfaredetail
+        {
+            public Fc fC { get; set; }
+            public Afc afC { get; set; }
+        }
+
+
         #endregion
 
 
-        
-
         #endregion
+
+
+        #region *******************Fare Quote Class***************************
+        public class FareQuotRequest
+        {
+            public string[] priceIds { get; set; }
+        }
+        #endregion
+
     }
 }
