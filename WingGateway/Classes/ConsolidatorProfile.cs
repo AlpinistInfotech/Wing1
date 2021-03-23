@@ -380,7 +380,7 @@ namespace WingGateway.Classes
         {
             List<mdlTcMarkUpWraper> returnData = new List<mdlTcMarkUpWraper>();
             
-                returnData = await _context.TblTcMarkUp.Where(p => p.TcNid >= tcnid)
+                returnData.AddRange( await _context.TblTcMarkUp.Where(p => p.TcNid == tcnid)
                 .Select(p => new mdlTcMarkUpWraper
                 {
                     DetailId = p.DetailId,
@@ -389,7 +389,7 @@ namespace WingGateway.Classes
                     TcId = p.tblRegistration.Id,
                     RequestDate = p.CreatedDt,
                     ModifiedDate = p.LastModifieddate
-                }).ToListAsync();
+                }).ToListAsync());
             return returnData;
         }
 

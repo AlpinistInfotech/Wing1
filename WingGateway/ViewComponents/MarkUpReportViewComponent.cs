@@ -16,15 +16,17 @@ namespace WingGateway.ViewComponents
         private readonly DBContext _context;
         private readonly IConfiguration _config;
         private readonly ICurrentUsers _currentUsers;
-        public MarkUpReportViewComponent(DBContext context, IConfiguration config, ICurrentUsers currentUsers)
+        private readonly IConsProfile _consProfile;
+        public MarkUpReportViewComponent(DBContext context, IConfiguration config, ICurrentUsers currentUsers, IConsProfile consProfile)
         {
             _context = context;
             _config = config;
             _currentUsers = currentUsers;
+            _consProfile = consProfile;
         }
-        public async Task<IViewComponentResult> InvokeAsync([FromServices] IConsProfile consProfile)
+        public async Task<IViewComponentResult> InvokeAsync()
         {
-            var result = await consProfile.GetMarkUpDetails(_currentUsers.TcNid);
+            var result = await _consProfile.GetMarkUpDetails(_currentUsers.TcNid);
             return  View(result);
         }
 
