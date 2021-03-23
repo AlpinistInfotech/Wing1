@@ -1,0 +1,38 @@
+﻿@model WingGateway.Models.mdlMarkUp
+
+<div class="card-body">
+    <table id="tblMarkUpDetails" class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th style="display:none">Edit</th>
+                <th>Booking Type</th>
+                <th style="width:200px">MarkUp Value</th>
+                <th style="width:150px">Request Date</th>
+                <th style="width:150px">Modified Date</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.TcMarkUpWrapers.Count(); i++)
+            {
+                <tr>
+
+                    <td style="display:none"><a href="javascript:DoPost(@Model.TcMarkUpWrapers[i].TcId)" data-toggle="tooltip" title="Edit Record !"><i class="nav-icon fas fa-edit"></i></a></td>
+                    <td>@Model.TcMarkUpWrapers[i].BookingType</td>
+                    <td>@Model.TcMarkUpWrapers[i].MarkUpValue</td>
+
+                    <td>@(Model.TcMarkUpWrapers[i].RequestDate.ToString("dd-MMM-yyyy hh:mm tt"))</td>
+                    <td>@(Model.TcMarkUpWrapers[i].ModifiedDate.ToString("dd-MMM-yyyy hh:mm tt"))</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@section Scripts {
+    <script src="~/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            bsCustomFileInput.init();
+        });
+    </script>
+}

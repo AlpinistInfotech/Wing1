@@ -48,7 +48,7 @@
                             <td>
                                 <span class=" @(Model.TcBankWrapers[i].IsApproved== enmApprovalType.Approved?"text-success":
                                 Model.TcBankWrapers[i].IsApproved== enmApprovalType.Rejected?"text-danger":"text-info")">
-                                    <a href="javascript:DoPostApproval(@Model.TcBankWrapers[i].TcId)" data-toggle="tooltip" title="Edit Record !">
+                                    <a href="javascript:DoPostApproval('@Model.TcBankWrapers[i].TcId')" data-toggle="tooltip" title="Edit Record !">
                                         @Model.TcBankWrapers[i].IsApproved
                                     </a>
                                 </span>

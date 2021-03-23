@@ -56,6 +56,8 @@ namespace WingGateway.Models
 
     public class mdlBank
     {
+        public mdlFilterModel FilterModel { get; set; }
+
         [Required]
         [Display(Name = "Select Bank Name")]
         public int BankId { get; set; }
@@ -87,8 +89,6 @@ namespace WingGateway.Models
         [StringLength(100, ErrorMessage = "The {0} must be at most {1} characters long.")]
         public string BranchAddress { set; get; }
 
-
-    
 
         [RegularExpression("[a-zA-Z0-9,/.\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         [Display(Name = "Remarks")]
@@ -241,6 +241,35 @@ namespace WingGateway.Models
 
 
     }
+
+    public class mdlMarkUp
+    {
+
+
+        [Display(Name = "Booking Type")]
+        public enmBookingType BookingType { get; set; }
+
+
+        [Required]
+        [Range(0,10000)]
+        [Display(Name = "MarkUp Value")]
+        public decimal markupValue { get; set; }
+
+        public List<mdlTcMarkUpWraper> TcMarkUpWrapers { get; set; }
+
+    }
+
+    public class mdlTcMarkUpWraper  
+    {
+        public int DetailId { get; set; }
+        public string TcId { get; set; }
+        public enmBookingType BookingType { get; set; }
+        public decimal MarkUpValue { get; set; }
+        public DateTime RequestDate { get; set; }
+        public DateTime ModifiedDate { get; set; }
+
+    }
+
 
 
     public class mdlAddress

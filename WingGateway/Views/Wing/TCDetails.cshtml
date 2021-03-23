@@ -16,19 +16,18 @@
                     <thead>
                         <tr>
                             <th style="display:none">Edit</th>
-                            <th>ID</th>
                             <th style="width:200px">TC ID</th>
                             <th style="width:200px">Name </th>
-                            <th style="width:200px">Sponsor ID</th>
+                            <th style="width:200px">Sponsor Name & ID</th>
                             <th>Gender</th>
                             <th>Father/Husband Name</th>
-                            <th style="width:200px">Phone No.</th>
-                            <th style="width:200px">Email ID</th>
-                            <th style="width:200px">DOB</th>
+                            <th>Phone No.</th>
+                            <th>Email ID</th>
+                            <th>DOB</th>
                             <th style="width:200px">Address</th>
-                            <th style="width:200px">Country</th>
-                            <th style="width:200px">State</th>
-                            <th style="width:200px">Pincode</th>
+                            <th>Country</th>
+                            <th>State</th>
+                            <th>Pincode</th>
 
 
                             <th>Status</th>
@@ -37,7 +36,8 @@
                             <th style="width:150px">Approval Date</th>
                             <th>Approval By</th>
                             <th style="width:150px">Approval Remarks</th>
-
+                            <th>Is Block</th>
+                            <th>Is Terminate</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -48,8 +48,8 @@
                             <td style="display:none"><a href="javascript:DoPost(@Model.TcWrapers[i].TCID)" data-toggle="tooltip" title="Edit Record !"><i class="nav-icon fas fa-edit"></i></a></td>
                             <td>@Model.TcWrapers[i].TCID</td>
                             <td>@Model.TcWrapers[i].FirstName @Model.TcWrapers[i].MiddleName @Model.TcWrapers[i].LastName</td>
-                            <td>@Model.TcWrapers[i].tcspid</td>
-                            <td>@Model.TcWrapers[i].gender</td>
+                            <td>@Model.TcWrapers[i].tcspname  @Model.TcWrapers[i].tcspid</td>
+                            <td>@(Model.TcWrapers[i].gender_id.ToString())</td>
                             <td>@Model.TcWrapers[i].husband_wifename</td>
                             <td>@Model.TcWrapers[i].mobileno</td>
                             <td>@Model.TcWrapers[i].emailid</td>
@@ -62,16 +62,18 @@
                             <td>
                                 <span class=" @(Model.TcWrapers[i].isactive== enmApprovalType.Approved?"text-success":
                                 Model.TcWrapers[i].isactive== enmApprovalType.Rejected?"text-danger":"text-info")">
-                                    <a href="javascript:DoPostApproval(@Model.TcWrapers[i].TCID)" data-toggle="tooltip" title="Edit Record !">
-                                        @Model.TcWrapers[i].isactive
+                                    <a href="javascript:DoPostApproval('@Model.TcWrapers[i].TCID')" data-toggle="tooltip" title="Edit Record !">
+                                        @Model.TcWrapers[i].isactive.ToString()
                                     </a>
                                 </span>
                             </td>
-                            
+
                             <td>@Model.TcWrapers[i].JoiningDate</td>
                             <td>@Model.TcWrapers[i].approve_datetime</td>
-                            <td>@Model.TcWrapers[i].approve_by??"")</td>
-                            <td>@Model.TcWrapers[i].approve_remarks??"")</td>
+                            <td>@(Model.TcWrapers[i].approve_by)??""</td>
+                            <td>@(Model.TcWrapers[i].approve_remarks)??""</td>
+                            <td>@Model.TcWrapers[i].block.ToString()</td>
+                            <td>@Model.TcWrapers[i].terminate.ToString()</td>
                         </tr>
                         }
                     </tbody>

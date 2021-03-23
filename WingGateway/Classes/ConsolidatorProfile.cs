@@ -276,15 +276,13 @@ namespace WingGateway.Classes
                     {
                         returnData.Add(new ProcRegistrationSearch()
                         {
-
+                            TCID=Convert.ToString(rd["tcid"]),
+                            tcnid = Convert.ToInt32(rd["tcnid"]),
                             FirstName = Convert.ToString(rd["firstname"]),
                             MiddleName = Convert.ToString(rd["middlename"]),
                             LastName = Convert.ToString(rd["lastname"]),
                             husband_wifename =Convert.ToString(rd["Husband_father_name"]),
                             DOB =Convert.ToString(rd["DOB"]),
-                            blockname = Convert.ToString(rd["block_name"]),
-                            terminatename = Convert.ToString(rd["terminate_name"]),
-                            activename = Convert.ToString(rd["active_name"]),
                             JoiningDate = Convert.ToString(rd["joining_date"]),
                             Address1 = Convert.ToString(rd["address_line1"]),
                             Address2 = Convert.ToString(rd["address_line2"]),
@@ -297,13 +295,15 @@ namespace WingGateway.Classes
                             countryname = Convert.ToString(rd["countryname"]),
                             tcspid = Convert.ToString(rd["spid"]),
                             tcspname = Convert.ToString(rd["spname"]),
-                            block = Convert.ToBoolean(rd["isblock"]),
-                            terminate = Convert.ToBoolean(rd["isterminate"]),
-                            //isactive = (rd["isactive"]),
+                            tcspnid=Convert.ToInt32(rd["tcspnid"]),
+                            block =  (enmIsKycUpdated)Convert.ToInt32(rd["isblock"]),
+                            terminate = (enmIsKycUpdated)Convert.ToInt32(rd["isterminate"]),
                             stateid = Convert.ToInt32(rd["stateid"]),
+                            isactive= (enmApprovalType)Convert.ToInt32(rd["IsActive"]),
                             cityid = Convert.ToInt32(rd["cityid"]),
                             countryid = Convert.ToInt32(rd["countryid"]),
-                            gender_id = Convert.ToInt32(rd["gender"]),
+                            gender_id = (enmGender)Convert.ToInt32(rd["gender"]),
+                            
                             
                         });
                         }
@@ -372,5 +372,26 @@ namespace WingGateway.Classes
                 mdltreeWraper.children.Add(mdl);
             }
         }
+
+        public List<mdlTcMarkUpWraper> GetMarkUpDetails(int tcnid)
+        {
+            List<mdlTcMarkUpWraper> returnData = new List<mdlTcMarkUpWraper>();
+            {
+                returnData = _context.TblTcMarkUp.Where(p => p.TcNid >= tcnid)
+                .Select(p => new mdlTcMarkUpWraper
+                {
+                    DetailId = p.DetailId,
+                    BookingType = p.BookingType,
+                    MarkUpValue = p.MarkupValue,
+                    TcId = p.tblRegistration.Id,
+                    RequestDate = p.CreatedDt,
+                    ModifiedDate = p.LastModifieddate
+                }).ToList();
+            }
+
+            return returnData;
+        }
+
     }
-}
+
+    }

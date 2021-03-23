@@ -268,4 +268,29 @@ namespace Database
 
     }
 
+    public class tblTcMarkUp
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int DetailId { get; set; }
+
+        [ForeignKey("tblRegistration")]
+        public int? TcNid { get; set; }
+        public tblRegistration tblRegistration { get; set; }
+
+        public enmBookingType BookingType { get; set; }
+
+        [MaxLength(4)]
+        public decimal MarkupValue { get; set; }
+
+        public DateTime CreatedDt { get; set; }
+        public int CreatedBy { get; set; }
+
+        public bool Isdeleted { get; set; }
+
+        public DateTime LastModifieddate { get; set; }
+        public int lastModifiedBy { get; set; }
+
+    }
+
 }

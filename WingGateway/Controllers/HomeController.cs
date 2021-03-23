@@ -686,7 +686,7 @@ namespace WingGateway.Controllers
         }
 
 
-        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Contact))]
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Email))]
         public IActionResult Email([FromServices] ICurrentUsers currentUsers, enmSaveStatus? _enmSaveStatus, enmMessage? _enmMessage)
         {
             mdlEmail mdl = new mdlEmail();
@@ -744,6 +744,75 @@ namespace WingGateway.Controllers
                     });
                     _context.SaveChanges();
                     return RedirectToAction("Email",
+                                 new { _enmSaveStatus = enmSaveStatus.success, _enmMessage = enmMessage.SaveSucessfully });
+                }
+
+            }
+
+            return View(mdl);
+        }
+
+
+
+        #endregion
+
+        #region MarkUp
+
+        [AcceptVerbs("Get")]
+        
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Markup))]
+        public IActionResult MarkUp([FromServices] ICurrentUsers currentUsers, enmSaveStatus? _enmSaveStatus, enmMessage? _enmMessage)
+        {
+            mdlMarkUp mdl = new mdlMarkUp();
+            if (_enmSaveStatus != null)
+            {
+                ViewBag.SaveStatus = (int)_enmSaveStatus.Value;
+                ViewBag.Message = _enmMessage?.GetDescription();
+            }
+
+            return View();
+        }
+
+
+
+        
+            [HttpPost]
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Markup))]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MarkUpAsync([FromServices] ICurrentUsers currentUsers, mdlMarkUp mdl)
+        {
+            if (ModelState.IsValid)
+            {
+
+                var ExistingData = _context.TblTcMarkUp.FirstOrDefault(p => !p.Isdeleted && p.TcNid == currentUsers.TcNid && p.BookingType== mdl.BookingType);
+                if (ExistingData != null) // for update the data
+                {
+                    ExistingData.MarkupValue = Convert.ToDecimal( mdl.markupValue);
+                    ExistingData.BookingType = mdl.BookingType;
+                    ExistingData.lastModifiedBy = currentUsers.TcNid;
+                    ExistingData.LastModifieddate = DateTime.Now;
+                    _context.TblTcMarkUp.Update(ExistingData);
+                    _context.SaveChanges();
+                    return RedirectToAction("MarkUp",
+                                     new { _enmSaveStatus = enmSaveStatus.success, _enmMessage = enmMessage.UpdateSucessfully });
+
+                }
+
+                else
+                {
+                    _context.TblTcMarkUp.Add(new tblTcMarkUp
+                    {
+
+                        MarkupValue  =mdl.markupValue,
+                        BookingType = mdl.BookingType,
+                        CreatedBy = currentUsers.TcNid,
+                        CreatedDt = DateTime.Now,
+                        Isdeleted = false,
+                        TcNid = currentUsers.TcNid,
+
+                    });
+                    _context.SaveChanges();
+                    return RedirectToAction("MarkUp",
                                  new { _enmSaveStatus = enmSaveStatus.success, _enmMessage = enmMessage.SaveSucessfully });
                 }
 

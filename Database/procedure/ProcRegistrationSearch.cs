@@ -18,12 +18,9 @@
         public int cityid { get; set; }
         public string cityname { get; set; }
         public string pincode { get; set; }
-        public bool terminate { get; set; }
-        public bool block { get; set; }
-        public string terminatename { get; set; }
-        public string blockname { get; set; }
+        public enmIsKycUpdated terminate { get; set; }
+        public enmIsKycUpdated block { get; set; }
         public enmApprovalType isactive { get; set; }
-        public string activename { get; set; }
         public int tcnid { get; set; }
         public int tcspnid { get; set; }
         public string tcspid { get; set; }
@@ -32,7 +29,7 @@
         public string emailid { get; set; }
 
         public string gender { get; set; }
-        public int gender_id { get; set; }
+        public enmGender gender_id { get; set; }
 
         public int approve_by { get; set; }
         public string approve_datetime { get; set; }
@@ -41,7 +38,6 @@
 
         public string nominee_name { get; set; }
         public string nominee_relation { get; set; }
-
 
     }
 }

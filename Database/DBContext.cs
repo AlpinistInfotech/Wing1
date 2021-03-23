@@ -29,50 +29,7 @@ namespace Database
             ///modelBuilder.Query //<SpGetProductByID>();
         }
 
-        //#region Get product by ID store procedure method.  
-        //SqlConnection sqlconnection;
-        //SqlCommand sqlcommand;
-
-        ///// <summary>  
-        ///// Get product by ID store procedure method.  
-        ///// </summary>  
-        ///// <param name="productId">Product ID value parameter</param>  
-        ///// <returns>Returns - List of product by ID</returns>  
-        //public async Task<List<ProcRegistrtaionSearch>> GetRegistrtaionSearchAsync(DateTime fromdate,DateTime todate,string Tcid,int status,int sessionid,int spmode)
-        //{
-        //    // Initialization.  
-        //    List<ProcRegistrtaionSearch> lst = new List<ProcRegistrtaionSearch>();
-
-        //    try
-        //    {
-        //        sqlcommand = new SqlCommand();
-        //        sqlcommand.Connection = sqlconnection;
-        //        sqlcommand.CommandText = "proc_registration_search";
-        //        // Settings.  
-        //        SqlParameter sqlParameter_fromdate = new SqlParameter("@fromdate", fromdate);
-        //        SqlParameter sqlParameter_todate = new SqlParameter("@todate", todate);
-        //        SqlParameter sqlParameter_tcid = new SqlParameter("@tcid", Tcid);
-        //        SqlParameter sqlParameter_status = new SqlParameter("@status", status);
-        //        SqlParameter sqlParameter_sessionid = new SqlParameter("@sessionid", sessionid);
-        //        SqlParameter sqlParameter_spmode = new SqlParameter("@spmode", spmode);
-
-
-
-
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-
-        //    // Info.  
-        //    return lst;
-        //}
-
-        //#endregion
-
-
+        
         public DbSet<ApplicationUser> ApplicationUser { get; set; }
 
         #region ******************** Masters Db ***********************
@@ -100,6 +57,8 @@ namespace Database
         public DbSet<tblTcContact> TblTcContact { get; set; }
 
         public DbSet<tblTcEmail> TblTcEmail { get; set; }
+
+        public DbSet<tblTcMarkUp> TblTcMarkUp { get; set; }
 
         #endregion
 
