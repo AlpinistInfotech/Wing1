@@ -1,0 +1,68 @@
+﻿@model WingGateway.Models.mdlMarkUp
+@using Database
+@{
+    ViewData["Title"] = Database.enmDocumentMaster.Gateway_Markup.GetDocumentDetails().Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary">
+
+            <form action="@Url.Action()" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+
+
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="BookingType"></label>
+
+                                <select asp-for="BookingType" class="form-control select2">
+                                    @foreach (var data in Enum.GetValues(typeof(enmBookingType)))
+                                    {
+                                        <option value="@(data)">@data.ToString() </option>
+                                    }
+                                </select>
+                                <span asp-validation-for="BookingType" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="markupValue"></label>
+                                <input asp-for="markupValue" class="form-control" placeholder="Markup Value" />
+                                <span asp-validation-for="markupValue" class="text-danger"></span>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <div class="card-footer">
+
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+
+
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script src="~/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            bsCustomFileInput.init();
+        });
+    </script>
+}

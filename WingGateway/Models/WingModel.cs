@@ -9,6 +9,15 @@ using System.Threading.Tasks;
 namespace WingGateway.Models
 {
 
+    public class mdlApprovalForm
+    {
+
+
+        [Display(Name = "Remarks")]
+        public string Remarks { get; set; }
+    }
+
+
     public class mdlDateFilter
     {
         [Required]
@@ -28,7 +37,7 @@ namespace WingGateway.Models
     public class mdlIdFilter
     {
         [Display(Name = "TcId")]
-        [StringLength(10, ErrorMessage = "The {0} must be at {2} characters long.", MinimumLength = 10)]
+        [StringLength(11, ErrorMessage = "The {0} must be at {2} characters long.", MinimumLength = 11)]
         [RegularExpression("[a-zA-Z0-9]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         [Remote(action: "IsSponsorValid", controller: "Account", ErrorMessage = "Invalid Id")]
         public string TcId { get; set; }
@@ -41,7 +50,7 @@ namespace WingGateway.Models
         public bool IsReport { get; set; } = false;
     }
 
-    
+ 
     public class mdlTcBankWraper : mdlBank
     {
         public int DetailId { get; set; }
@@ -60,6 +69,19 @@ namespace WingGateway.Models
         public mdlFilterModel FilterModel { get; set; }
         public List<mdlTcBankWraper> TcBankWrapers { get; set; }
     }
+    public class mdlTcMarkUpReportWraper
+    {
+        public List<mdlTcMarkUpWraper> TcMarkUpWrapers { get; set; }
+    }
+
+
+    public class mdlTcBankApprovalWraper : mdlBank
+    {
+        public mdlApprovalForm approval { get; set; }
+        public bool IsReport { get; set; } = true;
+
+    }
+
 
     public class mdlTcReportWraper
     {

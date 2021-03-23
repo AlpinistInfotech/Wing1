@@ -84,7 +84,7 @@ namespace WingGateway.Models
     public class mdlRegistration
     {
         
-        [StringLength(10,ErrorMessage = "The {0} must be at {2} characters long.", MinimumLength = 10)]
+        [StringLength(11,ErrorMessage = "The {0} must be at {2} characters long.", MinimumLength = 11)]
         [RegularExpression("[a-zA-Z0-9]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         [Display(Name = "SponsorId")]
         [Remote(action: "IsSponsorValid", controller: "Account", ErrorMessage ="Invalid Sponsor")]
@@ -224,7 +224,7 @@ namespace WingGateway.Models
                 SpId = SpTcId,
                 Isblock = false,
                 IsTerminate = false,
-                is_active = 0,
+                is_active = 8,
                 IsKycUpdated = enmIsKycUpdated.No,
                 JoiningDt = CurrentDatetime,
                 SpLegNumber = SpNid.HasValue?(consolidatorProfile.GetNidLegCount(SpNid.Value) + 1):1,

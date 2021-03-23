@@ -28,6 +28,15 @@ namespace Database
         Permanent=1,
         Contact=2
     }
+
+    public enum enmBookingType
+    {
+        Flight = 1,
+        Bus = 2,
+        Train =3,
+        Hotel=4
+    }
+
     public enum enmUserType
     {
         Consolidator=1,
@@ -48,8 +57,6 @@ namespace Database
         InProcessing = 4,
         Pending = 8,
     }
-
-
 
     public enum enmIsKycUpdated
     {
@@ -91,6 +98,8 @@ namespace Database
     {
         ByID=1,
         ByNid=2,
-        ByDateFilter=3
+        ByDateFilter=3,
+        ByApproved=4,
+        ByReject=5
     }
 }

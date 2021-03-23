@@ -183,7 +183,7 @@ namespace WingGateway.Controllers
         [AcceptVerbs("Get", "Post")]
         public async Task<IActionResult> IsSponsorValid(string SpTcId, [FromServices] IConsolidatorProfile consolidatorProfile)
         {
-            if (SpTcId != null)
+                if (SpTcId != null)
             {
                 var validSp =consolidatorProfile.ValidateSponsorId(SpTcId, true);
 
@@ -252,7 +252,6 @@ namespace WingGateway.Controllers
                         TcNid = mdl.TcNId,
                         PhoneNumber =mdl.PhoneNo,
                         UserType = enmUserType.Consolidator
-
                     };
                     var result = await _userManager.CreateAsync(appuser, mdl.Password);
                     if (result.Succeeded)

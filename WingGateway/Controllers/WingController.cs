@@ -59,6 +59,13 @@ namespace WingGateway.Controllers
         }
 
 
+        [Authorize(policy: nameof(enmDocumentMaster.Emp_Tc_BankApproval))]
+        public IActionResult BankApproval()
+        {
+            mdlTcBankApprovalWraper returnDataMdl = new mdlTcBankApprovalWraper();
+            returnDataMdl.approval= new mdlApprovalForm() { };
+            return View(returnDataMdl);
+        }
 
 
         [Authorize(policy: nameof(enmDocumentMaster.Emp_Tc_PANDetails))]
