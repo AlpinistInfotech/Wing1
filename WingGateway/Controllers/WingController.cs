@@ -212,7 +212,7 @@ namespace WingGateway.Controllers
                     ExistingData.state_id = mdl.state_id;
                     ExistingData.PackageDescription = mdl.PackageDescription;
                     ExistingData.SpecialNote = mdl.SpecialNote;
-                    ExistingData.lastModifiedBy = 0;
+                    ExistingData.lastModifiedBy = currentUsers.EmpId;
                     ExistingData.LastModifieddate = DateTime.Now;
                     _context.tblHolidayPackageMaster.Update(ExistingData);
                     _context.SaveChanges();
@@ -238,7 +238,7 @@ namespace WingGateway.Controllers
                     state_id = mdl.state_id,
                     PackageDescription = mdl.PackageDescription,
                     SpecialNote = mdl.SpecialNote,
-                        CreatedBy = 0,
+                        CreatedBy = currentUsers.EmpId,
                         CreatedDt = DateTime.Now,
                         Isdeleted = false,
                     });

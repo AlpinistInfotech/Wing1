@@ -102,7 +102,7 @@ namespace Database
             DisplayOrder: 1, Name: "Train", Description: "Train", Icon: "fa fa-train nav-icon", ActionName: "Train")]
         Gateway_Train = 13,
         [Document(EnmModule: enmModule.Gateway_Booking, DocumentType: enmDocumentType.Create | enmDocumentType.Update,
-            DisplayOrder: 1, Name: "Holiday Package", Description: "Holiday Package", Icon: "fa fa-binoculars nav-icon", ActionName: "HolidayPackageNew")]
+            DisplayOrder: 1, Name: "Holiday Package", Description: "Holiday Package", Icon: "fa fa-binoculars nav-icon", ActionName: "/Wing/HolidayPackageNew")]
         Gateway_Holiday_Package = 14,
         [Document(EnmModule: enmModule.Gateway_Booking, DocumentType: enmDocumentType.Report,
             DisplayOrder: 1, Name: "Booking Report", Description: "Booking Report", Icon: "far fa-circle nav-icon", ActionName: "BookingReport")]

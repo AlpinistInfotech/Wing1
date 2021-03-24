@@ -175,8 +175,8 @@ namespace WingGateway.Models
         public List<IFormFile>  UploadOtherImage { get; set; }
 
 
-        public List<byte[]> fileDataPackageImage { set; get; }
-        public List<byte[]> fileDataOtherImage { set; get; }
+        public List<byte[]> fileDataPackageImage { set; get; } = null;
+        public List<byte[]> fileDataOtherImage { set; get; } = null;
 
         public int created_by { get; set; }
         public DateTime created_datetime { get; set; }
