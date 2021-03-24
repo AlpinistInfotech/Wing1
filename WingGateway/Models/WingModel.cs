@@ -1,4 +1,5 @@
 ﻿using Database;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -105,6 +106,80 @@ namespace WingGateway.Models
         public DateTime RequestDate { get; set; }
         public string UploadImageName { get; set; }
 
+    }
+
+
+    public class mdlHolidayPackage
+    {
+        
+        [Required]
+        [Display(Name = "Package Name")]
+        [StringLength(100, ErrorMessage = "The {0} must be at most {1} characters long.", MinimumLength = 10)]
+        public string PackageName { get; set; }
+
+        [Required]
+        [Display(Name = "Package Type")]
+        public enmPackageCustomerType PackageType { get; set; }
+
+        [Required]
+        [Display(Name = "Package From")]
+        public DateTime  PackageFromDate { get; set; }
+
+        [Required]
+        [Display(Name = "To")]
+        public DateTime PackageToDate { get; set; }
+
+        [Required]
+        [Display(Name = "Price Range")]
+        [RegularExpression("^[0-9]{10}$", ErrorMessage = "Invalid {0}, no special charcter")]
+        public int PriceFrom { get; set; }
+
+        [Required]
+        [Display(Name = "To")]
+        [RegularExpression("^[0-9]{10}$", ErrorMessage = "Invalid {0}, no special charcter")]
+        public int PriceTo { get; set; }
+
+        
+        [Required]
+        [Display(Name = "Member's Count")]
+        [RegularExpression("^[0-9]{10}$", ErrorMessage = "Invalid {0}, no special charcter")]
+        public int MemberCount { get; set; }
+
+        [Required]
+        [Display(Name = "Day's Count")]
+        [RegularExpression("^[0-9]{10}$", ErrorMessage = "Invalid {0}, no special charcter")]
+        public int DaysCount{ get; set; }
+
+
+        [Required]
+        [Display(Name = "Country")]
+        public int country_id { get; set; }
+
+        [Required]
+        [Display(Name = "State")]
+        public int state_id { get; set; }
+
+        [Required]
+        [Display(Name = "Description")]
+        public string PackageDescription { get; set; }
+
+        [Display(Name = "Note (if any")]
+        public string SpecialNote{ get; set; }
+
+
+        [Required]
+        [Display(Name = "Upload Package Image")]
+        public List<IFormFile>  UploadPackageImage { get; set; }
+
+        [Display(Name = "Upload Other's Image")]
+        public List<IFormFile>  UploadOtherImage { get; set; }
+
+
+        public List<byte[]> fileDataPackageImage { set; get; }
+        public List<byte[]> fileDataOtherImage { set; get; }
+
+        public int created_by { get; set; }
+        public DateTime created_datetime { get; set; }
     }
 
 

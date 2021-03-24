@@ -11,6 +11,17 @@ namespace Database
         Trans = 3,
     }
 
+    public enum enmPackageCustomerType
+    {
+        Comman = 1,
+        Solo = 2,
+        Couple = 3,
+        Family=4,
+        Friends=5,
+        Cooperate=6,
+
+    }
+
     public enum enmTCRanks
     {
         Level1=1,

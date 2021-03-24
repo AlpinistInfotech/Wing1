@@ -59,6 +59,8 @@ namespace Database
         public DbSet<tblTcEmail> TblTcEmail { get; set; }
 
         public DbSet<tblTcMarkUp> TblTcMarkUp { get; set; }
+        public DbSet<tblHolidayPackageMaster> tblHolidayPackageMaster { get; set; }
+
 
         #endregion
 
