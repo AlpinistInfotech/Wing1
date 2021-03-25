@@ -1,0 +1,211 @@
+﻿@model WingGateway.Models.mdlHolidayPackage
+@using Database
+@{
+    ViewData["Title"] = Database.enmDocumentMaster.Gateway_Holiday_Package.GetDocumentDetails().Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary">
+
+            <form action="@Url.Action()" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+
+
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="PackageName"></label>
+                                <input asp-for="PackageName" class="form-control" placeholder="Package Name" />
+                                <span asp-validation-for="PackageName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="PackageType"></label>
+                                <select asp-for="PackageType" class="form-control select2">
+                                    @foreach (var data in Enum.GetValues(typeof(enmPackageCustomerType)))
+                                    {
+                                        <option value="@(data)">@data.ToString() </option>
+                                    }
+                                </select>
+                                <span asp-validation-for="PackageType" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="PackageFromDate"></label>
+                                <input asp-for="PackageFromDate" asp-format="{0:dd-MMM-yyyy}" type="text" placeholder="Package From Date" class="form-control"
+                                       onfocus="(this.type='date')" onblur="(this.type='text')" />
+                                <span asp-validation-for="PackageFromDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="PackageToDate"></label>
+                                <input asp-for="PackageToDate" asp-format="{0:dd-MMM-yyyy}" type="text" placeholder="Package To Date" class="form-control"
+                                       onfocus="(this.type='date')" onblur="(this.type='text')" />
+                                <span asp-validation-for="PackageToDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="PriceFrom"></label>
+                                <input asp-for="PriceFrom" class="form-control" placeholder="Price From Range" />
+                                <span asp-validation-for="PriceFrom" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="PriceTo"></label>
+                                <input asp-for="PriceTo" class="form-control" placeholder="Price To Range" />
+                                <span asp-validation-for="PriceTo" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="MemberCount"></label>
+                                <input asp-for="MemberCount" class="form-control" placeholder="Member's Count" />
+                                <span asp-validation-for="MemberCount" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="DaysCount"></label>
+                                <input asp-for="DaysCount" class="form-control" placeholder="Day's Count" />
+                                <span asp-validation-for="DaysCount" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="country_id"></label>
+                                <select id="ddl_country_id" asp-for="country_id" class="form-control select2">
+                                </select>
+                                <span asp-validation-for="country_id" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="state_id"></label>
+                                <select id="ddl_state_id" asp-for="state_id" class="form-control select2">
+                                    <option value="">Select State</option>
+                                </select>
+                                <span asp-validation-for="state_id" class="text-danger"></span>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="PackageDescription"></label>
+                                <input asp-for="PackageDescription" class="form-control" placeholder="Package Description" />
+                                <span asp-validation-for="PackageDescription" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="SpecialNote"></label>
+                                <input asp-for="SpecialNote" class="form-control" placeholder="Special Note (if any)" />
+                                <span asp-validation-for="SpecialNote" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="UploadPackageImage"></label>
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        <input asp-for="UploadPackageImage" class="custom-file-input" accept="image/x-png,image/jpeg" />
+                                        <label class="custom-file-label" asp-for="UploadPackageImage">Choose file</label>
+                                    </div>
+                                </div>
+                                <span asp-validation-for="UploadPackageImage" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="UploadOtherImage"></label>
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        <input asp-for="UploadOtherImage" class="custom-file-input" accept="image/x-png,image/jpeg" multiple/>
+                                        <label class="custom-file-label" asp-for="UploadOtherImage">Choose file</label>
+                                    </div>
+                                </div>
+                                <span asp-validation-for="UploadOtherImage" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                 
+        @*<div class="card-footer">
+            @if (Model.fileDataPackageImage != null)
+            {
+                @foreach (var fileD in Model.fileDataPackageImage)
+                {
+                    if (fileD != null)
+                    {
+                        <div class="form-group col-md-4">
+                            <img src="@string.Format("data:image/png;base64,{0}", Convert.ToBase64String(fileD))" height="300px" width="100%" />
+                        </div>
+                    }
+                }
+            }
+
+
+            @if (Model.fileDataOtherImage != null)
+            {
+                @foreach (var fileD in Model.fileDataOtherImage)
+                {
+                    if (fileD != null)
+                    {
+                        <div class="form-group col-md-4">
+                            <img src="@string.Format("data:image/png;base64,{0}", Convert.ToBase64String(fileD))" height="300px" width="100%" />
+                        </div>
+                    }
+                }
+            }
+        </div>*@
+</form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {    
+    <script src="~/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+    <script>
+        $(document).ready(function () {
+        bsCustomFileInput.init();
+        });
+    </script>
+}

@@ -293,4 +293,44 @@ namespace Database
 
     }
 
+
+    public class tblHolidayPackageMaster
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int DetailId { get; set; }
+        public string PackageName { get; set; }
+
+        public enmPackageCustomerType PackageType { get; set; }
+
+        public DateTime PackageFromDate { get; set; }
+
+        public DateTime PackageToDate { get; set; }
+
+        public int PriceFrom { get; set; }
+
+        public int PriceTo { get; set; }
+        public int MemberCount { get; set; }
+
+        public int DaysCount { get; set; }
+
+
+        public int country_id { get; set; }
+        public int state_id { get; set; }
+
+        public string PackageDescription { get; set; }
+        public string SpecialNote { get; set; }
+        public string UploadPackageImage { get; set; }
+        public string UploadOtherImage { get; set; }
+
+        public DateTime CreatedDt { get; set; }
+        public int CreatedBy { get; set; }
+
+        public bool Isdeleted { get; set; }
+
+        public DateTime LastModifieddate { get; set; }
+        public int lastModifiedBy { get; set; }
+
+    }
+
 }
