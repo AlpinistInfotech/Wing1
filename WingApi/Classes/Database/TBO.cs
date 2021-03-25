@@ -40,6 +40,8 @@ namespace WingApi.Classes.Database
         public ICollection<tblTboTravelDetailResult> tblTboTravelDetailResult { get; set; }
     }
 
+    
+
     public class tblTboTravelDetailResult
     {
         [Key]
@@ -54,6 +56,16 @@ namespace WingApi.Classes.Database
         public double OfferedFare { get; set; }        
         public string JsonData { get; set; }
         
+    }
+    public class tblTboFareRule
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        public string TraceId { get; set; }
+        public string ResultIndex { get; set; }
+        public string JsonData { get; set; }
+        public DateTime GenrationDt { get; set; }
     }
 
 

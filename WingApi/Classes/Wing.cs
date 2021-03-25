@@ -306,6 +306,7 @@ namespace WingApi.Classes
 
     public class mdlFarerule
     {
+        public int FlightId { get; set; }
         public string Origin { get; set; }
         public string Destination { get; set; }
         public string Airline { get; set; }
@@ -314,6 +315,8 @@ namespace WingApi.Classes
         public string FareRestriction { get; set; }
         public string FareFamilyCode { get; set; }
         public string FareRuleIndex { get; set; }
+        public DateTime DepartureTime { get; set; }
+        public DateTime ReturnDate { get; set; }
     }
 
     #endregion
@@ -347,12 +350,30 @@ namespace WingApi.Classes
 
     #endregion
 
+    #region ***************** Fare Rule ***************************
+    public class mdlFareRuleRequest : mdlFareQuotRequest
+    {
 
+    }
+    public class mdlFareRuleResponseWraper
+    {
+        public mdlFareRuleResponse Response { get; set; }
+    }
+
+    public class mdlFareRuleResponse
+    {
+        public mdlError Error { get; set; }
+        public mdlFarerule[] FareRules { get; set; }
+        public int ResponseStatus { get; set; }
+        public string TraceId { get; set; }
+    }
+    #endregion
 
     public interface IWing
     {
         Task<mdlSearchResponse> SearchAsync(mdlSearchRequest request);
         Task<mdlFareQuotResponse> FareQuoteAsync(mdlFareQuotRequest request);
-        
+        Task<mdlFareRuleResponse> FareRuleAsync(mdlFareRuleRequest request);
+
     }
 }
