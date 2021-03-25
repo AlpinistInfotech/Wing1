@@ -13,13 +13,11 @@ namespace Database
 
     public enum enmPackageCustomerType
     {
-        Comman = 1,
-        Solo = 2,
-        Couple = 3,
+        Solo = 1,
+        Couple = 2,
         Family=4,
-        Friends=5,
-        Cooperate=6,
-
+        Friends=8,
+        Cooperate=16,
     }
 
     public enum enmTCRanks
