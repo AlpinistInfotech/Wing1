@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -109,102 +110,175 @@ namespace WingApi.Classes.TripJack
         private async Task<mdlSearchResponse> SearchFromTripJackAsync(mdlSearchRequest request)
         {
             SearchresultWraper mdl = null;
+            SearchresultWraperMulticity mdlM = null;
             mdlSearchResponse mdlS = null;
             string tboUrl = _config["TripJack:API:Search"];
 
-            StartSendRequest:
+            
             string jsonString = System.Text.Json.JsonSerializer.Serialize(SearchRequestMap(request));
             var HaveResponse = GetResponse(jsonString, tboUrl);
-            if (HaveResponse.ErrorCode == 0)
-            {
-                mdl = (System.Text.Json.JsonSerializer.Deserialize<SearchresultWraper>(HaveResponse.Message));
-            }
 
-            if (mdl != null)
             {
-                if (mdl.status.success)//success
+                if (HaveResponse.ErrorCode == 0)
                 {
-
-                    List<mdlSearchResult[]> AllResults = new List<mdlSearchResult[]>();
-                    List<mdlSearchResult> ResultOB = new List<mdlSearchResult>();
-                    List<mdlSearchResult> ResultIB = new List<mdlSearchResult>();
-                    if (mdl.searchResult.tripInfos != null)
+                    mdl = (JsonConvert.DeserializeObject< SearchresultWraper>(HaveResponse.Message));
+                }
+                if (mdl != null)
+                {
+                    if (mdl.status.success)//success
                     {
-                        if (mdl.searchResult.tripInfos.ONWARD != null)
+
+                        List<mdlSearchResult[]> AllResults = new List<mdlSearchResult[]>();
+                        List<mdlSearchResult> Result1 = new List<mdlSearchResult>();
+                        List<mdlSearchResult> Result2 = new List<mdlSearchResult>();
+                        List<mdlSearchResult> Result3 = new List<mdlSearchResult>();
+                        List<mdlSearchResult> Result4 = new List<mdlSearchResult>();
+                        List<mdlSearchResult> Result5 = new List<mdlSearchResult>();
+                        List<mdlSearchResult> Result6 = new List<mdlSearchResult>();
+                        if (mdl.searchResult.tripInfos != null)
                         {
-                            foreach (var dt in mdl.searchResult.tripInfos.ONWARD)
+                            if (mdl.searchResult.tripInfos.ONWARD != null)
                             {
-                                ResultOB.AddRange(SearchResultMap(request.AdultCount, request.ChildCount,request.InfantCount, dt, "OB"));
+                                foreach (var dt in mdl.searchResult.tripInfos.ONWARD)
+                                {
+                                    Result1.AddRange(SearchResultMap(request.AdultCount, request.ChildCount, request.InfantCount, dt, "OB"));
+                                }
                             }
+                            if (mdl.searchResult.tripInfos.RETURN != null)
+                            {
+                                foreach (var dt in mdl.searchResult.tripInfos.RETURN)
+                                {
+                                    Result2.AddRange(SearchResultMap(request.AdultCount, request.ChildCount, request.InfantCount, dt, "IB"));
+                                }
+                            }
+                            if (mdl.searchResult.tripInfos.COMBO != null)
+                            {
+                                foreach (var dt in mdl.searchResult.tripInfos.COMBO)
+                                {
+                                    Result1.AddRange(SearchResultMap(request.AdultCount, request.ChildCount, request.InfantCount, dt, "OB"));
+                                }
+                            }
+                            if (mdl.searchResult.tripInfos._0 != null)
+                            {
+                                foreach (var dt in mdl.searchResult.tripInfos._0)
+                                {
+                                    Result1.AddRange(SearchResultMap(request.AdultCount, request.ChildCount, request.InfantCount, dt, "OB"));
+                                }
+                            }
+                            if (mdl.searchResult.tripInfos._1 != null)
+                            {
+                                foreach (var dt in mdl.searchResult.tripInfos._1)
+                                {
+                                    Result2.AddRange(SearchResultMap(request.AdultCount, request.ChildCount, request.InfantCount, dt, "OB"));
+                                }
+                            }
+                            if (mdl.searchResult.tripInfos._2 != null)
+                            {
+                                foreach (var dt in mdl.searchResult.tripInfos._2)
+                                {
+                                    Result3.AddRange(SearchResultMap(request.AdultCount, request.ChildCount, request.InfantCount, dt, "OB"));
+                                }
+                            }
+                            if (mdl.searchResult.tripInfos._3 != null)
+                            {
+                                foreach (var dt in mdl.searchResult.tripInfos._3)
+                                {
+                                    Result4.AddRange(SearchResultMap(request.AdultCount, request.ChildCount, request.InfantCount, dt, "OB"));
+                                }
+                            }
+                            if (mdl.searchResult.tripInfos._4 != null)
+                            {
+                                foreach (var dt in mdl.searchResult.tripInfos._4)
+                                {
+                                    Result5.AddRange(SearchResultMap(request.AdultCount, request.ChildCount, request.InfantCount, dt, "OB"));
+                                }
+                            }
+                            if (mdl.searchResult.tripInfos._5 != null)
+                            {
+                                foreach (var dt in mdl.searchResult.tripInfos._5)
+                                {
+                                    Result6.AddRange(SearchResultMap(request.AdultCount, request.ChildCount, request.InfantCount, dt, "OB"));
+                                }
+                            }
+
+
                         }
-                        if (mdl.searchResult.tripInfos.RETURN != null)
+                        if (Result1.Count() > 0)
                         {
-                            foreach (var dt in mdl.searchResult.tripInfos.RETURN)
-                            {
-                                ResultIB.AddRange(SearchResultMap(request.AdultCount, request.ChildCount, request.InfantCount, dt, "IB"));
-                            }
+                            AllResults.Add(Result1.ToArray());
                         }
-                        if (mdl.searchResult.tripInfos.COMBO != null)
+                        if (Result2.Count() > 0)
                         {
-                            foreach (var dt in mdl.searchResult.tripInfos.COMBO)
-                            {
-                                ResultOB.AddRange(SearchResultMap(request.AdultCount, request.ChildCount, request.InfantCount, dt, "OB"));
-                            }
+                            AllResults.Add(Result2.ToArray());
+                        }
+                        if (Result3.Count() > 0)
+                        {
+                            AllResults.Add(Result3.ToArray());
+                        }
+                        if (Result4.Count() > 0)
+                        {
+                            AllResults.Add(Result4.ToArray());
+                        }
+                        if (Result5.Count() > 0)
+                        {
+                            AllResults.Add(Result5.ToArray());
+                        }
+                        if (Result6.Count() > 0)
+                        {
+                            AllResults.Add(Result6.ToArray());
                         }
 
+
+                        mdlS = new mdlSearchResponse()
+                        {
+                            ServiceProvider = enmServiceProvider.TripJack,
+                            TraceId = Guid.NewGuid().ToString(),
+                            ResponseStatus = 1,
+                            Error = new mdlError()
+                            {
+                                ErrorCode = 0,
+                                ErrorMessage = "-"
+                            },
+                            Origin = request.Segments[0].Origin,
+                            Destination = request.Segments[0].Destination,
+                            Results = AllResults.ToArray()
+                        };
+                        var result = Search_SaveAsync(request, mdlS.TraceId, AllResults);
+                        await result;
                     }
-                    AllResults.Add(ResultOB.ToArray());
-                    AllResults.Add(ResultIB.ToArray());
-
-                    mdlS = new mdlSearchResponse()
+                    else
                     {
-                        ServiceProvider = enmServiceProvider.TripJack,
-                        TraceId = Guid.NewGuid().ToString(),
-                        ResponseStatus = 1,
-                        Error = new mdlError()
+                        mdlS = new mdlSearchResponse()
                         {
-                            ErrorCode = 0,
-                            ErrorMessage = "-"
-                        },
-                        Origin = request.Segments[0].Origin,
-                        Destination = request.Segments[0].Destination,
-                        Results = AllResults.ToArray()
-                    };
-                    var result = Search_SaveAsync(request, mdlS.TraceId, ResultOB.ToArray(), ResultIB.ToArray());
-                    await result;
+                            ResponseStatus = 3,
+                            Error = new mdlError()
+                            {
+                                ErrorCode = mdl.status.httpStatus,
+                                ErrorMessage = "Invalid Request",
+                            }
+                        };
+                    }
+
                 }
                 else
                 {
                     mdlS = new mdlSearchResponse()
                     {
-                        ResponseStatus = 3,
+                        ResponseStatus = 100,
                         Error = new mdlError()
                         {
-                            ErrorCode = mdl.status.httpStatus,
-                            ErrorMessage = "Invalid Request",
+                            ErrorCode = 100,
+                            ErrorMessage = "Unable to Process",
                         }
                     };
                 }
-
-            }
-            else
-            {
-                mdlS = new mdlSearchResponse()
-                {
-                    ResponseStatus = 100,
-                    Error = new mdlError()
-                    {
-                        ErrorCode = 100,
-                        ErrorMessage = "Unable to Process",
-                    }
-                };
             }
 
             return mdlS;
         }
 
 
-        private mdlSearchResult[] SearchResultMap(int AdultCount,int ChildCount,int InfantCount, ONWARD_RETURN_COMBO sr, string ResultType)
+        private mdlSearchResult[] SearchResultMap(int AdultCount,int ChildCount,int InfantCount, ONWARD_RETURN_COMBO sr, string ResultType,Conditions conditions=null)
         {
 
             List<mdlSearchResult> mdls = new List<mdlSearchResult>();
@@ -213,7 +287,7 @@ namespace WingApi.Classes.TripJack
             foreach (var price in sr.totalPriceList)
             {
                 mdlSearchResult mdl = new mdlSearchResult();
-                mdl.IsHoldAllowedWithSSR = false;
+                mdl.IsHoldAllowedWithSSR = conditions?.isBA??false;
                 mdl.ResultIndex = price.id;
                 mdl.ResultType = ResultType;
                 mdl.Source = 0;
@@ -228,11 +302,11 @@ namespace WingApi.Classes.TripJack
                 }
                 mdl.IsPanRequiredAtBook = false;
                 mdl.IsPanRequiredAtTicket = false;
-                mdl.IsPassportRequiredAtBook = false;
+                mdl.IsPassportRequiredAtBook = conditions?.pcs?.pm??false;
                 mdl.IsPassportRequiredAtTicket = false;
                 mdl.GSTAllowed = false;
                 mdl.IsCouponAppilcable = false;
-                mdl.IsGSTMandatory = false;
+                mdl.IsGSTMandatory = conditions?.gst?.igm ?? false;
                 mdl.AirlineRemark = price.messages;
                 mdl.ResultFareType = price.fareIdentifier;
                 mdl.TicketAdvisory = null;
@@ -536,27 +610,18 @@ namespace WingApi.Classes.TripJack
 
         
 
-        private async Task<bool> Search_SaveAsync(mdlSearchRequest request, string TraceId, mdlSearchResult[] OBresponse, mdlSearchResult[] IBresponse)
+        private async Task<bool> Search_SaveAsync(mdlSearchRequest request, string TraceId, List< mdlSearchResult[]> IBresponse)
         {
 
             int ExpirationMinute = 14;
             int.TryParse(_config["TripJack:TraceIdExpiryTime"], out ExpirationMinute);
             double minFare = 0;
             List<tblTripJackTravelDetailResult> mdlDetail = new List<tblTripJackTravelDetailResult>();
-            if (OBresponse != null && OBresponse.Length > 0)
-            {
-                minFare = OBresponse.Min(p => p.Fare.PublishedFare);
-                mdlDetail.AddRange(OBresponse.Select(p => new tblTripJackTravelDetailResult { ResultIndex = p.ResultIndex, ResultType = p.ResultType, OfferedFare = p.Fare.OfferedFare, PublishedFare = p.Fare.PublishedFare, JsonData = System.Text.Json.JsonSerializer.Serialize(p) }).ToList());
-            }
-            if (IBresponse != null && IBresponse.Length > 0)
-            {
-                minFare = minFare + OBresponse.Min(p => p.Fare.PublishedFare);
-                mdlDetail.AddRange(IBresponse.Select(p => new tblTripJackTravelDetailResult { ResultIndex = p.ResultIndex, ResultType = p.ResultType, OfferedFare = p.Fare.OfferedFare, PublishedFare = p.Fare.PublishedFare, JsonData = System.Text.Json.JsonSerializer.Serialize(p) }).ToList());
+            foreach (var Res in IBresponse) {
+                minFare = minFare + Res.Min(p => p.Fare.PublishedFare);
+                mdlDetail.AddRange(Res.Select(p => new tblTripJackTravelDetailResult { ResultIndex = p.ResultIndex, ResultType = p.ResultType, OfferedFare = p.Fare.OfferedFare, PublishedFare = p.Fare.PublishedFare, JsonData = System.Text.Json.JsonSerializer.Serialize(p) }).ToList());
             }
             DateTime TickGeration = DateTime.Now;
-
-
-
             tblTripJackTravelDetail td = new tblTripJackTravelDetail()
             {
                 TravelDate = request.Segments[0].TravelDt,
@@ -617,14 +682,14 @@ namespace WingApi.Classes.TripJack
         {
 
             mdlFareQuotResponse mdlS = null;
-            Searchresult mdl = null;
+            FareQuotResponse mdl = null;
 
             string tboUrl = _config["TripJack:API:FareQuote"];            
             string jsonString = System.Text.Json.JsonSerializer.Serialize(FareQuoteRequestMap(request));
             var HaveResponse = GetResponse(jsonString, tboUrl);
             if (HaveResponse.ErrorCode == 0)
             {
-                mdl = (System.Text.Json.JsonSerializer.Deserialize<Searchresult>(HaveResponse.Message));
+                mdl = (System.Text.Json.JsonSerializer.Deserialize<FareQuotResponse>(HaveResponse.Message));
             }
 
             if (mdl != null)
@@ -642,41 +707,31 @@ namespace WingApi.Classes.TripJack
                         ChildCount = mdl.searchQuery?.paxInfo?.CHILD ?? 0;
                         InfantCount = mdl.searchQuery?.paxInfo?.INFANT ?? 0;
 
-                        if (mdl.tripInfos.ONWARD != null)
+                        foreach (var dt in mdl.tripInfos)
                         {
-                            foreach (var dt in mdl.tripInfos.ONWARD)
-                            {
-                                ResultOB.AddRange(SearchResultMap(AdultCount,ChildCount,InfantCount, dt, "OB"));
-                            }
-                        }
-                        if (mdl.tripInfos.RETURN != null)
-                        {
-                            foreach (var dt in mdl.tripInfos.RETURN)
-                            {
-                                ResultIB.AddRange(SearchResultMap(AdultCount, ChildCount, InfantCount, dt, "IB"));
-                            }
-                        }
-                        if (mdl.tripInfos.COMBO != null)
-                        {
-                            foreach (var dt in mdl.tripInfos.COMBO)
-                            {
-                                ResultOB.AddRange(SearchResultMap(AdultCount, ChildCount, InfantCount, dt, "OB"));
-                            }
+                            ResultOB.AddRange(SearchResultMap(AdultCount, ChildCount, InfantCount, dt, "OB"));
                         }
 
+                        
                     }
-                    AllResults.Add(ResultOB.ToArray());
-                    AllResults.Add(ResultIB.ToArray());
-
+                    if (ResultOB.Count > 0)
+                    {
+                        AllResults.Add(ResultOB.ToArray());
+                    }
+                    if (ResultIB.Count > 0)
+                    {
+                        AllResults.Add(ResultIB.ToArray());
+                    }
                     mdlS = new mdlFareQuotResponse()
                     {
+                        
                         ServiceProvider = enmServiceProvider.TripJack,
                         TraceId = Guid.NewGuid().ToString(),
                         ResponseStatus = 1,
                         Error = new mdlError()
                         {
                             ErrorCode = 0,
-                            ErrorMessage = "Unable to Process"
+                            ErrorMessage = ""
                         },
                         Origin = mdl.searchQuery.routeInfos.FirstOrDefault()?.fromCityOrAirport.code,
                         Destination = mdl.searchQuery.routeInfos.FirstOrDefault()?.toCityOrAirport.code,
@@ -691,7 +746,7 @@ namespace WingApi.Classes.TripJack
                         Error = new mdlError()
                         {
                             ErrorCode = mdl.status.httpStatus,
-                            ErrorMessage = "Unable to Process",
+                            ErrorMessage = mdl.errors?.FirstOrDefault()?.message,
                         }
                     };
                 }
@@ -712,7 +767,7 @@ namespace WingApi.Classes.TripJack
 
             return mdlS;
         }
-
+            
 
 
         #region *******************Search Class***************************
@@ -762,6 +817,13 @@ namespace WingApi.Classes.TripJack
 
         #region *************** Response **********************************
 
+        public class Error
+        {
+            public string errCode { get; set; }
+            public string message { get; set; }
+            public string details { get; set; }
+        }
+
         public class SearchresultWraper
         {
             public Searchresult searchResult { get; set; }
@@ -777,7 +839,7 @@ namespace WingApi.Classes.TripJack
         }
         public class SearchresultMulticity
         {
-            public ONWARD_RETURN_COMBO[][] tripInfos { get; set; }
+            public ONWARD_RETURN_COMBO[] tripInfos { get; set; }            
         }
 
         public class Searchresult
@@ -796,6 +858,21 @@ namespace WingApi.Classes.TripJack
             public ONWARD_RETURN_COMBO[] ONWARD { get; set; }
             public ONWARD_RETURN_COMBO[] RETURN { get; set; }
             public ONWARD_RETURN_COMBO[] COMBO { get; set; }
+            [JsonProperty(PropertyName = "0")]
+            public ONWARD_RETURN_COMBO[] _0 { get; set; }
+            [JsonProperty(PropertyName = "1")]
+            public ONWARD_RETURN_COMBO[] _1 { get; set; }
+            [JsonProperty(PropertyName = "2")]
+            public ONWARD_RETURN_COMBO[] _2 { get; set; }
+            [JsonProperty(PropertyName = "3")]
+            public ONWARD_RETURN_COMBO[] _3 { get; set; }
+            [JsonProperty(PropertyName = "4")]
+            public ONWARD_RETURN_COMBO[] _4 { get; set; }
+            [JsonProperty(PropertyName = "5")]
+            public ONWARD_RETURN_COMBO[] _5 { get; set; }
+            [JsonProperty(PropertyName = "6")]
+            public ONWARD_RETURN_COMBO[] _6 { get; set; }
+
         }
 
         public class ONWARD_RETURN_COMBO
@@ -977,8 +1054,17 @@ namespace WingApi.Classes.TripJack
             public string name { get; set; }
             public bool isLcc { get; set; }
         }
+        public class pcs
+        {
+            public bool pped { get; set; }
+            public bool pid { get; set; }
+            public bool pm { get; set; } 
+            
+        }
+
         public class Conditions
         {
+            public pcs pcs { get; set; }
             public object[] ffas { get; set; }
             public bool isa { get; set; }
             public Dob dob { get; set; }
@@ -1022,6 +1108,17 @@ namespace WingApi.Classes.TripJack
         public class FareQuotRequest
         {
             public string[] priceIds { get; set; }
+        }
+
+        public class FareQuotResponse:SearchresultMulticity
+        {
+            public Alert[] alerts { get; set; }
+            public Searchquery searchQuery { get; set; }
+            public string bookingId { get; set; }
+            public Totalpriceinfo totalPriceInfo { get; set; }
+            public Status status { get; set; }
+            public Conditions conditions { get; set; }
+            public Error[] errors { get; set; }
         }
         #endregion
 

@@ -250,8 +250,16 @@ namespace WingApi.Classes.TekTravel
                             ResultOB.Add(SearchResultMap(dt, "OB"));
                         }
                     }
-                    AllResults.Add(ResultOB.ToArray());
-                    AllResults.Add(ResultIB.ToArray());
+                    if (ResultOB.Count() > 0)
+                    {
+                        AllResults.Add(ResultOB.ToArray());
+                    }
+                    if (ResultIB.Count() > 0)
+                    {
+                        AllResults.Add(ResultIB.ToArray());
+                    }
+
+
 
                     mdlS = new mdlSearchResponse()
                     {
@@ -304,15 +312,15 @@ namespace WingApi.Classes.TekTravel
         {
             FareQuotRequest mdl = new FareQuotRequest()
             {
-                EndUserIp= request.EndUserIp,
-                TokenId= TokenId,
-                TraceId=request.TraceId,
-                ResultIndex=request.ResultIndex.FirstOrDefault()
+                EndUserIp = request.EndUserIp,
+                TokenId = TokenId,
+                TraceId = request.TraceId,
+                ResultIndex = request.ResultIndex.FirstOrDefault()
             };
             return mdl;
         }
 
-        private async Task<mdlFareQuotResponse> FareQuoteFromTboAsync( mdlFareQuotRequest request)
+        private async Task<mdlFareQuotResponse> FareQuoteFromTboAsync(mdlFareQuotRequest request)
         {
 
             int MaxLoginAttempt = 1, LoginAttempt = 0;
@@ -332,7 +340,7 @@ namespace WingApi.Classes.TekTravel
                     goto StartSendRequest;
                 }
             }
-            
+
             string jsonString = System.Text.Json.JsonSerializer.Serialize(FareQuoteRequestMap(request, TokenDetails.TokenId));
             var HaveResponse = GetResponse(jsonString, tboUrl);
             if (HaveResponse.ErrorCode == 0)
@@ -348,7 +356,7 @@ namespace WingApi.Classes.TekTravel
             {
                 if (mdl.ResponseStatus == 1)//success
                 {
-                    var tempdata = mdl.Results.SelectMany(p => p).ToArray();                    
+                    var tempdata = mdl.Results.SelectMany(p => p).ToArray();
                     List<mdlSearchResult[]> AllResults = new List<mdlSearchResult[]>();
                     List<mdlSearchResult> ResultOB = new List<mdlSearchResult>();
                     List<mdlSearchResult> ResultIB = new List<mdlSearchResult>();
@@ -383,7 +391,7 @@ namespace WingApi.Classes.TekTravel
                         Origin = mdl.Origin,
                         Destination = mdl.Destination,
                         Results = AllResults.ToArray()
-                    };                    
+                    };
                 }
                 else
                 {
@@ -682,8 +690,8 @@ namespace WingApi.Classes.TekTravel
 
         private async Task RemoveFromDb(mdlFareQuotRequest request)
         {
-            DateTime currentDate = Convert.ToDateTime( DateTime.Now.ToString("yyyy-MM-dd"));
-            var Existing=_context.tblTboTravelDetail.Where(p => p.TraceId == request.TraceId && p.ExpireDt> currentDate).FirstOrDefault();
+            DateTime currentDate = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));
+            var Existing = _context.tblTboTravelDetail.Where(p => p.TraceId == request.TraceId && p.ExpireDt > currentDate).FirstOrDefault();
             if (Existing != null)
             {
                 _context.Database.ExecuteSqlRaw("delete from tblTboTravelDetailResult where TravelDetailId=@p0", parameters: new[] { Existing.TravelDetailId });
@@ -694,13 +702,168 @@ namespace WingApi.Classes.TekTravel
 
 
         public async Task<mdlFareQuotResponse> FareQuoteAsync(mdlFareQuotRequest request)
-        {   
-            mdlFareQuotResponse mdl=await FareQuoteFromTboAsync(request);
+        {
+            mdlFareQuotResponse mdl = await FareQuoteFromTboAsync(request);
             if (mdl.IsPriceChanged)
             {
                 await RemoveFromDb(request);
             }
             return mdl;
+        }
+
+
+        private FareRuleRequest FareRuleRequestMap(mdlFareRuleRequest request, string TokenId)
+        {
+            FareRuleRequest mdl = new FareRuleRequest()
+            {
+                EndUserIp = request.EndUserIp,
+                TokenId = TokenId,
+                TraceId = request.TraceId,
+                ResultIndex = request.ResultIndex.FirstOrDefault()
+            };
+            return mdl;
+        }
+
+        private async Task<mdlFareRuleResponse> FareRuleFromDbAsync(mdlFareRuleRequest request)
+        {
+            mdlFareRuleResponse mdl = null;
+            
+            var result= _context.tblTboFareRule.Where(p => p.TraceId == request.TraceId && p.ResultIndex == request.ResultIndex.FirstOrDefault()).OrderByDescending(p=>p.GenrationDt).FirstOrDefault();
+            if (result != null)
+            {
+                mdl = JsonConvert.DeserializeObject<mdlFareRuleResponse>(result.JsonData);
+            }
+            await _context.Database.ExecuteSqlRawAsync("delete from tblTboFareRule where GenrationDt<@p0", parameters: new[] { DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd") });
+            await _context.SaveChangesAsync();
+            return mdl;
+        }
+
+
+        private async Task FareRule_SaveAsync(mdlFareRuleRequest request, mdlFareRuleResponse mdl)
+        {
+            if (mdl != null)
+            { 
+            }
+            var result = _context.tblTboFareRule.Add(new tblTboFareRule()
+            {
+                GenrationDt = DateTime.Now,
+                ResultIndex = request.ResultIndex.FirstOrDefault(),
+                JsonData = JsonConvert.SerializeObject(mdl),
+                TraceId=request.TraceId
+            }) ;
+            await _context.SaveChangesAsync();            
+        }
+
+        private async Task<mdlFareRuleResponse> FareRuleFromTboAsync(mdlFareRuleRequest request)
+        {
+
+            int MaxLoginAttempt = 1, LoginAttempt = 0;
+            mdlFareRuleResponse mdlS = null;
+            FareRuleResponse mdl = null;
+            FareRuleResponseWraper mdlTemp = null;
+            string tboUrl = _config["TBO:API:FareRule"];
+            StartSendRequest:
+            //Load tokken ID 
+            var TokenDetails = _context.tblTboTokenDetails.OrderByDescending(p => p.GenrationDt).FirstOrDefault();
+            if (TokenDetails == null)
+            {
+                var AuthenticateResponse = await LoginAsync();
+                if (AuthenticateResponse.Status == 1 && LoginAttempt < MaxLoginAttempt)
+                {
+                    LoginAttempt++;
+                    goto StartSendRequest;
+                }
+            }
+
+            string jsonString = System.Text.Json.JsonSerializer.Serialize(FareRuleRequestMap(request, TokenDetails.TokenId));
+            var HaveResponse = GetResponse(jsonString, tboUrl);
+            if (HaveResponse.ErrorCode == 0)
+            {
+                mdlTemp = (System.Text.Json.JsonSerializer.Deserialize<FareRuleResponseWraper>(HaveResponse.Message));
+                if (mdlTemp != null)
+                {
+                    mdl = mdlTemp.Response;
+                }
+            }
+            
+
+            if (mdl != null)
+            {
+                if (mdl.ResponseStatus == 1)//success
+                {
+                    List<mdlFarerule> mdlFareRules = new List<mdlFarerule>();
+                    foreach (var r in mdl.FareRules)
+                    {
+                        mdlFareRules.Add(new mdlFarerule()
+                        {
+                            Airline = r.Airline,
+                            FlightId = r.FlightId,
+                            Origin = r.Origin,
+                            Destination = r.Destination,
+                            FareBasisCode = r.FareBasisCode,
+                            FareRuleDetail = r.FareRuleDetail,
+                            FareRestriction = r.FareRestriction,
+                            FareFamilyCode = r.FareFamilyCode,
+                            FareRuleIndex = r.FareRuleIndex,
+                            DepartureTime = r.DepartureTime,
+                            ReturnDate = r.ReturnDate
+                        });
+                    }
+
+                    mdlS = new mdlFareRuleResponse()
+                    {
+                         Error= new mdlError()
+                         {
+                             ErrorCode = mdl.Error.ErrorCode,
+                             ErrorMessage = mdl.Error.ErrorMessage,
+                         },
+                         FareRules= mdlFareRules.ToArray(),
+                         ResponseStatus=mdl.ResponseStatus
+
+                    };
+                    await FareRule_SaveAsync(request, mdlS);
+                }
+                else
+                {
+                    mdlS = new mdlFareRuleResponse()
+                    {
+                        ResponseStatus = 3,
+                        Error = new mdlError()
+                        {
+                            ErrorCode = mdl.Error.ErrorCode,
+                            ErrorMessage = mdl.Error.ErrorMessage,
+                        }
+                    };
+                }
+
+            }
+            else
+            {
+                mdlS = new mdlFareRuleResponse()
+                {
+                    ResponseStatus = 100,
+                    Error = new mdlError()
+                    {
+                        ErrorCode = 100,
+                        ErrorMessage = "Unable to Process",
+                    }
+                };
+            }
+
+            return mdlS;
+        }
+
+        public async Task<mdlFareRuleResponse> FareRuleAsync(mdlFareRuleRequest request) 
+        {
+            mdlFareRuleResponse response = null;
+            
+            response = await FareRuleFromDbAsync(request);
+            if (response == null)//no data found in Db
+            {
+                response = await FareRuleFromTboAsync(request);
+            }
+            
+            return response;
         }
 
         #region ************************* Search Classes ***************************
@@ -740,7 +903,7 @@ namespace WingApi.Classes.TekTravel
 
         public class SearchResponse
         {
-            public int ResponseStatus { get; set; }            
+            public int ResponseStatus { get; set; }
             public Error Error { get; set; }
             public string TraceId { get; set; }
             public string Origin { get; set; }
@@ -907,6 +1070,8 @@ namespace WingApi.Classes.TekTravel
 
         public class Farerule
         {
+
+            public int FlightId { get; set; }
             public string Origin { get; set; }
             public string Destination { get; set; }
             public string Airline { get; set; }
@@ -915,6 +1080,8 @@ namespace WingApi.Classes.TekTravel
             public string FareRestriction { get; set; }
             public string FareFamilyCode { get; set; }
             public string FareRuleIndex { get; set; }
+            public DateTime DepartureTime { get; set; }
+            public DateTime ReturnDate { get; set; }
         }
 
         #endregion
@@ -926,7 +1093,7 @@ namespace WingApi.Classes.TekTravel
             public string EndUserIp { get; set; }
             public string TokenId { get; set; }
             public string TraceId { get; set; }
-            public string ResultIndex { get; set; }            
+            public string ResultIndex { get; set; }
         }
 
         public class FareQuotResponseWraper
@@ -945,7 +1112,27 @@ namespace WingApi.Classes.TekTravel
         }
 
         #endregion
+        #region ***************** Fare Rule *****************
 
+        public class FareRuleRequest : FareQuotRequest
+        {
+
+        }
+        public class FareRuleResponseWraper
+        {
+            public FareRuleResponse Response { get; set; }
+        }
+
+        public class FareRuleResponse
+        {
+            public Error Error { get; set; }
+            public Farerule[] FareRules { get; set; }
+            public int ResponseStatus { get; set; }
+            public string TraceId { get; set; }
+        }
+
+        
+        #endregion
 
     }
 }

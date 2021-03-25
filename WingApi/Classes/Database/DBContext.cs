@@ -14,6 +14,8 @@ namespace WingApi.Classes.Database
         public DbSet<tblTboTokenDetails> tblTboTokenDetails { get; set; }
         public DbSet<tblTboTravelDetail> tblTboTravelDetail { get;set;}
         public DbSet<tblTboTravelDetailResult> tblTboTravelDetailResult { get; set; }
+        public DbSet<tblTboFareRule> tblTboFareRule { get; set; }
+        
         public DbSet<tblTripJackTravelDetail> tblTripJackTravelDetail { get; set; }
         public DbSet<tblTripJackTravelDetailResult> tblTripJackTravelDetailResult { get; set; }
     }
