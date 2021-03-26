@@ -319,6 +319,82 @@ namespace WingGateway.Classes
         }
 
 
+        public List<ProcHolidayPackageSearch> GetHolidayPackageDetails(enmLoadData loadType, mdlFilterModel mdl, int empid, int spmode, bool LoadImage)
+        {
+            List<ProcHolidayPackageSearch> returnData = new List<ProcHolidayPackageSearch>();
+            
+
+            DateTime datefrom = DateTime.Now;
+            DateTime datetto = DateTime.Now;
+            string tcid = "";
+            int status = 0;
+
+            if (mdl.dateFilter != null)
+            {
+                datefrom = mdl.dateFilter.FromDt;
+                datetto = mdl.dateFilter.ToDt;
+                status = Convert.ToInt32(mdl.dateFilter.approvalType);
+                spmode = 1;
+            }
+
+            if (mdl.idFilter != null)
+            {
+                tcid = mdl.idFilter.TcId;
+                spmode = 2;
+            }
+
+            using (SqlConnection sqlconnection = new SqlConnection(_config["ConnectionStrings:DefaultConnection"]))
+            {
+                using (SqlCommand sqlcmd = new SqlCommand("proc_holiday_package_search", sqlconnection))
+                {
+                    sqlcmd.CommandType = CommandType.StoredProcedure;
+                    sqlcmd.Parameters.Add(new SqlParameter("datefrom", datefrom));
+                    sqlcmd.Parameters.Add(new SqlParameter("dateto", datetto));
+                    sqlcmd.Parameters.Add(new SqlParameter("is_active", status));
+                    sqlcmd.Parameters.Add(new SqlParameter("session_nid", empid));
+                    sqlcmd.Parameters.Add(new SqlParameter("spmode", spmode));
+
+
+                    sqlconnection.Open();
+                    SqlDataReader rd = sqlcmd.ExecuteReader();
+                    while (rd.Read())
+                    {
+                        returnData.Add(new ProcHolidayPackageSearch()
+                        {
+                            PackageName = Convert.ToString(rd["packagename"]),
+                            PackageType = (enmPackageCustomerType) Convert.ToInt32(rd["PackageType"]),
+                            PackageFromDate = Convert.ToString(rd["packagefromdate"]),
+                            PackageToDate = Convert.ToString(rd["packagetodate"]),
+                            PriceFrom = Convert.ToInt32(rd["pricefrom"]),
+                            PriceTo= Convert.ToInt32(rd["priceto"]),
+                            MemberCount = Convert.ToInt32(rd["MemberCount"]),
+                            DaysCount = Convert.ToInt32(rd["DaysCount"]),
+                            state_name = Convert.ToString(rd["statename"]),
+                            country_name = Convert.ToString(rd["countryname"]),
+                            is_active = (enmStatus)Convert.ToInt32(rd["IsActive"]),
+                            country_id = Convert.ToInt32(rd["countryid"]),
+                            state_id = Convert.ToInt32(rd["countryid"]),
+                            PackageDescription=Convert.ToString(rd["PackageDescription"]),
+                            SpecialNote= Convert.ToString(rd["SpecialNote"]),
+                            UploadPackageImage=Convert.ToString(rd["UploadPackageImage"]),
+                            UploadOtherImage=Convert.ToString(rd["UploadOtherImage"]),
+                            CreatedByid = Convert.ToInt32(rd["createdbyid"]),
+                            CreatedByName = Convert.ToString(rd["CreatedByName"]),
+                            CreatedDt=Convert.ToString(rd["createddt"]),
+                            lastModifiedByid = Convert.ToInt32(rd["lastModifiedByid"]),
+                            lastModifiedByName= Convert.ToString(rd["lastModifiedByName"]),
+                            LastModifieddate= Convert.ToString(rd["LastModifieddate"]),
+                        });
+                    }
+                }
+
+            }
+
+            return returnData;
+
+        }
+
+
         new public mdlTreeWraper GetAllDownline(int NID)
         {
             mdlTreeWraper mdltreeWraper = new mdlTreeWraper();

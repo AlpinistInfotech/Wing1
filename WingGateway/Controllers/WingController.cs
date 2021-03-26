@@ -217,7 +217,7 @@ namespace WingGateway.Controllers
                     ExistingData.LastModifieddate = DateTime.Now;
                     ExistingData.UploadPackageImage = string.Join<string>(",", AllFileName_packageimages);
                     ExistingData.UploadOtherImage = string.Join<string>(",", AllFileName_otherimages);
-
+                    ExistingData.is_active = mdl.is_active;
                     _context.tblHolidayPackageMaster.Update(ExistingData);
                     _context.SaveChanges();
                     return RedirectToAction("HolidayPackageNew",
@@ -247,6 +247,7 @@ namespace WingGateway.Controllers
                         CreatedBy = currentUsers.EmpId,
                         CreatedDt = DateTime.Now,
                         Isdeleted = false,
+                        is_active=0,
                     });
                     _context.SaveChanges();
                     return RedirectToAction("HolidayPackageNew",
@@ -257,6 +258,37 @@ namespace WingGateway.Controllers
 
             return View(mdl);
         }
+
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Holiday_Package_Report))]
+        public IActionResult HolidayPackageReport()
+        {
+            mdlHolidayPackageReportWraper returnDataMdl = new mdlHolidayPackageReportWraper();
+            returnDataMdl.FilterModel = new mdlFilterModel() { dateFilter = new mdlDateFilter(), idFilter = new mdlIdFilter(), IsReport = true };
+            returnDataMdl.HolidayPackageWrapers = new List<ProcHolidayPackageSearch>();
+            return View(returnDataMdl);
+        }
+        [HttpPost]
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Holiday_Package_Report))]
+        public IActionResult HolidayPackageReport(mdlFilterModel mdl, enmLoadData submitdata)
+        {
+            mdlHolidayPackageReportWraper returnData = new mdlHolidayPackageReportWraper();
+            if (mdl.dateFilter == null)
+            {
+                mdl.dateFilter = new mdlDateFilter();
+            }
+            if (mdl.idFilter == null)
+            {
+                mdl.idFilter = new mdlIdFilter();
+            }
+            mdl.dateFilter.FromDt = Convert.ToDateTime(mdl.dateFilter.FromDt.ToString("dd-MMM-yyyy"));
+            mdl.dateFilter.ToDt = Convert.ToDateTime(mdl.dateFilter.ToDt.AddDays(1).ToString("dd-MMM-yyyy"));
+            WingGateway.Classes.ConsProfile consProfile = new Classes.ConsProfile(_context, _config);
+            returnData.HolidayPackageWrapers = consProfile.GetHolidayPackageDetails(submitdata, mdl, 0,0, false);
+            returnData.FilterModel = mdl;
+            return View(returnData);
+        }
+
+
 
         #endregion
     }

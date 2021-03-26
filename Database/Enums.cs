@@ -19,7 +19,11 @@ namespace Database
         Friends=8,
         Cooperate=16,
     }
-
+    public enum enmStatus
+    {
+        Active = 0,
+        Deactive = 1,
+    }
     public enum enmTCRanks
     {
         Level1=1,

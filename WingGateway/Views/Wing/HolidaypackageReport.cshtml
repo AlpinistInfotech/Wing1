@@ -1,0 +1,97 @@
+﻿@model WingGateway.Models.mdlHolidayPackageReportWraper
+@using Database;
+@inject Database.ICurrentUsers _currentUsers
+@{
+    ViewData["Title"] = Database.enmDocumentMaster.Gateway_Holiday_Package_Report.GetDocumentDetails().Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline card-outline-tabs">
+            <div class="card-header p-0 border-bottom-0">
+                @await Html.PartialAsync("_TcApproval", Model.FilterModel)
+            </div>
+            <div class="card-body">
+                <table id="tblHolidayPackageDetails" class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th style="display:none">Edit</th>
+                            <th>Package Name</th>
+                            <th>Type</th>
+                            <th>From Date</th>
+                            <th>To Date</th>
+                            <th>Price Range</th>
+                            <th>Status</th>
+
+                            <th>Member's Count</th>
+                            <th>Day's Count</th>
+                            <th>Country</th>
+                            <th>State</th>
+                            <th>Created By</th>
+                            <th>Created Date</th>
+                            <th>Last Modified Date</th>
+                            <th>Last Modify By</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.HolidayPackageWrapers.Count(); i++)
+                        {
+                        <tr>
+
+                            <td style="display:none"><a href="javascript:DoPost(@Model.HolidayPackageWrapers[i].DetailId)" data-toggle="tooltip" title="Edit Record !"><i class="nav-icon fas fa-edit"></i></a></td>
+                            <td>@Model.HolidayPackageWrapers[i].PackageName</td>
+                            <td>@Model.HolidayPackageWrapers[i].PackageType.ToString()</td>
+                            <td>@Model.HolidayPackageWrapers[i].PackageFromDate</td>
+                            <td>@Model.HolidayPackageWrapers[i].PackageToDate</td>
+                            <td>@Model.HolidayPackageWrapers[i].PriceFrom - @Model.HolidayPackageWrapers[i].PriceTo</td>
+                            <td>@Model.HolidayPackageWrapers[i].is_active.ToString()</td>
+                            <td>@Model.HolidayPackageWrapers[i].MemberCount</td>
+                            <td>@Model.HolidayPackageWrapers[i].DaysCount</td>
+
+                            <td>@Model.HolidayPackageWrapers[i].country_name</td>
+                            <td>@Model.HolidayPackageWrapers[i].state_name</td>
+
+                            <td>@Model.HolidayPackageWrapers[i].CreatedByName</td>
+                            <td>@Model.HolidayPackageWrapers[i].CreatedDt</td>
+                            <td>@Model.HolidayPackageWrapers[i].lastModifiedByName</td>
+                            <td>@Model.HolidayPackageWrapers[i].LastModifieddate</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<form name="updateData" action="@(enmDocumentMaster.Gateway_Holiday_Package_Report.GetDocumentDetails().ActionName)" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="idFilter.TcId" id="tcId1" />
+    <input type="hidden" name="submitdata" value="@(enmLoadData.ByID)" />
+</form>
+<form name="approveData" action="@(enmDocumentMaster.Gateway_Holiday_Package_Report.GetDocumentDetails().ActionName)" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="idFilter.TcId" id="tcId2" />
+    <input type="hidden" name="submitdata" value="@(enmLoadData.ByID)" />
+</form>
+
+
+@section Scripts {
+    <script>
+    function DoPost(id) {
+        document.getElementById("tcId1").value = id;
+        document.forms["updateData"].submit();
+        }
+        function DoPostApproval(id) {
+            document.getElementById("tcId2").value = id;
+            document.forms["approveData"].submit();
+        }
+
+    $(document).ready(function () {
+        $("#tblBankDetails").DataTable({ "ajax":null});
+    });
+    </script>
+
+}

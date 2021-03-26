@@ -33,6 +33,8 @@ namespace WingGateway.Models
 
         [Display(Name = "Approval Type")]
         public enmApprovalType approvalType { get; set; } = enmApprovalType.Pending;
+
+        public enmStatus statustype { get; set; } = enmStatus.Active;
     }
 
     public class mdlIdFilter
@@ -79,6 +81,25 @@ namespace WingGateway.Models
 
     }
 
+    public class mdlHolidayPackageReportWraper
+    {
+        public mdlFilterModel FilterModel { get; set; }
+        public List<ProcHolidayPackageSearch> HolidayPackageWrapers { get; set; }
+    }
+
+
+    public class mdlHolidayPackageWraper : mdlHolidayPackage
+    {
+        public int DetailId { get; set; }
+        public DateTime CreatedDt { get; set; }
+        public int CreatedBy { get; set; }
+
+        public bool Isdeleted { get; set; }
+
+        public DateTime LastModifieddate { get; set; }
+        public int lastModifiedBy { get; set; }
+
+    }
 
     public class mdlTcReportWraper
     {
@@ -173,10 +194,11 @@ namespace WingGateway.Models
 
         public List<byte[]> fileDataPackageImage { set; get; } = null;
         public List<byte[]> fileDataOtherImage { set; get; } = null;
+        public int is_active { get; set; }
 
         public int created_by { get; set; }
         public DateTime created_datetime { get; set; }
     }
 
-
+        
 }

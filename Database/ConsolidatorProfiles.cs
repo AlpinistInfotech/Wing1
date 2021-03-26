@@ -325,6 +325,7 @@ namespace Database
 
         public DateTime CreatedDt { get; set; }
         public int CreatedBy { get; set; }
+        public int is_active { get; set; }
 
         public bool Isdeleted { get; set; }
 
