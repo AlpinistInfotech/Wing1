@@ -131,23 +131,19 @@ namespace WingGateway.Models
 
         [Required]
         [Display(Name = "Price Range")]
-        [RegularExpression("^[0-9]{10}$", ErrorMessage = "Invalid {0}, no special charcter")]
         public int PriceFrom { get; set; }
 
         [Required]
         [Display(Name = "To")]
-        [RegularExpression("^[0-9]{10}$", ErrorMessage = "Invalid {0}, no special charcter")]
         public int PriceTo { get; set; }
 
         
         [Required]
         [Display(Name = "Member's Count")]
-        [RegularExpression("^[0-9]{10}$", ErrorMessage = "Invalid {0}, no special charcter")]
         public int MemberCount { get; set; }
 
         [Required]
         [Display(Name = "Day's Count")]
-        [RegularExpression("^[0-9]{10}$", ErrorMessage = "Invalid {0}, no special charcter")]
         public int DaysCount{ get; set; }
 
 

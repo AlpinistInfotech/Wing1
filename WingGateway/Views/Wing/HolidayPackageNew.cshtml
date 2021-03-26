@@ -27,7 +27,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label asp-for="PackageType"></label>
-                                <select asp-for="PackageType" class="form-control select2">
+                                <select multiple asp-for="PackageType" class="form-control select2">
                                     @foreach (var data in Enum.GetValues(typeof(enmPackageCustomerType)))
                                     {
                                         <option value="@(data)">@data.ToString() </option>
@@ -122,14 +122,14 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label asp-for="PackageDescription"></label>
-                                <input asp-for="PackageDescription" class="form-control" placeholder="Package Description" />
+                                <textarea asp-for="PackageDescription" class="form-control" rows="10" placeholder="Package Description"></textarea>
                                 <span asp-validation-for="PackageDescription" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label asp-for="SpecialNote"></label>
-                                <input asp-for="SpecialNote" class="form-control" placeholder="Special Note (if any)" />
+                                <textarea asp-for="SpecialNote" class="form-control" rows="10" placeholder="Special Note (if any)"></textarea>
                                 <span asp-validation-for="SpecialNote" class="text-danger"></span>
                             </div>
                         </div>
@@ -155,7 +155,7 @@
                                 <label asp-for="UploadOtherImage"></label>
                                 <div class="input-group">
                                     <div class="custom-file">
-                                        <input asp-for="UploadOtherImage" class="custom-file-input" accept="image/x-png,image/jpeg" multiple/>
+                                        <input asp-for="UploadOtherImage" class="custom-file-input" accept="image/x-png,image/jpeg" multiple />
                                         <label class="custom-file-label" asp-for="UploadOtherImage">Choose file</label>
                                     </div>
                                 </div>
@@ -166,46 +166,58 @@
                     </div>
 
                 </div>
-                 
-        @*<div class="card-footer">
-            @if (Model.fileDataPackageImage != null)
-            {
-                @foreach (var fileD in Model.fileDataPackageImage)
-                {
-                    if (fileD != null)
-                    {
-                        <div class="form-group col-md-4">
-                            <img src="@string.Format("data:image/png;base64,{0}", Convert.ToBase64String(fileD))" height="300px" width="100%" />
-                        </div>
-                    }
-                }
-            }
+
+                <div class="card-footer">
+
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
 
 
-            @if (Model.fileDataOtherImage != null)
-            {
-                @foreach (var fileD in Model.fileDataOtherImage)
-                {
-                    if (fileD != null)
-                    {
-                        <div class="form-group col-md-4">
-                            <img src="@string.Format("data:image/png;base64,{0}", Convert.ToBase64String(fileD))" height="300px" width="100%" />
-                        </div>
-                    }
-                }
-            }
-        </div>*@
-</form>
+                @*<div class="card-footer">
+                        @if (Model.fileDataPackageImage != null)
+                        {
+                            @foreach (var fileD in Model.fileDataPackageImage)
+                            {
+                                if (fileD != null)
+                                {
+                                    <div class="form-group col-md-4">
+                                        <img src="@string.Format("data:image/png;base64,{0}", Convert.ToBase64String(fileD))" height="300px" width="100%" />
+                                    </div>
+                                }
+                            }
+                        }
+
+
+                        @if (Model.fileDataOtherImage != null)
+                        {
+                            @foreach (var fileD in Model.fileDataOtherImage)
+                            {
+                                if (fileD != null)
+                                {
+                                    <div class="form-group col-md-4">
+                                        <img src="@string.Format("data:image/png;base64,{0}", Convert.ToBase64String(fileD))" height="300px" width="100%" />
+                                    </div>
+                                }
+                            }
+                        }
+                    </div>*@
+            </form>
 
         </div>
     </div>
 </div>
 
-@section Scripts {    
+@section Scripts {
     <script src="~/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
     <script>
         $(document).ready(function () {
-        bsCustomFileInput.init();
+            bsCustomFileInput.init();
         });
+
+
     </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/CountryState.js"></script>
+
 }

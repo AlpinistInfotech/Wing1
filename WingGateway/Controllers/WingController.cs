@@ -170,7 +170,8 @@ namespace WingGateway.Controllers
 
             if (ModelState.IsValid)
             {
-                List<string> AllFileName = new List<string>();
+                List<string> AllFileName_packageimages = new List<string>();
+                List<string> AllFileName_otherimages = new List<string>();
 
                 bool exists = System.IO.Directory.Exists(path_holidaypackageimages);
                 if (!exists)
@@ -181,7 +182,7 @@ namespace WingGateway.Controllers
                     var filename = Guid.NewGuid().ToString() + ".jpeg";
                     using (var stream = new FileStream(string.Concat(path_holidaypackageimages, filename), FileMode.Create))
                     {
-                        AllFileName.Add(filename);
+                        AllFileName_packageimages.Add(filename);
                         await file.CopyToAsync(stream);
                     }
                 }
@@ -191,7 +192,7 @@ namespace WingGateway.Controllers
                     var filename = Guid.NewGuid().ToString() + ".jpeg";
                     using (var stream = new FileStream(string.Concat(path_holidayotherimages, filename), FileMode.Create))
                     {
-                        AllFileName.Add(filename);
+                        AllFileName_otherimages.Add(filename);
                         await file.CopyToAsync(stream);
                     }
                 }
@@ -214,9 +215,12 @@ namespace WingGateway.Controllers
                     ExistingData.SpecialNote = mdl.SpecialNote;
                     ExistingData.lastModifiedBy = currentUsers.EmpId;
                     ExistingData.LastModifieddate = DateTime.Now;
+                    ExistingData.UploadPackageImage = string.Join<string>(",", AllFileName_packageimages);
+                    ExistingData.UploadOtherImage = string.Join<string>(",", AllFileName_otherimages);
+
                     _context.tblHolidayPackageMaster.Update(ExistingData);
                     _context.SaveChanges();
-                    return RedirectToAction("HolidayPackageMaster",
+                    return RedirectToAction("HolidayPackageNew",
                                      new { _enmSaveStatus = enmSaveStatus.success, _enmMessage = enmMessage.UpdateSucessfully });
 
                 }
@@ -226,24 +230,26 @@ namespace WingGateway.Controllers
                 {
                     _context.tblHolidayPackageMaster.Add(new tblHolidayPackageMaster
                     {
-                    PackageName = mdl.PackageName ,
-                    PackageType = mdl.PackageType,
+                        PackageName = mdl.PackageName,
+                        PackageType = mdl.PackageType,
                         PackageFromDate = mdl.PackageFromDate,
                         PackageToDate = mdl.PackageToDate,
                         PriceFrom = mdl.PriceFrom,
-                    PriceTo = mdl.PriceTo,
-                    MemberCount = mdl.MemberCount,
-                    DaysCount = mdl.DaysCount,
-                    country_id = mdl.country_id,
-                    state_id = mdl.state_id,
-                    PackageDescription = mdl.PackageDescription,
-                    SpecialNote = mdl.SpecialNote,
+                        PriceTo = mdl.PriceTo,
+                        MemberCount = mdl.MemberCount,
+                        DaysCount = mdl.DaysCount,
+                        country_id = mdl.country_id,
+                        state_id = mdl.state_id,
+                        PackageDescription = mdl.PackageDescription,
+                        SpecialNote = mdl.SpecialNote,
+                        UploadPackageImage = string.Join<string>(",", AllFileName_packageimages),
+                        UploadOtherImage = string.Join<string>(",", AllFileName_otherimages),
                         CreatedBy = currentUsers.EmpId,
                         CreatedDt = DateTime.Now,
                         Isdeleted = false,
                     });
                     _context.SaveChanges();
-                    return RedirectToAction("HolidayPackageMaster",
+                    return RedirectToAction("HolidayPackageNew",
                                  new { _enmSaveStatus = enmSaveStatus.success, _enmMessage = enmMessage.SaveSucessfully });
                 }
 
