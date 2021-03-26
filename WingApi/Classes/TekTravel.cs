@@ -712,6 +712,9 @@ namespace WingApi.Classes.TekTravel
         }
 
 
+
+
+
         private FareRuleRequest FareRuleRequestMap(mdlFareRuleRequest request, string TokenId)
         {
             FareRuleRequest mdl = new FareRuleRequest()
@@ -737,7 +740,6 @@ namespace WingApi.Classes.TekTravel
             await _context.SaveChangesAsync();
             return mdl;
         }
-
 
         private async Task FareRule_SaveAsync(mdlFareRuleRequest request, mdlFareRuleResponse mdl)
         {

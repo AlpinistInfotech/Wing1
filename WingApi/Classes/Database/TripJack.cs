@@ -44,6 +44,16 @@ namespace WingApi.Classes.Database
         public string JsonData { get; set; }
 
     }
+    public class tblTripJackFareRule
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        public string TraceId { get; set; }
+        public string ResultIndex { get; set; }
+        public string JsonData { get; set; }
+        public DateTime GenrationDt { get; set; }
+    }
 }
 
 

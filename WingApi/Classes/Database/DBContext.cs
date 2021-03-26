@@ -18,5 +18,7 @@ namespace WingApi.Classes.Database
         
         public DbSet<tblTripJackTravelDetail> tblTripJackTravelDetail { get; set; }
         public DbSet<tblTripJackTravelDetailResult> tblTripJackTravelDetailResult { get; set; }
+        public DbSet<tblTripJackFareRule> tblTripJackFareRule { get; set; }
+        
     }
 }
