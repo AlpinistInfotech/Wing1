@@ -1,0 +1,194 @@
+USE [TravelWing]
+GO
+/****** Object:  StoredProcedure [dbo].[proc_holiday_package_search]    Script Date: 27-03-2021 23:30:52 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER proc [dbo].[proc_holiday_package_search]
+@datefrom date,
+@dateto date,
+@is_active int,
+@session_nid int,
+@spmode tinyint
+
+as
+
+
+
+if @spmode=1 -- for getting the data as per joining date
+select  
+A.PackageName ,A.DetailId ,A.PackageType,
+format(A.PackageFromDate,'dd-MMM-yyyy') as PackageFromDate,
+format(A.PackageToDate,'dd-MMM-yyyy') as PackageToDate,
+A.PriceFrom,A.PriceTo,
+A.MemberCount , A.DaysCount,A.PackageDescription,A.SpecialNote,
+A.Isdeleted,
+format(A.CreatedDt,'dd-MMM-yyyy hh:mm tt') as CreatedDt,
+case when  isnull(A.lastModifiedBy ,0)=0 then '' else  format(A.LastModifieddate,'dd-MMM-yyyy hh:mm tt') end as LastModifieddate
+,A.UploadPackageImage,A.UploadOtherImage
+,E.StateName,G.CountryName,
+M.EmpCode as createdbyname,A.CreatedBy as CreatedByid ,
+A.lastModifiedBy as lastModifiedByid, M1.EmpCode as lastModifiedByname,
+A.is_active as IsActive,E.StateId,G.CountryId
+
+from 
+					  tblHolidayPackageMaster A  with(nolock)
+			inner join tblStateMaster E with(nolock) on  A.state_id=E.StateId
+			inner join tblCountryMaster G with(nolock) on A.country_id=G.CountryId
+			left join tblEmpMaster M with(nolock) on A.CreatedBy=M.EmpId
+			left join tblEmpMaster M1 with(nolock) on A.lastModifiedBy=M1.EmpId
+
+where A.PackageFromDate between @datefrom and @dateto 
+and (@is_active=0 or A.is_active=@is_active)
+order by PackageFromDate
+
+if @spmode=2
+select  
+A.PackageName ,A.DetailId ,A.PackageType,
+format(A.PackageFromDate,'dd-MMM-yyyy') as PackageFromDate,
+format(A.PackageToDate,'dd-MMM-yyyy') as PackageToDate,
+A.PriceFrom,A.PriceTo,
+A.MemberCount , A.DaysCount,A.PackageDescription,A.SpecialNote,
+A.Isdeleted,
+format(A.CreatedDt,'dd-MMM-yyyy hh:mm tt') as CreatedDt,
+case when  isnull(A.lastModifiedBy ,0)=0 then '' else  format(A.LastModifieddate,'dd-MMM-yyyy hh:mm tt') end as LastModifieddate
+,A.UploadPackageImage,A.UploadOtherImage
+,E.StateName,G.CountryName,
+M.EmpCode as createdbyname,A.CreatedBy as CreatedByid,
+A.lastModifiedBy as lastModifiedByid, M1.EmpCode as lastModifiedByname,
+A.is_active as IsActive,E.StateId,G.CountryId
+
+from 
+					  tblHolidayPackageMaster A  with(nolock)
+			inner join tblStateMaster E with(nolock) on  A.state_id=E.StateId
+			inner join tblCountryMaster G with(nolock) on A.country_id=G.CountryId
+			left join tblEmpMaster M with(nolock) on A.CreatedBy=M.EmpId
+			left join tblEmpMaster M1 with(nolock) on A.lastModifiedBy=M1.EmpId
+where A.is_active=@is_active
+order by PackageFromDate
+
+if @spmode=3
+select top 5
+A.PackageName ,A.DetailId ,A.PackageType,
+format(A.PackageFromDate,'dd-MMM-yyyy') as PackageFromDate,
+format(A.PackageToDate,'dd-MMM-yyyy') as PackageToDate,
+A.PriceFrom,A.PriceTo,
+A.MemberCount , A.DaysCount,A.PackageDescription,A.SpecialNote,
+A.Isdeleted,
+format(A.CreatedDt,'dd-MMM-yyyy hh:mm tt') as CreatedDt,
+case when  isnull(A.lastModifiedBy ,0)=0 then '' else  format(A.LastModifieddate,'dd-MMM-yyyy hh:mm tt') end as LastModifieddate
+,A.UploadPackageImage,A.UploadOtherImage
+,E.StateName,G.CountryName,
+M.EmpCode as createdbyname,A.CreatedBy as CreatedByid,
+A.lastModifiedBy as lastModifiedByid, M1.EmpCode as lastModifiedByname,
+A.is_active as IsActive,E.StateId,G.CountryId
+
+from 
+					  tblHolidayPackageMaster A  with(nolock)
+			inner join tblStateMaster E with(nolock) on  A.state_id=E.StateId
+			inner join tblCountryMaster G with(nolock) on A.country_id=G.CountryId
+			left join tblEmpMaster M with(nolock) on A.CreatedBy=M.EmpId
+			left join tblEmpMaster M1 with(nolock) on A.lastModifiedBy=M1.EmpId
+where A.is_active=8
+order by PackageFromDate desc
+
+
+Go
+
+
+USE [TravelWing]
+GO
+/****** Object:  StoredProcedure [dbo].[proc_holiday_package_search]    Script Date: 27-03-2021 23:57:47 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER proc [dbo].[proc_holiday_package_search]
+@datefrom date,
+@dateto date,
+@is_active int,
+@session_nid int,
+@spmode tinyint
+
+as
+
+
+
+if @spmode=1 -- for getting the data as per joining date
+select  
+A.PackageName ,A.DetailId ,A.PackageType,
+format(A.PackageFromDate,'dd-MMM-yyyy') as PackageFromDate,
+format(A.PackageToDate,'dd-MMM-yyyy') as PackageToDate,
+A.PriceFrom,A.PriceTo,
+A.MemberCount , A.DaysCount,A.PackageDescription,A.SpecialNote,
+A.Isdeleted,
+format(A.CreatedDt,'dd-MMM-yyyy hh:mm tt') as CreatedDt,
+case when  isnull(A.lastModifiedBy ,0)=0 then '' else  format(A.LastModifieddate,'dd-MMM-yyyy hh:mm tt') end as LastModifieddate
+,A.UploadPackageImage,A.UploadOtherImage
+,E.StateName,G.CountryName,
+M.EmpCode as createdbyname,A.CreatedBy as CreatedByid ,
+A.lastModifiedBy as lastModifiedByid, M1.EmpCode as lastModifiedByname,
+A.is_active as IsActive,E.StateId,G.CountryId
+
+from 
+					  tblHolidayPackageMaster A  with(nolock)
+			inner join tblStateMaster E with(nolock) on  A.state_id=E.StateId
+			inner join tblCountryMaster G with(nolock) on A.country_id=G.CountryId
+			left join tblEmpMaster M with(nolock) on A.CreatedBy=M.EmpId
+			left join tblEmpMaster M1 with(nolock) on A.lastModifiedBy=M1.EmpId
+
+where A.PackageFromDate between @datefrom and @dateto 
+and (@is_active=0 or A.is_active=@is_active)
+order by PackageFromDate
+
+if @spmode=2
+select  
+A.PackageName ,A.DetailId ,A.PackageType,
+format(A.PackageFromDate,'dd-MMM-yyyy') as PackageFromDate,
+format(A.PackageToDate,'dd-MMM-yyyy') as PackageToDate,
+A.PriceFrom,A.PriceTo,
+A.MemberCount , A.DaysCount,A.PackageDescription,A.SpecialNote,
+A.Isdeleted,
+format(A.CreatedDt,'dd-MMM-yyyy hh:mm tt') as CreatedDt,
+case when  isnull(A.lastModifiedBy ,0)=0 then '' else  format(A.LastModifieddate,'dd-MMM-yyyy hh:mm tt') end as LastModifieddate
+,A.UploadPackageImage,A.UploadOtherImage
+,E.StateName,G.CountryName,
+M.EmpCode as createdbyname,A.CreatedBy as CreatedByid,
+A.lastModifiedBy as lastModifiedByid, M1.EmpCode as lastModifiedByname,
+A.is_active as IsActive,E.StateId,G.CountryId
+
+from 
+					  tblHolidayPackageMaster A  with(nolock)
+			inner join tblStateMaster E with(nolock) on  A.state_id=E.StateId
+			inner join tblCountryMaster G with(nolock) on A.country_id=G.CountryId
+			left join tblEmpMaster M with(nolock) on A.CreatedBy=M.EmpId
+			left join tblEmpMaster M1 with(nolock) on A.lastModifiedBy=M1.EmpId
+where A.is_active=@is_active
+order by PackageFromDate
+
+if @spmode=3
+select top 5
+A.PackageName ,A.DetailId ,A.PackageType,
+format(A.PackageFromDate,'dd-MMM-yyyy') as PackageFromDate,
+format(A.PackageToDate,'dd-MMM-yyyy') as PackageToDate,
+A.PriceFrom,A.PriceTo,
+A.MemberCount , A.DaysCount,A.PackageDescription,A.SpecialNote,
+A.Isdeleted,
+format(A.CreatedDt,'dd-MMM-yyyy hh:mm tt') as CreatedDt,
+case when  isnull(A.lastModifiedBy ,0)=0 then '' else  format(A.LastModifieddate,'dd-MMM-yyyy hh:mm tt') end as LastModifieddate
+,A.UploadPackageImage,A.UploadOtherImage
+,E.StateName,G.CountryName,
+M.EmpCode as createdbyname,A.CreatedBy as CreatedByid,
+A.lastModifiedBy as lastModifiedByid, M1.EmpCode as lastModifiedByname,
+A.is_active as IsActive,E.StateId,G.CountryId
+
+from 
+					  tblHolidayPackageMaster A  with(nolock)
+			inner join tblStateMaster E with(nolock) on  A.state_id=E.StateId
+			inner join tblCountryMaster G with(nolock) on A.country_id=G.CountryId
+			left join tblEmpMaster M with(nolock) on A.CreatedBy=M.EmpId
+			left join tblEmpMaster M1 with(nolock) on A.lastModifiedBy=M1.EmpId
+where A.is_active=8
+order by PackageFromDate desc
+
