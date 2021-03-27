@@ -34,7 +34,7 @@ namespace WingGateway.Models
         [Display(Name = "Approval Type")]
         public enmApprovalType approvalType { get; set; } = enmApprovalType.Pending;
 
-        public enmStatus statustype { get; set; } = enmStatus.Active;
+        public enmStatus StatusType { get; set; } = enmStatus.Active;
     }
 
     public class mdlIdFilter

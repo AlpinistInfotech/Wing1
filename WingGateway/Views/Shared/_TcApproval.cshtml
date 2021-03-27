@@ -49,7 +49,25 @@
                             <div class="row">
                                 <div class="col-md-6">
 
-                                   
+
+                                    @*@if (Model.IsReport)
+                                    {
+                                        <div class="form-group row">
+                                            <label asp-for="dateFilter.StatusType" class="col-sm-2 col-form-label"></label>
+                                            <div class="col-sm-10">
+                                                <select asp-for="dateFilter.StatusType" class="form-control select2">
+                                                    <option value="@(enmStatus.Active | enmStatus.Deactive)">ALL </option>
+                                                    @foreach (var data in Enum.GetValues(typeof(enmStatus)))
+                                                    {
+                                                        <option value="@(data)">@data.ToString() </option>
+                                                    }
+                                                </select>
+                                                <span asp-validation-for="dateFilter.StatusType" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    }
+                                    else*@
+                                    {
                                     <div class="form-group row">
                                         <label asp-for="dateFilter.approvalType" class="col-sm-2 col-form-label"></label>
                                         <div class="col-sm-10">
@@ -63,6 +81,7 @@
                                             <span asp-validation-for="dateFilter.approvalType" class="text-danger"></span>
                                         </div>
                                     </div>
+                                    }
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group row">

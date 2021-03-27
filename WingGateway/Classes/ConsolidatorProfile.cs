@@ -337,11 +337,24 @@ namespace WingGateway.Classes
                 spmode = 1;
             }
 
-            if (mdl.idFilter != null)
+            else if (mdl.idFilter != null)
             {
                 tcid = mdl.idFilter.TcId;
                 spmode = 2;
             }
+            else
+                spmode = 3;
+
+            string filePath_holiday_package_image = _config["FileUpload:HolidayPackageImage"];
+            string filePath_other_package_image = _config["FileUpload:HolidayOtherImage"];
+
+            var path_holiday_package = Path.Combine(
+                     Directory.GetCurrentDirectory(),
+                     "wwwroot/" + filePath_holiday_package_image);
+
+            var path_other_package = Path.Combine(
+                     Directory.GetCurrentDirectory(),
+                     "wwwroot/" + filePath_other_package_image);
 
             using (SqlConnection sqlconnection = new SqlConnection(_config["ConnectionStrings:DefaultConnection"]))
             {
@@ -376,14 +389,15 @@ namespace WingGateway.Classes
                             state_id = Convert.ToInt32(rd["countryid"]),
                             PackageDescription=Convert.ToString(rd["PackageDescription"]),
                             SpecialNote= Convert.ToString(rd["SpecialNote"]),
-                            UploadPackageImage=Convert.ToString(rd["UploadPackageImage"]),
-                            UploadOtherImage=Convert.ToString(rd["UploadOtherImage"]),
+                            UploadPackageImage= filePath_holiday_package_image + ""+Convert.ToString(rd["UploadPackageImage"]),
+                            UploadOtherImage= filePath_other_package_image+ ""+Convert.ToString(rd["UploadOtherImage"]),
                             CreatedByid = Convert.ToInt32(rd["createdbyid"]),
                             CreatedByName = Convert.ToString(rd["CreatedByName"]),
                             CreatedDt=Convert.ToString(rd["createddt"]),
                             lastModifiedByid = Convert.ToInt32(rd["lastModifiedByid"]),
                             lastModifiedByName= Convert.ToString(rd["lastModifiedByName"]),
                             LastModifieddate= Convert.ToString(rd["LastModifieddate"]),
+                            
                         });
                     }
                 }
