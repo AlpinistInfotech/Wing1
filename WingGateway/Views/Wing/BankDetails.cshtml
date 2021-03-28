@@ -76,8 +76,8 @@
 </form>
 <form name="approveData" action="@(enmDocumentMaster.Emp_Tc_BankApproval.GetDocumentDetails().ActionName)" method="post">
     @Html.AntiForgeryToken()
-    <input type="hidden" name="idFilter.TcId" id="tcId2" />
-    <input type="hidden" name="submitdata" value="@(enmLoadData.ByID)" />
+    <input type="hidden" name="TcId" id="tcId2" />
+    <input type="hidden" name="submitdata" value="LoadData" />
 </form>
 
 
