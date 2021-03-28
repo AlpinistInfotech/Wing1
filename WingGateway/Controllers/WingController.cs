@@ -1,6 +1,7 @@
 ﻿using Database;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using WingGateway.Classes;
 using WingGateway.Models;
 
 namespace WingGateway.Controllers
@@ -17,10 +19,13 @@ namespace WingGateway.Controllers
     {
         private readonly DBContext _context;
         private readonly IConfiguration _config;
-        public WingController(DBContext context, IConfiguration config)
+        private readonly ICurrentUsers _currentUsers;
+        
+        public WingController(DBContext context, IConfiguration config, ICurrentUsers currentUsers)
         {
             _context = context;
             _config = config;
+            _currentUsers = currentUsers;
         }
 
         [Authorize(policy:nameof( enmDocumentMaster.Emp_Dashboard))]
@@ -38,9 +43,11 @@ namespace WingGateway.Controllers
             returnDataMdl.TcBankWrapers = new List<mdlTcBankWraper>();
             return View(returnDataMdl);
         }
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Authorize(policy: nameof(enmDocumentMaster.Emp_Tc_BankDetails))]
-        public IActionResult BankDetails(mdlFilterModel mdl, enmLoadData submitdata)
+        public IActionResult BankDetails(mdlFilterModel mdl, enmLoadData submitdata, [FromServices]IConsProfile consProfile)
         {
             mdlTcBankReportWraper returnData = new mdlTcBankReportWraper();
             if (mdl.dateFilter == null)
@@ -52,8 +59,7 @@ namespace WingGateway.Controllers
                 mdl.idFilter = new mdlIdFilter();
             }
             mdl.dateFilter.FromDt =Convert.ToDateTime( mdl.dateFilter.FromDt.ToString("dd-MMM-yyyy"));
-            mdl.dateFilter.ToDt = Convert.ToDateTime(mdl.dateFilter.ToDt.AddDays(1).ToString("dd-MMM-yyyy"));
-            WingGateway.Classes.ConsProfile consProfile = new Classes.ConsProfile(_context, _config);
+            mdl.dateFilter.ToDt = Convert.ToDateTime(mdl.dateFilter.ToDt.AddDays(1).ToString("dd-MMM-yyyy"));            
             returnData.TcBankWrapers = consProfile.GetBankDetails(submitdata, mdl, 0, false);
             returnData.FilterModel = mdl;
             return View(returnData);
@@ -61,11 +67,88 @@ namespace WingGateway.Controllers
 
 
         [Authorize(policy: nameof(enmDocumentMaster.Emp_Tc_BankApproval))]
-        public IActionResult BankApproval()
+        public IActionResult BankApproval(enmSaveStatus? _enmSaveStatus, enmMessage? _enmMessage)
         {
-            mdlTcBankApprovalWraper returnDataMdl = new mdlTcBankApprovalWraper();
-            returnDataMdl.approval= new mdlApprovalForm() { };
-            return View(returnDataMdl);
+            if (_enmSaveStatus != null)
+            {
+                ViewBag.SaveStatus = (int)_enmSaveStatus.Value;
+                ViewBag.Message = _enmMessage?.GetDescription();
+            }
+            mdlTcBankWraper mdl = new mdlTcBankWraper();
+            ModelState.Clear();
+            return View(mdl);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(policy: nameof(enmDocumentMaster.Emp_Tc_BankApproval))]
+        public async Task<IActionResult> BankApprovalAsync(mdlTcBankWraper mdl, string submitdata, [FromServices] IConsProfile consProfile)
+        {
+            try
+            {
+                ModelState.Clear();
+                if (submitdata == "LoadData")
+                {   
+                    if (mdl.TcId == "")
+                    {
+                        ModelState.AddModelError(nameof(mdl.TcId), "TcId Required");
+                    }
+                    else
+                    {
+                        mdl = consProfile.GetBankDetails(enmLoadData.ByID, new mdlFilterModel() { idFilter = new mdlIdFilter() { TcId = mdl.TcId } }, 0, true).FirstOrDefault();
+
+                    }
+                    return View(mdl);
+                }
+                else if (submitdata == "Approve" || submitdata == "Reject")
+                {
+                    bool HaveModelError = false;
+                    if (mdl.DetailId == 0)
+                    {
+                        HaveModelError = true;
+                        ModelState.AddModelError("", "Invalid Data");
+                    }
+                    if (submitdata == "Reject" && (string.IsNullOrWhiteSpace(mdl.ApprovalRemarks)))
+                    {
+                        HaveModelError = true;
+                        ModelState.AddModelError(nameof(mdl.ApprovalRemarks), "Remarks Required");
+                    }
+                    
+                    if (!HaveModelError)
+                    {
+                        var data=_context.tblTcBankDetails.Where(p => p.DetailId == mdl.DetailId).FirstOrDefault();
+                        if (data == null)
+                        {
+                            HaveModelError = true;
+                            ModelState.AddModelError("", "Invalid Data");
+                        }
+                        else
+                        {
+                            data.IsApproved = submitdata == "Approve" ? enmApprovalType.Approved : enmApprovalType.Rejected;
+                            data.ApprovalRemarks = mdl.ApprovalRemarks;
+                            data.ApprovedBy = _currentUsers.EmpId;
+                            data.ApprovedDt = DateTime.Now;
+                            _context.Update(data);
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+                    if (HaveModelError)
+                    {   
+                        ViewBag.SaveStatus = (int)enmSaveStatus.danger;
+                        ViewBag.Message = enmMessage.InvalidData;                        
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+            }
+            if (mdl == null)
+            {
+                mdl = new mdlTcBankWraper();
+            }
+            return View(mdl);
         }
 
 
