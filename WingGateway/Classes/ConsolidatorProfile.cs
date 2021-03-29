@@ -224,8 +224,12 @@ namespace WingGateway.Classes
                     var files = p.UploadImageName.Split(",");
                     foreach (var file in files)
                     {
-                        p.fileData.Add(System.IO.File.ReadAllBytes(string.Concat(path, file)));
-                    }
+                        try
+                        {
+                            p.fileData.Add(System.IO.File.ReadAllBytes(string.Concat(path, file)));
+                        }
+                        catch { }
+                        }
                 }
                 );
             }

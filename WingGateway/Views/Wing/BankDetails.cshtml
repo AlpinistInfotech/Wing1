@@ -26,10 +26,10 @@
                             <th>Status</th>
                             <th style="width:200px">Remarks</th>
 
-                            <th style="width:150px">Request Date</th>
-                            <th style="width:150px">Approval Date</th>
-                            <th>Approval By</th>
-                            <th style="width:150px">Approval Remarks</th>
+                            <th style="width:150px">Requested Date</th>
+                            <th style="width:150px">Action Date</th>
+                            <th>Action By</th>
+                            <th style="width:150px">Action Remarks</th>
 
                         </tr>
                     </thead>
@@ -39,6 +39,7 @@
                         <tr>
 
                             <td style="display:none"><a href="javascript:DoPost(@Model.TcBankWrapers[i].TcId)" data-toggle="tooltip" title="Edit Record !"><i class="nav-icon fas fa-edit"></i></a></td>
+              
                             <td>@Model.TcBankWrapers[i].TcId</td>
                             <td>@Model.TcBankWrapers[i].TcName</td>
                             <td>@Model.TcBankWrapers[i].TcNameasonBank</td>

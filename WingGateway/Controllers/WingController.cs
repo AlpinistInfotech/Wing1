@@ -96,7 +96,6 @@ namespace WingGateway.Controllers
                     else
                     {
                         mdl = consProfile.GetBankDetails(enmLoadData.ByID, new mdlFilterModel() { idFilter = new mdlIdFilter() { TcId = mdl.TcId } }, 0, true).FirstOrDefault();
-
                     }
                     return View(mdl);
                 }
@@ -130,6 +129,9 @@ namespace WingGateway.Controllers
                             data.ApprovedDt = DateTime.Now;
                             _context.Update(data);
                             await _context.SaveChangesAsync();
+                            return RedirectToAction("BankApproval",
+                                 new { _enmSaveStatus = enmSaveStatus.success,  _enmMessage = submitdata == "Approve" ? enmMessage.ApprovedSucessfully: enmMessage.RejectSucessfully });
+
                         }
                     }
                     if (HaveModelError)
@@ -160,9 +162,12 @@ namespace WingGateway.Controllers
             returnDataMdl.TcPANWrapers = new List<mdlTcPANWraper>();
             return View(returnDataMdl);
         }
+
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Authorize(policy: nameof(enmDocumentMaster.Emp_Tc_PANDetails))]
-        public IActionResult PANDetails(mdlFilterModel mdl, enmLoadData submitdata)
+        public IActionResult PANDetails(mdlFilterModel mdl, enmLoadData submitdata, [FromServices] IConsProfile consProfile)
         {
             mdlTcPANReportWraper returnData = new mdlTcPANReportWraper();
             if (mdl.dateFilter == null)
@@ -175,11 +180,98 @@ namespace WingGateway.Controllers
             }
             mdl.dateFilter.FromDt = Convert.ToDateTime(mdl.dateFilter.FromDt.ToString("dd-MMM-yyyy"));
             mdl.dateFilter.ToDt = Convert.ToDateTime(mdl.dateFilter.ToDt.AddDays(1).ToString("dd-MMM-yyyy"));
-            WingGateway.Classes.ConsProfile consProfile = new Classes.ConsProfile(_context, _config);
             returnData.TcPANWrapers = consProfile.GetPANDetails(submitdata, mdl, 0, false);
             returnData.FilterModel = mdl;
             return View(returnData);
         }
+
+        [Authorize(policy: nameof(enmDocumentMaster.Emp_Tc_PANApproval))]
+        public IActionResult PANApproval(enmSaveStatus? _enmSaveStatus, enmMessage? _enmMessage)
+        {
+            if (_enmSaveStatus != null)
+            {
+                ViewBag.SaveStatus = (int)_enmSaveStatus.Value;
+                ViewBag.Message = _enmMessage?.GetDescription();
+            }
+            mdlTcPANWraper mdl = new mdlTcPANWraper();
+            ModelState.Clear();
+            return View(mdl);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(policy: nameof(enmDocumentMaster.Emp_Tc_PANApproval))]
+        public async Task<IActionResult> PANApprovalAsync(mdlTcPANWraper mdl, string submitdata, [FromServices] IConsProfile consProfile)
+        {
+            try
+            {
+                ModelState.Clear();
+                if (submitdata == "LoadData")
+                {
+                    if (mdl.TcId == "")
+                    {
+                        ModelState.AddModelError(nameof(mdl.TcId), "TcId Required");
+                    }
+                    else
+                    {
+                        mdl = consProfile.GetPANDetails(enmLoadData.ByID, new mdlFilterModel() { idFilter = new mdlIdFilter() { TcId = mdl.TcId } }, 0, true).FirstOrDefault();
+                    }
+                    return View(mdl);
+                }
+                else if (submitdata == "Approve" || submitdata == "Reject")
+                {
+                    bool HaveModelError = false;
+                    if (mdl.DetailId == 0)
+                    {
+                        HaveModelError = true;
+                        ModelState.AddModelError("", "Invalid Data");
+                    }
+                    if (submitdata == "Reject" && (string.IsNullOrWhiteSpace(mdl.ApprovalRemarks)))
+                    {
+                        HaveModelError = true;
+                        ModelState.AddModelError(nameof(mdl.ApprovalRemarks), "Remarks Required");
+                    }
+
+                    if (!HaveModelError)
+                    {
+                        var data = _context.TblTcPanDetails.Where(p => p.DetailId == mdl.DetailId).FirstOrDefault();
+                        if (data == null)
+                        {
+                            HaveModelError = true;
+                            ModelState.AddModelError("", "Invalid Data");
+                        }
+                        else
+                        {
+                            data.IsApproved = submitdata == "Approve" ? enmApprovalType.Approved : enmApprovalType.Rejected;
+                            data.ApprovalRemarks = mdl.ApprovalRemarks;
+                            data.ApprovedBy = _currentUsers.EmpId;
+                            data.ApprovedDt = DateTime.Now;
+                            _context.Update(data);
+                            await _context.SaveChangesAsync();
+                            return RedirectToAction("PANApproval",
+                                 new { _enmSaveStatus = enmSaveStatus.success, _enmMessage = submitdata == "Approve" ? enmMessage.ApprovedSucessfully : enmMessage.RejectSucessfully });
+
+                        }
+                    }
+                    if (HaveModelError)
+                    {
+                        ViewBag.SaveStatus = (int)enmSaveStatus.danger;
+                        ViewBag.Message = enmMessage.InvalidData;
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+            }
+            if (mdl == null)
+            {
+                mdl = new mdlTcPANWraper();
+            }
+            return View(mdl);
+        }
+
 
 
         [Authorize(policy: nameof(enmDocumentMaster.Emp_Tc_Details))]

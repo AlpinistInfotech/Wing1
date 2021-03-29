@@ -106,7 +106,7 @@ namespace WingGateway.Models
 
         [StringLength(200, ErrorMessage = "The {0} must be at most {1} characters long.")]
         [RegularExpression("[a-zA-Z0-9,/.\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
-        [Display(Name = "Approval Remarks")]
+        [Display(Name = "Approval/Reject Remarks")]
         public string ApprovalRemarks { set; get; }
 
         public List<byte[]> fileData { set; get; }

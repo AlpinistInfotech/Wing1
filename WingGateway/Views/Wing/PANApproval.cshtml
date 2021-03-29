@@ -1,9 +1,9 @@
-﻿@model WingGateway.Models.mdlTcBankWraper 
+﻿@model WingGateway.Models.mdlTcPANWraper 
 
 
 @using Database
 @{
-    ViewData["Title"] = Database.enmDocumentMaster.Emp_Tc_BankApproval.GetDocumentDetails().Name;
+    ViewData["Title"] = Database.enmDocumentMaster.Emp_Tc_PANApproval.GetDocumentDetails().Name;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div class="row">
@@ -18,7 +18,7 @@
                 {
                     <div class="card card-white">
                         <div class="card-header">
-                            <h3 class="card-title">@Database.enmDocumentMaster.Emp_Tc_BankDetails.GetDocumentDetails().Name (@enmApprovalType.Pending)</h3>
+                            <h3 class="card-title">@Database.enmDocumentMaster.Emp_Tc_PANDetails.GetDocumentDetails().Name (@enmApprovalType.Pending)</h3>
                         </div>
                     </div>
                 }
@@ -26,7 +26,7 @@
                 {
                     <div class="card card-info">
                         <div class="card-header">
-                            <h3 class="card-title">@Database.enmDocumentMaster.Emp_Tc_BankDetails.GetDocumentDetails().Name (@enmApprovalType.InProcessing)</h3>
+                            <h3 class="card-title">@Database.enmDocumentMaster.Emp_Tc_PANDetails.GetDocumentDetails().Name (@enmApprovalType.InProcessing)</h3>
                         </div>
                     </div>
                 }
@@ -34,7 +34,7 @@
                 {
                     <div class="card card-success">
                         <div class="card-header">
-                            <h3 class="card-title">@Database.enmDocumentMaster.Emp_Tc_BankDetails.GetDocumentDetails().Name (@enmApprovalType.Approved)</h3>
+                            <h3 class="card-title">@Database.enmDocumentMaster.Emp_Tc_PANDetails.GetDocumentDetails().Name (@enmApprovalType.Approved)</h3>
                         </div>
                     </div>
                 }
@@ -42,7 +42,7 @@
                 {
                     <div class="card card-danger">
                         <div class="card-header">
-                            <h3 class="card-title">@Database.enmDocumentMaster.Emp_Tc_BankDetails.GetDocumentDetails().Name (@enmApprovalType.Rejected)</h3>
+                            <h3 class="card-title">@Database.enmDocumentMaster.Emp_Tc_PANDetails.GetDocumentDetails().Name (@enmApprovalType.Rejected)</h3>
                         </div>
                     </div>
                 }
@@ -73,49 +73,28 @@
                 </div>
 
 
+                
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="BankId"></label>
-                            <input asp-for="TcBankName" class="form-control" placeholder="Bank Name" readonly data-val="false" />                            
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="IFSC"></label>
-                            <input asp-for="IFSC" class="form-control" placeholder="IFSC" readonly data-val="false"/>
-                            <span asp-validation-for="IFSC" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="AccountNo"></label>
-                            <input asp-for="AccountNo" class="form-control" placeholder="Account No." readonly  data-val="false"/>
-                            <span asp-validation-for="AccountNo" class="text-danger"></span>
+                            <label asp-for="PANNo"></label>
+                            <input asp-for="TcPANNo" class="form-control" placeholder="PAN No." readonly  data-val="false"/>
+                            <span asp-validation-for="PANNo" class="text-danger"></span>
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="NameasonBank"></label>
-                            <input asp-for="NameasonBank" class="form-control" placeholder="Please enter Name (as on bank passbook)" readonly data-val="false"/>
-                            <span asp-validation-for="NameasonBank" class="text-danger"></span>
+                            <label asp-for="PanName"></label>
+                            <input asp-for="TcNameasonPAN" class="form-control" placeholder="PAN Name" readonly data-val="false"/>
+                            <span asp-validation-for="PanName" class="text-danger"></span>
                         </div>
                     </div>
 
                 </div>
 
                 <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="BranchAddress"></label>
-                            <input asp-for="BranchAddress" class="form-control" placeholder="Branch Address" readonly data-val="false"/>
-                            <span asp-validation-for="BranchAddress" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="form-group">
                             <label asp-for="Remarks"></label>
                             <input asp-for="Remarks" class="form-control" placeholder="Remarks" readonly />
