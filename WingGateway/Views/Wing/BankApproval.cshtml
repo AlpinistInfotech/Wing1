@@ -1,17 +1,13 @@
-﻿@model WingGateway.Models.mdlTcBankApprovalWraper 
+﻿@model WingGateway.Models.mdlTcBankWraper 
 
 
 @using Database
 @{
-    ViewData["Title"] = Database.enmDocumentMaster.Gateway_Bank.GetDocumentDetails().Name;
+    ViewData["Title"] = Database.enmDocumentMaster.Emp_Tc_BankApproval.GetDocumentDetails().Name;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div class="row">
     <div class="col-md-12">
-
-        <div class="card-header p-0 border-bottom-0">
-            @await Html.PartialAsync("_TcApprovalsubmit", Model.approval)
-        </div>
         <div class="card card-primary">
 
             <form action="@Url.Action()" method="post" enctype="multipart/form-data">
@@ -53,121 +49,126 @@
 
 
 
-                <div class="card-body">
+            <div class="card-body">
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="BankId"></label>
-                                <select asp-for="BankId" class="form-control select2" asp-items="ViewBag.BankList">
-                                </select>
-                                <span asp-validation-for="BankId" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="IFSC"></label>
-                                <input asp-for="IFSC" class="form-control" placeholder="IFSC" />
-                                <span asp-validation-for="IFSC" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="AccountNo"></label>
-                                <input asp-for="AccountNo" class="form-control" placeholder="Account No." />
-                                <span asp-validation-for="AccountNo" class="text-danger"></span>
-                            </div>
-                        </div>
+                <input asp-for="DetailId" type="hidden" />
 
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="NameasonBank"></label>
-                                <input asp-for="NameasonBank" class="form-control" placeholder="Please enter Name (as on bank passbook)" />
-                                <span asp-validation-for="NameasonBank" class="text-danger"></span>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="row">
-
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="BranchAddress"></label>
-                                <input asp-for="BranchAddress" class="form-control" placeholder="Branch Address" />
-                                <span asp-validation-for="BranchAddress" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="Remarks"></label>
-                                <input asp-for="Remarks" class="form-control" placeholder="Remarks" />
-                                <span asp-validation-for="Remarks" class="text-danger"></span>
-                            </div>
-                        </div>
-
-                        <div class="row">
-
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label asp-for="UploadImages">Please Select Cancelled Cheque/PassBook</label>
-                                    <div class="input-group">
-                                        <div class="custom-file">
-                                            <input asp-for="UploadImages" class="custom-file-input" accept="image/x-png,image/jpeg" multiple />
-                                            <label class="custom-file-label" asp-for="UploadImages">Choose file</label>
-                                        </div>
-                                    </div>
-                                    <span asp-validation-for="UploadImages" class="text-danger"></span>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="row">
+                                <label asp-for="TcId" class="col-md-2 col-form-label"></label>
+                                <div class="col-sm-10">
+                                    <input asp-for="TcId" class="form-control" placeholder="TcId" required />
+                                    <span asp-validation-for="TcId" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
-
-                    </div>
-                    @if (Model.IsApproved == enmApprovalType.Approved || Model.IsApproved == enmApprovalType.Rejected)
-                    {
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label asp-for="IsApproved"></label>
-                                    <input asp-for="IsApproved" class="form-control" placeholder="Remarks" />
-                                    <span asp-validation-for="IsApproved" class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label asp-for="ApprovalRemarks"></label>
-                                    <input asp-for="ApprovalRemarks" class="form-control" placeholder="Remarks" />
-                                    <span asp-validation-for="ApprovalRemarks" class="text-danger"></span>
-                                </div>
-                            </div>
-
+                     </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <button type="submit" name="submitdata" value="LoadData" class="btn btn-primary">Load Data</button>
                         </div>
-                    }
+                    </div>
+                </div>
 
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="BankId"></label>
+                            <input asp-for="TcBankName" class="form-control" placeholder="Bank Name" readonly data-val="false" />                            
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="IFSC"></label>
+                            <input asp-for="IFSC" class="form-control" placeholder="IFSC" readonly data-val="false"/>
+                            <span asp-validation-for="IFSC" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="AccountNo"></label>
+                            <input asp-for="AccountNo" class="form-control" placeholder="Account No." readonly  data-val="false"/>
+                            <span asp-validation-for="AccountNo" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="NameasonBank"></label>
+                            <input asp-for="NameasonBank" class="form-control" placeholder="Please enter Name (as on bank passbook)" readonly data-val="false"/>
+                            <span asp-validation-for="NameasonBank" class="text-danger"></span>
+                        </div>
+                    </div>
 
                 </div>
-                <div class="card-footer">
-                    @if (Model.IsApproved == null || Model.IsApproved == enmApprovalType.Rejected)
-                    {
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    }
-                    @if (Model.fileData != null)
-                    {
-                        @foreach (var fileD in Model.fileData)
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="BranchAddress"></label>
+                            <input asp-for="BranchAddress" class="form-control" placeholder="Branch Address" readonly data-val="false"/>
+                            <span asp-validation-for="BranchAddress" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Remarks"></label>
+                            <input asp-for="Remarks" class="form-control" placeholder="Remarks" readonly />
+                            <span asp-validation-for="Remarks" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="IsApproved"></label>
+                            <input asp-for="IsApproved" class="form-control" readonly/>
+                            <span asp-validation-for="IsApproved" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="ApprovalRemarks"></label>
+                            <input asp-for="ApprovalRemarks" class="form-control" placeholder="Remarks" />
+                            <span asp-validation-for="ApprovalRemarks" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        @if (Model.fileData != null)
                         {
-                            if (fileD != null)
+                            @foreach (var fileD in Model.fileData)
                             {
-                                <div class="form-group col-md-4">
-                                    <img src="@string.Format("data:image/png;base64,{0}", Convert.ToBase64String(fileD))" height="300px" width="100%" />
-                                </div>
+                                if (fileD != null)
+                                {
+                                    <div class="form-group col-md-4">
+                                        <img src="@string.Format("data:image/png;base64,{0}", Convert.ToBase64String(fileD))" height="300px" width="100%" />
+                                    </div>
+                                }
                             }
                         }
-                    }
+                    </div>
                 </div>
-            </form>
+
+
+
+            </div>
+            <div class="card-footer">
+                @if (Model.IsApproved == enmApprovalType.Pending)
+                {
+                    <button type="submit" name="submitdata" value="Approve" class="btn btn-success">Approve</button>
+                    <button type="submit" name="submitdata" value="Reject" class="btn btn-danger">&nbsp;Reject</button>
+                }
+
+            </div>
+        </form>
 
         </div>
     </div>

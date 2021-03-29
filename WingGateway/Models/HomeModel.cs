@@ -55,14 +55,11 @@ namespace WingGateway.Models
 
 
     public class mdlBank
-    {
-        public mdlFilterModel FilterModel { get; set; }
+    {   
 
         [Required]
         [Display(Name = "Select Bank Name")]
         public int BankId { get; set; }
-
-
         [StringLength(11, ErrorMessage = "The {0} must be at most {1} characters long.",MinimumLength =11)]
         [Required]
         [Display(Name = "IFSC Code")]
@@ -107,7 +104,7 @@ namespace WingGateway.Models
         public DateTime? ApprovedDt { get; set; }
 
 
-        [StringLength(20, ErrorMessage = "The {0} must be at most {1} characters long.")]
+        [StringLength(200, ErrorMessage = "The {0} must be at most {1} characters long.")]
         [RegularExpression("[a-zA-Z0-9,/.\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         [Display(Name = "Approval Remarks")]
         public string ApprovalRemarks { set; get; }

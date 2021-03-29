@@ -74,13 +74,7 @@ namespace WingGateway.Models
     }
     
     
-    public class mdlTcBankApprovalWraper : mdlBank
-    {
-        public mdlApprovalForm approval { get; set; }
-        public bool IsReport { get; set; } = true;
-
-    }
-
+    
     public class mdlHolidayPackageReportWraper
     {
         public mdlFilterModel FilterModel { get; set; }

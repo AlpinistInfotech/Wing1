@@ -72,7 +72,7 @@ namespace WingApi.Classes
         public string EndUserIp { get; set; }
     }
 
-    
+
     public class mdlAuthenticateResponse
     {
         public int Status { get; set; }
@@ -129,7 +129,7 @@ namespace WingApi.Classes
         public enmCabinClass FlightCabinClass { get; set; }
         public DateTime TravelDt { get; set; }
         public enmPreferredDepartureTime PreferredDeparture { get; set; }
-        public enmPreferredDepartureTime PreferredArrival{ get; set; }
+        public enmPreferredDepartureTime PreferredArrival { get; set; }
     }
 
 
@@ -324,29 +324,29 @@ namespace WingApi.Classes
 
     #region *********************** Fare Quotation **********************
 
-        public class mdlFareQuotRequest
-        {
-            public string EndUserIp { get; set; }            
-            public string TraceId { get; set; }
-            public string []ResultIndex { get; set; }
-            public enmServiceProvider Provider { get; set; }
-        }
+    public class mdlFareQuotRequest
+    {
+        public string EndUserIp { get; set; }
+        public string TraceId { get; set; }
+        public string[] ResultIndex { get; set; }
+        public enmServiceProvider Provider { get; set; }
+    }
 
-        public class mdlFareQuotResponseWraper
-        {
-            public mdlFareQuotResponse Response { get; set; }
-        }
-        public class mdlFareQuotResponse
-        {
-            public int ResponseStatus { get; set; }
-            public enmServiceProvider ServiceProvider { get; set; }
-            public bool IsPriceChanged { get; set; }
-            public mdlError Error { get; set; }
-            public string TraceId { get; set; }
-            public string Origin { get; set; }
-            public string Destination { get; set; }
-            public mdlSearchResult[][] Results { get; set; }
-        }
+    public class mdlFareQuotResponseWraper
+    {
+        public mdlFareQuotResponse Response { get; set; }
+    }
+    public class mdlFareQuotResponse
+    {
+        public int ResponseStatus { get; set; }
+        public enmServiceProvider ServiceProvider { get; set; }
+        public bool IsPriceChanged { get; set; }
+        public mdlError Error { get; set; }
+        public string TraceId { get; set; }
+        public string Origin { get; set; }
+        public string Destination { get; set; }
+        public mdlSearchResult[][] Results { get; set; }
+    }
 
     #endregion
 
@@ -368,6 +368,218 @@ namespace WingApi.Classes
         public string TraceId { get; set; }
     }
     #endregion
+
+
+    #region *********************  Raju Response **************************
+
+
+
+    public class Rootobject
+    {
+        public Item[] Items { get; set; }
+    }
+
+    public class Item
+    {
+        public string TraceID { get; set; }
+        public string TokenID { get; set; }
+        public string Inbound { get; set; }
+        public float BaseFare { get; set; }
+        public float Taxes { get; set; }
+        public float YQTax { get; set; }
+        public float ServiceFee { get; set; }
+        public float BaseFare_outbound { get; set; }
+        public float Taxes_outbound { get; set; }
+        public float YQTax_outbound { get; set; }
+        public float ExtraCharges_outbound { get; set; }
+        public float BaseFare_inbound { get; set; }
+        public float Taxes_inbound { get; set; }
+        public float YQTax_inbound { get; set; }
+        public float ExtraCharges_inbound { get; set; }
+        public float AdditionalTxnFeeOfrd { get; set; }
+        public float TotalPrice { get; set; }
+        public float ExtraCharges { get; set; }
+        public float OfferedFare { get; set; }
+        public float PublishedFare { get; set; }
+        public string isCache { get; set; }
+        public bool IstResult { get; set; }
+        public float MarkUp { get; set; }
+        public bool IsMarkup { get; set; }
+        public float MarkupPlus { get; set; }
+        public float MarkupMinus { get; set; }
+        public float DiscountOnResult { get; set; }
+        public float FareIncrease { get; set; }
+        public float Commission { get; set; }
+        public float Safi { get; set; }
+        public float Conveniencefee_oneway { get; set; }
+        public float Conveniencefee_roundway { get; set; }
+        public int Conveniencefee_NoDay { get; set; }
+        public float GrandTotal { get; set; }
+        public string Currency { get; set; }
+        public string Currency_new { get; set; }
+        public string FareType { get; set; }
+        public string FareRestriction { get; set; }
+        public int IndexNumber { get; set; }
+        public string ResultIndex { get; set; }
+        public string ResultIndexOutbound { get; set; }
+        public string ResultIndexInbound { get; set; }
+        public string IsRefundable { get; set; }
+        public string IsLccOutbound { get; set; }
+        public string IsLccInbound { get; set; }
+        public string Provider { get; set; }
+        public string ValCarrier { get; set; }
+        public string LastTicketingDate { get; set; }
+        public string Fltcheck { get; set; }
+        public string Fltcheck_Flt { get; set; }
+        public Adultinfo AdultInfo { get; set; }
+        public Childinfo ChildInfo { get; set; }
+        public Infantinfo InfantInfo { get; set; }
+        public object[] FareBasisCodes { get; set; }
+        public Sector[] Sectors { get; set; }
+        public object[] Baggages { get; set; }
+        public string Key { get; set; }
+        public string KeyPt { get; set; }
+        public string CffCharge { get; set; }
+        public int Priority_air { get; set; }
+        public int Priority_stop { get; set; }
+    }
+
+    public class Adultinfo
+    {
+        public int NoAdult { get; set; }
+        public float AdTax { get; set; }
+        public float AdtBFare { get; set; }
+        public float AdtPricePP { get; set; }
+        public float MarkUp { get; set; }
+        public float Commission { get; set; }
+        public float Safi { get; set; }
+        public float OtherCharges { get; set; }
+    }
+
+    public class Childinfo
+    {
+        public int NoChild { get; set; }
+        public float CHTax { get; set; }
+        public float ChdBFare { get; set; }
+        public float MarkUp { get; set; }
+        public float Commission { get; set; }
+        public float Safi { get; set; }
+        public float OtherCharges { get; set; }
+    }
+
+    public class Infantinfo
+    {
+        public int NoInfant { get; set; }
+        public float InTax { get; set; }
+        public float InfBFare { get; set; }
+        public float MarkUp { get; set; }
+        public float Commission { get; set; }
+        public float Safi { get; set; }
+        public float OtherCharges { get; set; }
+    }
+
+    public class Sector
+    {
+        public string Indicator { get; set; }
+        public string AirlineCode { get; set; }
+        public string AirlineName { get; set; }
+        public string AirlineLogoPath { get; set; }
+        public string Class { get; set; }
+        public Cabinclass CabinClass { get; set; }
+        public int NoSeats { get; set; }
+        public string FltNum { get; set; }
+        public string AmountAirCode { get; set; }
+        public string EquipType { get; set; }
+        public string ElapsedTime { get; set; }
+        public string AirChange { get; set; }
+        public string ActualTime { get; set; }
+        public string TotalFlightDuration { get; set; }
+        public object IsConnect { get; set; }
+        public Techstopover TechStopOver { get; set; }
+        public string Status { get; set; }
+        public string IsReturn { get; set; }
+        public Operatingcarrier OperatingCarrier { get; set; }
+        public object MarketingCarrier { get; set; }
+        public string BaggageInfo { get; set; }
+        public object TransitTime { get; set; }
+        public string Key { get; set; }
+        public string SegmentIndex { get; set; }
+        public string Distance { get; set; }
+        public string ETicket { get; set; }
+        public string ChangeOfPlane { get; set; }
+        public string ParticipantLevel { get; set; }
+        public bool OptionalServicesIndicator { get; set; }
+        public string AvailabilitySource { get; set; }
+        public string Group { get; set; }
+        public Departure Departure { get; set; }
+        public Arrival Arrival { get; set; }
+    }
+
+    public class Cabinclass
+    {
+        public string Code { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class Techstopover
+    {
+        public int TechStopOver { get; set; }
+        public string DepartureAirport { get; set; }
+        public string GroundTime { get; set; }
+        public string DepartureAirportName { get; set; }
+        public string CityCode { get; set; }
+        public string CityName { get; set; }
+        public string CountryCode { get; set; }
+        public string CountryName { get; set; }
+        public string ArrivalAirport { get; set; }
+        public string DepartureTime { get; set; }
+        public string ArrivalTime { get; set; }
+        public string AirpName { get; set; }
+    }
+
+    public class Operatingcarrier
+    {
+        public string OptrCarrierCode { get; set; }
+        public object OptrCarrierDes { get; set; }
+    }
+
+    public class Departure
+    {
+        public string AirportCode { get; set; }
+        public string AirportName { get; set; }
+        public string AirportCityCode { get; set; }
+        public string AirportCityName { get; set; }
+        public string AirportCountryCode { get; set; }
+        public string AirportCountryName { get; set; }
+        public string GeoLocation { get; set; }
+        public string Terminal { get; set; }
+        public string Date { get; set; }
+        public string Time { get; set; }
+        public DateTime FullDate { get; set; }
+        public string Day { get; set; }
+        public object DateTimeStamp { get; set; }
+    }
+
+    public class Arrival
+    {
+        public string AirportCode { get; set; }
+        public DateTime FullDate { get; set; }
+        public string AirportName { get; set; }
+        public string AirportCityCode { get; set; }
+        public string AirportCityName { get; set; }
+        public string AirportCountryCode { get; set; }
+        public string AirportCountryName { get; set; }
+        public string GeoLocation { get; set; }
+        public string Terminal { get; set; }
+        public string Date { get; set; }
+        public string Time { get; set; }
+        public string Day { get; set; }
+        public object DateTimeStamp { get; set; }
+    }
+
+    #endregion
+
+
 
     public interface IWing
     {
