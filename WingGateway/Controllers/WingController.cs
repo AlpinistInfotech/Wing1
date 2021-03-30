@@ -287,16 +287,122 @@ namespace WingGateway.Controllers
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Authorize(policy: nameof(enmDocumentMaster.Emp_Tc_Details))]
-        public IActionResult TCDetails(mdlFilterModel mdl, enmLoadData submitdata)
+        public IActionResult TCDetails(mdlFilterModel mdl, enmLoadData submitdata, [FromServices] IConsProfile consProfile)
         {
             mdlTcReportWraper returnData = new mdlTcReportWraper();
-            WingGateway.Classes.ConsProfile consProfile = new Classes.ConsProfile(_context, _config);
+            if (mdl.dateFilter == null)
+            {
+                mdl.dateFilter = new mdlDateFilter();
+            }
+            if (mdl.idFilter == null)
+            {
+                mdl.idFilter = new mdlIdFilter();
+            }
+            mdl.dateFilter.FromDt = Convert.ToDateTime(mdl.dateFilter.FromDt.ToString("dd-MMM-yyyy"));
+            mdl.dateFilter.ToDt = Convert.ToDateTime(mdl.dateFilter.ToDt.AddDays(1).ToString("dd-MMM-yyyy"));
             returnData.TcWrapers = consProfile.GetTCDetails(submitdata, mdl, 0,0, false);
             returnData.FilterModel = mdl;
             return View(returnData);
         }
 
+        [Authorize(policy: nameof(enmDocumentMaster.Emp_Tc_Approval))]
+        public IActionResult TCApproval(enmSaveStatus? _enmSaveStatus, enmMessage? _enmMessage)
+        {
+            if (_enmSaveStatus != null)
+            {
+                ViewBag.SaveStatus = (int)_enmSaveStatus.Value;
+                ViewBag.Message = _enmMessage?.GetDescription();
+            }
+            ProcRegistrationSearch mdl = new ProcRegistrationSearch();
+            ModelState.Clear();
+            return View(mdl);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(policy: nameof(enmDocumentMaster.Emp_Tc_Approval))]
+        public async Task<IActionResult> TCApprovalAsync(ProcRegistrationSearch mdl, string submitdata, [FromServices] IConsProfile consProfile)
+        {
+            try
+            {
+                ModelState.Clear();
+                if (submitdata == "LoadData")
+                {
+                    if (mdl.TCID == "")
+                    {
+                        ModelState.AddModelError(nameof(mdl.TCID), "TcId Required");
+                    }
+                    else
+                    {
+                        mdl = consProfile.GetTCDetails(enmLoadData.ByID, new mdlFilterModel() { idFilter = new mdlIdFilter() { TcId = mdl.TCID } }, 0,0, true).FirstOrDefault();
+                    }
+                    return View(mdl);
+                }
+                else if (submitdata == "Approve" || submitdata == "Reject")
+                {
+                    bool HaveModelError = false;
+                    if (mdl.tcnid == 0)
+                    {
+                        HaveModelError = true;
+                        ModelState.AddModelError("", "Invalid Data");
+                    }
+                    if (submitdata == "Reject" && (string.IsNullOrWhiteSpace(mdl.approve_remarks)))
+                    {
+                        HaveModelError = true;
+                        ModelState.AddModelError(nameof(mdl.approve_remarks), "Remarks Required");
+                    }
+
+                    if (!HaveModelError)
+                    {
+                        var data = _context.tblRegistration.Where(p => p.Nid== mdl.tcnid).FirstOrDefault();
+                        if (data == null)
+                        {
+                            HaveModelError = true;
+                            ModelState.AddModelError("", "Invalid Data");
+                        }
+                        else
+                        {
+                            tblTCStatus tblTCstatus = new tblTCStatus()
+                            {
+                                action_remarks = mdl.approve_remarks,
+                                TcNid = mdl.tcnid,
+                                action = submitdata == "Approve" ? enmApprovalType.Approved : enmApprovalType.Rejected,
+                                action_type = (enmTCStatus)1,
+                                action_by = _currentUsers.EmpId,
+                                action_datetime = DateTime.Now,
+                            };
+
+                            _context.tblTCStatus.Add(tblTCstatus);
+
+                            data.is_active = submitdata == "Approve" ? enmApprovalType.Approved : enmApprovalType.Rejected;
+                            _context.Update(data);
+                            
+                            await _context.SaveChangesAsync();
+                            return RedirectToAction("TCApproval",
+                                 new { _enmSaveStatus = enmSaveStatus.success, _enmMessage = submitdata == "Approve" ? enmMessage.ApprovedSucessfully : enmMessage.RejectSucessfully });
+
+                        }
+                    }
+                    if (HaveModelError)
+                    {
+                        ViewBag.SaveStatus = (int)enmSaveStatus.danger;
+                        ViewBag.Message = enmMessage.InvalidData;
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+            }
+            if (mdl == null)
+            {
+                mdl = new ProcRegistrationSearch();
+            }
+            return View(mdl);
+        }
 
 
         #region Holiday Package

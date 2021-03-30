@@ -4,14 +4,16 @@ using Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Database.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20210330173421_registration_table_is_active_status")]
+    partial class registration_table_is_active_status
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -526,38 +528,6 @@ namespace Database.Migrations
                         .HasFilter("[CountryId] IS NOT NULL AND [StateName] IS NOT NULL");
 
                     b.ToTable("tblStateMaster");
-                });
-
-            modelBuilder.Entity("Database.tblTCStatus", b =>
-                {
-                    b.Property<int>("DetailId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("TcNid")
-                        .HasColumnType("int");
-
-                    b.Property<byte>("action")
-                        .HasColumnType("tinyint");
-
-                    b.Property<int>("action_by")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("action_datetime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("action_remarks")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("status_type")
-                        .HasColumnType("int");
-
-                    b.HasKey("DetailId");
-
-                    b.HasIndex("TcNid");
-
-                    b.ToTable("tblTCStatus");
                 });
 
             modelBuilder.Entity("Database.tblTcAddressDetail", b =>
@@ -1182,15 +1152,6 @@ namespace Database.Migrations
                         .HasForeignKey("CountryId");
 
                     b.Navigation("tblCountryMaster");
-                });
-
-            modelBuilder.Entity("Database.tblTCStatus", b =>
-                {
-                    b.HasOne("Database.tblRegistration", "tblRegistration")
-                        .WithMany()
-                        .HasForeignKey("TcNid");
-
-                    b.Navigation("tblRegistration");
                 });
 
             modelBuilder.Entity("Database.tblTcAddressDetail", b =>

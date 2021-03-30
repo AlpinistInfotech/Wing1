@@ -70,8 +70,8 @@
 
                             <td>@Model.TcWrapers[i].JoiningDate</td>
                             <td>@Model.TcWrapers[i].approve_datetime</td>
-                            <td>@(Model.TcWrapers[i].approve_by)??""</td>
-                            <td>@(Model.TcWrapers[i].approve_remarks)??""</td>
+                            <td>@Model.TcWrapers[i].approve_by</td>
+                            <td>@(Model.TcWrapers[i].approve_remarks)??"")</td>
                             <td>@Model.TcWrapers[i].block.ToString()</td>
                             <td>@Model.TcWrapers[i].terminate.ToString()</td>
                         </tr>
@@ -89,10 +89,10 @@
     <input type="hidden" name="idFilter.TcId" id="tcId1" />
     <input type="hidden" name="submitdata" value="@(enmLoadData.ByID)" />
 </form>
-<form name="approveData" action="@(enmDocumentMaster.Emp_Tc_Update.GetDocumentDetails().ActionName)" method="post">
+<form name="approveData" action="@(enmDocumentMaster.Emp_Tc_Approval.GetDocumentDetails().ActionName)" method="post">
     @Html.AntiForgeryToken()
-    <input type="hidden" name="idFilter.TcId" id="tcId2" />
-    <input type="hidden" name="submitdata" value="@(enmLoadData.ByID)" />
+    <input type="hidden" name="TcId" id="tcId2" />
+    <input type="hidden" name="submitdata" value="LoadData" />
 </form>
 
 

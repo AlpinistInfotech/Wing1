@@ -38,7 +38,7 @@ namespace Database
         public DateTime JoiningDt { get; set; }
         public int SpLegNumber { get; set; }        
         public enmTCRanks TCRanks { get; set; }
-        public int is_active { get; set; }
+        public enmApprovalType is_active { get; set; }
 
     }
 
@@ -53,7 +53,23 @@ namespace Database
         public int TcSpNid { get; set; }
     }
 
+    public class tblTCStatus
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int DetailId { get; set; }
+        [ForeignKey("tblRegistration")]
+        public int? TcNid { get; set; }
+        public tblRegistration tblRegistration { get; set; }
+        
+        public enmTCStatus action_type { get; set; }
+        
+        public enmApprovalType action { get; set; }
 
+        public string action_remarks { get; set; }
+        public int action_by { get; set; }
+        public DateTime action_datetime { get; set; }
+    }
     public class tblTcRanksDetails
     {
         [Key]

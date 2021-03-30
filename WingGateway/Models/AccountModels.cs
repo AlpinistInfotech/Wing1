@@ -81,7 +81,7 @@ namespace WingGateway.Models
     }
 
 
-    public class mdlRegistration
+    public class mdlRegistration : ProcRegistrationSearch
     {
         
         [StringLength(11,ErrorMessage = "The {0} must be at {2} characters long.", MinimumLength = 11)]
@@ -224,7 +224,7 @@ namespace WingGateway.Models
                 SpId = SpTcId,
                 Isblock = false,
                 IsTerminate = false,
-                is_active = 8,
+                is_active = (enmApprovalType)8,
                 IsKycUpdated = enmIsKycUpdated.No,
                 JoiningDt = CurrentDatetime,
                 SpLegNumber = SpNid.HasValue?(consolidatorProfile.GetNidLegCount(SpNid.Value) + 1):1,

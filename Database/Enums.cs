@@ -24,6 +24,14 @@ namespace Database
         Active = 0,
         Deactive = 1,
     }
+
+    public enum enmTCStatus
+    {
+        Active=1,
+        Block = 2,
+        Terminate = 3,
+
+    }
     public enum enmTCRanks
     {
         Level1=1,

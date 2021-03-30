@@ -263,12 +263,13 @@ namespace WingGateway.Classes
                 spmode = 1;
             }
 
-            if (mdl.idFilter != null)
+         else if (mdl.idFilter != null)
             {
                 tcid = mdl.idFilter.TcId;
                 spmode = 2;
             }
 
+            
             using (SqlConnection sqlconnection = new SqlConnection(_config["ConnectionStrings:DefaultConnection"]))
             {
                 using (SqlCommand sqlcmd = new SqlCommand("proc_registration_search", sqlconnection))

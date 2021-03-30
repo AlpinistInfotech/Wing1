@@ -45,6 +45,8 @@ namespace Database
 
         #region ********************** Consolidator Profile*************************
         public DbSet<tblRegistration> tblRegistration { get; set; }
+        public DbSet<tblTCStatus> tblTCStatus { get; set; }
+
         public DbSet<tblTree> tblTree { get; set; }
         public DbSet<tblTcRanksDetails> tblTcRanksDetails { get; set; }
         public DbSet<tblTcAddressDetail> tblTcAddressDetail { get; set; }
