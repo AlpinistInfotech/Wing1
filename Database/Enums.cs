@@ -115,6 +115,13 @@ namespace Database
         Waterbill = 5,
         ElectricityBill = 6,
     }
+    public enum enmWalletTransactiontype
+    {
+        Credit= 1,
+        Debit= 2,
+    }
+
+
     public enum enmLoadData
     {
         ByID=1,

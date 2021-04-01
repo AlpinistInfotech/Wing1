@@ -350,4 +350,37 @@ namespace Database
 
     }
 
+    public class tblTCWallet
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int DetailId { get; set; }
+
+        [ForeignKey("tblRegistration")]
+        public int? TcNid { get; set; }
+        public tblRegistration tblRegistration { get; set; }
+
+        public decimal walletamt { get; set; }
+    }
+
+    public class tblTCWalletLog
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int DetailId { get; set; }
+
+        [ForeignKey("tblRegistration")]
+        public int? TcNid { get; set; }
+        public tblRegistration tblRegistration { get; set; }
+
+        public decimal credit { get; set; }
+        public decimal debit { get; set; }
+        public int groupid { get; set; }
+        public string remarks { get; set; }
+        public int reqno { get; set; }
+        public int createdby { get; set; }
+        public DateTime createddatetime { get; set; }
+
+    }
+
 }

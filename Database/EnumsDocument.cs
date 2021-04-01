@@ -117,10 +117,10 @@ namespace Database
             DisplayOrder: 1, Name: "Statement", Description: "Statement", Icon: "far fa-circle nav-icon", ActionName: "Statement")]
         Gateway_Statement = 21,
         [Document(EnmSubModule: enmSubModule.Gateway_Incentive_wallet, DocumentType: enmDocumentType.Report,
-            DisplayOrder: 1, Name: "Wallet Statement", Description: "Wallet Statement", Icon: "far fa-circle nav-icon", ActionName: "WalletStatement")]
+            DisplayOrder: 1, Name: "Wallet Statement", Description: "Wallet Statement", Icon: "far fa-circle nav-icon", ActionName: "/Wing/WalletStatement")]
         Gateway_Wallet_Statement = 22,
         [Document(EnmSubModule: enmSubModule.Gateway_Incentive_wallet, DocumentType: enmDocumentType.Create | enmDocumentType.Update,
-            DisplayOrder: 1, Name: "Add Wallet", Description: "Add Wallet", Icon: "far fa-circle nav-icon", ActionName: "AddWallet")]
+            DisplayOrder: 1, Name: "Add Wallet", Description: "Add Wallet", Icon: "far fa-circle nav-icon", ActionName: "/Wing/AddWallet")]
         Gateway_Add_Wallet = 23,
 
         [Document(EnmModule: enmModule.Gateway_Promotion, DocumentType: enmDocumentType.Create | enmDocumentType.Update,

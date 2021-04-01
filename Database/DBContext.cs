@@ -63,6 +63,9 @@ namespace Database
         public DbSet<tblTcMarkUp> TblTcMarkUp { get; set; }
         public DbSet<tblHolidayPackageMaster> tblHolidayPackageMaster { get; set; }
 
+        public DbSet<tblTCWallet> tblTCwallet { get; set; }
+        public DbSet<tblTCWalletLog> tblTCwalletlog { get; set; }
+
 
         #endregion
 

@@ -1,4 +1,5 @@
 ﻿using Database;
+using Database.Classes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -404,6 +405,90 @@ namespace WingGateway.Controllers
             return View(mdl);
         }
 
+
+        #region Wallet
+
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Add_Wallet))]
+        public IActionResult AddWallet(enmSaveStatus? _enmSaveStatus, enmMessage? _enmMessage)
+        {
+            mdlWallet mdl = new mdlWallet();
+            if (_enmSaveStatus != null)
+            {
+                ViewBag.SaveStatus = (int)_enmSaveStatus.Value;
+                ViewBag.Message = _enmMessage?.GetDescription();
+            }
+
+            return View(mdl);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Add_Wallet))]
+        public async Task<IActionResult> AddWalletAsync([FromServices] ICurrentUsers currentUsers, mdlWallet mdl,[FromServices] IConsolidatorProfile consolidator)
+        {
+            if (ModelState.IsValid)
+            {
+                int TcNiD = 0;
+                if (mdl.SpTcId != null && mdl.SpTcId.Length > 0)
+                {
+                    TcNiD = consolidator.GetNId(mdl.SpTcId, true);
+                    if (TcNiD == 0)
+                    {
+                        ModelState.AddModelError("", "Invalid TC ID !!!");
+                    }
+                }
+
+                decimal credit_amt = mdl.TransactionType == (enmWalletTransactiontype)1 ? mdl.WalletAmt : 0;
+                decimal debit_amt = mdl.TransactionType == (enmWalletTransactiontype)2 ? mdl.WalletAmt : 0;
+                DateTime todaydate = Convert.ToDateTime(  DateTime.Now.ToString("dd-MMM-yyyy") );
+                var data = _context.tblTCwalletlog.Where(p => p.TcNid == TcNiD && p.credit == credit_amt && p.debit == debit_amt && p.createddatetime >= todaydate && p.createddatetime <= todaydate.AddDays(1)).FirstOrDefault();
+                if (data != null)
+                {
+                    ModelState.AddModelError("", "Same Date with same Amount entry already exists !!!");
+                    return View(mdl);
+                }
+
+
+
+                var ExistingData = _context.tblTCwallet.FirstOrDefault(p => p.TcNid ==TcNiD);
+                if (ExistingData != null)
+                {
+                    ExistingData.TcNid = TcNiD;
+                    ExistingData.walletamt = ExistingData.walletamt + mdl.WalletAmt;
+                    _context.tblTCwallet.Update(ExistingData);
+                }
+                else
+                {
+                    _context.tblTCwallet.Add(new tblTCWallet
+                    {
+                        TcNid = TcNiD,
+                        walletamt = mdl.WalletAmt,
+                    });
+                }
+                _context.tblTCwalletlog.Add(new tblTCWalletLog()
+                {
+                    TcNid = TcNiD,
+                    credit = credit_amt,
+                    debit = debit_amt,
+                    createdby = currentUsers.EmpId,
+                    createddatetime = DateTime.Now,
+                    remarks = mdl.Remarks,
+                    reqno = 0,
+                    groupid = 0,
+                });
+
+                await _context.SaveChangesAsync();
+                    return RedirectToAction("AddWallet",
+                                 new { _enmSaveStatus = enmSaveStatus.success, _enmMessage = enmMessage.SaveSucessfully });
+                }
+
+            
+
+            return View(mdl);
+        }
+
+
+        #endregion
 
         #region Holiday Package
 
