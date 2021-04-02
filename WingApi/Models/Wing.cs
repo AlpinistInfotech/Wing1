@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace WingApi.Models
 {
+    #region ******************* Search Request **********************888
+
     public class mdlSearchRequest
     {
         [Required]
@@ -43,13 +45,13 @@ namespace WingApi.Models
         public string TraceId { get; set; }
         public string Origin { get; set; }
         public string Destination { get; set; }
-        public mdlSearchResult[][] Results { get; set; }
+        public List< List<mdlSearchResult>> Results { get; set; }
     }
 
     public class mdlSearchResult
     {
-        public mdlSegment[] TripInfos { get; set; }
-        public mdlTotalpricelist []TotalPriceList { get; set; }
+        public List< mdlSegment> Segment { get; set; }
+        public List<mdlTotalpricelist> TotalPriceList { get; set; }
     }
 
     public class mdlSegment
@@ -91,7 +93,7 @@ namespace WingApi.Models
         public mdlPassenger INFANT { get; set; }
         public string ResultIndex { get; set; }
         public string sri { get; set; }
-        public string [] msri { get; set; }
+        public List<string>  msri { get; set; }
         
     }
 
@@ -137,5 +139,89 @@ namespace WingApi.Models
         public string Key { get; set; }
         public string Value { get; set; }
     }
+
+    #endregion
+
+
+    #region ***************** Fare Quotation **************************
+    
+    public class mdlFareQuotRequest
+    {
+     
+        public string TraceId { get; set; }
+        public string[] ResultIndex { get; set; }
+        public Classes.enmServiceProvider Provider { get; set; }
+    }
+
+    public class mdlFareQuotResponseWraper
+    {
+        public mdlFareQuotResponse Response { get; set; }
+    }
+    public class mdlFareQuotResponse
+    {
+        public int ResponseStatus { get; set; }
+        public Classes.enmServiceProvider ServiceProvider { get; set; }
+        public bool IsPriceChanged { get; set; }
+        public mdlError Error { get; set; }
+        public string TraceId { get; set; }
+        public string Origin { get; set; }
+        public string Destination { get; set; }
+        public List<List<mdlSearchResult>> Results { get; set; }
+    }
+
+
+
+    #endregion
+
+    #region ***************** Fare Rule ***************************
+    public class mdlFareRuleRequest : mdlFareQuotRequest
+    {
+
+    }
+    public class mdlFareRuleResponseWraper
+    {
+        public mdlFareRuleResponse Response { get; set; }
+    }
+
+    public class mdlFareRuleResponse
+    {
+        public mdlError Error { get; set; }        
+        public int ResponseStatus { get; set; }        
+        public mdlFareRule FareRule { get; set; }
+    }
+
+
+    public class mdlFareRule
+    {
+        public bool isML { get; set; }
+        public bool isHB { get; set; }
+        public string rT { get; set; }
+        public mdlPassengerBagege cB { get; set; }
+        public mdlPassengerBagege hB { get; set; }
+        public mdlFarePolicy fr { get; set; }
+    }
+
+    public class mdlPassengerBagege
+    {
+        public string ADT { get; set; }
+        public string CNN { get; set; }
+        public string INF { get; set; }
+    }
+
+
+    public class mdlFarePolicy
+    {   
+        public mdlAllPOlicy DATECHANGE { get; set; }
+        public mdlAllPOlicy CANCELLATION { get; set; }
+        public mdlAllPOlicy SEAT_CHARGEABLE { get; set; }
+    }
+    public class mdlAllPOlicy
+    {
+        public double amount { get; set; }
+        public double additionalFee { get; set; }
+        public string policyInfo { get; set; }
+    }
+
+    #endregion
 
 }

@@ -30,7 +30,7 @@ namespace WingApi
         {
             services.AddDbContext<DBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")),ServiceLifetime.Transient);
             #region ************* Services Registration ************************
-            services.AddScoped<ITekTravel>(ctx => new TekTravel(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
+            //services.AddScoped<ITekTravel>(ctx => new TekTravel(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
             services.AddScoped<ITripJack>(ctx => new TripJack(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
             #endregion
 

@@ -8,6 +8,7 @@ using WingApi.Classes;
 using WingApi.Classes.Database;
 using WingApi.Classes.TekTravel;
 using WingApi.Classes.TripJack;
+using WingApi.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -26,30 +27,48 @@ namespace WingApi.Controllers
         }
         [HttpPost]
         [Route("Search")]
-        public async Task<ActionResult<IEnumerable<mdlSearchResponse>>> SearchFlight([FromServices] ITekTravel tekTravel,
+        public async Task<ActionResult<IEnumerable<mdlSearchResponse>>> SearchFlight(//[FromServices] ITekTravel tekTravel,
             [FromServices] ITripJack tripJack, mdlSearchRequest mdlRq)
         {
             List<mdlSearchResponse> mdlRs = new List<mdlSearchResponse>();
-            var mdlTekTravel = tekTravel.SearchAsync(mdlRq) ;
+            //var mdlTekTravel = tekTravel.SearchAsync(mdlRq) ;
             var mdlTripJack = tripJack.SearchAsync(mdlRq);
-            mdlRs.Add(await mdlTekTravel);            
+            //mdlRs.Add(await mdlTekTravel);            
             mdlRs.Add(await mdlTripJack);
             return mdlRs;
         }
 
         [HttpPost]
         [Route("FareQuote")]
-        public async Task<ActionResult<mdlFareQuotResponse>> FareQuote([FromServices] ITekTravel tekTravel,
+        public async Task<ActionResult<mdlFareQuotResponse>> FareQuote(//[FromServices] ITekTravel tekTravel,
             [FromServices] ITripJack tripJack, mdlFareQuotRequest mdlRq)
         {
             mdlFareQuotResponse mdlRs = new mdlFareQuotResponse();
             switch (mdlRq.Provider) 
             {
                 case enmServiceProvider.TBO:
-                    mdlRs =await tekTravel.FareQuoteAsync(mdlRq);
+                    //mdlRs =await tekTravel.FareQuoteAsync(mdlRq);
                     break;
                 case enmServiceProvider.TripJack:
                     mdlRs = await tripJack.FareQuoteAsync(mdlRq);
+                    break;
+            }
+            return mdlRs;
+        }
+
+        [HttpPost]
+        [Route("FareRule")]
+        public async Task<ActionResult<mdlFareRuleResponse>> FareRule(//[FromServices] ITekTravel tekTravel,
+            [FromServices] ITripJack tripJack, mdlFareRuleRequest mdlRq)
+        {
+            mdlFareRuleResponse mdlRs = new mdlFareRuleResponse();
+            switch (mdlRq.Provider)
+            {
+                case enmServiceProvider.TBO:
+                    //mdlRs =await tekTravel.FareQuoteAsync(mdlRq);
+                    break;
+                case enmServiceProvider.TripJack:
+                    mdlRs = await tripJack.FareRuleAsync(mdlRq);
                     break;
             }
             return mdlRs;
