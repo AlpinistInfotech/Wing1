@@ -108,6 +108,6 @@ namespace WingApi.Classes
         Task<mdlSearchResponse> SearchAsync(mdlSearchRequest request);
         Task<mdlFareQuotResponse> FareQuoteAsync(mdlFareQuotRequest request);
         Task<mdlFareRuleResponse> FareRuleAsync(mdlFareRuleRequest request);
-
+        Task<mdlBookingResponse> BookingAsync(mdlBookingRequest request);
     }
 }

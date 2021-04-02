@@ -115,7 +115,11 @@ namespace WingApi.Classes.TripJack
             return response;
         }
 
-
+        public async Task<mdlBookingResponse> BookingAsync(mdlBookingRequest request)
+        {
+            return await BookingFromTripJacAsync(request);
+        }
+        
 
         #region *******************Search Class***************************
 
@@ -127,18 +131,24 @@ namespace WingApi.Classes.TripJack
             double minFare = 0, minFareReturn = 0;
 
             List<tblTripJackTravelDetailResult> mdlDetail = new List<tblTripJackTravelDetailResult>();
-            if (tripinfos.ONWARD != null )
+            if (tripinfos.ONWARD != null)
             {
                 if (tripinfos.ONWARD.Length > 0)
                 {
-                    minFare = tripinfos.ONWARD.Select(p => p.totalPriceList.Min(q=> q.fd?.ADULT?.fC?.TF??0 )).Min();
+                    minFare = tripinfos.ONWARD.Select(p => p.totalPriceList.Min(q => q.fd?.ADULT?.fC?.TF ?? 0)).Min();
                 }
 
 
-                mdlDetail.AddRange(tripinfos.ONWARD.Select(p => new tblTripJackTravelDetailResult { segmentId = 0, ResultIndex = p.totalPriceList.FirstOrDefault()?.id,
-                    ResultType = "OB", OfferedFare = p.totalPriceList.Min(q=>q.fd.ADULT?.fC.TF??0), PublishedFare = p.totalPriceList.Min(q => q.fd.ADULT?.fC.TF ?? 0), 
-                    JsonData = JsonConvert.SerializeObject(p) }));
-                
+                mdlDetail.AddRange(tripinfos.ONWARD.Select(p => new tblTripJackTravelDetailResult
+                {
+                    segmentId = 0,
+                    ResultIndex = p.totalPriceList.FirstOrDefault()?.id,
+                    ResultType = "OB",
+                    OfferedFare = p.totalPriceList.Min(q => q.fd.ADULT?.fC.TF ?? 0),
+                    PublishedFare = p.totalPriceList.Min(q => q.fd.ADULT?.fC.TF ?? 0),
+                    JsonData = JsonConvert.SerializeObject(p)
+                }));
+
 
 
             }
@@ -146,7 +156,7 @@ namespace WingApi.Classes.TripJack
             {
                 if (tripinfos.RETURN.Length > 0)
                 {
-                    minFareReturn = tripinfos.RETURN.Select(p => p.totalPriceList.Min(q => q.fd?.ADULT?.fC?.TF ?? 0)).Min();                    
+                    minFareReturn = tripinfos.RETURN.Select(p => p.totalPriceList.Min(q => q.fd?.ADULT?.fC?.TF ?? 0)).Min();
                 }
                 mdlDetail.AddRange(tripinfos.RETURN.Select(p => new tblTripJackTravelDetailResult
                 {
@@ -162,7 +172,7 @@ namespace WingApi.Classes.TripJack
             {
                 if (tripinfos.COMBO.Length > 0)
                 {
-                    minFare = tripinfos.COMBO.Select(p => p.totalPriceList.Min(q => q.fd?.ADULT?.fC?.TF ?? 0)).Min(); 
+                    minFare = tripinfos.COMBO.Select(p => p.totalPriceList.Min(q => q.fd?.ADULT?.fC?.TF ?? 0)).Min();
                 }
                 mdlDetail.AddRange(tripinfos.COMBO.Select(p => new tblTripJackTravelDetailResult
                 {
@@ -361,7 +371,7 @@ namespace WingApi.Classes.TripJack
         private List<mdlSearchResult> SearchResultMap(ONWARD_RETURN_COMBO[] sr)
         {
             List<mdlSearchResult> mdls = new List<mdlSearchResult>();
-            mdls.AddRange( sr.Select(p => new mdlSearchResult
+            mdls.AddRange(sr.Select(p => new mdlSearchResult
             {
                 Segment = p.sI.Select(q => new mdlSegment
                 {
@@ -412,20 +422,21 @@ namespace WingApi.Classes.TripJack
                         {
                             BaseFare = q.fd?.ADULT?.fC?.BF ?? 0,
                             IGST = q.fd?.ADULT?.fC?.IGST ?? 0,
-                            TaxAndFees= q.fd?.ADULT?.fC?.TAF ?? 0,
+                            TaxAndFees = q.fd?.ADULT?.fC?.TAF ?? 0,
                             TotalFare = q.fd?.ADULT?.fC?.TF ?? 0,
-                            NetFare= q.fd?.ADULT?.fC?.TF ?? 0,
+                            NetFare = q.fd?.ADULT?.fC?.TF ?? 0,
                         },
-                        BaggageInformation= new mdlBaggageInformation() { 
-                            CabinBaggage= q.fd?.ADULT?.bI?.cB??string.Empty,
-                            CheckingBaggage=q.fd?.ADULT?.bI?.iB ?? string.Empty
-                        } ,
-                        CabinClass= (enmCabinClass)Enum.Parse(typeof(enmCabinClass), q.fd?.ADULT?.cc??(nameof( enmCabinClass.ECONOMY)) , true),
-                        ClassOfBooking= q.fd?.ADULT?.cB??string.Empty,
-                        FareBasis= q.fd?.ADULT?.fB ?? string.Empty,
-                        IsFreeMeel= q.fd?.ADULT?.mi??false,
-                        RefundableType= q.fd?.ADULT?.rT??0,
-                        SeatRemaing=q.fd?.ADULT?.sR??0,                        
+                        BaggageInformation = new mdlBaggageInformation()
+                        {
+                            CabinBaggage = q.fd?.ADULT?.bI?.cB ?? string.Empty,
+                            CheckingBaggage = q.fd?.ADULT?.bI?.iB ?? string.Empty
+                        },
+                        CabinClass = (enmCabinClass)Enum.Parse(typeof(enmCabinClass), q.fd?.ADULT?.cc ?? (nameof(enmCabinClass.ECONOMY)), true),
+                        ClassOfBooking = q.fd?.ADULT?.cB ?? string.Empty,
+                        FareBasis = q.fd?.ADULT?.fB ?? string.Empty,
+                        IsFreeMeel = q.fd?.ADULT?.mi ?? false,
+                        RefundableType = q.fd?.ADULT?.rT ?? 0,
+                        SeatRemaing = q.fd?.ADULT?.sR ?? 0,
                     },
                     CHILD = new mdlPassenger()
                     {
@@ -472,14 +483,14 @@ namespace WingApi.Classes.TripJack
                         SeatRemaing = q.fd?.INFANT?.sR ?? 0,
                     },
                 }
-                    ).ToList()
+                   ).ToList()
             }));
             return mdls;
         }
 
         private async Task<mdlSearchResponse> SearchFromTripJackAsync(mdlSearchRequest request)
         {
-            SearchresultWraper mdl = null;            
+            SearchresultWraper mdl = null;
             mdlSearchResponse mdlS = null;
             string tboUrl = _config["TripJack:API:Search"];
 
@@ -498,7 +509,7 @@ namespace WingApi.Classes.TripJack
 
                         string TraceId = Guid.NewGuid().ToString();
                         var result = Search_SaveAsync(request, TraceId, mdl.searchResult.tripInfos);
-                        List<List<mdlSearchResult>> AllResults = new List<List< mdlSearchResult>>();
+                        List<List<mdlSearchResult>> AllResults = new List<List<mdlSearchResult>>();
                         List<mdlSearchResult> Result1 = new List<mdlSearchResult>();
                         List<mdlSearchResult> Result2 = new List<mdlSearchResult>();
                         List<mdlSearchResult> Result3 = new List<mdlSearchResult>();
@@ -507,10 +518,10 @@ namespace WingApi.Classes.TripJack
                         List<mdlSearchResult> Result6 = new List<mdlSearchResult>();
 
                         if (mdl.searchResult.tripInfos != null)
-                        {   
+                        {
                             if (mdl.searchResult.tripInfos.ONWARD != null)
                             {
-                                Result1.AddRange(SearchResultMap(mdl.searchResult.tripInfos.ONWARD));                                
+                                Result1.AddRange(SearchResultMap(mdl.searchResult.tripInfos.ONWARD));
                             }
                             if (mdl.searchResult.tripInfos.RETURN != null)
                             {
@@ -586,7 +597,7 @@ namespace WingApi.Classes.TripJack
                             Destination = request.Segments[0].Destination,
                             Results = AllResults
                         };
-                        
+
                         await result;
                     }
                     else
@@ -638,12 +649,12 @@ namespace WingApi.Classes.TripJack
                 ).Include(p => p.tblTripJackTravelDetailResult).OrderByDescending(p => p.ExpireDt).FirstOrDefault();
                 if (Data != null)
                 {
-                    List< List< mdlSearchResult> > AllResults = new List<List< mdlSearchResult>>();
-                    var disSegIds= Data.tblTripJackTravelDetailResult.Select(p => p.segmentId).Distinct().OrderBy(p=>p);
+                    List<List<mdlSearchResult>> AllResults = new List<List<mdlSearchResult>>();
+                    var disSegIds = Data.tblTripJackTravelDetailResult.Select(p => p.segmentId).Distinct().OrderBy(p => p);
                     foreach (var d in disSegIds)
                     {
                         AllResults.Add(
-                           SearchResultMap(Data.tblTripJackTravelDetailResult.Where(p => p.segmentId == d).Select(p => JsonConvert.DeserializeObject<ONWARD_RETURN_COMBO>(p.JsonData)).ToArray()));                        
+                           SearchResultMap(Data.tblTripJackTravelDetailResult.Where(p => p.segmentId == d).Select(p => JsonConvert.DeserializeObject<ONWARD_RETURN_COMBO>(p.JsonData)).ToArray()));
                     }
 
                     mdlSearchResponse = new mdlSearchResponse()
@@ -733,7 +744,7 @@ namespace WingApi.Classes.TripJack
             public Metainfo metaInfo { get; set; }
         }
 
-        
+
         public class SearchresultMulticity
         {
             public ONWARD_RETURN_COMBO[] tripInfos { get; set; }
@@ -875,10 +886,10 @@ namespace WingApi.Classes.TripJack
             public string cc { get; set; }
             public string cB { get; set; }
             public string fB { get; set; }
-            public bool mi{ get; set; }
+            public bool mi { get; set; }
 
         }
-        
+
 
         public class Fc
         {
@@ -1048,7 +1059,7 @@ namespace WingApi.Classes.TripJack
                 {
                     List<List<mdlSearchResult>> AllResults = new List<List<mdlSearchResult>>();
                     List<mdlSearchResult> Result1 = new List<mdlSearchResult>();
-                    
+
                     if (mdl.tripInfos != null)
                     {
                         Result1.AddRange(SearchResultMap(mdl.tripInfos));
@@ -1062,7 +1073,7 @@ namespace WingApi.Classes.TripJack
                     {
 
                         ServiceProvider = enmServiceProvider.TripJack,
-                        TraceId = Guid.NewGuid().ToString(),
+                        TraceId = mdl.bookingId,
                         ResponseStatus = 1,
                         IsPriceChanged = mdl.alerts?.Any(p => p.oldFare != p.newFare) ?? false,
                         Error = new mdlError()
@@ -1132,18 +1143,18 @@ namespace WingApi.Classes.TripJack
         {
             FareRuleRequest mdl = new FareRuleRequest()
             {
-                flowType = "SEARCH",                
-                id= request.ResultIndex.FirstOrDefault()                
+                flowType = "SEARCH",
+                id = request.ResultIndex.FirstOrDefault()
             };
             return mdl;
         }
 
-        
+
 
         private async Task<mdlFareRuleResponse> FareRuleFromTripJackAsync(mdlFareRuleRequest request)
         {
 
-            
+
             mdlFareRuleResponse mdlS = null;
             FareRuleResponse mdl = null;
             string tboUrl = _config["TripJack:API:FareRule"];
@@ -1153,15 +1164,15 @@ namespace WingApi.Classes.TripJack
             if (HaveResponse.Code == 0)
             {
                 dynamic mdlTemp = JValue.Parse(HaveResponse.Message);
-                if (Convert.ToBoolean( mdlTemp.status.success))
+                if (Convert.ToBoolean(mdlTemp.status.success))
                 {
-                    JObject rss = JObject.Parse(Convert.ToString( mdlTemp.fareRule));
+                    JObject rss = JObject.Parse(Convert.ToString(mdlTemp.fareRule));
                     string property_name = string.Empty;
                     foreach (JProperty prop in rss.Properties())
                     {
-                        property_name =prop.Name;
+                        property_name = prop.Name;
                     }
-                    mdl = JsonConvert.DeserializeObject<FareRuleResponse>(Convert.ToString( rss[property_name]));
+                    mdl = JsonConvert.DeserializeObject<FareRuleResponse>(Convert.ToString(rss[property_name]));
                     if (mdl != null)
                     {
                         mdlS = new mdlFareRuleResponse()
@@ -1170,14 +1181,16 @@ namespace WingApi.Classes.TripJack
                             Error = new mdlError()
                             {
                                 Code = 0,
-                                Message =string.Empty,
+                                Message = string.Empty,
                             },
-                            FareRule=new mdlFareRule() { 
-                                isML=mdl.isML,
-                                cB= new mdlPassengerBagege() { 
-                                    ADT= mdl.cB?.ADT ?? string.Empty,
+                            FareRule = new mdlFareRule()
+                            {
+                                isML = mdl.isML,
+                                cB = new mdlPassengerBagege()
+                                {
+                                    ADT = mdl.cB?.ADT ?? string.Empty,
                                     CNN = mdl.cB?.CNN ?? string.Empty,
-                                    INF = mdl.cB?.INF??string.Empty,
+                                    INF = mdl.cB?.INF ?? string.Empty,
                                 },
                                 hB = new mdlPassengerBagege()
                                 {
@@ -1185,20 +1198,22 @@ namespace WingApi.Classes.TripJack
                                     CNN = mdl.hB?.CNN ?? string.Empty,
                                     INF = mdl.hB?.INF ?? string.Empty,
                                 },
-                                rT=mdl.rT,
-                                isHB=mdl.isHB,
-                                fr= new mdlFarePolicy() { 
-                                    CANCELLATION= new mdlAllPOlicy() { 
-                                        policyInfo= mdl.fr?.CANCELLATION?.DEFAULT?.policyInfo ?? string.Empty,
-                                        amount= (mdl.fr?.CANCELLATION?.DEFAULT?.fcs?.ARF??0 )+
-                                        (mdl.fr?.CANCELLATION?.DEFAULT?.fcs?.ARFT ?? 0)+
-                                        (mdl.fr?.CANCELLATION?.DEFAULT?.fcs?.ACF ?? 0)+
-                                        (mdl.fr?.CANCELLATION?.DEFAULT?.fcs?.ACFT ?? 0)+
-                                        (mdl.fr?.CANCELLATION?.DEFAULT?.fcs?.CRF ?? 0)+
-                                        (mdl.fr?.CANCELLATION?.DEFAULT?.fcs?.CRFT ?? 0)+
+                                rT = mdl.rT,
+                                isHB = mdl.isHB,
+                                fr = new mdlFarePolicy()
+                                {
+                                    CANCELLATION = new mdlAllPOlicy()
+                                    {
+                                        policyInfo = mdl.fr?.CANCELLATION?.DEFAULT?.policyInfo ?? string.Empty,
+                                        amount = (mdl.fr?.CANCELLATION?.DEFAULT?.fcs?.ARF ?? 0) +
+                                        (mdl.fr?.CANCELLATION?.DEFAULT?.fcs?.ARFT ?? 0) +
+                                        (mdl.fr?.CANCELLATION?.DEFAULT?.fcs?.ACF ?? 0) +
+                                        (mdl.fr?.CANCELLATION?.DEFAULT?.fcs?.ACFT ?? 0) +
+                                        (mdl.fr?.CANCELLATION?.DEFAULT?.fcs?.CRF ?? 0) +
+                                        (mdl.fr?.CANCELLATION?.DEFAULT?.fcs?.CRFT ?? 0) +
                                         (mdl.fr?.CANCELLATION?.DEFAULT?.fcs?.CCF ?? 0) +
                                         (mdl.fr?.CANCELLATION?.DEFAULT?.fcs?.CCFT ?? 0),
-                                         additionalFee=0,
+                                        additionalFee = 0,
                                     },
                                     DATECHANGE = new mdlAllPOlicy()
                                     {
@@ -1225,7 +1240,7 @@ namespace WingApi.Classes.TripJack
                                         (mdl.fr?.SEAT_CHARGEABLE?.DEFAULT?.fcs?.CCF ?? 0) +
                                         (mdl.fr?.SEAT_CHARGEABLE?.DEFAULT?.fcs?.CCFT ?? 0),
                                         additionalFee = 0,
-                                    },                                    
+                                    },
 
                                 }
                             }
@@ -1239,8 +1254,8 @@ namespace WingApi.Classes.TripJack
                         ResponseStatus = 3,
                         Error = new mdlError()
                         {
-                            Code =Convert.ToInt32( mdlTemp.errors.errCode),
-                            Message = Convert.ToString( mdlTemp.errors.message),
+                            Code = Convert.ToInt32(mdlTemp.errors.errCode),
+                            Message = Convert.ToString(mdlTemp.errors.message),
                         }
                     };
                 }
@@ -1255,15 +1270,15 @@ namespace WingApi.Classes.TripJack
                     Error = new mdlError()
                     {
                         Code = 12,
-                        Message ="Unable to Process",
+                        Message = "Unable to Process",
                     }
                 };
             }
             return mdlS;
         }
 
-        
-       
+
+
         public class FareRuleRequest
         {
             public string id { get; set; }
@@ -1289,7 +1304,7 @@ namespace WingApi.Classes.TripJack
             public string INF { get; set; }
         }
 
-        
+
         public class FarePolicy
         {
             public AllPOlicy NO_SHOW { get; set; }
@@ -1311,7 +1326,7 @@ namespace WingApi.Classes.TripJack
             public Fcs fcs { get; set; }
         }
 
-        
+
         public class Fcs
         {
             public double ARF { get; set; }
@@ -1324,10 +1339,198 @@ namespace WingApi.Classes.TripJack
             public double CCFT { get; set; }
         }
 
-        
+
+
+
+
+
+
+
+        #endregion
+
+
+        #region ********************** Booking ****************************
+
+        private BookingRequest BookingRequestMap(mdlBookingRequest request)
+        {
+            GstInfo _gstInfo = null;
+            if (request.gstInfo != null)
+            {
+                _gstInfo = new GstInfo()
+                {
+                    address= request.gstInfo.address,
+                    email = request.gstInfo.email,
+                    gstNumber = request.gstInfo.gstNumber,
+                    mobile = request.gstInfo.mobile,
+                    registeredName = request.gstInfo.registeredName,                    
+                };
+            }
+            PaymentInfos[] paymentInfos =null;
+            if (request.paymentInfos != null)
+            {
+                paymentInfos =request.paymentInfos.Select(p => new PaymentInfos { amount = p.amount }).ToArray();
+            }
+
+
+            BookingRequest mdl = new BookingRequest()
+            {
+                bookingId= request.TraceId,
+                gstInfo= _gstInfo,
+                deliveryInfo= new Deliveryinfo()
+                {
+                    contacts = request.deliveryInfo?.contacts,
+                    emails = request.deliveryInfo?.emails,
+                },
+                travellerInfo= request.travellerInfo.Select(p=>new Travellerinfo {
+                    ti=p.Title,fN=p.FirstName,
+                    lN=p.LastName,
+                    dob=p.dob.ToString("yyyy-MM-dd"),
+                    eD=p.PassportExpiryDate.ToString("yyyy-MM-dd"),
+                    pid=p.PassportIssueDate.ToString("yyyy-MM-dd"),
+                    pNum=p.pNum,
+                    pt=p.passengerType.ToString(),
+                    ssrBaggageInfos= p.ssrBaggageInfos==null?null:( new SSRS() {key= p.ssrBaggageInfos.key, value= p.ssrBaggageInfos.value}),
+                    ssrSeatInfos = p.ssrSeatInfos == null ? null : (new SSRS() { key = p.ssrSeatInfos.key, value = p.ssrSeatInfos.value }),
+                    ssrMealInfos = p.ssrMealInfos == null ? null : (new SSRS() { key = p.ssrMealInfos.key, value = p.ssrMealInfos.value }),
+                    ssrExtraServiceInfos = p.ssrExtraServiceInfos == null ? null : (new SSRS() { key = p.ssrExtraServiceInfos.key, value = p.ssrExtraServiceInfos.value }),
+
+
+                }).ToArray(),
+                paymentInfos= paymentInfos
+            };
+            return mdl;
+        }
+
+        private async Task<mdlBookingResponse> BookingFromTripJacAsync(mdlBookingRequest request)
+        {
+
+            mdlBookingResponse mdlS = null;
+            BookingResponse mdl = null;
+
+            string tboUrl = _config["TripJack:API:Book"];
+            string jsonString = System.Text.Json.JsonSerializer.Serialize(BookingRequestMap(request));
+            var HaveResponse = GetResponse(jsonString, tboUrl);
+            if (HaveResponse.Code == 0)
+            {
+                mdl = (JsonConvert.DeserializeObject<BookingResponse>(HaveResponse.Message));
+            }
+
+            if (mdl != null)
+            {
+                if (mdl.status.success)//success
+                {
+                    mdlS = new mdlBookingResponse()
+                    {
+                        bookingId= mdl.bookingId,
+                        Error = new mdlError()
+                        {
+                            Code = 0,
+                            Message = ""
+                        },
+                        ResponseStatus = 1,
+                        
+                    };
+                }
+                else
+                {
+                    mdlS = new mdlBookingResponse()
+                    {
+                        ResponseStatus = 3,
+                        Error = new mdlError()
+                        {
+                            Code = 12,
+                            Message = mdl.errors?.FirstOrDefault()?.message??"",
+                        }
+                    };
+                }
+
+            }
+            else
+            {
+                mdlS = new mdlBookingResponse()
+                {
+                    ResponseStatus = 100,
+                    Error = new mdlError()
+                    {
+                        Code = 100,
+                        Message = "Unable to Process",
+                    }
+                };
+            }
+
+            return mdlS;
+        }
+
+
+        #region *****************Booking Request *************************
+
+
+
+        public class BookingRequest
+        {
+            public string bookingId { get; set; }
+            public Travellerinfo[] travellerInfo { get; set; }
+            public Deliveryinfo deliveryInfo { get; set; }
+            public GstInfo gstInfo { get; set; }
+            public PaymentInfos[]paymentInfos { get; set; }
+        }
+
+        public class PaymentInfos
+        {
+            public double amount { get; set; }
+        }
+
+        public class Deliveryinfo
+        {
+            public string[] emails { get; set; }
+            public string[] contacts { get; set; }
+        }
+
+        public class Travellerinfo
+        {
+            public string ti { get; set; }
+            public string fN { get; set; }
+            public string lN { get; set; }
+            public string pt { get; set; }
+            public string dob { get; set; }
+            public string pNum { get; set; }
+            public string eD { get; set; }
+            public string pid { get; set; }
+            public SSRS ssrBaggageInfos { get; set; }
+            public SSRS ssrMealInfos { get; set; }
+            public SSRS ssrSeatInfos { get; set; }
+            public SSRS ssrExtraServiceInfos { get; set; }
+        }
+
+
+        public class GstInfo
+        {
+            public string gstNumber { get; set; }
+            public string email { get; set; }
+            public string registeredName { get; set; }
+            public string mobile { get; set; }
+            public string address { get; set; }
+        }
+
+        public class SSRS
+        {
+            public string key { get; set; }
+            public string value { get; set; }
+        }
+
+
+        public class BookingResponse
+        {
+            public string bookingId { get; set; }
+            public Status status { get; set; }
+            public Metainfo metaInfo { get; set; }
+            public Error[] errors { get; set; }
+        }
+
         
 
 
+        #endregion
 
 
 
