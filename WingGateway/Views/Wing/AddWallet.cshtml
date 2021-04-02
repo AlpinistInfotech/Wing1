@@ -1,0 +1,86 @@
+﻿@model WingGateway.Models.mdlWallet
+
+
+@using Database
+@{
+    ViewData["Title"] = Database.enmDocumentMaster.Gateway_Add_Wallet.GetDocumentDetails().Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary">
+
+            <form action="@Url.Action()" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                
+            <div class="card-body">
+
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="SpTcId"></label>
+                                <input asp-for="SpTcId" class="form-control" placeholder="TC ID" autofocus />
+                                <span asp-validation-for="SpTcId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                </div>
+
+
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="TransactionType"></label>
+                            <select asp-for="TransactionType" class="form-control">
+                                @foreach (var data in Enum.GetValues(typeof(enmWalletTransactiontype)))
+                                {
+                                    <option value="@(data)">@data.ToString() </option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="WalletAmt"></label>
+                            <input asp-for="WalletAmt" class="form-control" placeholder="Wallet Amt" />
+                            <span asp-validation-for="WalletAmt" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label asp-for="Remarks"></label>
+                            <input asp-for="Remarks" class="form-control" />
+                            <span asp-validation-for="Remarks" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+               
+
+
+            </div>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            bsCustomFileInput.init();
+        });
+    </script>
+}

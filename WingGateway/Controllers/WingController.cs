@@ -1,4 +1,5 @@
 ﻿using Database;
+using Database.Classes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -287,17 +288,207 @@ namespace WingGateway.Controllers
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Authorize(policy: nameof(enmDocumentMaster.Emp_Tc_Details))]
-        public IActionResult TCDetails(mdlFilterModel mdl, enmLoadData submitdata)
+        public IActionResult TCDetails(mdlFilterModel mdl, enmLoadData submitdata, [FromServices] IConsProfile consProfile)
         {
             mdlTcReportWraper returnData = new mdlTcReportWraper();
-            WingGateway.Classes.ConsProfile consProfile = new Classes.ConsProfile(_context, _config);
+            if (mdl.dateFilter == null)
+            {
+                mdl.dateFilter = new mdlDateFilter();
+            }
+            if (mdl.idFilter == null)
+            {
+                mdl.idFilter = new mdlIdFilter();
+            }
+            mdl.dateFilter.FromDt = Convert.ToDateTime(mdl.dateFilter.FromDt.ToString("dd-MMM-yyyy"));
+            mdl.dateFilter.ToDt = Convert.ToDateTime(mdl.dateFilter.ToDt.AddDays(1).ToString("dd-MMM-yyyy"));
             returnData.TcWrapers = consProfile.GetTCDetails(submitdata, mdl, 0,0, false);
             returnData.FilterModel = mdl;
             return View(returnData);
         }
 
+        [Authorize(policy: nameof(enmDocumentMaster.Emp_Tc_Approval))]
+        public IActionResult TCApproval(enmSaveStatus? _enmSaveStatus, enmMessage? _enmMessage)
+        {
+            if (_enmSaveStatus != null)
+            {
+                ViewBag.SaveStatus = (int)_enmSaveStatus.Value;
+                ViewBag.Message = _enmMessage?.GetDescription();
+            }
+            ProcRegistrationSearch mdl = new ProcRegistrationSearch();
+            ModelState.Clear();
+            return View(mdl);
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(policy: nameof(enmDocumentMaster.Emp_Tc_Approval))]
+        public async Task<IActionResult> TCApprovalAsync(ProcRegistrationSearch mdl, string submitdata, [FromServices] IConsProfile consProfile)
+        {
+            try
+            {
+                ModelState.Clear();
+                if (submitdata == "LoadData")
+                {
+                    if (mdl.TCID == "")
+                    {
+                        ModelState.AddModelError(nameof(mdl.TCID), "TcId Required");
+                    }
+                    else
+                    {
+                        mdl = consProfile.GetTCDetails(enmLoadData.ByID, new mdlFilterModel() { idFilter = new mdlIdFilter() { TcId = mdl.TCID } }, 0,0, true).FirstOrDefault();
+                    }
+                    return View(mdl);
+                }
+                else if (submitdata == "Approve" || submitdata == "Reject")
+                {
+                    bool HaveModelError = false;
+                    if (mdl.tcnid == 0)
+                    {
+                        HaveModelError = true;
+                        ModelState.AddModelError("", "Invalid Data");
+                    }
+                    if (submitdata == "Reject" && (string.IsNullOrWhiteSpace(mdl.approve_remarks)))
+                    {
+                        HaveModelError = true;
+                        ModelState.AddModelError(nameof(mdl.approve_remarks), "Remarks Required");
+                    }
+
+                    if (!HaveModelError)
+                    {
+                        var data = _context.tblRegistration.Where(p => p.Nid== mdl.tcnid).FirstOrDefault();
+                        if (data == null)
+                        {
+                            HaveModelError = true;
+                            ModelState.AddModelError("", "Invalid Data");
+                        }
+                        else
+                        {
+                            tblTCStatus tblTCstatus = new tblTCStatus()
+                            {
+                                action_remarks = mdl.approve_remarks,
+                                TcNid = mdl.tcnid,
+                                action = submitdata == "Approve" ? enmApprovalType.Approved : enmApprovalType.Rejected,
+                                action_type = (enmTCStatus)1,
+                                action_by = _currentUsers.EmpId,
+                                action_datetime = DateTime.Now,
+                            };
+
+                            _context.tblTCStatus.Add(tblTCstatus);
+
+                            data.is_active = submitdata == "Approve" ? enmApprovalType.Approved : enmApprovalType.Rejected;
+                            _context.Update(data);
+                            
+                            await _context.SaveChangesAsync();
+                            return RedirectToAction("TCApproval",
+                                 new { _enmSaveStatus = enmSaveStatus.success, _enmMessage = submitdata == "Approve" ? enmMessage.ApprovedSucessfully : enmMessage.RejectSucessfully });
+
+                        }
+                    }
+                    if (HaveModelError)
+                    {
+                        ViewBag.SaveStatus = (int)enmSaveStatus.danger;
+                        ViewBag.Message = enmMessage.InvalidData;
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+            }
+            if (mdl == null)
+            {
+                mdl = new ProcRegistrationSearch();
+            }
+            return View(mdl);
+        }
+
+
+        #region Wallet
+
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Add_Wallet))]
+        public IActionResult AddWallet(enmSaveStatus? _enmSaveStatus, enmMessage? _enmMessage)
+        {
+            mdlWallet mdl = new mdlWallet();
+            if (_enmSaveStatus != null)
+            {
+                ViewBag.SaveStatus = (int)_enmSaveStatus.Value;
+                ViewBag.Message = _enmMessage?.GetDescription();
+            }
+
+            return View(mdl);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Add_Wallet))]
+        public async Task<IActionResult> AddWalletAsync([FromServices] ICurrentUsers currentUsers, mdlWallet mdl,[FromServices] IConsolidatorProfile consolidator)
+        {
+            if (ModelState.IsValid)
+            {
+                int TcNiD = 0;
+                if (mdl.SpTcId != null && mdl.SpTcId.Length > 0)
+                {
+                    TcNiD = consolidator.GetNId(mdl.SpTcId, true);
+                    if (TcNiD == 0)
+                    {
+                        ModelState.AddModelError("", "Invalid TC ID !!!");
+                    }
+                }
+
+                decimal credit_amt = mdl.TransactionType == (enmWalletTransactiontype)1 ? mdl.WalletAmt : 0;
+                decimal debit_amt = mdl.TransactionType == (enmWalletTransactiontype)2 ? mdl.WalletAmt : 0;
+                DateTime todaydate = Convert.ToDateTime(  DateTime.Now.ToString("dd-MMM-yyyy") );
+                var data = _context.tblTCwalletlog.Where(p => p.TcNid == TcNiD && p.credit == credit_amt && p.debit == debit_amt && p.createddatetime >= todaydate && p.createddatetime <= todaydate.AddDays(1)).FirstOrDefault();
+                if (data != null)
+                {
+                    ModelState.AddModelError("", "Same Date with same Amount entry already exists !!!");
+                    return View(mdl);
+                }
+
+
+
+                var ExistingData = _context.tblTCwallet.FirstOrDefault(p => p.TcNid ==TcNiD);
+                if (ExistingData != null)
+                {
+                    ExistingData.TcNid = TcNiD;
+                    ExistingData.walletamt = ExistingData.walletamt + mdl.WalletAmt;
+                    _context.tblTCwallet.Update(ExistingData);
+                }
+                else
+                {
+                    _context.tblTCwallet.Add(new tblTCWallet
+                    {
+                        TcNid = TcNiD,
+                        walletamt = mdl.WalletAmt,
+                    });
+                }
+                _context.tblTCwalletlog.Add(new tblTCWalletLog()
+                {
+                    TcNid = TcNiD,
+                    credit = credit_amt,
+                    debit = debit_amt,
+                    createdby = currentUsers.EmpId,
+                    createddatetime = DateTime.Now,
+                    remarks = mdl.Remarks,
+                    reqno = 0,
+                    groupid = 0,
+                });
+
+                await _context.SaveChangesAsync();
+                    return RedirectToAction("AddWallet",
+                                 new { _enmSaveStatus = enmSaveStatus.success, _enmMessage = enmMessage.SaveSucessfully });
+                }
+
+            
+
+            return View(mdl);
+        }
+
+
+        #endregion
 
         #region Holiday Package
 

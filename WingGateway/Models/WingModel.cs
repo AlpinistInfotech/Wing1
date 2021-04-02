@@ -194,5 +194,31 @@ namespace WingGateway.Models
         public DateTime created_datetime { get; set; }
     }
 
+    public class mdlWallet
+    {
+
+        [StringLength(11, ErrorMessage = "The {0} must be at {2} characters long.", MinimumLength = 11)]
+        [RegularExpression("[a-zA-Z0-9]*$", ErrorMessage = "Invalid {0}, no special charcter")]
+        [Display(Name = "Please enter TC ID")]
+        [Remote(action: "IsSponsorValid", controller: "Account", ErrorMessage = "Invalid TC ID")]
+        public string SpTcId { get; set; }
+
+        [Required]
+        [Display(Name = "Transaction Type")]
+        public enmWalletTransactiontype TransactionType { get; set; }
+
+        [Required]
+        [Display(Name = "Wallet Amt")]
+        public decimal WalletAmt { get; set; }
+
         
+        [Display(Name = "Remarks")]
+        [StringLength(200, ErrorMessage = "The {0} must be at most {1} characters long.")]
+        public string Remarks { set; get; }
+
+        
+    }
+
+
 }
+

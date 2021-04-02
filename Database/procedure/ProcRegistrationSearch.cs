@@ -28,7 +28,7 @@
         public string mobileno { get; set; }
         public string emailid { get; set; }
 
-        public string gender { get; set; }
+        public string gender_name { get; set; }
         public enmGender gender_id { get; set; }
 
         public int approve_by { get; set; }

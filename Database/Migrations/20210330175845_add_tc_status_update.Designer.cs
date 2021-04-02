@@ -4,14 +4,16 @@ using Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Database.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20210330175845_add_tc_status_update")]
+    partial class add_tc_status_update
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -550,7 +552,7 @@ namespace Database.Migrations
                     b.Property<string>("action_remarks")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("action_type")
+                    b.Property<int>("status_type")
                         .HasColumnType("int");
 
                     b.HasKey("DetailId");
@@ -558,64 +560,6 @@ namespace Database.Migrations
                     b.HasIndex("TcNid");
 
                     b.ToTable("tblTCStatus");
-                });
-
-            modelBuilder.Entity("Database.tblTCWallet", b =>
-                {
-                    b.Property<int>("DetailId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("TcNid")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("walletamt")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("DetailId");
-
-                    b.HasIndex("TcNid");
-
-                    b.ToTable("tblTCwallet");
-                });
-
-            modelBuilder.Entity("Database.tblTCWalletLog", b =>
-                {
-                    b.Property<int>("DetailId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("TcNid")
-                        .HasColumnType("int");
-
-                    b.Property<int>("createdby")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("createddatetime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("credit")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("debit")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("groupid")
-                        .HasColumnType("int");
-
-                    b.Property<string>("remarks")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("reqno")
-                        .HasColumnType("int");
-
-                    b.HasKey("DetailId");
-
-                    b.HasIndex("TcNid");
-
-                    b.ToTable("tblTCwalletlog");
                 });
 
             modelBuilder.Entity("Database.tblTcAddressDetail", b =>
@@ -1243,24 +1187,6 @@ namespace Database.Migrations
                 });
 
             modelBuilder.Entity("Database.tblTCStatus", b =>
-                {
-                    b.HasOne("Database.tblRegistration", "tblRegistration")
-                        .WithMany()
-                        .HasForeignKey("TcNid");
-
-                    b.Navigation("tblRegistration");
-                });
-
-            modelBuilder.Entity("Database.tblTCWallet", b =>
-                {
-                    b.HasOne("Database.tblRegistration", "tblRegistration")
-                        .WithMany()
-                        .HasForeignKey("TcNid");
-
-                    b.Navigation("tblRegistration");
-                });
-
-            modelBuilder.Entity("Database.tblTCWalletLog", b =>
                 {
                     b.HasOne("Database.tblRegistration", "tblRegistration")
                         .WithMany()

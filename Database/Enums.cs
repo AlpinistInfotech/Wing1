@@ -24,6 +24,14 @@ namespace Database
         Active = 0,
         Deactive = 1,
     }
+
+    public enum enmTCStatus
+    {
+        Active=1,
+        Block = 2,
+        Terminate = 3,
+
+    }
     public enum enmTCRanks
     {
         Level1=1,
@@ -107,6 +115,13 @@ namespace Database
         Waterbill = 5,
         ElectricityBill = 6,
     }
+    public enum enmWalletTransactiontype
+    {
+        Credit= 1,
+        Debit= 2,
+    }
+
+
     public enum enmLoadData
     {
         ByID=1,

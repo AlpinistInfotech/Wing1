@@ -1,0 +1,232 @@
+﻿@model Database.ProcRegistrationSearch
+
+
+@using Database
+@{
+    ViewData["Title"] = Database.enmDocumentMaster.Emp_Tc_Approval.GetDocumentDetails().Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary">
+
+            <form action="@Url.Action()" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                @if (Model.isactive == null)
+                {
+                    <div class="card card-white">
+                        <div class="card-header">
+                            <h3 class="card-title">@Database.enmDocumentMaster.Emp_Tc_Details.GetDocumentDetails().Name (@enmApprovalType.Pending)</h3>
+                        </div>
+                    </div>
+                }
+                @if (Model.isactive == enmApprovalType.Pending)
+                {
+                    <div class="card card-info">
+                        <div class="card-header">
+                            <h3 class="card-title">@Database.enmDocumentMaster.Emp_Tc_Details.GetDocumentDetails().Name (@enmApprovalType.InProcessing)</h3>
+                        </div>
+                    </div>
+                }
+                @if (Model.isactive == enmApprovalType.Approved)
+                {
+                    <div class="card card-success">
+                        <div class="card-header">
+                            <h3 class="card-title">@Database.enmDocumentMaster.Emp_Tc_Details.GetDocumentDetails().Name (@enmApprovalType.Approved)</h3>
+                        </div>
+                    </div>
+                }
+                @if (Model.isactive == enmApprovalType.Rejected)
+                {
+                    <div class="card card-danger">
+                        <div class="card-header">
+                            <h3 class="card-title">@Database.enmDocumentMaster.Emp_Tc_Details.GetDocumentDetails().Name (@enmApprovalType.Rejected)</h3>
+                        </div>
+                    </div>
+                }
+
+
+
+            <div class="card-body">
+
+                <input asp-for="tcnid" type="hidden" />
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="row">
+                                <label asp-for="TCID" class="col-md-2 col-form-label"></label>
+                                <div class="col-sm-10">
+                                    <input asp-for="TCID" class="form-control" placeholder="TcId" required />
+                                    <span asp-validation-for="TCID" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <button type="submit" name="submitdata" value="LoadData" class="btn btn-primary">Load Data</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="FirstName"></label>
+                            <input asp-for="FirstName" class="form-control" placeholder="First Name" readonly data-val="false" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="MiddleName"></label>
+                            <input asp-for="MiddleName" class="form-control" placeholder="Middle Name" readonly data-val="false" />
+                            <span asp-validation-for="MiddleName" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="LastName"></label>
+                            <input asp-for="LastName" class="form-control" placeholder="Last Name" readonly data-val="false" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="DOB"></label>
+                            <input asp-for="DOB" class="form-control" placeholder="DOB" readonly data-val="false" />
+                            <span asp-validation-for="DOB" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label >Sponsor ID</label>
+                            <input asp-for="tcspid" class="form-control" placeholder="Sponsor ID" readonly data-val="false" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label >Sponsor Name</label>
+                            <input asp-for="tcspname" class="form-control" placeholder="Sponsor Name" readonly />
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label >Gender</label>
+                            <input asp-for="gender_id" class="form-control" placeholder="Gender" readonly data-val="false" />
+                      </div>
+</div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label >Husband/Father Name</label>
+                            <input asp-for="husband_wifename" class="form-control" placeholder="Husband/Father Name" readonly />
+                            </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label >State</label>
+                            <input asp-for="statename" class="form-control" placeholder="State" readonly data-val="false" />
+                            </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>City</label>
+                            <input asp-for="cityname" class="form-control" placeholder="City" readonly />
+                            </div>
+                    </div>
+                </div>
+
+</div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input asp-for="emailid" class="form-control" placeholder="Email Address" readonly data-val="false" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Phone No.</label>
+                            <input asp-for="mobileno" class="form-control" placeholder="Mobile No." readonly />
+                            </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Address1</label>
+                            <input asp-for="Address1" class="form-control" placeholder="Address1" readonly data-val="false" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Address2</label>
+                            <input asp-for="Address2" class="form-control" placeholder="Address2" readonly />
+                            </div>
+                    </div>
+                </div>
+
+
+
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Is Approved</label>
+                            <input asp-for="isactive" class="form-control" readonly />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Approval Remarks</label>
+                            <input asp-for="approve_remarks" class="form-control" placeholder="Remarks" />
+                        </div>
+                    </div>
+
+                </div>
+                
+
+
+
+            <div class="card-footer">
+                @if (Model.isactive == enmApprovalType.Pending)
+                {
+                    <button type="submit" name="submitdata" value="Approve" class="btn btn-success">Approve</button>
+                    <button type="submit" name="submitdata" value="Reject" class="btn btn-danger">&nbsp;Reject&nbsp;</button>
+                }
+
+            </div>
+        </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            bsCustomFileInput.init();
+        });
+    </script>
+}
