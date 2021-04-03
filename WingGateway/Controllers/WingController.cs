@@ -503,7 +503,7 @@ namespace WingGateway.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(policy: nameof(enmDocumentMaster.Gateway_Wallet_Statement))]
-        public IActionResult WalletStatement(mdlTcWalletReportWraper mdl, enmLoadData submitdata, [FromServices] IConsProfile consProfile)
+        public IActionResult WalletStatement(mdlTcWalletReportWraper mdl, string submitdata, [FromServices] IConsProfile consProfile)
         {
             mdl.mdlTcWalletWraper = consProfile.GetTCWalletStatement(mdl, 0, 0, true);
             return View(mdl);

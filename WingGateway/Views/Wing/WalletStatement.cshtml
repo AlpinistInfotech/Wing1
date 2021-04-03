@@ -48,11 +48,18 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label >Current Wallet Amt </label>
-                            @*<label asp-for="@Model.mdlTcWalletWraper[0].current_ewallet_amt" class="col-form-label"></label>*@
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="info-box mb-3">
+                            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-rupee-sign"></i></span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-text">Wallet Balance</span>
+                                
+                                <span class="info-box-number">@((Model.mdlTcWalletWraper?.FirstOrDefault()?.current_ewallet_amt)??0)</span>
+                            </div>
+                            <!-- /.info-box-content -->
                         </div>
+                        <!-- /.info-box -->
                     </div>
 
                     
