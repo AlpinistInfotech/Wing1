@@ -192,3 +192,49 @@ from
 where A.is_active=8
 order by PackageFromDate desc
 
+Go
+
+USE [TravelWing]
+GO
+/****** Object:  StoredProcedure [dbo].[proc_wallet_search]    Script Date: 03-04-2021 21:52:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- exec proc_wallet_search '01-apr-2021','30-apr-2021',3,0,1
+ALTER proc [dbo].[proc_wallet_search]
+@datefrom date,
+@dateto date,
+@tcnid int,
+@session_nid int,
+@spmode tinyint
+
+as
+
+if @spmode=0 -- search as per date 
+begin
+set @dateto = DATEADD(D,1,@dateto)
+declare @current_ewallet_amt decimal(10,2)=0
+select  @current_ewallet_amt=walletamt from tblTCwallet with(nolock) where TcNid=@tcnid
+
+set @current_ewallet_amt=isnull(@current_ewallet_amt,0)
+
+create table #temp_wallet(sno int ,date_ datetime,credit decimal(10,2),debit decimal(10,2),balance decimal(10,2),particulars varchar(1000))
+Insert into #temp_wallet (sno,date_,particulars,credit,debit,balance)
+select  1,format( cast(@datefrom as date),'dd-MMM-yyyy') as Date_,'Opening Balance' as Particulars,isnull(sum(credit-debit),0),0,0
+from tblTCwalletlog with(nolock) where TcNid=@tcnid and cast(createddatetime  as date) < @datefrom
+
+Insert into #temp_wallet (sno,date_,particulars,credit,debit,balance)
+select ROW_NUMBER() over (order by createddatetime)+1 as srNo,
+createddatetime as Date_, remarks,credit,debit, 0 
+from tblTCwalletlog with(nolock) where TcNid=@tcnid and createddatetime between @datefrom and @dateto order by  createddatetime
+
+update #temp_wallet set balance=(isnull(balance,0)+ isnull(credit,0)) - isnull(debit,0)
+
+select sno, format(Date_,'dd-MMM-yyyy') as Date_,Particulars,isnull(credit,0) as credit,isnull(debit,0) as debit, 
+sum(balance) over (order by sno) as  balance,@current_ewallet_amt as current_ewallet_amt 
+from #temp_wallet order by sno
+
+drop table #temp_wallet
+
+end
