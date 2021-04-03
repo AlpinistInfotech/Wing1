@@ -6,17 +6,19 @@ using System.Threading.Tasks;
 
 namespace WingApi.Models
 {
+    #region ******************* Search Request **********************888
+
     public class mdlSearchRequest
     {
         [Required]
         public int AdultCount { get; set; } = 1;
         public int ChildCount { get; set; } = 0;
         public int InfantCount { get; set; } = 0;
-        public bool DirectFlight { get; set; }        
+        public bool DirectFlight { get; set; }
         public Classes.enmJourneyType JourneyType { get; set; }
         public string[] PreferredAirlines { get; set; }
         [Required]
-        public mdlSegmentRequest[] Segments { get; set; }        
+        public mdlSegmentRequest[] Segments { get; set; }
     }
 
     public class mdlSegmentRequest
@@ -31,7 +33,7 @@ namespace WingApi.Models
 
     public class mdlError
     {
-        public int Code { get; set; }        
+        public int Code { get; set; }
         public string Message { get; set; }
     }
 
@@ -43,13 +45,13 @@ namespace WingApi.Models
         public string TraceId { get; set; }
         public string Origin { get; set; }
         public string Destination { get; set; }
-        public mdlSearchResult[][] Results { get; set; }
+        public List<List<mdlSearchResult>> Results { get; set; }
     }
 
     public class mdlSearchResult
     {
-        public mdlSegment[] TripInfos { get; set; }
-        public mdlTotalpricelist []TotalPriceList { get; set; }
+        public List<mdlSegment> Segment { get; set; }
+        public List<mdlTotalpricelist> TotalPriceList { get; set; }
     }
 
     public class mdlSegment
@@ -57,7 +59,7 @@ namespace WingApi.Models
         public mdlAirline Airline { get; set; }
         public mdlAirport Origin { get; set; }
         public mdlAirport Destination { get; set; }
-        
+
         public int TripIndicator { get; set; }
         public DateTime DepartureTime { get; set; }
         public DateTime ArrivalTime { get; set; }
@@ -69,7 +71,7 @@ namespace WingApi.Models
         public bool isLcc { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
-        public string FlightNumber { get; set; }        
+        public string FlightNumber { get; set; }
         public string OperatingCarrier { get; set; }
     }
 
@@ -91,8 +93,8 @@ namespace WingApi.Models
         public mdlPassenger INFANT { get; set; }
         public string ResultIndex { get; set; }
         public string sri { get; set; }
-        public string [] msri { get; set; }
-        
+        public List<string> msri { get; set; }
+
     }
 
     public class mdlPassenger
@@ -103,13 +105,13 @@ namespace WingApi.Models
         public mdlBaggageInformation BaggageInformation { get; set; }
         public int RefundableType { get; set; }//0 Non Refundable,1 - Refundable,2 - Partial Refundable
         public Classes.enmCabinClass CabinClass { get; set; }//ECONOMY,PREMIUM_ECONOMY, BUSINESS,FIRST
-        public string ClassOfBooking{ get; set; }
+        public string ClassOfBooking { get; set; }
         public string FareBasis { get; set; }
         public bool IsFreeMeel { get; set; }
     }
 
     public class mdlBaggageInformation
-    { 
+    {
         public string CheckingBaggage { get; set; }
         public string CabinBaggage { get; set; }
     }
@@ -133,9 +135,172 @@ namespace WingApi.Models
     }
 
     public class mdlAdditionalFareComponent
-    { 
+    {
         public string Key { get; set; }
         public string Value { get; set; }
     }
+
+    #endregion
+
+
+    #region ***************** Fare Quotation **************************
+
+    public class mdlFareQuotRequest
+    {
+
+        public string TraceId { get; set; }
+        public string[] ResultIndex { get; set; }
+        public Classes.enmServiceProvider Provider { get; set; }
+    }
+
+    public class mdlFareQuotResponseWraper
+    {
+        public mdlFareQuotResponse Response { get; set; }
+    }
+    public class mdlFareQuotResponse
+    {
+        public int ResponseStatus { get; set; }
+        public Classes.enmServiceProvider ServiceProvider { get; set; }
+        public bool IsPriceChanged { get; set; }
+        public mdlError Error { get; set; }
+        public string TraceId { get; set; }
+        public string Origin { get; set; }
+        public string Destination { get; set; }
+        public List<List<mdlSearchResult>> Results { get; set; }
+    }
+
+
+
+    #endregion
+
+    #region ***************** Fare Rule ***************************
+    public class mdlFareRuleRequest : mdlFareQuotRequest
+    {
+
+    }
+    public class mdlFareRuleResponseWraper
+    {
+        public mdlFareRuleResponse Response { get; set; }
+    }
+
+    public class mdlFareRuleResponse
+    {
+        public mdlError Error { get; set; }
+        public int ResponseStatus { get; set; }
+        public mdlFareRule FareRule { get; set; }
+    }
+
+
+    public class mdlFareRule
+    {
+        public bool isML { get; set; }
+        public bool isHB { get; set; }
+        public string rT { get; set; }
+        public mdlPassengerBagege cB { get; set; }
+        public mdlPassengerBagege hB { get; set; }
+        public mdlFarePolicy fr { get; set; }
+    }
+
+    public class mdlPassengerBagege
+    {
+        public string ADT { get; set; }
+        public string CNN { get; set; }
+        public string INF { get; set; }
+    }
+
+
+    public class mdlFarePolicy
+    {
+        public mdlAllPOlicy DATECHANGE { get; set; }
+        public mdlAllPOlicy CANCELLATION { get; set; }
+        public mdlAllPOlicy SEAT_CHARGEABLE { get; set; }
+    }
+    public class mdlAllPOlicy
+    {
+        public double amount { get; set; }
+        public double additionalFee { get; set; }
+        public string policyInfo { get; set; }
+    }
+
+    #endregion
+
+
+    #region *****************Booking Request *************************
+
+    public class mdlBookingRequest
+    {
+        public string TraceId { get; set; }
+        public mdlTravellerinfo[] travellerInfo { get; set; }
+        public mdlDeliveryinfo deliveryInfo { get; set; }
+        public mdlGstInfo gstInfo { get; set; }
+        public mdlPaymentInfos[] paymentInfos { get; set; }
+
+    }
+
+    public class mdlDeliveryinfo
+    {
+        public string[] emails { get; set; }
+        public string[] contacts { get; set; }
+    }
+
+    public class mdlTravellerinfo
+    {
+        public string Title { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public Classes.enmPassengerType passengerType { get; set; }
+        public DateTime dob { get; set; }
+        public string pNum { get; set; }
+        public DateTime PassportExpiryDate { get; set; }
+        public DateTime PassportIssueDate { get; set; }
+        public mdlSSRS ssrBaggageInfos { get; set; }
+        public mdlSSRS ssrMealInfos { get; set; }
+        public mdlSSRS ssrSeatInfos { get; set; }
+        public mdlSSRS ssrExtraServiceInfos { get; set; }
+    }
+    public class mdlPaymentInfos
+    {
+        public double amount { get; set; }
+    }
+
+
+    public class mdlGstInfo
+    {
+        public string gstNumber { get; set; }
+        public string email { get; set; }
+        public string registeredName { get; set; }
+        public string mobile { get; set; }
+        public string address { get; set; }
+    }
+
+    public class mdlSSRS
+    {
+        public string key { get; set; }
+        public string value { get; set; }
+    }
+
+    public class mdlBookingResponse
+    {
+        public string bookingId { get; set; }
+        public mdlError Error { get; set; }
+        public mdlMetainfo metaInfo { get; set; }
+        public int ResponseStatus { get; set; }
+
+    }
+
+    public class mdlStatus
+    {
+        public bool success { get; set; }
+        public int httpStatus { get; set; }
+    }
+
+    public class mdlMetainfo
+    {
+    }
+
+
+
+    #endregion
+
 
 }
