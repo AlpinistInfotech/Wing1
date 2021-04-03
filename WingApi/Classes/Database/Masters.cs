@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 namespace WingApi.Classes.Database
 {
 
-    
-
     public class tblCustomerMaster
     {
         [Key]
@@ -27,7 +25,32 @@ namespace WingApi.Classes.Database
         public int CreatedBy { get; set; }
         public DateTime CreatedDt { get; set; }
     }
-    
+
+    public class tblUserMaster
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
+        public bool IsActive { get; set; }
+        public int CreatedBy { get; set; }
+        public DateTime CreatedDt { get; set; }
+        [ForeignKey("tblCustomerMaster")] // Foreign Key here
+        public int? CustomerId { get; set; }
+        public tblCustomerMaster tblCustomerMaster { get; set; }
+    }
+
+    public class tblUserRole
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        [ForeignKey("tblUserMaster")] // Foreign Key here
+        public int? UserId { get; set; }
+        public tblUserMaster tblUserMaster { get; set; }
+        public enmRole Role { get; set; }
+    }
 
     public class tblCustomerIPFilter
     {
