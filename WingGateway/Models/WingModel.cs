@@ -194,7 +194,30 @@ namespace WingGateway.Models
         public DateTime created_datetime { get; set; }
     }
 
-    public class mdlWallet
+
+    public class mdlTcWalletReportWraper
+    {
+        [Required]
+        [Display(Name = "FromDate")]
+        [DataType(DataType.Date)]
+        public DateTime FromDt { get; set; } = DateTime.Now.AddMonths(-1);
+
+        [Required]
+        [Display(Name = "ToDate")]
+        [DataType(DataType.Date)]
+        public DateTime ToDt { get; set; } = DateTime.Now.AddDays(1);
+        
+        [StringLength(11, ErrorMessage = "The {0} must be at {2} characters long.", MinimumLength = 11)]
+        [RegularExpression("[a-zA-Z0-9]*$", ErrorMessage = "Invalid {0}, no special charcter")]
+        [Display(Name = "Please enter TC ID")]
+        [Remote(action: "IsSponsorValid", controller: "Account", ErrorMessage = "Invalid TC ID")]
+        public string SpTcId { get; set; }
+        public List<ProcWalletSearch> mdlTcWalletWraper  { get; set; }
+
+        
+    }
+  
+    public class mdlWallet 
     {
 
         [StringLength(11, ErrorMessage = "The {0} must be at {2} characters long.", MinimumLength = 11)]

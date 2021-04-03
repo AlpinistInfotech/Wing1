@@ -28,6 +28,8 @@ namespace WingGateway.Classes
         List<mdlTcPANWraper> GetPANDetails(enmLoadData loadType, mdlFilterModel mdl, int Nid, bool LoadImage);
         List<ProcRegistrationSearch> GetTCDetails(enmLoadData loadType, mdlFilterModel mdl, int Nid, int spmode, bool LoadImage);
         List<mdlUserInfo> GetUserName(List<int> UserId, bool IsEmployee = true);
+        List<ProcWalletSearch> GetTCWalletStatement(mdlTcWalletReportWraper mdl, int Nid, int spmode, bool LoadImage);
+
         int GetNId(string Id, bool OnlyUnterminated = false);
         
     }
@@ -418,6 +420,51 @@ namespace WingGateway.Classes
 
         }
 
+        public List<ProcWalletSearch> GetTCWalletStatement(mdlTcWalletReportWraper mdl, int Nid, int spmode, bool LoadImage)
+        {
+            List<ProcWalletSearch> returnData = new List<ProcWalletSearch>();
+           
+                Nid = GetNId(mdl.SpTcId, false);
+                if (Nid == 0)
+                {
+                    throw new Exception("Invalid TC ID");
+                }
+            
+
+            
+            using (SqlConnection sqlconnection = new SqlConnection(_config["ConnectionStrings:DefaultConnection"]))
+            {
+                using (SqlCommand sqlcmd = new SqlCommand("proc_wallet_search", sqlconnection))
+                {
+                    sqlcmd.CommandType = CommandType.StoredProcedure;
+                    sqlcmd.Parameters.Add(new SqlParameter("datefrom", mdl.FromDt));
+                    sqlcmd.Parameters.Add(new SqlParameter("dateto", mdl.ToDt));
+                    sqlcmd.Parameters.Add(new SqlParameter("tcnid", Nid));
+                    sqlcmd.Parameters.Add(new SqlParameter("session_nid", Nid));
+                    sqlcmd.Parameters.Add(new SqlParameter("spmode", spmode));
+
+
+                    sqlconnection.Open();
+                    SqlDataReader rd = sqlcmd.ExecuteReader();
+                    while (rd.Read())
+                    {
+                        returnData.Add(new ProcWalletSearch()
+                        {
+                            Date = Convert.ToString(rd["date_"]),
+                            Particulars = Convert.ToString(rd["Particulars"]),
+                            Credit= Convert.ToDecimal(rd["Credit"]),
+                            Debit = Convert.ToDecimal(rd["Debit"]),
+                            Balance = Convert.ToDecimal(rd["Balance"]),
+                            current_ewallet_amt= Convert.ToDecimal(rd["current_ewallet_amt"]),
+                        });
+                    }
+                }
+
+            }
+
+            return returnData;
+
+        }
 
         new public mdlTreeWraper GetAllDownline(int NID)
         {

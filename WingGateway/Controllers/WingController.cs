@@ -406,7 +406,7 @@ namespace WingGateway.Controllers
         }
 
 
-        #region Wallet
+        #region Add Wallet
 
         [Authorize(policy: nameof(enmDocumentMaster.Gateway_Add_Wallet))]
         public IActionResult AddWallet(enmSaveStatus? _enmSaveStatus, enmMessage? _enmMessage)
@@ -484,6 +484,28 @@ namespace WingGateway.Controllers
 
             
 
+            return View(mdl);
+        }
+
+
+        #endregion
+
+        #region Wallet Statement
+
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Wallet_Statement))]
+        public IActionResult WalletStatement()
+        {
+            mdlTcWalletReportWraper returnDataMdl = new mdlTcWalletReportWraper();
+            returnDataMdl.mdlTcWalletWraper = new List<ProcWalletSearch>();
+            return View(returnDataMdl);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(policy: nameof(enmDocumentMaster.Gateway_Wallet_Statement))]
+        public IActionResult WalletStatement(mdlTcWalletReportWraper mdl, enmLoadData submitdata, [FromServices] IConsProfile consProfile)
+        {
+            mdl.mdlTcWalletWraper = consProfile.GetTCWalletStatement(mdl, 0, 0, true);
             return View(mdl);
         }
 
@@ -653,8 +675,6 @@ namespace WingGateway.Controllers
             returnData.FilterModel = mdl;
             return View(returnData);
         }
-
-
 
         #endregion
     }
