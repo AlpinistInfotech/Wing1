@@ -8,10 +8,46 @@ using WingApi.Models;
 namespace WingApi.Classes
 {
 
+    public enum enmRole
+    { 
+        SearchFlight,
+        BookTicket,
+        HoldTicket,
+        WalletReport,
+        WalletRequest,
+        Markup,
+        IPFilteration,
+        CheckPassengerDetails
+    }
+
+    public enum enmCustomerType
+    {
+        Admin,
+        MLM,
+        B2B,
+        B2C,
+        InHouse
+    }
+
+    public enum enmTransactionType
+    {
+        TicketBook,
+        WalletAmountUpdate,
+        PaymentGatewayAmountUpdate,
+        OnCreditUpdate,
+    }
 
     public enum enmJourneyType
     {
         OneWay = 1, Return = 2, MultiStop = 3, AdvanceSearch = 4, SpecialReturn = 5
+    }
+
+    public enum enmGender
+    {
+        Male=1,
+        Female=2,
+        Other=4
+
     }
 
     public enum enmServiceProvider

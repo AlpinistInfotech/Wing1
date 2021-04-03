@@ -4,11 +4,13 @@ using System.Text;
 
 namespace Database
 {
+    
+
     public enum enmGender
     {
         Male = 1,
         Female = 2,
-        Trans = 3,
+        Trans = 4,
     }
 
     public enum enmPackageCustomerType
