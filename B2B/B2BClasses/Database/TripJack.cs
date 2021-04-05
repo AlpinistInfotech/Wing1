@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WingApi.Classes.Database
+namespace B2BClasses.Database
 {
     public class tblTripJackTravelDetail : tblTravelMaster
     {

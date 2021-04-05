@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using B2BClasses.Database;
+using B2BClasses.Services.Enums;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -10,10 +12,8 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using WingApi.Classes.Database;
-using WingApi.Models;
 
-namespace WingApi.Classes.TripJack
+namespace B2BClasses.Services.Air
 {
     public interface ITripJack : IWing
     {

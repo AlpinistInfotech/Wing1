@@ -1,11 +1,12 @@
-﻿using System;
+﻿using B2BClasses.Services.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WingApi.Classes.Database
+namespace B2BClasses.Database
 {
 
     public class tblCustomerMaster
@@ -13,6 +14,7 @@ namespace WingApi.Classes.Database
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        public string Code { get; set; }
         public string CustomerName{ get; set; }
         public string Email { get; set; }
         public string Address { get; set; }
@@ -143,7 +145,5 @@ namespace WingApi.Classes.Database
         public int? ModifiedBy { get; set; }
         public DateTime? ModifiedDt { get; set; }
     }
-
-
 
 }

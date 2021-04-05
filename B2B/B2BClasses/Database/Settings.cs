@@ -1,47 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using B2BClasses.Services.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace WingApi.Classes.Database
+namespace B2BClasses.Database
 {
-    public class DBContext : DbContext
-    {
-        public DBContext(DbContextOptions<DBContext> options) : base(options)
-        {
-        }
-        public DbSet<tblTboTokenDetails> tblTboTokenDetails { get; set; }
-        public DbSet<tblTboTravelDetail> tblTboTravelDetail { get;set;}
-        public DbSet<tblTboTravelDetailResult> tblTboTravelDetailResult { get; set; }
-        public DbSet<tblTboFareRule> tblTboFareRule { get; set; }
-        
-        public DbSet<tblTripJackTravelDetail> tblTripJackTravelDetail { get; set; }
-        public DbSet<tblTripJackTravelDetailResult> tblTripJackTravelDetailResult { get; set; }
-        public DbSet<tblTripJackFareRule> tblTripJackFareRule { get; set; }
-        
-        
-        public DbSet<tblAirlineFareRule> tblAirlineFareRule { get; set; }
-
-
-        #region*************** Masters ***************************
-        public DbSet<tblMinBalenceAlert> tblMinBalenceAlert { get; set; }
-        public DbSet<tblMinBalenceAlertDetails> tblMinBalenceAlertDetails { get; set; }
-        public DbSet<tblActiveSerivceProvider> tblActiveSerivceProvider { get; set; }
-        public DbSet<tblActiveSerivceProviderLog> tblActiveSerivceProviderLog { get; set; }
-
-        public DbSet<tblWingMarkupMaster> tblWingMarkupMaster { get; set; }
-        public DbSet<tblWingMarkupServiceProvider> tblWingMarkupServiceProvider { get; set; }
-        public DbSet<tblWingMarkupCustomerDetails> tblWingMarkupCustomerDetails { get; set; }
-        public DbSet<tblWingMarkupPassengerType> tblWingMarkupPassengerType { get; set; }
-        public DbSet<tblWingConvenience> tblWingConvenience { get; set; }
-        #endregion
-
-    }
-
-
     public class tblAirlineFareRule
     {
         [Key]
@@ -59,7 +24,7 @@ namespace WingApi.Classes.Database
         public double CancellationAdditionalCharge { get; set; }
         public string CancellationPolicy { get; set; }
         public string CheckingBaggage { get; set; }
-        public string CabinBaggage { get; set; }        
+        public string CabinBaggage { get; set; }
     }
     public class tblTravelMaster
     {
@@ -100,7 +65,7 @@ namespace WingApi.Classes.Database
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public bool ForAllServiceProvider { get; set; }
-        public double AmountForSendMail{ get; set; }
+        public double AmountForSendMail { get; set; }
         public double AmountForDisableProvider { get; set; }// If Amount is Below then This Amount the Service Will be Disabled
         public DateTime EffectiveFromDt { get; set; }
         public string Remarks { get; set; }
@@ -122,7 +87,7 @@ namespace WingApi.Classes.Database
     }
     public class tblActiveSerivceProvider
     {
-        [Key]        
+        [Key]
         public enmServiceProvider ServiceProvider { get; set; }
         public bool IsDisabled { get; set; }
         public DateTime DisabledFromDt { get; set; }
@@ -138,7 +103,7 @@ namespace WingApi.Classes.Database
         public enmServiceProvider ServiceProvider { get; set; }
         public bool IsDisabled { get; set; }
         public bool IsDisabledBySystem { get; set; }
-        public DateTime DisabledFromDt { get; set; }        
+        public DateTime DisabledFromDt { get; set; }
         public string Remarks { get; set; }
         public int? ModifiedBy { get; set; }
         public DateTime? ModifiedDt { get; set; }
@@ -200,7 +165,7 @@ namespace WingApi.Classes.Database
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }        
+        public int Id { get; set; }
         public double ConvenienceAmt { get; set; }
         public DateTime EffectiveFromDt { get; set; }
         public DateTime EffectiveToDt { get; set; }
@@ -210,6 +175,5 @@ namespace WingApi.Classes.Database
         public int? ModifiedBy { get; set; }
         public DateTime? ModifiedDt { get; set; }
     }
-
 
 }

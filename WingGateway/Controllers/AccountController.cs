@@ -30,7 +30,6 @@ namespace WingGateway.Controllers
         public IActionResult Login([FromServices] ICaptchaGenratorBase captchaGenratorBase,string ReturnUrl)
         {
             ViewBag.ReturnUrl = ReturnUrl;
-
             mdlCaptcha mdC = new mdlCaptcha();
             mdC.GenrateCaptcha(captchaGenratorBase);
             mdlLogin mdl = new mdlLogin()

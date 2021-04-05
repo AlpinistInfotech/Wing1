@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using B2BClasses.Database;
+using B2BClasses.Services.Enums;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,10 +10,8 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using WingApi.Classes.Database;
-using WingApi.Models;
 
-namespace WingApi.Classes.TBO
+namespace B2BClasses.Services.Air
 {
     public interface ITBO //: IWing
     {
@@ -96,9 +96,9 @@ namespace WingApi.Classes.TBO
             }
             else
             {
-                mdl.Error = new Classes.Error()
+                mdl.Error = new Error()
                 {
-                    ErrorCode = 1,
+                    ErrorCode= 1,
                     ErrorMessage = "Invalid Login",
                 };
             }
@@ -123,6 +123,39 @@ namespace WingApi.Classes.TBO
             //}
             return Task.FromResult( response);
         }
+
+        #region ********************* Login Classes ***********************
+
+        public class mdlAuthenticateRequest
+        {
+            public string ClientId { get; set; }
+            public string UserName { get; set; }
+            public string Password { get; set; }
+            public string EndUserIp { get; set; }
+        }
+
+
+        public class mdlAuthenticateResponse
+        {
+            public int Status { get; set; }
+            public string TokenId { get; set; }
+            public Error Error { get; set; }
+            public Member Member { get; set; }
+        }
+
+       
+        public class Member
+        {
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+            public string Email { get; set; }
+            public int MemberId { get; set; }
+            public int AgencyId { get; set; }
+            public string LoginName { get; set; }
+            public string LoginDetails { get; set; }
+            public bool isPrimaryAgent { get; set; }
+        }
+        #endregion
 
 
         #region ************************* Search Classes ***************************
