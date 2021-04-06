@@ -108,6 +108,28 @@ namespace Database
     }
 
 
+    public enum enmMemberRank
+    {
+        Diamond = 1,
+        Turquoise = 2,
+        Amber = 3,
+        Zircon = 4,
+        Onyx = 5,
+        lolite = 6,
+        Ivory = 7,
+        Amethyst=8,
+    }
+
+    public enum enmIncentiveStatus
+    {
+        Pending = 1,
+        Processing = 2,
+        Hold = 3,
+        Release = 4,
+        Cancelled = 5,
+        Adjusted = 6,
+    }
+
     public enum enmAddressProof
     {
         Aadhar = 1,

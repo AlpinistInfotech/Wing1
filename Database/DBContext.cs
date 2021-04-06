@@ -65,7 +65,12 @@ namespace Database
 
         public DbSet<tblTCWallet> tblTCwallet { get; set; }
         public DbSet<tblTCWalletLog> tblTCwalletlog { get; set; }
-
+        public DbSet<tblTCMemberRank> tblTCmemberrank { get; set; }
+        public DbSet<tblTCMemberRankLog> tblTCmemberranklog { get; set; }
+        public DbSet<tblTCInvoice> tblTCinvoice { get; set; }
+        public DbSet<tblTCStatement> tblTCstatement { get; set; }
+        public DbSet<tblTCStatementLog> tblTCstatementlog { get; set; }
+        public DbSet<tblTCSaleSummary> tblTCsalesummary { get; set; }
 
         #endregion
 
