@@ -51,7 +51,7 @@ namespace B2BClasses.Database
         [ForeignKey("tblUserMaster")] // Foreign Key here
         public int? UserId { get; set; }
         public tblUserMaster tblUserMaster { get; set; }
-        public enmRole Role { get; set; }
+        public enmDocumentMaster Role { get; set; }
     }
 
     public class tblCustomerIPFilter
