@@ -13,6 +13,9 @@ using Microsoft.EntityFrameworkCore;
 using WingApi.Classes.TekTravel;
 using WingApi.Classes;
 using WingApi.Classes.TripJack;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace WingApi
 {
@@ -28,12 +31,36 @@ namespace WingApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["Token:SigningKey"]));
+            var validationParams = new TokenValidationParameters()
+            {
+                ClockSkew = TimeSpan.Zero,
+                ValidateAudience = true,
+                ValidAudience = Configuration["Token:Audience"],
+                ValidateIssuer = true,
+                ValidIssuer = Configuration["Token:Issuer"],
+                IssuerSigningKey = signingKey,
+                ValidateIssuerSigningKey = true,
+                RequireExpirationTime = true,
+                ValidateLifetime = true
+            };
+
+            services.AddScoped(serviceProvider => new JwtTokenGenerator(validationParams.ToTokenOptions()));
+
+
             services.AddDbContext<DBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")),ServiceLifetime.Transient);
             #region ************* Services Registration ************************
             //services.AddScoped<ITekTravel>(ctx => new TekTravel(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
             services.AddScoped<ITripJack>(ctx => new TripJack(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
             #endregion
 
+
+            services.AddAuthentication(option =>
+            {
+                option.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                option.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            }).AddCookie();
 
             services.AddControllersWithViews();
         }
@@ -53,9 +80,9 @@ namespace WingApi
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
