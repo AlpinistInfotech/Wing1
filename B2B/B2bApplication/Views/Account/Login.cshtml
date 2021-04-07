@@ -210,8 +210,6 @@
             });
         });
 
-
-
         //you don't need this, just used for changing background
         jQuery(function ($) {
             $('#btn-login-dark').on('click', function (e) {
@@ -236,6 +234,9 @@
                 e.preventDefault();
             });
 
+        });
+        $(document).ready(function () {
+            sessionStorage.removeItem("_SideMenu");
         });
     </script>
 </body>

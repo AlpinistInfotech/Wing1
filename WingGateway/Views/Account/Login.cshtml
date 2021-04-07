@@ -77,5 +77,10 @@
 @section Scripts {    
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script src="~/js/CountryState.js"></script>
+<script>
+    $(document).ready(function () {
+        sessionStorage.removeItem("_SideMenu");
+    });
+</script>
 }
 
