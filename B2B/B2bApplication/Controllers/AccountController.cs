@@ -37,6 +37,11 @@ namespace B2bApplication.Controllers
                     var userMaster = await account.LoginAsync(mdl, IPAddress);
                     var userRoles = await account.GetEnmDocumentsAsync(userMaster.Id);
                     var userClaims = new List<Claim>();
+
+                    userClaims.Add(new Claim("_UserId", userMaster.Id.ToString()));
+                    userClaims.Add(new Claim("_CustomerId", userMaster.CustomerId.ToString()));
+                    userClaims.Add(new Claim("_Name", userMaster.UserName.ToString()));                    
+
                     foreach (var usr in userRoles)
                     {
                         userClaims.Add(new Claim(nameof(usr), usr.ToString()));
