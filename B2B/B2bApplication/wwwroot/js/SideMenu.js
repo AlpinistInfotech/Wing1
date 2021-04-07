@@ -42,25 +42,41 @@
         elemet.setAttribute("class", iconname);
         return elemet;
     }
-    function fncCreateMenuItem(menuname, iconname, linkname, hastree, isactive) {
+    function fncCreateMenuItem(menuname, iconname, linkname, hastree, isactive,isrootMenu) {
         let item = document.createElement("li");
 
-        item.classList.add("nav-item");
-        if (hastree) {
-            item.classList.add("has-treeview");
-        }
-
-        let itemlink = document.createElement("a");
+        item.classList.add("hover");
+        //if (hastree) {
+        //    item.classList.add("has-treeview");
+        //}
+        
+        if (isactive) { item.classList.add("active"); itemlink.classList.add("open"); }
+        let itemlink = document.createElement("a");        
         itemlink.href = linkname;
-        itemlink.classList.add("nav-link");
-        if (isactive) { itemlink.classList.add("active"); }
-        itemlink.appendChild(fncCreateMenuIcon(iconname));
-
-        let itemTxt = document.createElement("p");
-        itemTxt.textContent = menuname;
-        if (hastree) {
-            itemTxt.appendChild(fncCreateMenuIcon("fas fa-angle-left right"));
+        if (isrootMenu) {
+            itemlink.classList.add("dropdown-toggle");
         }
+        itemlink.appendChild(fncCreateMenuIcon(iconname));
+        if (isrootMenu) {
+            let itemSpan = document.createElement("span");
+            itemSpan.classList.add("menu-text");
+            itemSpan.textContent = menuname;
+            itemlink.appendChild(itemSpan);
+        }
+        else {
+            itemlink.textContent = itemlink.textContent + menuname
+        }
+
+        if (hastree) {
+            let itemB = document.createElement("b");
+            itemB.setAttribute("class", "arrow fa fa-angle-down");
+            itemlink.appendChild(itemB);
+        }
+
+        let itemB1 = document.createElement("b");
+        itemB1.setAttribute("class", "arrow");
+        item.appendChild(itemB1);
+
         itemlink.appendChild(itemTxt);
         item.appendChild(itemlink);
         return item;
@@ -121,28 +137,28 @@
         
         for (let i = 0; i < AllDocuments.length; i++) {            
             if (AllDocuments[i].moduleId == 0 && AllDocuments[i].subModuleId == 0) {                
-                let item = fncCreateMenuItem(AllDocuments[i].name, AllDocuments[i].icon, AllDocuments[i].actionName, false, AllDocuments[i].id == _documentId);                
+                let item = fncCreateMenuItem(AllDocuments[i].name, AllDocuments[i].icon, AllDocuments[i].actionName, false, AllDocuments[i].id == _documentId,true);
                 panelSideMenu.appendChild(item);
             }
         }
         //Get Modules
         for (let i = 0; i < AllModules.length; i++) {
             
-            let ModuleItem = fncCreateMenuItem(AllModules[i].name, AllModules[i].icon, "#", true, AllModules[i].id == _moduleId);
+            let ModuleItem = fncCreateMenuItem(AllModules[i].name, AllModules[i].icon, "#", true, AllModules[i].id == _moduleId,true);
             let ModuleUL = document.createElement("ul");
-            ModuleUL.setAttribute("class", "nav nav-treeview");
+            ModuleUL.setAttribute("class", "submenu");
             ModuleItem.appendChild(ModuleUL);
 
             for (let j = 0; j < AllSubModules.length; j++) {
                 if (AllSubModules[j].moduleId == AllModules[i].id) {
                    
-                    let SubModuleItem = fncCreateMenuItem(AllSubModules[j].name, AllSubModules[j].icon, "#", true, AllSubModules[j].id == _submoduleId);
+                    let SubModuleItem = fncCreateMenuItem(AllSubModules[j].name, AllSubModules[j].icon, "#", true, AllSubModules[j].id == _submoduleId,false);
                     let SubModuleUL = document.createElement("ul");
-                    SubModuleUL.setAttribute("class", "nav nav-treeview");
+                    SubModuleUL.setAttribute("class", "submenu");
                     SubModuleItem.appendChild(SubModuleUL);
                     for (let k = 0; k < AllDocuments.length; k++) {
                         if (AllDocuments[k].subModuleId == AllSubModules[j].id) {
-                            let item = fncCreateMenuItem(AllDocuments[k].name, AllDocuments[k].icon, AllDocuments[k].actionName, false, AllDocuments[k].id == _documentId);
+                            let item = fncCreateMenuItem(AllDocuments[k].name, AllDocuments[k].icon, AllDocuments[k].actionName, false, AllDocuments[k].id == _documentId, false);
                             SubModuleUL.appendChild(item);
                         }
                     }
@@ -153,7 +169,7 @@
 
             for (let k = 0; k < AllDocuments.length; k++) {
                 if (AllDocuments[k].moduleId == AllModules[i].id) {
-                    let item = fncCreateMenuItem(AllDocuments[k].name, AllDocuments[k].icon, AllDocuments[k].actionName, false, AllDocuments[k].id == _documentId);
+                    let item = fncCreateMenuItem(AllDocuments[k].name, AllDocuments[k].icon, AllDocuments[k].actionName, false, AllDocuments[k].id == _documentId,false);
                     ModuleUL.appendChild(item);
                 }
             }
