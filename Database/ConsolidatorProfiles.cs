@@ -383,4 +383,100 @@ namespace Database
 
     }
 
+    public class tblTCMemberRank
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int DetailId { get; set; }
+        [ForeignKey("tblRegistration")]
+        public int? TcNid { get; set; }
+        public tblRegistration tblRegistration { get; set; }
+        public enmMemberRank levelid { get; set; }
+        public enmMemberRank displayid { get; set; }
+    }
+
+    public class tblTCMemberRankLog
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int DetailId { get; set; }
+        [ForeignKey("tblRegistration")]
+        public int? TcNid { get; set; }
+        public tblRegistration tblRegistration { get; set; }
+        public enmMemberRank levelid { get; set; }
+        public DateTime qualifieddate { get; set; }
+    }
+
+
+    public class tblTCInvoice
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int DetailId { get; set; }
+        [ForeignKey("tblRegistration")]
+        public int? TcNid { get; set; }
+        public tblRegistration tblRegistration { get; set; }
+        public DateTime inv_date { get; set; }
+        public decimal inv_amt { get; set; }
+        public decimal pv { get; set; }
+        public decimal bv { get; set; }
+        public DateTime createddatetime { get; set; }
+    }
+
+
+    public class tblTCStatement
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int inentiveId { get; set; }
+        [ForeignKey("tblRegistration")]
+        public int? TcNid { get; set; }
+        public tblRegistration tblRegistration { get; set; }
+        public int monthyear { get; set; }
+        public decimal incentive { get; set; }
+        public decimal deduction { get; set; }
+        public decimal tds { get; set; }
+        public decimal netincentive { get; set; }
+        public enmIncentiveStatus incentivestatus { get; set; }
+        public DateTime createddatetime { get; set; }
+    }
+
+    public class tblTCStatementLog
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int DetailedId { get; set; }
+        
+        [ForeignKey("tblTCStatement")]
+        public int? inentiveId { get; set; }
+        public enmIncentiveStatus incentive_status { get; set; }
+        public string remarks { get; set; }
+        public int createdby { get; set; }
+        public DateTime createddatetime { get; set; }
+    }
+
+
+
+
+    public class tblTCSaleSummary
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int salesummaryId { get; set; }
+        [ForeignKey("tblRegistration")]
+        public int? TcNid { get; set; }
+        public tblRegistration tblRegistration { get; set; }
+        public int monthyear { get; set; }
+
+        [ForeignKey("tblRegistration")]
+        public int? TcSpNid { get; set; }
+        public tblRegistration tblRegistrationSp { get; set; }
+        public enmMemberRank TcNidlevelid { get; set; }
+        public enmMemberRank TcSpNidlevelid { get; set; }
+        public decimal incentive { get; set; }
+    }
+
+
+
+
 }
