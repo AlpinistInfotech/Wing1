@@ -98,18 +98,16 @@ namespace B2BClasses.Services.Enums
     }
 
     public enum enmModule : int
-    {
-        [Module(EnmApplication: enmApplication.B2B, IsArea: false, DisplayOrder: 1, Name: "Profile", Description: "", Icon: "nav-icon far fa-plus-square", AreaName: "", CntrlName: "Profile")]
-        Profile = 1,
-        [Module(EnmApplication: enmApplication.B2B, IsArea: false, DisplayOrder: 2, Name: "Booking", Description: "", Icon: "nav-icon far fa-plus-square", AreaName: "", CntrlName: "Booking")]
+    {   
+        [Module(EnmApplication: enmApplication.B2B, IsArea: false, DisplayOrder: 2, Name: "Booking", Description: "", Icon: "menu-icon fa fa-suitcase", AreaName: "", CntrlName: "Booking")]
         Booking = 2,
-        [Module(EnmApplication: enmApplication.B2B, IsArea: false, DisplayOrder: 3, Name: "Wallet", Description: "", Icon: "nav-icon far fa-plus-square", AreaName: "", CntrlName: "Wallet")]
+        [Module(EnmApplication: enmApplication.B2B, IsArea: false, DisplayOrder: 3, Name: "Wallet", Description: "", Icon: "menu-icon fa fas-wallet", AreaName: "", CntrlName: "Wallet")]
         Wallet = 3,
-        [Module(EnmApplication: enmApplication.B2B, IsArea: false, DisplayOrder: 4, Name: "Incentive", Description: "", Icon: "nav-icon far fa-plus-square", AreaName: "", CntrlName: "Incentive")]
+        [Module(EnmApplication: enmApplication.B2B, IsArea: false, DisplayOrder: 4, Name: "Incentive", Description: "", Icon: "menu-icon fas fa-rupee-sign", AreaName: "", CntrlName: "Incentive")]
         Incentive = 4,
-        [Module(EnmApplication: enmApplication.B2B, IsArea: false, DisplayOrder: 5, Name: "Report", Description: "", Icon: "nav-icon far fa-plus-square", AreaName: "", CntrlName: "Report")]
+        [Module(EnmApplication: enmApplication.B2B, IsArea: false, DisplayOrder: 5, Name: "Report", Description: "", Icon: "menu-icon fa fa-chart-bar", AreaName: "", CntrlName: "Report")]
         Report = 5,
-        [Module(EnmApplication: enmApplication.B2B, IsArea: false, DisplayOrder: 10, Name: "Setting", Description: "", Icon: "nav-icon far fa-plus-square", AreaName: "", CntrlName: "Setting")]
+        [Module(EnmApplication: enmApplication.B2B, IsArea: false, DisplayOrder: 10, Name: "Setting", Description: "", Icon: "menu-icon fa fa-cog", AreaName: "", CntrlName: "Setting")]
         Setting = 10,
     }
     public enum enmSubModule : int
@@ -124,19 +122,19 @@ namespace B2BClasses.Services.Enums
 
     public enum enmDocumentMaster : int
     {
-        [Document(enmDocumentType.Report, 1, "Dashboard", "Dashboard", "far fa-circle nav-icon", "/Home/Index")]
+        [Document(enmDocumentType.Report | enmDocumentType.DisplayMenu, 1, "Dashboard", "Dashboard", "menu-icon fa fa-tachometer", "/Home/Index")]
         Dashboard = 1,
         [Document(EnmModule: enmModule.Booking, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "Flight", Description: "Flight", Icon: "fa fa-plane nav-icon", ActionName: "Flight")]
+            DisplayOrder: 1, Name: "Flight", Description: "Flight", Icon: "fa fa-plane", ActionName: "Flight")]
         Flight = 10,
         [Document(EnmModule: enmModule.Booking, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "Hotel", Description: "Hotel", Icon: "fa fa-building nav-icon", ActionName: "Hotel")]
+            DisplayOrder: 1, Name: "Hotel", Description: "Hotel", Icon: "fa fa-building", ActionName: "Hotel")]
         Hotel = 11,
         [Document(EnmModule: enmModule.Booking, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "Buses", Description: "Buses", Icon: "fa fa-bus nav-icon", ActionName: "Buses")]
+            DisplayOrder: 1, Name: "Buses", Description: "Buses", Icon: "fa fa-bus", ActionName: "Buses")]
         Buses = 12,
         [Document(EnmModule: enmModule.Booking, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "Train", Description: "Train", Icon: "fa fa-train nav-icon", ActionName: "Train")]
+            DisplayOrder: 1, Name: "Train", Description: "Train", Icon: "fa fa-train", ActionName: "Train")]
         Train = 13,
 
         [Document(EnmModule: enmModule.Wallet, DocumentType: enmDocumentType.Report | enmDocumentType.DisplayMenu,
@@ -154,6 +152,10 @@ namespace B2BClasses.Services.Enums
         [Document(EnmSubModule: enmSubModule.Credit, DocumentType: enmDocumentType.Report | enmDocumentType.DisplayMenu,
             DisplayOrder: 1, Name: "Credit Report", Description: "Credit Report", Icon: "far fa-circle nav-icon", ActionName: "/Wing/WalletStatement")]
         CreditReport = 25,
+
+        [Document(EnmModule: enmModule.Incentive, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
+            DisplayOrder: 1, Name: "Incentive Statement", Description: "Incentive Statement", Icon: "far fa-circle nav-icon", ActionName: "/Wing/AddWallet")]
+        Incentive_Statement = 20,
 
         [Document(EnmModule: enmModule.Setting, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.Report | enmDocumentType.DisplayMenu,
             DisplayOrder: 1, Name: "MarkUp", Description: "MarkUp", Icon: "far fa-circle nav-icon", ActionName: "/Home/MarkUp")]
