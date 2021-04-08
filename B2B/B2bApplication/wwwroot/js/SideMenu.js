@@ -77,7 +77,7 @@
         itemB1.setAttribute("class", "arrow");
         item.appendChild(itemB1);
 
-        itemlink.appendChild(itemTxt);
+        //itemlink.appendChild(itemTxt);
         item.appendChild(itemlink);
         return item;
     }

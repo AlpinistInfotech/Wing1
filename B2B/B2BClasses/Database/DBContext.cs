@@ -14,6 +14,15 @@ namespace B2BClasses.Database
         public DBContext(DbContextOptions<DBContext> options) : base(options)
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            DefaultData defaultData = new DefaultData(modelBuilder);
+            defaultData.InsertCustomerMaster();
+            defaultData.InsertUser();
+        }
+
+
         public DbSet<tblTboTokenDetails> tblTboTokenDetails { get; set; }
         public DbSet<tblTboTravelDetail> tblTboTravelDetail { get;set;}
         public DbSet<tblTboTravelDetailResult> tblTboTravelDetailResult { get; set; }

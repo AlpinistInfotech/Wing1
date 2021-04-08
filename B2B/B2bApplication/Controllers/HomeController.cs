@@ -23,6 +23,7 @@ namespace B2bApplication.Controllers
             _logger = logger;
         }
 
+        [Authorize]
         public IActionResult Index()
         {
             return View();
@@ -51,7 +52,12 @@ namespace B2bApplication.Controllers
             var eDms = (await account.GetEnmDocumentsAsync(currentUsers.UserId));            
             foreach (var doc in eDms)
             {
-                alldocument.Add(doc.GetDocumentDetails());
+                var DD=doc.GetDocumentDetails();
+                if (DD.DocumentType.HasFlag(enmDocumentType.DisplayMenu))
+                {
+                    alldocument.Add(DD);
+                }
+                
             }
             var eMods = Enum.GetValues(typeof(enmModule)).Cast<enmModule>().ToList();
             foreach (var doc in eMods)

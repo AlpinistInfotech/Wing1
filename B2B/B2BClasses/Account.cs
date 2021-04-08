@@ -54,7 +54,7 @@ namespace B2BClasses
                 throw new Exception("Invalid Customer ID");
             }
 
-            if (await IsValidIPAsync(customerMaster.Id, UserIp))
+            if (!(await IsValidIPAsync(customerMaster.Id, UserIp)))
             {
                 throw new Exception("Invalid User IP");
             }

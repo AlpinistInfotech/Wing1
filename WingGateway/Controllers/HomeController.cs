@@ -56,7 +56,11 @@ namespace WingGateway.Controllers
             eDms.RemoveAll(p => !AllClaims.Contains(p.ToString()));
             foreach (var doc in eDms)
             {
-                alldocument.Add(doc.GetDocumentDetails());
+                var DD = doc.GetDocumentDetails();
+                if (DD.DocumentType.HasFlag(enmDocumentType.DisplayMenu))
+                {
+                    alldocument.Add(DD);
+                }
             }
             var eMods = Enum.GetValues(typeof(enmModule)).Cast<enmModule>().ToList();
             foreach (var doc in eMods)
