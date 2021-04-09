@@ -125,17 +125,17 @@ namespace B2BClasses.Services.Enums
         [Document(enmDocumentType.Report | enmDocumentType.DisplayMenu, 1, "Dashboard", "Dashboard", "menu-icon fa fa-tachometer", "/Home/Index")]
         Dashboard = 1,
         [Document(EnmModule: enmModule.Booking, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "Flight", Description: "Flight", Icon: "fa fa-plane", ActionName: "Flight")]
+            DisplayOrder: 1, Name: "Flight", Description: "Flight", Icon: "fa fa-plane", ActionName: "/Home/FlightSearch")]
         Flight = 10,
         [Document(EnmModule: enmModule.Booking, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "Hotel", Description: "Hotel", Icon: "fa fa-building", ActionName: "Hotel")]
+            DisplayOrder: 1, Name: "Hotel", Description: "Hotel", Icon: "fa fa-building", ActionName: "/Home/Hotel")]
         Hotel = 11,
         [Document(EnmModule: enmModule.Booking, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "Buses", Description: "Buses", Icon: "fa fa-bus", ActionName: "Buses")]
-        Buses = 12,
+            DisplayOrder: 1, Name: "Buses Train", Description: "Buses", Icon: "fa fa-bus", ActionName: "/Home/TrainBuses")]
+        BusesTrain = 12,
         [Document(EnmModule: enmModule.Booking, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "Train", Description: "Train", Icon: "fa fa-train", ActionName: "Train")]
-        Train = 13,
+            DisplayOrder: 1, Name: "HolidayPackage", Description: "Train", Icon: "fa fa-train", ActionName: "/Home/HolidayPackage")]
+        HolidayPackage = 13,
 
         [Document(EnmModule: enmModule.Wallet, DocumentType: enmDocumentType.Report | enmDocumentType.DisplayMenu,
             DisplayOrder: 1, Name: "Statement", Description: "Statement", Icon: "far fa-circle nav-icon", ActionName: "Statement")]

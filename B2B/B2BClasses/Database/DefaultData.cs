@@ -87,5 +87,9 @@ namespace B2BClasses.Database
             _modelBuilder.Entity<tblUserRole>().HasData(UserRoles);
         }
 
+
+        
+
+
     }
 }

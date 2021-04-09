@@ -105,25 +105,29 @@ namespace B2bApplication.Controllers
 
         }
 
-        
-        [Authorize(policy: nameof(enmDocumentMaster.Flight))]
+
+        //[Authorize(policy: nameof(enmDocumentMaster.Flight))]
+        [Authorize]
         public async Task<IActionResult> FlightSearch()
         {
             mdlFlightSearch flightSearch = new mdlFlightSearch();
             await flightSearch.LoadAirportAsync(_booking);
-            await flightSearch.LoadDefaultSearchRequestAsync(_booking);
+            
             return View(flightSearch);
         }
 
         [HttpPost]
-        [Authorize(policy: nameof(enmDocumentMaster.Flight))]
+        //[Authorize(policy: nameof(enmDocumentMaster.Flight))]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> FlightSearch(mdlFlightSearch mdl)
         {
             if (ModelState.IsValid)
             {
+                await mdl.LoadDefaultSearchRequestAsync(_booking);
                 mdl.searchResponse = (await _booking.SearchFlight(mdl.searchRequest)).ToList();                
             }
+            await mdl.LoadAirportAsync(_booking);
             return View(mdl);
         }
 

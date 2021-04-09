@@ -12,76 +12,121 @@
             <div class="widget-header">
                 <h4 class="widget-title">Search Flight</h4>                
             </div>
-
             <div class="widget-body">
                 <div class="widget-main">
-                    <label for="id-date-picker-1">Date Picker</label>
 
+                    <div class="row">
+                        <div class="form-group col-md-3">
+                            <label for="Origin">From</label>
+                            <div class="row">
+                                <div class="col-sm-11">
+                                    <div class="form-group">
+                                        <select id="Origin" asp-for="flightSearchGUI.From" class="select2 form-control" data-placeholder="From">
+                                            @foreach (var d in Model.Airports)
+                                            {
+                                                <option value="@d.AirportCode">@(d.AirportCode)-@d.CityCode , @d.CityName  </option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="Origin">To</label>
+                            <div class="row">
+                                <div class="col-sm-11">
+                                    <div class="form-group">
+                                        <select id="Origin" asp-for="flightSearchGUI.To" class="select2 form-control" data-placeholder="To">
+                                            @foreach (var d in Model.Airports)
+                                            {
+                                                <option value="@d.AirportCode">@(d.AirportCode)-@d.CityCode , @d.CityName  </option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="id-date-picker-1">Journey Type</label>
+                            <div class="row">
+                                <div class="col-sm-11">
+                                    <div class="form-group">
+                                        <select id="JourneyType" asp-for="flightSearchGUI.JourneyType" class="form-control" data-placeholder="Journey Type">
+                                            <option value="1">OneWay </option>
+                                            <option value="2">Return </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="id-date-picker-1">Travel Date</label>
+                            <div class="row">
+                                <div class="col-sm-11">
+                                    <div class="input-daterange input-group">
+                                        <input type="text" class="input-sm form-control" asp-for="flightSearchGUI.DepartureDt" />
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-exchange"></i>
+                                        </span>
+                                        <input type="text" class="input-sm form-control" asp-for="flightSearchGUI.ReturnDt" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    
                     
-
                     <div class="row">
-                        <div class="col-xs-8 col-sm-11">
-                            <div class="input-group">
-                                <input class="form-control date-picker" id="id-date-picker-1" type="text" data-date-format="dd-mm-yyyy" />
-                                <span class="input-group-addon">
-                                    <i class="fa fa-calendar bigger-110"></i>
-                                </span>
+                        <div class="form-group col-md-2">
+                            
+                            <div class="row">
+                                <label for="Adult" class="col-sm-3">Adult</label>
+                                <div class="col-sm-9">
+                                    <div class="form-group">
+                                        <select id="Adult" asp-for="flightSearchGUI.AdultCount" class="form-control" data-placeholder="Adult">
+                                            <option value="1">1</option>
+                                            <option value="2">2 </option>
+                                            <option value="3">3 </option>
+                                            <option value="4">4 </option>
+                                            <option value="5">5 </option>
+                                            <option value="6">6 </option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="space space-8"></div>
-                    <label>Range Picker</label>
-
-                    <div class="row">
-                        <div class="col-xs-8 col-sm-11">
-                            <div class="input-daterange input-group">
-                                <input type="text" class="input-sm form-control" name="start" />
-                                <span class="input-group-addon">
-                                    <i class="fa fa-exchange"></i>
-                                </span>
-
-                                <input type="text" class="input-sm form-control" name="end" />
+                        <div class="form-group col-md-2">                            
+                            <div class="row">
+                                <label for="Child" class="col-sm-3">Child</label>
+                                <div class="col-sm-9">
+                                    <div class="form-group">
+                                        <select id="Child" asp-for="flightSearchGUI.ChildCount" class="form-control" data-placeholder="Child">
+                                            <option value="1">1</option>
+                                            <option value="2">2 </option>
+                                            <option value="3">3 </option>
+                                            <option value="4">4 </option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    <hr />
-                    <label for="id-date-range-picker-1">Date Range Picker</label>
-
-                    <div class="row">
-                        <div class="col-xs-8 col-sm-11">
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                    <i class="fa fa-calendar bigger-110"></i>
-                                </span>
-
-                                <input class="form-control" type="text" name="date-range-picker" id="id-date-range-picker-1" />
+                        <div class="form-group col-md-2">
+                            <div class="row">
+                                <label for="Infant" class="col-sm-3">Infant</label>
+                                <div class="col-sm-9">
+                                    <div class="form-group">
+                                        <select id="Infant" asp-for="flightSearchGUI.InfantCount" class="form-control" data-placeholder="Infant">
+                                            <option value="1">1</option>
+                                            <option value="2">2 </option>
+                                            <option value="3">3 </option>
+                                            <option value="4">4 </option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    <hr />
-                    <label for="timepicker1">Time Picker</label>
-
-                    <div class="input-group bootstrap-timepicker">
-                        <input id="timepicker1" type="text" class="form-control" />
-                        <span class="input-group-addon">
-                            <i class="fa fa-clock-o bigger-110"></i>
-                        </span>
-                    </div>
-
-                    <hr />
-                    <label for="date-timepicker1">Date/Time Picker</label>
-
-                    <div class="input-group">
-                        <input id="date-timepicker1" type="text" class="form-control" />
-                        <span class="input-group-addon">
-                            <i class="fa fa-clock-o bigger-110"></i>
-                        </span>
                     </div>
                 </div>
-            </div>
+                </div>
         </div>
     </div>
 </div>
