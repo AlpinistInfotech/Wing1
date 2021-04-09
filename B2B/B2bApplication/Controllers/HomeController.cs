@@ -10,17 +10,21 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-
+using B2BClasses.Services.Air;
 namespace B2bApplication.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
         private readonly DBContext _context;
-        public HomeController(ILogger<HomeController> logger, DBContext context)
+        private readonly IBooking _booking;
+        public HomeController(ILogger<HomeController> logger, DBContext context, IBooking booking
+
+            )
         {
             _context = context;
             _logger = logger;
+            _booking = booking;
         }
 
         [Authorize]
@@ -101,14 +105,28 @@ namespace B2bApplication.Controllers
 
         }
 
-
-        [Authorize]
-        public async Task<IActionResult> FlightBooking([FromServices]IBooking booking)
+        
+        [Authorize(policy: nameof(enmDocumentMaster.Flight))]
+        public async Task<IActionResult> FlightSearch()
         {
             mdlFlightSearch flightSearch = new mdlFlightSearch();
-            await flightSearch.LoadAirportAsync(booking);
+            await flightSearch.LoadAirportAsync(_booking);
+            await flightSearch.LoadDefaultSearchRequestAsync(_booking);
             return View(flightSearch);
         }
+
+        [HttpPost]
+        [Authorize(policy: nameof(enmDocumentMaster.Flight))]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> FlightSearch(mdlFlightSearch mdl)
+        {
+            if (ModelState.IsValid)
+            {
+                mdl.searchResponse = (await _booking.SearchFlight(mdl.searchRequest)).ToList();                
+            }
+            return View(mdl);
+        }
+
 
     }
 }

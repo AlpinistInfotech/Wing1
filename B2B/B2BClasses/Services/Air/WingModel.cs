@@ -15,10 +15,11 @@ namespace B2BClasses.Services.Air
         public int ChildCount { get; set; } = 0;
         public int InfantCount { get; set; } = 0;
         public bool DirectFlight { get; set; }
-        public enmJourneyType JourneyType { get; set; }
+        public enmJourneyType JourneyType { get; set; } = enmJourneyType.OneWay;
         public string[] PreferredAirlines { get; set; }
         [Required]
-        public mdlSegmentRequest[] Segments { get; set; }
+        public List<mdlSegmentRequest> Segments { get; set; }
+
     }
 
     public class mdlSegmentRequest

@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace B2BClasses.Services.Air
 {
-    public interface ITripJack : IWing
+    public interface ITripJack : IWingFlight
     {
     }
 
