@@ -101,7 +101,7 @@ namespace B2BClasses.Services.Enums
     {   
         [Module(EnmApplication: enmApplication.B2B, IsArea: false, DisplayOrder: 2, Name: "Booking", Description: "", Icon: "menu-icon fa fa-suitcase", AreaName: "", CntrlName: "Booking")]
         Booking = 2,
-        [Module(EnmApplication: enmApplication.B2B, IsArea: false, DisplayOrder: 3, Name: "Wallet", Description: "", Icon: "menu-icon fa fas-wallet", AreaName: "", CntrlName: "Wallet")]
+        [Module(EnmApplication: enmApplication.B2B, IsArea: false, DisplayOrder: 3, Name: "Wallet", Description: "", Icon: "menu-icon fa fa-credit-card", AreaName: "", CntrlName: "Wallet")]
         Wallet = 3,
         [Module(EnmApplication: enmApplication.B2B, IsArea: false, DisplayOrder: 4, Name: "Incentive", Description: "", Icon: "menu-icon fas fa-rupee-sign", AreaName: "", CntrlName: "Incentive")]
         Incentive = 4,

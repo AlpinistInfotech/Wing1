@@ -101,7 +101,14 @@ namespace B2bApplication.Controllers
 
         }
 
-         
+
+        [Authorize]
+        public async Task<IActionResult> FlightBooking([FromServices]IBooking booking)
+        {
+            mdlFlightSearch flightSearch = new mdlFlightSearch();
+            await flightSearch.LoadAirportAsync(booking);
+            return View(flightSearch);
+        }
 
     }
 }

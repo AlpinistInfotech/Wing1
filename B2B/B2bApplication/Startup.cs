@@ -31,6 +31,7 @@ namespace B2bApplication
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddDbContext<DBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")),ServiceLifetime.Transient);
             services.AddScoped<IAccount>(ctx => new Account(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
+            services.AddScoped<IBooking>(ctx => new Booking(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
             services.AddScoped<ICurrentUsers>(ctx => new CurrentUsers(ctx.GetRequiredService<IHttpContextAccessor>(), ctx.GetRequiredService<DBContext>()));
             services.AddAuthentication("CookieAuthentication")
                  .AddCookie("CookieAuthentication", config =>

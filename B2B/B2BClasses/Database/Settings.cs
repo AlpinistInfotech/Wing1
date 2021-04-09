@@ -1,4 +1,5 @@
-﻿using B2BClasses.Services.Enums;
+﻿using B2BClasses.Services.Air;
+using B2BClasses.Services.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -169,6 +170,35 @@ namespace B2BClasses.Database
         public double ConvenienceAmt { get; set; }
         public DateTime EffectiveFromDt { get; set; }
         public DateTime EffectiveToDt { get; set; }
+        public int CreatedBy { get; set; }
+        public DateTime CreatedDt { get; set; }
+        public bool IsDeleted { get; set; }
+        public int? ModifiedBy { get; set; }
+        public DateTime? ModifiedDt { get; set; }
+    }
+
+    public class tblAirline
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        public string Code { get; set; }
+        public string Name { get; set; }
+        public bool isLcc { get; set; }
+        public string ImagePath { get; set; }
+        public int CreatedBy { get; set; }
+        public DateTime CreatedDt { get; set; }
+        public bool IsDeleted { get; set; }
+        public int? ModifiedBy { get; set; }
+        public DateTime? ModifiedDt { get; set; }
+
+    }
+    public class tblAirport: mdlAirport
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        public bool IsDomestic { get; set; }
         public int CreatedBy { get; set; }
         public DateTime CreatedDt { get; set; }
         public bool IsDeleted { get; set; }

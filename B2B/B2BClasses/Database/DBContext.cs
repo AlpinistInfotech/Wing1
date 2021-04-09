@@ -22,6 +22,9 @@ namespace B2BClasses.Database
             defaultData.InsertUser();
         }
 
+        public DbSet<tblAirline> tblAirline { get; set; }
+        public DbSet<tblAirport> tblAirport { get; set; }
+
 
         public DbSet<tblTboTokenDetails> tblTboTokenDetails { get; set; }
         public DbSet<tblTboTravelDetail> tblTboTravelDetail { get;set;}

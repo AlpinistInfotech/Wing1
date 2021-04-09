@@ -1,0 +1,8 @@
+﻿@model B2bApplication.Models.mdlFlightSearch
+@using B2BClasses.Services.Enums
+@{
+    ViewData["Title"] =  enmDocumentMaster.Flight.GetDocumentDetails().Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<input type="hidden" value="@(enmDocumentMaster.Flight)" id="_currentDocument" name="_currentDocument" />
+
