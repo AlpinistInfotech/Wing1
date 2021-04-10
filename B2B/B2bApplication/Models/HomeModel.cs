@@ -23,7 +23,7 @@ namespace B2bApplication.Models
 
     public class mdlFlightSearch
     {
-        public FlightSearchGUI flightSearchGUI { get; set; } =new FlightSearchGUI();
+        public FlightSearchGUI flightSearchGUI { get; set; } = new FlightSearchGUI();
         public mdlSearchRequest searchRequest { get; set; }
         public List<mdlSearchResponse> searchResponse { get; set; }
         public List<tblAirport> Airports { get; set; }
@@ -64,17 +64,19 @@ namespace B2bApplication.Models
                         Destination = flightSearchGUI.From,
                         Origin = flightSearchGUI.To,
                         FlightCabinClass = flightSearchGUI.CabinClass,
-                        TravelDt = flightSearchGUI.ReturnDt?? flightSearchGUI.DepartureDt,
+                        TravelDt = flightSearchGUI.ReturnDt ?? flightSearchGUI.DepartureDt,
                         PreferredArrival = enmPreferredDepartureTime.AnyTime,
                         PreferredDeparture = enmPreferredDepartureTime.AnyTime
                     });
 
                 }
 
-                
+
             }
 
-            
+
         }
     }
 }
+
+

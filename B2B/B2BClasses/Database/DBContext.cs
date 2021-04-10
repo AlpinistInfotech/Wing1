@@ -20,6 +20,8 @@ namespace B2BClasses.Database
             DefaultData defaultData = new DefaultData(modelBuilder);
             defaultData.InsertCustomerMaster();
             defaultData.InsertUser();
+            defaultData.InsertAirport();
+            defaultData.InsertAirline();
         }
 
         public DbSet<tblAirline> tblAirline { get; set; }
