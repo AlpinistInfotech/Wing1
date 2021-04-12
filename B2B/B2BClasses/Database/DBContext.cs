@@ -36,8 +36,6 @@ namespace B2BClasses.Database
         public DbSet<tblTripJackTravelDetail> tblTripJackTravelDetail { get; set; }
         public DbSet<tblTripJackTravelDetailResult> tblTripJackTravelDetailResult { get; set; }
         public DbSet<tblTripJackFareRule> tblTripJackFareRule { get; set; }
-        
-        
         public DbSet<tblAirlineFareRule> tblAirlineFareRule { get; set; }
 
 
