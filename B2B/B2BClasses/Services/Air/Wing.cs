@@ -12,28 +12,28 @@ namespace B2BClasses.Services.Air
    
     public interface IWingFlight
     {
-        Task<mdlSearchResponse> SearchAsync(mdlSearchRequest request);
+        Task<mdlSearchResponse> SearchAsync(mdlSearchRequest request, int CustomerId);
         Task<mdlFareQuotResponse> FareQuoteAsync(mdlFareQuotRequest request);
         Task<mdlFareRuleResponse> FareRuleAsync(mdlFareRuleRequest request);
         Task<mdlBookingResponse> BookingAsync(mdlBookingRequest request);
     }
 
-    public class WingFlight
-    {
-        private readonly DBContext _context;
-        private readonly IConfiguration _config;
-        private readonly ITripJack _tripJack;
-        public WingFlight(DBContext context, IConfiguration config, ITripJack tripJack)
-        {
-            _context = context;
-            _config = config;
-            _tripJack = tripJack;
-        }
+    //public class WingFlight
+    //{
+    //    private readonly DBContext _context;
+    //    private readonly IConfiguration _config;
+    //    private readonly ITripJack _tripJack;
+    //    public WingFlight(DBContext context, IConfiguration config, ITripJack tripJack)
+    //    {
+    //        _context = context;
+    //        _config = config;
+    //        _tripJack = tripJack;
+    //    }
 
         
 
 
-    }
+    //}
 
 
 

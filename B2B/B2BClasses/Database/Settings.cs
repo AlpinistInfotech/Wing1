@@ -90,8 +90,7 @@ namespace B2BClasses.Database
     {
         [Key]
         public enmServiceProvider ServiceProvider { get; set; }
-        public bool IsDisabled { get; set; }
-        public DateTime DisabledFromDt { get; set; }
+        public bool IsEnabled { get; set; }        
         public string Remarks { get; set; }
         public int? ModifiedBy { get; set; }
         public DateTime? ModifiedDt { get; set; }
@@ -119,6 +118,7 @@ namespace B2BClasses.Database
         public bool IsAllCustomer { get; set; }
         public bool IsApplicableOnEachPasenger { get; set; }// Is Markup is applicable on Each Passnger or on Ticket
         public bool IsAllPessenger { get; set; }//Applicable For All Pasenger
+        public bool IsAllFlightClass { get; set; }
         public enmGender Gender { get; set; }
         public double MarkupAmt { get; set; }
         public DateTime EffectiveFromDt { get; set; }
@@ -129,6 +129,10 @@ namespace B2BClasses.Database
         public int? ModifiedBy { get; set; }
         public DateTime? ModifiedDt { get; set; }
     }
+
+    
+
+
     public class tblWingMarkupServiceProvider
     {
         [Key]
@@ -160,6 +164,17 @@ namespace B2BClasses.Database
         public int? MarkupId { get; set; }
         public tblWingMarkupMaster tblWingMarkupMaster { get; set; }
         public enmPassengerType PassengerType { get; set; }
+    }
+
+    public class tblWingMarkupFlightClass
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        [ForeignKey("tblWingMarkupMaster")] // Foreign Key here
+        public int? MarkupId { get; set; }
+        public tblWingMarkupMaster tblWingMarkupMaster { get; set; }
+        public string classid{ get; set; }
     }
 
     public class tblWingConvenience
