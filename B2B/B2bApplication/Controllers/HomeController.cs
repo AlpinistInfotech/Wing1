@@ -11,6 +11,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using B2BClasses.Services.Air;
+using B2BClasses.Models;
+
 namespace B2bApplication.Controllers
 {
     public class HomeController : Controller
@@ -122,10 +124,12 @@ namespace B2bApplication.Controllers
         [Authorize]
         public async Task<IActionResult> FlightSearch(mdlFlightSearch mdl)
         {
+            int CustomerId = 1;
             if (ModelState.IsValid)
             {
-                await mdl.LoadDefaultSearchRequestAsync(_booking);
-                mdl.searchResponse = (await _booking.SearchFlight(mdl.searchRequest)).ToList();                
+                mdl.LoadDefaultSearchRequestAsync(_booking);
+                _booking.CustomerId = CustomerId;
+                mdl.searchResponse = (await _booking.SearchFlightMinPrices(mdl.searchRequest));                
             }
             await mdl.LoadAirportAsync(_booking);
             return View(mdl);

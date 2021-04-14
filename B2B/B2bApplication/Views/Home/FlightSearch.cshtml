@@ -1,7 +1,7 @@
-﻿@model B2bApplication.Models.mdlFlightSearch
+﻿@model B2BClasses.Models.mdlFlightSearch
 @using B2BClasses.Services.Enums
 @{
-    ViewData["Title"] =  enmDocumentMaster.Flight.GetDocumentDetails().Name;
+    ViewData["Title"] = enmDocumentMaster.Flight.GetDocumentDetails().Name;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <input type="hidden" value="@(enmDocumentMaster.Flight)" id="_currentDocument" name="_currentDocument" />
@@ -10,129 +10,182 @@
     <div class="col-sm-12">
         <div class="widget-box">
             <div class="widget-header">
-                <h4 class="widget-title">Search Flight</h4>                
+                <h4 class="widget-title">Search Flight</h4>
             </div>
             <div class="widget-body">
                 <div class="widget-main">
+                    <form action="@Url.Action()" method="post">
+                        <div class="row">
+                            <div class="form-group col-md-3">
+                                <label for="Origin">From</label>
+                                <div class="row">
+                                    <div class="col-sm-11">
+                                        <div class="form-group">
+                                            <select id="Origin" asp-for="FlightSearchWraper.From" class="select2 form-control" data-placeholder="From">
+                                                @foreach (var d in Model.Airports)
+                                                {
+                                                    <option value="@d.AirportCode">@(d.AirportCode)-@d.CityCode , @d.CityName  </option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="Origin">To</label>
+                                <div class="row">
+                                    <div class="col-sm-11">
+                                        <div class="form-group">
+                                            <select id="Origin" asp-for="FlightSearchWraper.To" class="select2 form-control" data-placeholder="To">
+                                                @foreach (var d in Model.Airports)
+                                                {
+                                                    <option value="@d.AirportCode">@(d.AirportCode)-@d.CityCode , @d.CityName  </option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="id-date-picker-1">Journey Type</label>
+                                <div class="row">
+                                    <div class="col-sm-11">
+                                        <div class="form-group">
+                                            <select id="JourneyType" asp-for="FlightSearchWraper.JourneyType" class="form-control" data-placeholder="Journey Type">
+                                                <option value="1">OneWay </option>
+                                                <option value="2">Return </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="id-date-picker-1">Travel Date</label>
+                                <div class="row">
+                                    <div class="col-sm-11">
+                                        <div class="input-daterange input-group">
+                                            <input type="text" class="input-sm form-control" asp-for="FlightSearchWraper.DepartureDt" />
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-exchange"></i>
+                                            </span>
+                                            <input type="text" class="input-sm form-control" asp-for="FlightSearchWraper.ReturnDt" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                    <div class="row">
-                        <div class="form-group col-md-3">
-                            <label for="Origin">From</label>
-                            <div class="row">
-                                <div class="col-sm-11">
-                                    <div class="form-group">
-                                        <select id="Origin" asp-for="flightSearchGUI.From" class="select2 form-control" data-placeholder="From">
-                                            @foreach (var d in Model.Airports)
-                                            {
-                                                <option value="@d.AirportCode">@(d.AirportCode)-@d.CityCode , @d.CityName  </option>
-                                            }
-                                        </select>
+                        <div class="row">
+                            <div class="form-group col-md-2">
+
+                                <div class="row">
+                                    <label for="Adult" class="col-sm-3">Adult</label>
+                                    <div class="col-sm-9">
+                                        <div class="form-group">
+                                            <select id="Adult" asp-for="FlightSearchWraper.AdultCount" class="form-control" data-placeholder="Adult">
+                                                <option value="1">1</option>
+                                                <option value="2">2 </option>
+                                                <option value="3">3 </option>
+                                                <option value="4">4 </option>
+                                                <option value="5">5 </option>
+                                                <option value="6">6 </option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label for="Origin">To</label>
-                            <div class="row">
-                                <div class="col-sm-11">
-                                    <div class="form-group">
-                                        <select id="Origin" asp-for="flightSearchGUI.To" class="select2 form-control" data-placeholder="To">
-                                            @foreach (var d in Model.Airports)
-                                            {
-                                                <option value="@d.AirportCode">@(d.AirportCode)-@d.CityCode , @d.CityName  </option>
-                                            }
-                                        </select>
+                            <div class="form-group col-md-2">
+                                <div class="row">
+                                    <label for="Child" class="col-sm-3">Child</label>
+                                    <div class="col-sm-9">
+                                        <div class="form-group">
+                                            <select id="Child" asp-for="FlightSearchWraper.ChildCount" class="form-control" data-placeholder="Child">
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label for="id-date-picker-1">Journey Type</label>
-                            <div class="row">
-                                <div class="col-sm-11">
-                                    <div class="form-group">
-                                        <select id="JourneyType" asp-for="flightSearchGUI.JourneyType" class="form-control" data-placeholder="Journey Type">
-                                            <option value="1">OneWay </option>
-                                            <option value="2">Return </option>
-                                        </select>
+                            <div class="form-group col-md-2">
+                                <div class="row">
+                                    <label for="Infant" class="col-sm-3">Infant</label>
+                                    <div class="col-sm-9">
+                                        <div class="form-group">
+                                            <select id="Infant" asp-for="FlightSearchWraper.InfantCount" class="form-control" data-placeholder="Infant">
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label for="id-date-picker-1">Travel Date</label>
-                            <div class="row">
-                                <div class="col-sm-11">
-                                    <div class="input-daterange input-group">
-                                        <input type="text" class="input-sm form-control" asp-for="flightSearchGUI.DepartureDt" />
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-exchange"></i>
-                                        </span>
-                                        <input type="text" class="input-sm form-control" asp-for="flightSearchGUI.ReturnDt" />
-                                    </div>
-                                </div>
+                            <div class="form-group col-md-6">
+                                <button class="btn btn-info" type="submit">
+                                    <i class="ace-icon fa fa-search bigger-110"></i>
+                                    Search
+                                </button>
                             </div>
                         </div>
-                    </div>                    
-                    
-                    <div class="row">
-                        <div class="form-group col-md-2">
-                            
-                            <div class="row">
-                                <label for="Adult" class="col-sm-3">Adult</label>
-                                <div class="col-sm-9">
-                                    <div class="form-group">
-                                        <select id="Adult" asp-for="flightSearchGUI.AdultCount" class="form-control" data-placeholder="Adult">
-                                            <option value="1">1</option>
-                                            <option value="2">2 </option>
-                                            <option value="3">3 </option>
-                                            <option value="4">4 </option>
-                                            <option value="5">5 </option>
-                                            <option value="6">6 </option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group col-md-2">                            
-                            <div class="row">
-                                <label for="Child" class="col-sm-3">Child</label>
-                                <div class="col-sm-9">
-                                    <div class="form-group">
-                                        <select id="Child" asp-for="flightSearchGUI.ChildCount" class="form-control" data-placeholder="Child">
-                                            <option value="1">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
-                                            <option value="4">4</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <div class="row">
-                                <label for="Infant" class="col-sm-3">Infant</label>
-                                <div class="col-sm-9">
-                                    <div class="form-group">
-                                        <select id="Infant" asp-for="flightSearchGUI.InfantCount" class="form-control" data-placeholder="Infant">
-                                            <option value="1">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
-                                            <option value="4">4</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <button class="btn btn-info" type="submit">
-                                <i class="ace-icon fa fa-search bigger-110"></i>
-                                Search
-                            </button>
-                        </div>
-                    </div>
+                    </form>
                 </div>
-                </div>
+            </div>
         </div>
     </div>
+    @if ((Model.searchResponse?.Results?.Count ?? 0) == 1)
+    {
+        @foreach (var res in Model.searchResponse?.Results.FirstOrDefault())
+        {
+            <div class="col-sm-12">
+                @{ await Html.RenderPartialAsync("_FlightResult", res);}
+            </div>
+        }
+    }
+
+    @if ((Model.searchResponse?.Results?.Count ?? 0) > 1)
+    {
+
+
+        <div class="tabbale">
+            <ul class="nav nav-tabs padding-18">
+                <li class="active">
+                    <a data-toggle="tab" href="#OnwardResult">
+                        <i class="green ace-icon fa fa-user bigger-120"></i>
+                        Profile
+                    </a>
+                </li>
+                <li>
+                    <a data-toggle="tab" href="#ReturnResult">
+                        <i class="green ace-icon fa fa-user bigger-120"></i>
+                        Profile
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+        <div class="tab-content no-border padding-24">
+            <div id="OnwardResult" class="tab-pane in active">
+                @foreach (var res in Model.searchResponse?.Results[0])
+                {
+
+                    <div class="col-sm-12">
+                        @{ await Html.RenderPartialAsync("_FlightResult", res);}
+                    </div>
+                }
+            </div>
+            <div id="ReturnResult" class="tab-pane in active">
+                @foreach (var res in Model.searchResponse?.Results[0])
+                {
+
+                    <div class="col-sm-12">
+                        @{ await Html.RenderPartialAsync("_FlightResult", res);}
+                    </div>
+                }
+            </div>
+        </div>
+    }
 </div>

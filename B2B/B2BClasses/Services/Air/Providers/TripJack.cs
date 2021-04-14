@@ -76,7 +76,7 @@ namespace B2BClasses.Services.Air
             return mdl;
         }
 
-        public async Task<mdlSearchResponse> SearchAsync(mdlSearchRequest request)
+        public async Task<mdlSearchResponse> SearchAsync(mdlSearchRequest request, int CustomerId)
         {
             mdlSearchResponse response = null;
             if (request.JourneyType == enmJourneyType.OneWay ||
