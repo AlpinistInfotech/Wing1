@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 
 namespace B2BClasses
 {
+    
+
     public interface IBooking
     {
         int CustomerId { get; set; }
@@ -24,7 +26,7 @@ namespace B2BClasses
         Task<mdlSearchResponse> SearchFlightMinPrices(mdlSearchRequest mdlRq);
     }
 
-    public class Booking :  IBooking
+    public class Booking : IBooking
     {
         private readonly DBContext _context;
         private readonly IConfiguration _config;
@@ -92,22 +94,85 @@ namespace B2BClasses
 
         public async Task<mdlSearchResponse> SearchFlightMinPrices(mdlSearchRequest mdlRq)
         {
-
-            mdlSearchResponse searchResponse = new mdlSearchResponse() { ResponseStatus=0, Error= new mdlError() {Code=0, Message="" } };
+            mdlSearchResponse searchResponse = new mdlSearchResponse() { ResponseStatus = 0, Error = new mdlError() { Code = 0, Message = "" } };
             var res = (await SearchFlight(mdlRq)).ToList();
-            if (res == null)
+            if (res == null || res.Count == 0)
             {
                 searchResponse.Error.Message = "No data found";
                 return searchResponse;
             }
             if (res.Count() == 1)
             {
+                res[0].ResponseStatus = 1;
                 return res[0];
             }
 
+            //Convert into Single
+            int SegmentId = 0;
+            bool IsAllSegmentAreEqual = false;
+            List<List<mdlSearchResult>> Results = res.SelectMany(p => p.Results).ToList();
+            for (int i = 0; i < Results.Count - 1; i++)
+            {
+                for (int j = Results[i].Count - 1; j > 0; j--)
+                {
+
+                    for (int k = j - 1; k >= 0; k--)
+                    {
+                        if (Results[i][j].Segment.Count == Results[i][k].Segment.Count)
+                        {
+                            IsAllSegmentAreEqual = true;
+                            SegmentId = Results[i][j].Segment.Count - 1;
+                            while (SegmentId >= 0)//check Wheather the Flight and segment are same or not
+                            {
+                                if (!(Results[i][j].Segment[SegmentId].Airline.Code == Results[i][k].Segment[SegmentId].Airline.Code
+                                    && Results[i][j].Segment[SegmentId].Airline.FlightNumber == Results[i][k].Segment[SegmentId].Airline.FlightNumber))
+                                {
+                                    IsAllSegmentAreEqual = false;
+                                    break;
+                                }
+                            }
+                            if (IsAllSegmentAreEqual)
+                            {
+                                for (int PriceListCount1 = Results[i][j].TotalPriceList.Count - 1; PriceListCount1 >= 0; PriceListCount1--)
+                                {
+
+                                    for (int PriceListCount2 = Results[i][k].TotalPriceList.Count - 1; PriceListCount2 >= 0; PriceListCount2--)
+                                    {
+                                        if (Results[i][j].TotalPriceList[PriceListCount1].ADULT.CabinClass == Results[i][k].TotalPriceList[PriceListCount2].ADULT.CabinClass
+                                            && Results[i][j].TotalPriceList[PriceListCount1].ADULT.ClassOfBooking == Results[i][k].TotalPriceList[PriceListCount2].ADULT.ClassOfBooking)
+                                        {
+                                            if (Results[i][j].TotalPriceList[PriceListCount1].ADULT.FareComponent.TotalFare > Results[i][k].TotalPriceList[PriceListCount2].ADULT.FareComponent.TotalFare)
+                                            {
+                                                Results[i][j].TotalPriceList.RemoveAt(PriceListCount1);
+                                                goto PriceListCount1_;
+                                            }
+                                        }
+
+                                    }
+                                PriceListCount1_:;
+                                }
+                                Results[i][k].TotalPriceList.AddRange(Results[i][j].TotalPriceList);
+                                Results[i].RemoveAt(j);
+                                goto outerLoop;
+                            }
+
+                        }
+
+                    }
+                outerLoop:;
+
+                }
+            }
+            searchResponse.Results = Results;
+            searchResponse.ResponseStatus = 1;
             return searchResponse;
 
         }
+
+
+
+
+
 
 
 
