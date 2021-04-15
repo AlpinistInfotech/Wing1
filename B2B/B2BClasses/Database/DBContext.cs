@@ -22,6 +22,7 @@ namespace B2BClasses.Database
             defaultData.InsertUser();
             defaultData.InsertAirport();
             defaultData.InsertAirline();
+            defaultData.InsertServiceProvider();
         }
 
         public DbSet<tblAirline> tblAirline { get; set; }

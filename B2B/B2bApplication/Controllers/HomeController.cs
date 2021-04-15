@@ -112,7 +112,20 @@ namespace B2bApplication.Controllers
         [Authorize]
         public async Task<IActionResult> FlightSearch()
         {
-            mdlFlightSearch flightSearch = new mdlFlightSearch();
+            mdlFlightSearch flightSearch = new mdlFlightSearch() { 
+                FlightSearchWraper= new mdlFlightSearchWraper() { 
+                    AdultCount=1,
+                    ChildCount=0,
+                    InfantCount=0,
+                    CabinClass= enmCabinClass.ECONOMY,
+                    DepartureDt= DateTime.Now,
+                    ReturnDt=null,
+                    From ="DEL",
+                    To="BOM",
+                    JourneyType=enmJourneyType.OneWay,
+                    
+                }
+            };
             await flightSearch.LoadAirportAsync(_booking);
             
             return View(flightSearch);
@@ -120,7 +133,7 @@ namespace B2bApplication.Controllers
 
         [HttpPost]
         //[Authorize(policy: nameof(enmDocumentMaster.Flight))]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> FlightSearch(mdlFlightSearch mdl)
         {
@@ -135,11 +148,28 @@ namespace B2bApplication.Controllers
             return View(mdl);
         }
 
+        [HttpPost]
+        //[Authorize(policy: nameof(enmDocumentMaster.Flight))]
+        //[ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> FlightSearch1(mdlFlightSearchWraper mdl)
+        {
+            //int CustomerId = 1;
+            //if (ModelState.IsValid)
+            //{
+            //    mdl.LoadDefaultSearchRequestAsync(_booking);
+            //    _booking.CustomerId = CustomerId;
+            //    mdl.searchResponse = (await _booking.SearchFlightMinPrices(mdl.searchRequest));
+            //}
+            //await mdl.LoadAirportAsync(_booking);
+            return View();
+        }
 
-        
 
 
-        
+
+
+
 
 
     }

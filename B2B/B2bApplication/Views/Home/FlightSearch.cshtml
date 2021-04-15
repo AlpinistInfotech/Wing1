@@ -15,7 +15,11 @@
             <div class="widget-body">
                 <div class="widget-main">
                     <form action="@Url.Action()" method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <input type="hidden" asp-for="FlightSearchWraper.CabinClass" />
                         <div class="row">
+
                             <div class="form-group col-md-3">
                                 <label for="Origin">From</label>
                                 <div class="row">
@@ -24,7 +28,7 @@
                                             <select id="Origin" asp-for="FlightSearchWraper.From" class="select2 form-control" data-placeholder="From">
                                                 @foreach (var d in Model.Airports)
                                                 {
-                                                    <option value="@d.AirportCode">@(d.AirportCode)-@d.CityCode , @d.CityName  </option>
+                                                    <option value="@d.AirportCode">@(d.AirportCode), @d.CityName, @d.CountryCode  </option>
                                                 }
                                             </select>
                                         </div>
@@ -39,7 +43,7 @@
                                             <select id="Origin" asp-for="FlightSearchWraper.To" class="select2 form-control" data-placeholder="To">
                                                 @foreach (var d in Model.Airports)
                                                 {
-                                                    <option value="@d.AirportCode">@(d.AirportCode)-@d.CityCode , @d.CityName  </option>
+                                                    <option value="@d.AirportCode">@(d.AirportCode), @d.CityName, @d.CountryCode </option>
                                                 }
                                             </select>
                                         </div>
@@ -64,7 +68,7 @@
                                 <div class="row">
                                     <div class="col-sm-11">
                                         <div class="input-daterange input-group">
-                                            <input type="text" class="input-sm form-control" asp-for="FlightSearchWraper.DepartureDt" />
+                                            <input type="text" class="input-sm form-control" id="DepartureDt" asp-for="FlightSearchWraper.DepartureDt" />
                                             <span class="input-group-addon">
                                                 <i class="fa fa-exchange"></i>
                                             </span>
@@ -100,6 +104,7 @@
                                     <div class="col-sm-9">
                                         <div class="form-group">
                                             <select id="Child" asp-for="FlightSearchWraper.ChildCount" class="form-control" data-placeholder="Child">
+                                                <option value="0">0</option>
                                                 <option value="1">1</option>
                                                 <option value="2">2</option>
                                                 <option value="3">3</option>
@@ -115,6 +120,7 @@
                                     <div class="col-sm-9">
                                         <div class="form-group">
                                             <select id="Infant" asp-for="FlightSearchWraper.InfantCount" class="form-control" data-placeholder="Infant">
+                                                <option value="1">0</option>
                                                 <option value="1">1</option>
                                                 <option value="2">2</option>
                                                 <option value="3">3</option>
@@ -189,3 +195,13 @@
         </div>
     }
 </div>
+
+@section Scripts {    
+    <script>
+        jQuery(function ($) {
+            $('.select2').select2({ allowClear: true });
+            $('.input-daterange').datepicker({ autoclose: true, format: 'd-M-yyyy', startDate: '3d' });
+        });        
+        
+    </script>
+}

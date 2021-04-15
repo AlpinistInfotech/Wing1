@@ -10,20 +10,20 @@ namespace B2BClasses.Models
 {
     public class mdlFlightSearchWraper
     {
-        public string From { get; set; } = "DEL";
-        public string To { get; set; } = "BOM";
-        public enmJourneyType JourneyType { get; set; } = enmJourneyType.OneWay;
-        public enmCabinClass CabinClass { get; set; } = enmCabinClass.ECONOMY;
-        public DateTime DepartureDt { get; set; } = DateTime.Now.AddDays(7);
-        public DateTime? ReturnDt { get; set; } = DateTime.Now.AddDays(14);
-        public int AdultCount { get; set; } = 1;
-        public int ChildCount { get; set; } = 0;
-        public int InfantCount { get; set; } = 0;
+        public string From { get; set; } 
+        public string To { get; set; } 
+        public enmJourneyType JourneyType { get; set; } 
+        public enmCabinClass CabinClass { get; set; } 
+        public DateTime? DepartureDt { get; set; }
+        public DateTime? ReturnDt { get; set; }
+        public int AdultCount { get; set; } 
+        public int ChildCount { get; set; } 
+        public int InfantCount { get; set; } 
     }
 
     public class mdlFlightSearch
     {
-        public mdlFlightSearchWraper FlightSearchWraper { get; set; } = new mdlFlightSearchWraper();
+        public mdlFlightSearchWraper FlightSearchWraper { get; set; }
         public mdlSearchRequest searchRequest { get; set; }
         public mdlSearchResponse searchResponse { get; set; }
         public List<tblAirport> Airports { get; set; }
@@ -53,7 +53,7 @@ namespace B2BClasses.Models
                     Destination = FlightSearchWraper.To,
                     Origin = FlightSearchWraper.From,
                     FlightCabinClass = FlightSearchWraper.CabinClass,
-                    TravelDt = FlightSearchWraper.DepartureDt,
+                    TravelDt = FlightSearchWraper.DepartureDt?? DateTime.Now.AddDays(7),
                     PreferredArrival = enmPreferredDepartureTime.AnyTime,
                     PreferredDeparture = enmPreferredDepartureTime.AnyTime
                 });
@@ -64,7 +64,7 @@ namespace B2BClasses.Models
                         Destination = FlightSearchWraper.From,
                         Origin = FlightSearchWraper.To,
                         FlightCabinClass = FlightSearchWraper.CabinClass,
-                        TravelDt = FlightSearchWraper.ReturnDt ?? FlightSearchWraper.DepartureDt,
+                        TravelDt = FlightSearchWraper.ReturnDt ?? FlightSearchWraper.DepartureDt ?? DateTime.Now.AddDays(7),
                         PreferredArrival = enmPreferredDepartureTime.AnyTime,
                         PreferredDeparture = enmPreferredDepartureTime.AnyTime
                     });

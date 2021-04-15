@@ -86,6 +86,24 @@ namespace B2BClasses.Database
             _modelBuilder.Entity<tblUserRole>().HasData(UserRoles);
         }
 
+        public void InsertServiceProvider()
+        {
+
+            tblActiveSerivceProvider _tblActiveSerivceProvider = new tblActiveSerivceProvider()
+            {
+                IsEnabled=true,
+                ServiceProvider= Services.Enums.enmServiceProvider.TripJack,
+                ModifiedBy=1,
+                ModifiedDt= _CurrentDt,
+                Remarks=""
+            };
+
+            
+            _modelBuilder.Entity<tblActiveSerivceProvider>().HasData(_tblActiveSerivceProvider);
+            //IP Filteration
+            
+        }
+
         public void InsertAirport()
         {
             List<tblAirport> airports = new List<tblAirport>();
