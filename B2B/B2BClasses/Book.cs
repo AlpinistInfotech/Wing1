@@ -76,11 +76,9 @@ namespace B2BClasses
             return null;
         }
 
-
-
         public async Task<IEnumerable<mdlSearchResponse>> SearchFlight(
           mdlSearchRequest mdlRq)
-        {
+         {
             //Get the All Active Service Provider
             List<mdlSearchResponse> mdlRs = new List<mdlSearchResponse>();
             List<enmServiceProvider> serviceProviders = await GetActiveProviderAsync();

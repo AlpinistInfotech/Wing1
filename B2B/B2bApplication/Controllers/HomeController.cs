@@ -152,7 +152,7 @@ namespace B2bApplication.Controllers
         //[Authorize(policy: nameof(enmDocumentMaster.Flight))]
         //[ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> FlightSearch1(mdlFlightSearchWraper mdl)
+        public async Task<IActionResult> FlightSearch(mdlFlightSearchWraper mdl)
         {
             //int CustomerId = 1;
             //if (ModelState.IsValid)
@@ -166,7 +166,7 @@ namespace B2bApplication.Controllers
         }
 
 
-
+        
 
 
 

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,8 +41,7 @@ namespace B2BClasses.Services.Air
                 byte[] data = Encoding.UTF8.GetBytes(requestData);
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                 request.Method = "POST";
-                request.ContentType = "application/json";
-                request.Headers.Add("Accept-Encoding", "gzip");
+                request.ContentType = "application/json";                
                 request.Headers.Add("apikey", _config["TripJack:Credential:apikey"]);
                 Stream dataStream = request.GetRequestStream();
                 dataStream.Write(data, 0, data.Length);
@@ -54,7 +54,7 @@ namespace B2BClasses.Services.Air
                 }
                 using (StreamReader readStream = new StreamReader(rsp))
                 {
-                    mdl.Code = 0;
+                    mdl.Code = 0;                    
                     mdl.Message = readStream.ReadToEnd();//JsonConvert.DeserializeXmlNode(readStream.ReadToEnd(), "root").InnerXml;
                 }
                 return mdl;
@@ -75,6 +75,58 @@ namespace B2BClasses.Services.Air
             }
             return mdl;
         }
+
+        //private mdlError GetResponse(string requestData, string url)
+        //{
+        //    mdlError mdl = new mdlError();
+        //    mdl.Code = 1;
+        //    mdl.Message = string.Empty;
+        //    try
+        //    {
+        //        IRestClient client = new RestClient(url);
+        //        IRestRequest request = new RestRequest(Method.POST) { Credentials = new NetworkCredential("testUser", "P455w0rd") };
+        //        request.AddHeader("apikey", _config["TripJack:Credential:apikey"]);
+        //        request.AddHeader("apikey", _config["TripJack:Credential:apikey"]);
+        //        request.AddHeader("apikey", _config["TripJack:Credential:apikey"]);
+
+        //        byte[] data = Encoding.UTF8.GetBytes(requestData);
+        //        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+        //        request.Method = "POST";
+        //        request.ContentType = "application/json";
+        //        request.Headers.Add("Accept-Encoding", "gzip");
+        //        request.Headers.Add("apikey", _config["TripJack:Credential:apikey"]);
+        //        Stream dataStream = request.GetRequestStream();
+        //        dataStream.Write(data, 0, data.Length);
+        //        dataStream.Close();
+        //        WebResponse webResponse = request.GetResponse();
+        //        var rsp = webResponse.GetResponseStream();
+        //        if (rsp == null)
+        //        {
+        //            mdl.Message = "No Response Found";
+        //        }
+        //        using (StreamReader readStream = new StreamReader(new GZipStream(rsp, CompressionMode.Decompress)))
+        //        {
+        //            mdl.Code = 0;
+        //            mdl.Message = readStream.ReadToEnd();//JsonConvert.DeserializeXmlNode(readStream.ReadToEnd(), "root").InnerXml;
+        //        }
+        //        return mdl;
+        //    }
+        //    catch (WebException webEx)
+        //    {
+        //        mdl.Code = 1;
+        //        //get the response stream
+        //        WebResponse response = webEx.Response;
+        //        Stream stream = response.GetResponseStream();
+        //        String responseMessage = new StreamReader(stream).ReadToEnd();
+        //        mdl.Message = responseMessage;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        mdl.Code = 1;
+        //        mdl.Message = ex.Message;
+        //    }
+        //    return mdl;
+        //}
 
         public async Task<mdlSearchResponse> SearchAsync(mdlSearchRequest request, int CustomerId)
         {
@@ -125,7 +177,10 @@ namespace B2BClasses.Services.Air
 
         private async Task<bool> Search_SaveAsync(mdlSearchRequest request, string TraceId, Tripinfos tripinfos)
         {
-
+            if (tripinfos == null)
+            {
+                return false;
+            }
             int ExpirationMinute = 14;
             int.TryParse(_config["TripJack:TraceIdExpiryTime"], out ExpirationMinute);
             double minFare = 0, minFareReturn = 0;
@@ -350,7 +405,7 @@ namespace B2BClasses.Services.Air
                 searchModifiers = new Searchmodifiers()
                 {
                     isDirectFlight = true,
-                    isConnectingFlight = !request.DirectFlight
+                    isConnectingFlight = true
                 },
 
             };
@@ -494,7 +549,7 @@ namespace B2BClasses.Services.Air
             mdlSearchResponse mdlS = null;
             string tboUrl = _config["TripJack:API:Search"];
 
-
+            
             string jsonString = JsonConvert.SerializeObject(SearchRequestMap(request));
             var HaveResponse = GetResponse(jsonString, tboUrl);
             {
@@ -506,6 +561,18 @@ namespace B2BClasses.Services.Air
                 {
                     if (mdl.status.success)//success
                     {
+                        if (mdl.searchResult?.tripInfos==null)
+                        {
+                            mdlS = new mdlSearchResponse()
+                            {
+                                ResponseStatus = 3,
+                                Error = new mdlError()
+                                {
+                                    Code = mdl.status.httpStatus,
+                                    Message = "No data found",
+                                }
+                            };
+                        }
 
                         string TraceId = Guid.NewGuid().ToString();
                         var result = Search_SaveAsync(request, TraceId, mdl.searchResult.tripInfos);
