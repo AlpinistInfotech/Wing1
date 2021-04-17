@@ -1,0 +1,86 @@
+﻿@model List<B2BClasses.Services.Air.mdlFareQuotResponse>
+@using B2BClasses.Services.Enums
+@{
+    ViewData["Title"] = enmDocumentMaster.Flight.GetDocumentDetails().Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<input type="hidden" value="@(enmDocumentMaster.Flight)" id="_currentDocument" name="_currentDocument" />
+
+<div class="row">
+    <div class="col-md-8 ">
+        <div id="accordion" class="accordion-style2">
+            <div class="group">
+                <h3 class="accordion-header">Ticket Details</h3>
+                <div>
+                    @foreach (var md in Model)
+                    {
+                        @{var tripinfo = md.Results.FirstOrDefault()?.FirstOrDefault()?.Segment?.FirstOrDefault();}
+                        @if (tripinfo != null)
+                        {
+                            <div class="widget-box">
+                                <div class="widget-header">
+                                    <h4 class="widget-title">@tripinfo.Origin.CityName to @tripinfo.Origin.destin </h4>
+                                </div>
+                                <div class="widget-body">
+                                    <div class="widget-main">
+
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                    }
+                </div>
+            </div>
+
+            <div class="group">
+                <h3 class="accordion-header">Passenger</h3>
+
+                <div>
+                    <p>
+                        Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet
+                    </p>
+                </div>
+            </div>
+            <div class="group">
+                <h3 class="accordion-header">Contact Details</h3>
+             </div>
+
+            </div>
+
+        </div>
+
+    <div class="col-sm-12">
+        <div class="widget-box">
+            <div class="widget-header">
+                <h4 class="widget-title">Search Flight</h4>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    
+
+
+
+
+
+                    <form action="@Url.Action()" method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        
+                        
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {    
+    <script>
+        jQuery(function ($) {
+            $('.select2').select2({ allowClear: true });
+            $('.input-daterange').datepicker({ autoclose: true, format: 'd-M-yyyy', startDate: '3d' });
+        });        
+        
+    </script>
+}
