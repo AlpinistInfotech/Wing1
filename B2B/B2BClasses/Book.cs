@@ -11,14 +11,13 @@ using System.Threading.Tasks;
 
 namespace B2BClasses
 {
-    
-
+   
     public interface IBooking
     {
         int CustomerId { get; set; }
 
-        Task<mdlFareQuotResponse> FareQuote(mdlFareQuotRequest mdlRq);
-        Task<mdlFareRuleResponse> FareRule(mdlFareRuleRequest mdlRq);
+        Task<List<mdlFareQuotResponse>> FareQuoteAsync(mdlFareQuotRequest mdlRq);
+        Task<List<mdlFareRuleResponse>> FareRule(mdlFareRuleRequest mdlRq);
         Task<List<enmServiceProvider>> GetActiveProviderAsync();
         Task<List<tblAirline>> GetAirlinesAsync();
         Task<List<tblAirport>> GetAirportAsync();
@@ -26,7 +25,7 @@ namespace B2BClasses
         Task<mdlSearchResponse> SearchFlightMinPrices(mdlSearchRequest mdlRq);
     }
 
-    public class Booking : IBooking
+    public class Booking :  IBooking
     {
         private readonly DBContext _context;
         private readonly IConfiguration _config;
@@ -78,7 +77,7 @@ namespace B2BClasses
 
         public async Task<IEnumerable<mdlSearchResponse>> SearchFlight(
           mdlSearchRequest mdlRq)
-         {
+        {
             //Get the All Active Service Provider
             List<mdlSearchResponse> mdlRs = new List<mdlSearchResponse>();
             List<enmServiceProvider> serviceProviders = await GetActiveProviderAsync();
@@ -170,38 +169,33 @@ namespace B2BClasses
 
 
 
-
-
-
-
-
-        public async Task<mdlFareQuotResponse> FareQuote(
+        public async Task<List<mdlFareQuotResponse>> FareQuoteAsync(
              mdlFareQuotRequest mdlRq)
         {
-            mdlFareQuotResponse mdlRs = new mdlFareQuotResponse();
-            switch (mdlRq.Provider)
+            List<mdlFareQuotResponse> mdlRs = new List<mdlFareQuotResponse>();
+            for (int i = 0; i < mdlRq.ResultIndex.Count(); i++)
             {
-                case enmServiceProvider.TBO:
-                    //mdlRs =await tekTravel.FareQuoteAsync(mdlRq);
-                    break;
-                case enmServiceProvider.TripJack:
-                    mdlRs = await _tripJack.FareQuoteAsync(mdlRq);
-                    break;
+                var sp = (enmServiceProvider)Convert.ToInt32(mdlRq.ResultIndex[i].Split("_").FirstOrDefault());
+
+                int index = mdlRq.ResultIndex[i].IndexOf('_');
+                mdlRq.ResultIndex[i] = mdlRq.ResultIndex[i].Substring(index);
+                IWingFlight wingflight = GetFlightObject(sp);
+                mdlRs.Add(await wingflight.FareQuoteAsync(mdlRq));
             }
             return mdlRs;
         }
-        public async Task<mdlFareRuleResponse> FareRule(//[FromServices] ITekTravel tekTravel,
+        public async Task<List<mdlFareRuleResponse>> FareRule(
              mdlFareRuleRequest mdlRq)
         {
-            mdlFareRuleResponse mdlRs = new mdlFareRuleResponse();
-            switch (mdlRq.Provider)
+            List<mdlFareRuleResponse> mdlRs = new List<mdlFareRuleResponse>();
+            for (int i = 0; i < mdlRq.ResultIndex.Count(); i++)
             {
-                case enmServiceProvider.TBO:
-                    //mdlRs =await tekTravel.FareQuoteAsync(mdlRq);
-                    break;
-                case enmServiceProvider.TripJack:
-                    mdlRs = await _tripJack.FareRuleAsync(mdlRq);
-                    break;
+                var sp = (enmServiceProvider)Convert.ToInt32(mdlRq.ResultIndex[i].Split("_").FirstOrDefault());
+
+                int index = mdlRq.ResultIndex[i].IndexOf('_');
+                mdlRq.ResultIndex[i] = mdlRq.ResultIndex[i].Substring(index);
+                IWingFlight wingflight = GetFlightObject(sp);
+                mdlRs.Add(await wingflight.FareRuleAsync(mdlRq));
             }
             return mdlRs;
         }

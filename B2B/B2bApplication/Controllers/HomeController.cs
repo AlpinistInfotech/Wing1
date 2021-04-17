@@ -133,7 +133,7 @@ namespace B2bApplication.Controllers
 
         [HttpPost]
         //[Authorize(policy: nameof(enmDocumentMaster.Flight))]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> FlightSearch(mdlFlightSearch mdl)
         {
@@ -150,19 +150,29 @@ namespace B2bApplication.Controllers
 
         [HttpPost]
         //[Authorize(policy: nameof(enmDocumentMaster.Flight))]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> FlightSearch(mdlFlightSearchWraper mdl)
+        public async Task<IActionResult> FlightReview(mdlFareQuotRequest mdl)
         {
-            //int CustomerId = 1;
-            //if (ModelState.IsValid)
-            //{
-            //    mdl.LoadDefaultSearchRequestAsync(_booking);
-            //    _booking.CustomerId = CustomerId;
-            //    mdl.searchResponse = (await _booking.SearchFlightMinPrices(mdl.searchRequest));
-            //}
-            //await mdl.LoadAirportAsync(_booking);
-            return View();
+            int CustomerId = 1;
+            List<mdlFareQuotResponse> responsesMdl = new List<mdlFareQuotResponse>();
+            _booking.CustomerId = CustomerId;
+            if (mdl != null)
+            {
+                ViewBag.priceIds = mdl.ResultIndex;
+                ViewBag.TraceId = mdl.TraceId;
+                responsesMdl.AddRange( await _booking.FareQuoteAsync(mdl));
+            }
+            else if (ViewBag.priceIds != null)
+            {
+                mdl = new mdlFareQuotRequest() { TraceId = ViewBag.TraceId, ResultIndex = ViewBag.priceIds };
+                responsesMdl.AddRange(await _booking.FareQuoteAsync(mdl));
+            }
+            else
+            {
+                return RedirectToAction("FlightSearch", "Home");
+            }
+            return View(responsesMdl);
         }
 
 

@@ -18,6 +18,9 @@ namespace B2BClasses.Database
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             DefaultData defaultData = new DefaultData(modelBuilder);
+
+            modelBuilder.Entity<tblCustomerMaster>(entity =>entity.HasCheckConstraint("CK_tblCustomerMaster_WalletBalence", "WalletBalence >= 0"));
+
             defaultData.InsertCustomerMaster();
             defaultData.InsertUser();
             defaultData.InsertAirport();

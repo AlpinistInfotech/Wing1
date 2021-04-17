@@ -76,76 +76,95 @@ namespace B2BClasses.Services.Air
             return mdl;
         }
 
-        //private mdlError GetResponse(string requestData, string url)
-        //{
-        //    mdlError mdl = new mdlError();
-        //    mdl.Code = 1;
-        //    mdl.Message = string.Empty;
-        //    try
-        //    {
-        //        IRestClient client = new RestClient(url);
-        //        IRestRequest request = new RestRequest(Method.POST) { Credentials = new NetworkCredential("testUser", "P455w0rd") };
-        //        request.AddHeader("apikey", _config["TripJack:Credential:apikey"]);
-        //        request.AddHeader("apikey", _config["TripJack:Credential:apikey"]);
-        //        request.AddHeader("apikey", _config["TripJack:Credential:apikey"]);
+        private mdlError GetResponseZip(string requestData, string url)
+        {
+            mdlError mdl = new mdlError();
+            mdl.Code = 1;
+            mdl.Message = string.Empty;
+            try
+            {
 
-        //        byte[] data = Encoding.UTF8.GetBytes(requestData);
-        //        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-        //        request.Method = "POST";
-        //        request.ContentType = "application/json";
-        //        request.Headers.Add("Accept-Encoding", "gzip");
-        //        request.Headers.Add("apikey", _config["TripJack:Credential:apikey"]);
-        //        Stream dataStream = request.GetRequestStream();
-        //        dataStream.Write(data, 0, data.Length);
-        //        dataStream.Close();
-        //        WebResponse webResponse = request.GetResponse();
-        //        var rsp = webResponse.GetResponseStream();
-        //        if (rsp == null)
-        //        {
-        //            mdl.Message = "No Response Found";
-        //        }
-        //        using (StreamReader readStream = new StreamReader(new GZipStream(rsp, CompressionMode.Decompress)))
-        //        {
-        //            mdl.Code = 0;
-        //            mdl.Message = readStream.ReadToEnd();//JsonConvert.DeserializeXmlNode(readStream.ReadToEnd(), "root").InnerXml;
-        //        }
-        //        return mdl;
-        //    }
-        //    catch (WebException webEx)
-        //    {
-        //        mdl.Code = 1;
-        //        //get the response stream
-        //        WebResponse response = webEx.Response;
-        //        Stream stream = response.GetResponseStream();
-        //        String responseMessage = new StreamReader(stream).ReadToEnd();
-        //        mdl.Message = responseMessage;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        mdl.Code = 1;
-        //        mdl.Message = ex.Message;
-        //    }
-        //    return mdl;
-        //}
+                byte[] data = Encoding.UTF8.GetBytes(requestData);
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                request.Method = "POST";
+                request.ContentType = "application/json";
+                request.Headers.Add("Accept-Encoding", "gzip");
+                request.Headers.Add("apikey", _config["TripJack:Credential:apikey"]);
+                Stream dataStream = request.GetRequestStream();
+                dataStream.Write(data, 0, data.Length);
+                dataStream.Close();
+                WebResponse webResponse = request.GetResponse();
+                var rsp = webResponse.GetResponseStream();
+                if (rsp == null)
+                {
+                    mdl.Message = "No Response Found";
+                }
+                using (StreamReader readStream = new StreamReader(new GZipStream(rsp, CompressionMode.Decompress)))
+                {
+                    mdl.Code = 0;
+                    mdl.Message = readStream.ReadToEnd();//JsonConvert.DeserializeXmlNode(readStream.ReadToEnd(), "root").InnerXml;
+                }
+                return mdl;
+            }
+            catch (WebException webEx)
+            {
+                mdl.Code = 1;
+                //get the response stream
+                WebResponse response = webEx.Response;
+                Stream stream = response.GetResponseStream();
+                String responseMessage = new StreamReader(stream).ReadToEnd();
+                mdl.Message = responseMessage;
+            }
+            catch (Exception ex)
+            {
+                mdl.Code = 1;
+                mdl.Message = ex.Message;
+            }
+            return mdl;
+        }
 
         public async Task<mdlSearchResponse> SearchAsync(mdlSearchRequest request, int CustomerId)
         {
             mdlSearchResponse response = null;
-            if (request.JourneyType == enmJourneyType.OneWay ||
-                request.JourneyType == enmJourneyType.Return ||
-                request.JourneyType == enmJourneyType.SpecialReturn
-                )//only Journey TYpe is one way then Fetch from DB else Fetch from tbo
+            if (request.JourneyType == enmJourneyType.OneWay)
             {
                 response = SearchFromDb(request);
-                if (response == null)//no data found in Db
+                if (response == null)
                 {
                     response = await SearchFromTripJackAsync(request);
                 }
             }
-            else
+            else if (request.JourneyType == enmJourneyType.Return ||
+                request.JourneyType == enmJourneyType.MultiStop)
             {
-                response = await SearchFromTripJackAsync(request);
+                request.JourneyType = enmJourneyType.OneWay;
+                var lst = request.Segments.ToList();                
+                for (int i = 0; i < lst.Count; i++)
+                {
+                    request.Segments = new List<mdlSegmentRequest>();
+                    request.Segments.Add(lst[i]);
+                    mdlSearchResponse tempRe= SearchFromDb(request);
+                    if (tempRe == null)
+                    {
+                        tempRe = await SearchFromTripJackAsync(request);
+                    }
+                    
+                    if (response == null)
+                    {
+                        response = tempRe;
+                    }
+                    else
+                    {
+                        response.Results.Add(tempRe.Results.FirstOrDefault());
+                    }
+                }
             }
+            //Add Provider Previx in Result index
+            response.Results.ForEach(p =>
+            {
+                p.ForEach(q => q.TotalPriceList.ForEach(r => r.ResultIndex = enmServiceProvider.TripJack + "_" + r.ResultIndex));
+            });
+
             return response;
         }
 
@@ -551,7 +570,7 @@ namespace B2BClasses.Services.Air
 
             
             string jsonString = JsonConvert.SerializeObject(SearchRequestMap(request));
-            var HaveResponse = GetResponse(jsonString, tboUrl);
+            var HaveResponse = GetResponseZip(jsonString, tboUrl);
             {
                 if (HaveResponse.Code == 0)
                 {
@@ -1140,7 +1159,8 @@ namespace B2BClasses.Services.Air
                     {
 
                         ServiceProvider = enmServiceProvider.TripJack,
-                        TraceId = mdl.bookingId,
+                        TraceId = request.TraceId,
+                        BookingId = mdl.bookingId,
                         ResponseStatus = 1,
                         IsPriceChanged = mdl.alerts?.Any(p => p.oldFare != p.newFare) ?? false,
                         Error = new mdlError()
@@ -1150,7 +1170,12 @@ namespace B2BClasses.Services.Air
                         },
                         Origin = mdl.searchQuery.routeInfos.FirstOrDefault()?.fromCityOrAirport.code,
                         Destination = mdl.searchQuery.routeInfos.FirstOrDefault()?.toCityOrAirport.code,
-                        Results = AllResults
+                        Results = AllResults,
+                        TotalPriceInfo=new mdlTotalPriceInfo() { 
+                            BaseFare= mdl.totalPriceInfo?.totalFareDetail?.fC?.BF??0,
+                            TaxAndFees= mdl.totalPriceInfo?.totalFareDetail?.fC?.TAF ?? 0,
+                            TotalFare = mdl.totalPriceInfo?.totalFareDetail?.fC?.TF ?? 0,
+                        } 
                     };
                 }
                 else

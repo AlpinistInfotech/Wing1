@@ -148,10 +148,8 @@ namespace B2BClasses.Services.Air
 
     public class mdlFareQuotRequest
     {
-
         public string TraceId { get; set; }
-        public string[] ResultIndex { get; set; }
-        public enmServiceProvider Provider { get; set; }
+        public string[] ResultIndex { get; set; }        
     }
 
     public class mdlFareQuotResponseWraper
@@ -165,9 +163,19 @@ namespace B2BClasses.Services.Air
         public bool IsPriceChanged { get; set; }
         public mdlError Error { get; set; }
         public string TraceId { get; set; }
+        public string BookingId { get; set; }
         public string Origin { get; set; }
         public string Destination { get; set; }
         public List<List<mdlSearchResult>> Results { get; set; }
+        public mdlTotalPriceInfo TotalPriceInfo { get; set; }
+    }
+
+    public class mdlTotalPriceInfo
+    {
+        public double TaxAndFees { get; set; }        
+        public double BaseFare { get; set; }
+        public double TotalFare { get; set; }
+
     }
 
 
