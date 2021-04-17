@@ -1,4 +1,5 @@
-﻿using B2BClasses.Services.Enums;
+﻿using B2BClasses.Models;
+using B2BClasses.Services.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -168,6 +169,8 @@ namespace B2BClasses.Services.Air
         public string Destination { get; set; }
         public List<List<mdlSearchResult>> Results { get; set; }
         public mdlTotalPriceInfo TotalPriceInfo { get; set; }
+        public mdlFlightSearchWraper SearchQuery { get; set; }
+        public mdlFareQuoteCondition FareQuoteCondition { get; set; }
     }
 
     public class mdlTotalPriceInfo
@@ -175,9 +178,33 @@ namespace B2BClasses.Services.Air
         public double TaxAndFees { get; set; }        
         public double BaseFare { get; set; }
         public double TotalFare { get; set; }
-
     }
 
+    public class mdlFareQuoteCondition
+    { 
+        public bool IsHoldApplicable { get; set; }        
+        public mdlDobCondition dob { get; set; }
+        public mdlPassportCondition PassportCondition { get; set; }
+        public mdlGstCondition GstCondition { get; set; }
+    }
+    public class mdlDobCondition
+    {
+        public bool adobr { get; set; }
+        public bool cdobr { get; set; }
+        public bool idobr { get; set; }
+    }
+    public class mdlPassportCondition
+    {
+        public bool IsPassportExpiryDate { get; set; }
+        public bool isPassportIssueDate { get; set; }
+        public bool isPassportRequired{ get; set; }
+    }
+
+    public class mdlGstCondition
+    {
+        public bool IsGstMandatory { get; set; }
+        public bool IsGstApplicable { get; set; }
+    }
 
 
     #endregion
@@ -239,6 +266,7 @@ namespace B2BClasses.Services.Air
     public class mdlBookingRequest
     {
         public string TraceId { get; set; }
+        public string BookingId { get; set; }
         public mdlTravellerinfo[] travellerInfo { get; set; }
         public mdlDeliveryinfo deliveryInfo { get; set; }
         public mdlGstInfo gstInfo { get; set; }
@@ -258,7 +286,7 @@ namespace B2BClasses.Services.Air
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public enmPassengerType passengerType { get; set; }
-        public DateTime dob { get; set; }
+        public DateTime? dob { get; set; }
         public string pNum { get; set; }
         public DateTime PassportExpiryDate { get; set; }
         public DateTime PassportIssueDate { get; set; }

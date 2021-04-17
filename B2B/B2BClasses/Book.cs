@@ -178,7 +178,7 @@ namespace B2BClasses
                 var sp = (enmServiceProvider)Convert.ToInt32(mdlRq.ResultIndex[i].Split("_").FirstOrDefault());
 
                 int index = mdlRq.ResultIndex[i].IndexOf('_');
-                mdlRq.ResultIndex[i] = mdlRq.ResultIndex[i].Substring(index);
+                mdlRq.ResultIndex[i] = mdlRq.ResultIndex[i].Substring(index+1);
                 IWingFlight wingflight = GetFlightObject(sp);
                 mdlRs.Add(await wingflight.FareQuoteAsync(mdlRq));
             }
@@ -193,7 +193,7 @@ namespace B2BClasses
                 var sp = (enmServiceProvider)Convert.ToInt32(mdlRq.ResultIndex[i].Split("_").FirstOrDefault());
 
                 int index = mdlRq.ResultIndex[i].IndexOf('_');
-                mdlRq.ResultIndex[i] = mdlRq.ResultIndex[i].Substring(index);
+                mdlRq.ResultIndex[i] = mdlRq.ResultIndex[i].Substring(index+1);
                 IWingFlight wingflight = GetFlightObject(sp);
                 mdlRs.Add(await wingflight.FareRuleAsync(mdlRq));
             }

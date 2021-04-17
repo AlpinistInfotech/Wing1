@@ -8,7 +8,92 @@ using System.Threading.Tasks;
 using B2BClasses.Services.Enums;
 namespace B2bApplication.Models
 {
-   
+    public class mdlFlightReview
+    {
+        public mdlFareQuotRequest FareQuoteRequest { get; set; }
+        public List<mdlFareQuotResponse> FareQuotResponse { get; set; }
+        public List<mdlFareRuleResponse> FareRule{ get; set; }
+        public List<string> TraceId { get; set; }
+        public List<string> BookingId { get; set; }
+        public List< mdlTravellerinfo> travellerInfo { get; set; }
+        
+        public mdlGstInfo gstInfo { get; set; }        
+        public mdlFareQuoteCondition FareQuoteCondition{ get; set; }
+
+        public string emails { get; set; }
+        public string contacts { get; set; }
+
+        public int AdultCount { get; set; }
+        public int ChildCount { get; set; }
+        public int InfantCount { get; set; }
+
+
+        public void SetFareQuoteCondtion()
+        {
+            FareQuoteCondition = new mdlFareQuoteCondition()
+            {
+                dob = new mdlDobCondition()
+                {
+                    adobr = FareQuotResponse.Any(p=>p.FareQuoteCondition?.dob?.adobr?? false) ,
+                    cdobr = FareQuotResponse.Any(p => p.FareQuoteCondition?.dob?.cdobr ?? false),
+                    idobr = FareQuotResponse.Any(p => p.FareQuoteCondition?.dob?.idobr ?? false),
+                },
+                GstCondition = new mdlGstCondition()
+                {
+                    IsGstMandatory = FareQuotResponse.Any(p => p.FareQuoteCondition?.GstCondition?.IsGstMandatory ?? false),                    
+                    IsGstApplicable = FareQuotResponse.Any(p => p.FareQuoteCondition?.GstCondition?.IsGstApplicable ?? false),
+                },
+                IsHoldApplicable = FareQuotResponse.Any(p => p.FareQuoteCondition?.IsHoldApplicable ?? false),
+                PassportCondition = new mdlPassportCondition()
+                {
+                    IsPassportExpiryDate = FareQuotResponse.Any(p => p.FareQuoteCondition?.PassportCondition?.IsPassportExpiryDate ?? false),
+                    isPassportIssueDate = FareQuotResponse.Any(p => p.FareQuoteCondition?.PassportCondition?.isPassportIssueDate ?? false),
+                    isPassportRequired = FareQuotResponse.Any(p => p.FareQuoteCondition?.PassportCondition?.isPassportRequired ?? false),
+                }
+            };
+        }
+
+        public void BookingRequestDefaultData()
+        {
+            if (FareQuotResponse == null || FareQuotResponse.Count == 0)
+            {
+                return;
+            }
+            TraceId = new List<string>();
+            BookingId= new List<string>();
+            BookingId.AddRange(FareQuotResponse.Select(p => p.BookingId));
+            TraceId.AddRange(FareQuotResponse.Select(p => p.TraceId));
+
+            
+            travellerInfo = new List<mdlTravellerinfo>();
+
+            int AdultCount = FareQuotResponse?.FirstOrDefault()?.SearchQuery?.AdultCount ?? 0;
+            int ChildCount = FareQuotResponse?.FirstOrDefault()?.SearchQuery?.ChildCount ?? 0;
+            int InfantCount = FareQuotResponse?.FirstOrDefault()?.SearchQuery?.InfantCount ?? 0;
+            this.AdultCount = AdultCount;
+            this.ChildCount = ChildCount;
+            this.InfantCount = InfantCount;
+
+            while (AdultCount > 0)
+            {
+                travellerInfo.Add(new mdlTravellerinfo() { passengerType = enmPassengerType.Adult });
+                AdultCount--;
+            }
+            while (ChildCount > 0)
+            {
+                travellerInfo.Add(new mdlTravellerinfo() { passengerType = enmPassengerType.Child});
+                ChildCount--;
+            }
+            while (InfantCount > 0)
+            {
+                travellerInfo.Add(new mdlTravellerinfo() { passengerType = enmPassengerType.Infant});
+                InfantCount--;
+            }
+            SetFareQuoteCondtion();
+        }
+    }
+
+    
 }
 
 

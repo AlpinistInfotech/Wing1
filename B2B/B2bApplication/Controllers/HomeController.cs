@@ -148,31 +148,34 @@ namespace B2bApplication.Controllers
             return View(mdl);
         }
 
+
+
+
         [HttpPost]
         //[Authorize(policy: nameof(enmDocumentMaster.Flight))]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> FlightReview(mdlFareQuotRequest mdl)
+        public async Task<IActionResult> FlightReview(mdlFlightReview mdl)
         {
             int CustomerId = 1;
-            List<mdlFareQuotResponse> responsesMdl = new List<mdlFareQuotResponse>();
+            
             _booking.CustomerId = CustomerId;
-            if (mdl != null)
+
+            mdl.FareQuotResponse = new List<mdlFareQuotResponse>();
+            mdl.FareRule = new List<mdlFareRuleResponse>();
+            
+
+            if (!(mdl == null || mdl.FareQuoteRequest==null))
             {
-                ViewBag.priceIds = mdl.ResultIndex;
-                ViewBag.TraceId = mdl.TraceId;
-                responsesMdl.AddRange( await _booking.FareQuoteAsync(mdl));
-            }
-            else if (ViewBag.priceIds != null)
-            {
-                mdl = new mdlFareQuotRequest() { TraceId = ViewBag.TraceId, ResultIndex = ViewBag.priceIds };
-                responsesMdl.AddRange(await _booking.FareQuoteAsync(mdl));
+                mdl.FareQuotResponse.AddRange( await _booking.FareQuoteAsync(mdl.FareQuoteRequest));
+                //mdl.FareRule.AddRange(await _booking.FareRule(new mdlFareRuleRequest() { TraceId= mdl.FareQuoteRequest.TraceId, ResultIndex= mdl.FareQuoteRequest.ResultIndex }));
+                mdl.BookingRequestDefaultData();
             }
             else
             {
                 return RedirectToAction("FlightSearch", "Home");
             }
-            return View(responsesMdl);
+            return View(mdl);
         }
 
 

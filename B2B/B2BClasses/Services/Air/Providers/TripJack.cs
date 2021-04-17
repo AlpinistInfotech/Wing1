@@ -160,9 +160,10 @@ namespace B2BClasses.Services.Air
                 }
             }
             //Add Provider Previx in Result index
+            int tripjackId=(int)enmServiceProvider.TripJack;
             response.Results.ForEach(p =>
             {
-                p.ForEach(q => q.TotalPriceList.ForEach(r => r.ResultIndex = enmServiceProvider.TripJack + "_" + r.ResultIndex));
+                p.ForEach(q => q.TotalPriceList.ForEach(r => r.ResultIndex = ""+tripjackId + "_" + r.ResultIndex));
             });
 
             return response;
@@ -1131,6 +1132,9 @@ namespace B2BClasses.Services.Air
             mdlFareQuotResponse mdlS = null;
             FareQuotResponse mdl = null;
 
+            DateTime DepartureDt = DateTime.Now, ArrivalDt= DateTime.Now;
+
+
             string tboUrl = _config["TripJack:API:FareQuote"];
             string jsonString = System.Text.Json.JsonSerializer.Serialize(FareQuoteRequestMap(request));
             var HaveResponse = GetResponse(jsonString, tboUrl);
@@ -1154,7 +1158,7 @@ namespace B2BClasses.Services.Air
                     {
                         AllResults.Add(Result1);
                     }
-
+                    DateTime.TryParse(mdl.searchQuery?.routeInfos?.FirstOrDefault()?.travelDate, out DepartureDt);
                     mdlS = new mdlFareQuotResponse()
                     {
 
@@ -1171,11 +1175,40 @@ namespace B2BClasses.Services.Air
                         Origin = mdl.searchQuery.routeInfos.FirstOrDefault()?.fromCityOrAirport.code,
                         Destination = mdl.searchQuery.routeInfos.FirstOrDefault()?.toCityOrAirport.code,
                         Results = AllResults,
-                        TotalPriceInfo=new mdlTotalPriceInfo() { 
-                            BaseFare= mdl.totalPriceInfo?.totalFareDetail?.fC?.BF??0,
-                            TaxAndFees= mdl.totalPriceInfo?.totalFareDetail?.fC?.TAF ?? 0,
+                        TotalPriceInfo = new mdlTotalPriceInfo() {
+                            BaseFare = mdl.totalPriceInfo?.totalFareDetail?.fC?.BF ?? 0,
+                            TaxAndFees = mdl.totalPriceInfo?.totalFareDetail?.fC?.TAF ?? 0,
                             TotalFare = mdl.totalPriceInfo?.totalFareDetail?.fC?.TF ?? 0,
-                        } 
+                        },
+                        SearchQuery = new Models.mdlFlightSearchWraper() {
+                            AdultCount = mdl.searchQuery?.paxInfo?.ADULT ?? 0,
+                            ChildCount = mdl.searchQuery?.paxInfo?.CHILD ?? 0,
+                            InfantCount = mdl.searchQuery?.paxInfo?.INFANT ?? 0,
+                            CabinClass = (enmCabinClass)Enum.Parse(typeof(enmCabinClass), mdl.searchQuery?.cabinClass ?? (nameof(enmCabinClass.ECONOMY)), true),
+                            JourneyType = enmJourneyType.OneWay,
+                            DepartureDt = DepartureDt,
+                            From = mdl.searchQuery?.routeInfos?.FirstOrDefault()?.fromCityOrAirport?.code,
+                            To = mdl.searchQuery?.routeInfos?.FirstOrDefault()?.toCityOrAirport?.code
+                        },
+                        FareQuoteCondition = new mdlFareQuoteCondition() {
+                            dob = new mdlDobCondition() {
+                                adobr = mdl.conditions?.dob?.adobr ?? false,
+                                cdobr = mdl.conditions?.dob?.cdobr ?? false,
+                                idobr = mdl.conditions?.dob?.idobr ?? false,
+                            },
+                            GstCondition = new mdlGstCondition() {
+                                IsGstMandatory = mdl.conditions?.gst?.igm ?? false,
+                                IsGstApplicable = mdl.conditions?.gst?.gstappl ?? true,
+                            },
+                            IsHoldApplicable = mdl.conditions?.isBA ?? false,
+                            PassportCondition=new mdlPassportCondition() { 
+                                IsPassportExpiryDate= mdl.conditions?.pcs?.pped??false,
+                                isPassportIssueDate= mdl.conditions?.pcs?.pid ?? false,
+                                isPassportRequired= mdl.conditions?.pcs?.pm??false,
+                            }
+                            
+                        }
+
                     };
                 }
                 else
@@ -1466,7 +1499,7 @@ namespace B2BClasses.Services.Air
 
             BookingRequest mdl = new BookingRequest()
             {
-                bookingId= request.TraceId,
+                bookingId= request.BookingId,
                 gstInfo= _gstInfo,
                 deliveryInfo= new Deliveryinfo()
                 {
@@ -1476,7 +1509,7 @@ namespace B2BClasses.Services.Air
                 travellerInfo= request.travellerInfo.Select(p=>new Travellerinfo {
                     ti=p.Title,fN=p.FirstName,
                     lN=p.LastName,
-                    dob=p.dob.ToString("yyyy-MM-dd"),
+                    dob=p.dob.HasValue? p.dob.Value.ToString("yyyy-MM-dd"):null,
                     eD=p.PassportExpiryDate.ToString("yyyy-MM-dd"),
                     pid=p.PassportIssueDate.ToString("yyyy-MM-dd"),
                     pNum=p.pNum,
