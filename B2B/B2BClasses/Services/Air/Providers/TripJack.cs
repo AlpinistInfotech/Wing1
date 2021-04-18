@@ -161,7 +161,7 @@ namespace B2BClasses.Services.Air
             }
             //Add Provider Previx in Result index
             int tripjackId=(int)enmServiceProvider.TripJack;
-            response.Results.ForEach(p =>
+            response.Results?.ForEach(p =>
             {
                 p.ForEach(q => q.TotalPriceList.ForEach(r => r.ResultIndex = ""+tripjackId + "_" + r.ResultIndex));
             });

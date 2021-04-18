@@ -24,7 +24,7 @@
                                     <button class="btn btn-success pull-right">Fare Rule</button>
                                 </div>
                                 <div class="widget-body">
-                                    <div class="widget-main">
+                                    <div class="widget-main no-padding">
                                         @foreach (var tr in tripinfo)
                                         {
                                             <div class="col-sm-12">
@@ -38,7 +38,7 @@
                                                                 @(tr?.Airline?.Name)
                                                             </div>
                                                             <div class="row">
-                                                                @(tr?.Airline?.Code)-(tr?.Airline?.FlightNumber)
+                                                                @(tr?.Airline?.Code)-@(tr?.Airline?.FlightNumber)
                                                             </div>
                                                         </div>
                                                     </div>
@@ -91,7 +91,7 @@
                                         }
                                     </div>
 
-                                    <div class="widget-toolbox padding-8 clearfix">
+                                    <div class="form-actions">
                                         <div class="col-sm-6">
                                             <table class="table table-striped table-hover">
                                                 <thead class="thin-border-bottom">
@@ -212,7 +212,7 @@
                                         }
                                         @if (Model.travellerInfo[i].passengerType == enmPassengerType.Infant)
                                         {
-                                            <span class="label label-inverse"><i class="ace-icon fa fa-baby"> Child</i></span>
+                                            <span class="label label-inverse"><i class="ace-icon fa fa-baby"> Infant</i></span>
                                         }
                                     </td>
 
@@ -228,14 +228,14 @@
                                         @if (Model.travellerInfo[i].passengerType == enmPassengerType.Child)
                                         {
                                             <select class="form-control" asp-for="travellerInfo[i].Title">
-                                                <option value="Master">Mr</option>
+                                                <option value="Master">Master</option>
                                                 <option value="Ms">Ms</option>
                                             </select>
                                         }
                                         @if (Model.travellerInfo[i].passengerType == enmPassengerType.Infant)
                                         {
                                             <select class="form-control" asp-for="travellerInfo[i].Title">
-                                                <option value="Master">Mr</option>
+                                                <option value="Master">Master</option>
                                                 <option value="Ms">Ms</option>
                                             </select>
                                         }
@@ -308,21 +308,22 @@
                 <div class="group">
                     <h3 class="accordion-header">
                         GST
-                        <label class="pull-right inline">
-                            <small class="muted">Have Gst:</small>
-                            @if (Model.FareQuoteCondition.GstCondition?.IsGstMandatory ?? false)
-                            {
-                                <input id="id-have-gst" type="checkbox" readonly="readonly" class="ace ace-switch ace-switch-5" value="true" checked="checked">
-                            }
-                            else
-                            {
-                                <input id="id-have-gst" type="checkbox" class="ace ace-switch ace-switch-5" value="false">
-                            }
-                            <span class="lbl middle"></span>
-                        </label>
-
                     </h3>
                     <div>
+                        <div class="row">
+                            <label class="pull-right inline">
+                                <small class="muted">Have Gst:</small>
+                                @if (Model.FareQuoteCondition.GstCondition?.IsGstMandatory ?? false)
+                                {
+                                    <input id="id-have-gst" type="checkbox" readonly="readonly" class="ace ace-switch ace-switch-5" value="true" checked="checked">
+                                }
+                                else
+                                {
+                                    <input id="id-have-gst" type="checkbox" class="ace ace-switch ace-switch-5" value="false">
+                                }
+                                <span class="lbl middle"></span>
+                            </label>
+                        </div>
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">
@@ -403,7 +404,22 @@
         <script>
             jQuery(function ($) {
                 $('.select2').select2({ allowClear: true });
-                $('.input-daterange').datepicker({ autoclose: true, format: 'd-M-yyyy', startDate: '3d' });
+                $('.date-picker').datepicker({ autoclose: true, format: 'd-M-yyyy', startDate: '3d' });
+                //jquery accordion
+                $("#accordion").accordion({
+                    collapsible: true,
+                    heightStyle: "content",
+                    animate: 250,
+                    header: ".accordion-header"
+                }).sortable({
+                    axis: "y",
+                    handle: ".accordion-header",
+                    stop: function (event, ui) {
+                        // IE doesn't register the blur when sorting
+                        // so trigger focusout handlers to remove .ui-state-focus
+                        ui.item.children(".accordion-header").triggerHandler("focusout");
+                    }
+                });
             });
 
         </script>
