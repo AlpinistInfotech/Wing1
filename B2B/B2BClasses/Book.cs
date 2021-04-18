@@ -175,7 +175,7 @@ namespace B2BClasses
             List<mdlFareQuotResponse> mdlRs = new List<mdlFareQuotResponse>();
             for (int i = 0; i < mdlRq.ResultIndex.Count(); i++)
             {
-                var sp = (enmServiceProvider)Convert.ToInt32(mdlRq.ResultIndex[i].Split("_").FirstOrDefault());
+                var sp = (enmServiceProvider)Convert.ToInt32(mdlRq.ResultIndex?[i].Split("_").FirstOrDefault());
 
                 int index = mdlRq.ResultIndex[i].IndexOf('_');
                 mdlRq.ResultIndex[i] = mdlRq.ResultIndex[i].Substring(index+1);
@@ -190,7 +190,7 @@ namespace B2BClasses
             List<mdlFareRuleResponse> mdlRs = new List<mdlFareRuleResponse>();
             for (int i = 0; i < mdlRq.ResultIndex.Count(); i++)
             {
-                var sp = (enmServiceProvider)Convert.ToInt32(mdlRq.ResultIndex[i].Split("_").FirstOrDefault());
+                var sp = (enmServiceProvider)Convert.ToInt32(mdlRq.ResultIndex?[i].Split("_").FirstOrDefault());
 
                 int index = mdlRq.ResultIndex[i].IndexOf('_');
                 mdlRq.ResultIndex[i] = mdlRq.ResultIndex[i].Substring(index+1);

@@ -27,6 +27,47 @@ namespace B2bApplication.Models
         public int ChildCount { get; set; }
         public int InfantCount { get; set; }
 
+        public double AdultBaseFare { get; set; }
+        public double ChildBaseFare { get; set; }
+        public double InfantBaseFare { get; set; }
+
+        public double AdultTotalBaseFare { get; set; }
+        public double ChildTotalBaseFare { get; set; }
+        public double InfantTotalBaseFare { get; set; }
+
+        public double TotalBaseFare { get; set; }
+        public double FeeSurcharge { get; set; }
+        public double TotalFare { get; set; }
+        public double OtherCharge { get; set; }        
+        public double NetFare { get; set; }
+
+
+        public void SetFareAmount()
+        {
+            AdultTotalBaseFare = FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.FareComponent?.BaseFare ?? 0).Sum();
+            ChildTotalBaseFare = FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.FareComponent?.BaseFare ?? 0).Sum();
+            InfantTotalBaseFare = FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.INFANT?.FareComponent?.BaseFare ?? 0).Sum();
+            if (AdultCount > 0)
+            {
+                AdultBaseFare = AdultTotalBaseFare / AdultCount;
+            }
+            if (ChildCount > 0)
+            {
+                ChildBaseFare = ChildTotalBaseFare / ChildCount;
+            }
+            if (InfantCount > 0)
+            {
+                InfantBaseFare = InfantTotalBaseFare / InfantCount;
+            }
+            TotalBaseFare = AdultBaseFare + ChildBaseFare + InfantBaseFare;
+            double AdultTotalFare = FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.FareComponent?.TotalFare ?? 0).Sum();
+            double ChildTotalFare = FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.FareComponent?.TotalFare ?? 0).Sum();
+            double InfantTotalFare = FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.INFANT?.FareComponent?.TotalFare ?? 0).Sum();
+            TotalFare = AdultTotalFare + ChildTotalFare + InfantTotalFare;
+            FeeSurcharge = TotalFare - TotalBaseFare;
+            OtherCharge = 0;
+            NetFare = TotalFare + OtherCharge;
+        }
 
         public void SetFareQuoteCondtion()
         {
@@ -90,6 +131,7 @@ namespace B2bApplication.Models
                 InfantCount--;
             }
             SetFareQuoteCondtion();
+            SetFareAmount();
         }
     }
 
