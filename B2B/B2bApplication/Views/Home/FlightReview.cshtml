@@ -1,10 +1,11 @@
 ﻿@model mdlFlightReview
 @using B2BClasses.Services.Enums
-
+@inject Microsoft.Extensions.Configuration.IConfiguration _Configuration
 @{
     ViewData["Title"] = enmDocumentMaster.Flight.GetDocumentDetails().Name;
     Layout = "~/Views/Shared/_Layout.cshtml";
-    System.Globalization.CultureInfo nfi = new System.Globalization.CultureInfo("en-IN", false);
+    System.Globalization.CultureInfo nfi = new System.Globalization.CultureInfo(_Configuration["CultureInfo"], false);
+
 }
 <input type="hidden" value="@(enmDocumentMaster.Flight)" id="_currentDocument" name="_currentDocument" />
 
@@ -13,80 +14,96 @@
         <div class="widget-box widget-color-dark light-border ui-sortable-handle" id="widget-box-6">
             <div class="widget-header">
                 <h5 class="widget-title smaller">Fare Summary</h5>
-
             </div>
             <div class="widget-body">
+                <div class="widget-main">
+                    <div id="accordion1" class="accordion-style2">
+                        <div class="group clearfix">
+                            <h3 class="accordion-header">
+                                Base Fare
+                                <span class="pull-right">
+                                    @(Model.TotalBaseFare.ToString("C", nfi))
+                                </span>
+                            </h3>
+                            <div class="Row">
+                                <div class="col-sm-12">
+                                    Adult(s) @(Model.AdultCount) × @(Model.AdultBaseFare.ToString("C", nfi))
+                                    <span class="pull-right">
+                                        @(Model.AdultTotalBaseFare.ToString("C", nfi))
+                                    </span>
+                                </div>
 
-                <div id="accordion1" class="accordion-style2">
-                    <div class="group">
-                        <h3 class="accordion-header">
-                            Base Fare
-                            <span class="pull-right">
-                                @(Model.TotalBaseFare.ToString("C", nfi))
-                            </span>
-                        </h3>
-                        <>
-                        <div class="Row">
-                            Adult(s) @(Model.AdultCount) × @(Model.AdultBaseFare.ToString("C", nfi))
-                            <span class="pull-right">
-                                 @(Model.AdultTotalBaseFare.ToString("C", nfi))
-                            </span>
+                            </div>
+                            @if (Model.ChildCount > 0)
+                            {
+                                <div class="Row">
+                                    <div class="col-sm-12">
+                                        Child(s) @(Model.ChildCount) ×  @(Model.ChildBaseFare.ToString("C", nfi))
+                                        <span class="pull-right">
+                                            @(Model.ChildTotalBaseFare.ToString("C", nfi))
+                                        </span>
+                                    </div>
+                                </div>
+                            }
+                            @if (Model.InfantCount > 0)
+                            {
+                                <div class="Row">
+                                    <div class="col-sm-12">
+                                        Infant(s) @(Model.InfantCount) ×  @(Model.InfantBaseFare.ToString("C", nfi))
+                                        <span class="pull-right">
+                                            @(Model.InfantTotalBaseFare.ToString("C", nfi))
+                                        </span>
+                                    </div>
+                                </div>
+                            }
+
+
                         </div>
-                        @if (Model.ChildCount > 0)
-                        {
-                            <div class="Row">
-                                Child(s) @(Model.ChildCount) ×  @(Model.ChildBaseFare.ToString("C", nfi))
+                        <div class="group clearfix">
+                            <h3 class="accordion-header">
+                                Fee &amp; Surcharge
                                 <span class="pull-right">
-                                     @(Model.ChildTotalBaseFare.ToString("C", nfi))
+                                    @(Model.FeeSurcharge.ToString("C", nfi))
+                                </span>
+                            </h3>
+                            <div class="Row">
+                                Fee &amp; Surcharge
+                                <span class="pull-right">
+                                    @(Model.FeeSurcharge.ToString("C", nfi))
                                 </span>
                             </div>
-                        }
-                        @if (Model.InfantCount > 0)
-                        {
-                            <div class="Row">
-                                Infant(s) @(Model.InfantCount) ×  @(Model.InfantBaseFare.ToString("C", nfi))
+                        </div>
+                        <div class="group clearfix">
+                            <h3 class="accordion-header">
+                                Other Charge
                                 <span class="pull-right">
-                                     @(Model.InfantTotalBaseFare.ToString("C", nfi))
+                                    @(Model.OtherCharge.ToString("C", nfi))
+                                </span>
+                            </h3>
+                            <div class="Row">
+                                Other Charge
+                                <span class="pull-right">
+                                    @(Model.OtherCharge.ToString("C", nfi))
                                 </span>
                             </div>
-                        }
-                    </div>
-                    <div class="group">
-                        <h3 class="accordion-header">
-                            Fee &amp; Surcharge
-                            <span class="pull-right">
-                                 @(Model.FeeSurcharge.ToString("C", nfi))
-                            </span>
-                        </h3>
-                        <div class="Row">
-                            Fee &amp; Surcharge
-                            <span class="pull-right">
-                                 @(Model.FeeSurcharge.ToString("C", nfi))
-                            </span>
                         </div>
                     </div>
-                    <div class="group">
-                        <h3 class="accordion-header">
-                            Other Charge
-                            <span class="pull-right">
-                                 @(Model.OtherCharge.ToString("C", nfi))
-                            </span>
-                        </h3>
-                        <div class="Row">
-                            Other Charge
-                            <span class="pull-right">
-                                 @(Model.OtherCharge.ToString("C", nfi))
-                            </span>
-                        </div>
-                    </div>
+                    <h4>
+                        Total Amount
+                        <span class="pull-right">
+                            @(Model.NetFare.ToString("C", nfi))
+                        </span>
+                    </h4>
+
+
+
                 </div>
-                    <h4>Total Amount 
-                <span class="pull-right">
-                     @(Model.NetFare.ToString("C", nfi))
-                </span>
-                </h4>
+                <div class="form-actions no-padding">
+                    <button type="button" name="btnBookFllilgh" class="btn btn-success">Book</button>
+                    <button type="button" name="btnHoldFllilgh" class="btn btn-danger">Hold</button>
                 </div>
             </div>
+        </div>
     </div>
     <div class="col-md-8">
 
@@ -474,41 +491,41 @@
     </div>
 
 </div>
-    @section Scripts {
-        <script>
-            jQuery(function ($) {
-                $('.select2').select2({ allowClear: true });
-                $('.date-picker').datepicker({ autoclose: true, format: 'd-M-yyyy', startDate: '3d' });
-                //jquery accordion
-                $("#accordion").accordion({
-                    collapsible: true,
-                    heightStyle: "content",
-                    animate: 250,
-                    header: ".accordion-header"
-                }).sortable({
-                    axis: "y",
-                    handle: ".accordion-header",
-                    stop: function (event, ui) {
-                        // IE doesn't register the blur when sorting
-                        // so trigger focusout handlers to remove .ui-state-focus
-                        ui.item.children(".accordion-header").triggerHandler("focusout");
-                    }
-                });
-                $("#accordion1").accordion({
-                    collapsible: true,
-                    heightStyle: "content",
-                    animate: 250,
-                    header: ".accordion-header"
-                }).sortable({
-                    axis: "y",
-                    handle: ".accordion-header",
-                    stop: function (event, ui) {
-                        // IE doesn't register the blur when sorting
-                        // so trigger focusout handlers to remove .ui-state-focus
-                        ui.item.children(".accordion-header").triggerHandler("focusout");
-                    }
-                });
+@section Scripts {
+    <script>
+        jQuery(function ($) {
+            $('.select2').select2({ allowClear: true });
+            $('.date-picker').datepicker({ autoclose: true, format: 'd-M-yyyy', startDate: '3d' });
+            //jquery accordion
+            $("#accordion").accordion({
+                collapsible: true,
+                heightStyle: "content",
+                animate: 250,
+                header: ".accordion-header"
+            }).sortable({
+                axis: "y",
+                handle: ".accordion-header",
+                stop: function (event, ui) {
+                    // IE doesn't register the blur when sorting
+                    // so trigger focusout handlers to remove .ui-state-focus
+                    ui.item.children(".accordion-header").triggerHandler("focusout");
+                }
             });
+            $("#accordion1").accordion({
+                collapsible: true,
+                heightStyle: "content",
+                animate: 250,
+                header: ".accordion-header"
+            }).sortable({
+                axis: "y",
+                handle: ".accordion-header",
+                stop: function (event, ui) {
+                    // IE doesn't register the blur when sorting
+                    // so trigger focusout handlers to remove .ui-state-focus
+                    ui.item.children(".accordion-header").triggerHandler("focusout");
+                }
+            });
+        });
 
-        </script>
-    }
+    </script>
+}
