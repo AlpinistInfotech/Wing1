@@ -25,6 +25,7 @@
                                 @(Model.TotalBaseFare.ToString("C", nfi))
                             </span>
                         </h3>
+                        <>
                         <div class="Row">
                             Adult(s) @(Model.AdultCount) × @(Model.AdultBaseFare.ToString("C", nfi))
                             <span class="pull-right">
@@ -34,7 +35,7 @@
                         @if (Model.ChildCount > 0)
                         {
                             <div class="Row">
-                                Adult(s) @(Model.ChildCount) ×  @(Model.ChildBaseFare.ToString("C", nfi))
+                                Child(s) @(Model.ChildCount) ×  @(Model.ChildBaseFare.ToString("C", nfi))
                                 <span class="pull-right">
                                      @(Model.ChildTotalBaseFare.ToString("C", nfi))
                                 </span>
@@ -43,7 +44,7 @@
                         @if (Model.InfantCount > 0)
                         {
                             <div class="Row">
-                                Adult(s) @(Model.InfantCount) ×  @(Model.InfantBaseFare.ToString("C", nfi))
+                                Infant(s) @(Model.InfantCount) ×  @(Model.InfantBaseFare.ToString("C", nfi))
                                 <span class="pull-right">
                                      @(Model.InfantTotalBaseFare.ToString("C", nfi))
                                 </span>
