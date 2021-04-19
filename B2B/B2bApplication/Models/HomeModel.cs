@@ -40,7 +40,7 @@ namespace B2bApplication.Models
         public double TotalFare { get; set; }
         public double OtherCharge { get; set; }        
         public double NetFare { get; set; }
-
+        
 
         public void SetFareAmount()
         {
@@ -84,7 +84,7 @@ namespace B2bApplication.Models
                     IsGstMandatory = FareQuotResponse.Any(p => p.FareQuoteCondition?.GstCondition?.IsGstMandatory ?? false),                    
                     IsGstApplicable = FareQuotResponse.Any(p => p.FareQuoteCondition?.GstCondition?.IsGstApplicable ?? false),
                 },
-                IsHoldApplicable = FareQuotResponse.Any(p => p.FareQuoteCondition?.IsHoldApplicable ?? false),
+                IsHoldApplicable = FareQuotResponse.All(p => p.FareQuoteCondition?.IsHoldApplicable ?? false),
                 PassportCondition = new mdlPassportCondition()
                 {
                     IsPassportExpiryDate = FareQuotResponse.Any(p => p.FareQuoteCondition?.PassportCondition?.IsPassportExpiryDate ?? false),

@@ -151,8 +151,7 @@ namespace B2bApplication.Controllers
 
 
 
-        [HttpPost]
-        //[Authorize(policy: nameof(enmDocumentMaster.Flight))]
+        [HttpPost]        
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> FlightReview(mdlFlightReview mdl)
@@ -179,8 +178,32 @@ namespace B2bApplication.Controllers
         }
 
 
-        
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> FlightBook(mdlFlightReview mdl)
+        {
+            int CustomerId = 1;
+
+            _booking.CustomerId = CustomerId;
+
+            mdl.FareQuotResponse = new List<mdlFareQuotResponse>();
+            mdl.FareRule = new List<mdlFareRuleResponse>();
+
+
+            if (!(mdl == null || mdl.FareQuoteRequest == null))
+            {
+                mdl.FareQuotResponse.AddRange(await _booking.FareQuoteAsync(mdl.FareQuoteRequest));
+                //mdl.FareRule.AddRange(await _booking.FareRule(new mdlFareRuleRequest() { TraceId= mdl.FareQuoteRequest.TraceId, ResultIndex= mdl.FareQuoteRequest.ResultIndex }));
+                mdl.BookingRequestDefaultData();
+            }
+            else
+            {
+                return RedirectToAction("FlightSearch", "Home");
+            }
+            return View(mdl);
+        }
 
 
 

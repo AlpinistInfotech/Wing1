@@ -25,38 +25,39 @@
                                     @(Model.TotalBaseFare.ToString("C", nfi))
                                 </span>
                             </h3>
-                            <div class="Row">
-                                <div class="col-sm-12">
-                                    Adult(s) @(Model.AdultCount) × @(Model.AdultBaseFare.ToString("C", nfi))
-                                    <span class="pull-right">
-                                        @(Model.AdultTotalBaseFare.ToString("C", nfi))
-                                    </span>
-                                </div>
+                            <div class="col-sm-12 no-padding">
+                                <div class="Row">
+                                    <div class="col-sm-12">
+                                        Adult(s) @(Model.AdultCount) × @(Model.AdultBaseFare.ToString("C", nfi))
+                                        <span class="pull-right">
+                                            @(Model.AdultTotalBaseFare.ToString("C", nfi))
+                                        </span>
+                                    </div>
 
+                                </div>
+                                @if (Model.ChildCount > 0)
+                                {
+                                    <div class="Row">
+                                        <div class="col-sm-12">
+                                            Child(s) @(Model.ChildCount) ×  @(Model.ChildBaseFare.ToString("C", nfi))
+                                            <span class="pull-right">
+                                                @(Model.ChildTotalBaseFare.ToString("C", nfi))
+                                            </span>
+                                        </div>
+                                    </div>
+                                }
+                                @if (Model.InfantCount > 0)
+                                {
+                                    <div class="Row">
+                                        <div class="col-sm-12">
+                                            Infant(s) @(Model.InfantCount) ×  @(Model.InfantBaseFare.ToString("C", nfi))
+                                            <span class="pull-right">
+                                                @(Model.InfantTotalBaseFare.ToString("C", nfi))
+                                            </span>
+                                        </div>
+                                    </div>
+                                }
                             </div>
-                            @if (Model.ChildCount > 0)
-                            {
-                                <div class="Row">
-                                    <div class="col-sm-12">
-                                        Child(s) @(Model.ChildCount) ×  @(Model.ChildBaseFare.ToString("C", nfi))
-                                        <span class="pull-right">
-                                            @(Model.ChildTotalBaseFare.ToString("C", nfi))
-                                        </span>
-                                    </div>
-                                </div>
-                            }
-                            @if (Model.InfantCount > 0)
-                            {
-                                <div class="Row">
-                                    <div class="col-sm-12">
-                                        Infant(s) @(Model.InfantCount) ×  @(Model.InfantBaseFare.ToString("C", nfi))
-                                        <span class="pull-right">
-                                            @(Model.InfantTotalBaseFare.ToString("C", nfi))
-                                        </span>
-                                    </div>
-                                </div>
-                            }
-
 
                         </div>
                         <div class="group clearfix">
@@ -98,9 +99,12 @@
 
 
                 </div>
-                <div class="form-actions no-padding">
+                <div class="form-actions no-padding align-center">
                     <button type="button" name="btnBookFllilgh" class="btn btn-success">Book</button>
+                    @if (Model.FareQuoteCondition.IsHoldApplicable)
+                    {
                     <button type="button" name="btnHoldFllilgh" class="btn btn-danger">Hold</button>
+                    }
                 </div>
             </div>
         </div>
