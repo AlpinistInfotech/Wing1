@@ -1,6 +1,7 @@
 ﻿using B2BClasses.Database;
 using B2BClasses.Services.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,17 +23,55 @@ namespace B2BClasses
         public int CustomerId { get { return _CustomerId; } set { _CustomerId = value; } }
         private readonly DBContext _context;
         private int _CustomerId;
-        public CustomerWallet(DBContext context)
+        private IConfiguration _config;
+        public CustomerWallet(DBContext context, IConfiguration config)
         {
-            _context = context;
+            _config = config;
+               _context = context;
         }
+        private List<int> GetFixWalletBalanceCustomer()
+        {
+            var FixWalletBalanceCustomer = _config.GetSection("FixWalletBalanceCustomer")?.GetChildren()?.Select(x => int.Parse(x.Value))?.ToList();
+            if (FixWalletBalanceCustomer == null)
+            {
+                FixWalletBalanceCustomer = new List<int>();
+            }
+            return FixWalletBalanceCustomer;
+        }
+        private double GetWalletBalanceAmt()
+        {
+            double WalletBalanceAmt = 1000000;
+            double.TryParse(_config["WalletBalanceAmt"], out WalletBalanceAmt);
+            return WalletBalanceAmt;
+        }
+
+        private double GetCustomerBalanceAmt(double Exitingbalance)
+        {   
+            List<int> UnlimitedWalletBalance = GetFixWalletBalanceCustomer();
+            if (UnlimitedWalletBalance.Any(p => p == _CustomerId))
+            {
+                return Exitingbalance= GetWalletBalanceAmt();
+            }
+            return Exitingbalance;
+        }
+
         public async Task<double> GetBalenceAsync()
         {
-            return (await _context.tblCustomerMaster.Where(p => p.Id == _CustomerId).FirstOrDefaultAsync())?.WalletBalence ?? 0.0;
-
+            double CustomerBalance = 0;
+            CustomerBalance=(await _context.tblCustomerMaster.Where(p => p.Id == _CustomerId).FirstOrDefaultAsync())?.WalletBalence ?? 0.0;            
+            return GetCustomerBalanceAmt(CustomerBalance);
         }
+
+        
+
         public async Task DeductBalenceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails)
         {
+            bool CustomerFound = false;
+            List<int> UnlimitedWalletBalance = GetFixWalletBalanceCustomer();
+            if (UnlimitedWalletBalance.Any(p => p == _CustomerId))
+            {
+                CustomerFound=true;
+            }
             try
             {
                 var customer = _context.tblCustomerMaster.FirstOrDefault(p => p.Id == _CustomerId);
@@ -40,9 +79,12 @@ namespace B2BClasses
                 {
                     throw new Exception("Invalid Customer");
                 }
-                if (Amount > customer.WalletBalence)
+                if (!CustomerFound)
                 {
-                    throw new Exception("Insufficient fund");
+                    if (Amount > customer.WalletBalence)
+                    {
+                        throw new Exception("Insufficient fund");
+                    }
                 }
                 _context.tblWalletDetailLedger.Add(new tblWalletDetailLedger()
                 {
@@ -54,7 +96,10 @@ namespace B2BClasses
                     TransactionDetails = TransactionDetails,
                     TransactionType = TransactionType,
                 });
-                customer.WalletBalence = customer.WalletBalence - Amount;
+                if (!CustomerFound)
+                {
+                    customer.WalletBalence = customer.WalletBalence - Amount;
+                }                
                 _context.tblCustomerMaster.Update(customer);
                 await _context.SaveChangesAsync();
             }
