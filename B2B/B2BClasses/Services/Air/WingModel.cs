@@ -267,17 +267,17 @@ namespace B2BClasses.Services.Air
     {
         public string TraceId { get; set; }
         public string BookingId { get; set; }
-        public mdlTravellerinfo[] travellerInfo { get; set; }
+        public List< mdlTravellerinfo> travellerInfo { get; set; }
         public mdlDeliveryinfo deliveryInfo { get; set; }
         public mdlGstInfo gstInfo { get; set; }
-        public mdlPaymentInfos[] paymentInfos { get; set; }
+        public List<mdlPaymentInfos> paymentInfos { get; set; }
 
     }
 
     public class mdlDeliveryinfo
     {
-        public string[] emails { get; set; }
-        public string[] contacts { get; set; }
+        public List< string> emails { get; set; }
+        public List<string> contacts { get; set; }
     }
 
     public class mdlTravellerinfo

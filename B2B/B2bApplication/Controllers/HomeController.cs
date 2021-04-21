@@ -154,7 +154,7 @@ namespace B2bApplication.Controllers
         [HttpPost]        
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> FlightReview(mdlFlightReview mdl)
+        public async Task<IActionResult> FlightReview(mdlFlightReview mdl,bool IsPriceChanged,string Message)
         {
             int CustomerId = 1;
             
@@ -182,21 +182,64 @@ namespace B2bApplication.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> FlightBook(mdlFlightReview mdl)
+        public async Task<IActionResult> FlightBook(mdlFlightReview mdl, [FromServices]ICustomerWallet customerWallet )
         {
+            mdlFlighBook mdlres = new mdlFlighBook() {FareQuotResponse= new List<mdlFareQuotResponse>(), IsSucess=new List<bool>() , BookingId= new List<string>()};
+            
             int CustomerId = 1;
-
             _booking.CustomerId = CustomerId;
-
             mdl.FareQuotResponse = new List<mdlFareQuotResponse>();
             mdl.FareRule = new List<mdlFareRuleResponse>();
-
-
+            bool IsPriceChanged = false;
             if (!(mdl == null || mdl.FareQuoteRequest == null))
             {
                 mdl.FareQuotResponse.AddRange(await _booking.FareQuoteAsync(mdl.FareQuoteRequest));
-                //mdl.FareRule.AddRange(await _booking.FareRule(new mdlFareRuleRequest() { TraceId= mdl.FareQuoteRequest.TraceId, ResultIndex= mdl.FareQuoteRequest.ResultIndex }));
-                mdl.BookingRequestDefaultData();
+                mdl.FareQuotResponse.Any(p => p.IsPriceChanged);
+                if (IsPriceChanged)
+                {
+                    return RedirectToAction("FlightReview", "Home", new { mdl = mdl, IsPriceChanged = true,Message="Price changed" });
+                }
+
+                if (mdl.FareQuotResponse.Sum(p => p.TotalPriceInfo?.TotalFare) > mdl.TotalFare)
+                {
+                    return RedirectToAction("FlightReview", "Home", new { mdl = mdl, IsPriceChanged = true, Message = "Price changed" });
+                }
+                customerWallet.CustomerId = CustomerId;
+                double Walletbalence=await customerWallet.GetBalenceAsync();
+                if (Walletbalence < mdl.TotalFare)
+                {
+                    return RedirectToAction("FlightReview", "Home", new { mdl = mdl, IsPriceChanged = true, Message = "Insufficient Wallet balence" });
+                }
+                else
+                {
+                    await customerWallet.DeductBalenceAsync(DateTime.Now ,mdl.TotalFare,enmTransactionType.TicketBook, string.Concat("Booking Ids", string.Join( ',',mdl.FareQuotResponse.Select(p=>p.BookingId))) );
+                }
+
+                //if Price not chnage then Book the Flight
+                for (int i = 0; i < mdl.FareQuotResponse.Count(); i++)
+                {
+                    List<string> cont = new List<string>();
+                    cont.Add(mdl.contacts);
+                    List<string> eml = new List<string>();
+                    eml.Add(mdl.emails);
+                    List<mdlPaymentInfos> pi = new List<mdlPaymentInfos>();
+                    pi.Add(new mdlPaymentInfos() { amount = mdl.FareQuotResponse[i].TotalPriceInfo.TotalFare });
+
+                    mdlBookingRequest mdlReq = new mdlBookingRequest()
+                    {
+                        TraceId = mdl.FareQuotResponse[i].TraceId,
+                        BookingId = mdl.FareQuotResponse[i].BookingId,
+                        travellerInfo = mdl.travellerInfo,
+                        deliveryInfo = new mdlDeliveryinfo() { contacts = cont, emails = eml },
+                        gstInfo = mdl.gstInfo,
+                        paymentInfos = pi
+                    };
+                    var Result=  await _booking.BookingAsync(mdlReq);
+                    mdlres.FareQuotResponse.Add(mdl.FareQuotResponse[i]);
+                    mdlres.IsSucess.Add(Result.ResponseStatus == 1 ? true : false);
+                    mdlres.BookingId.Add(Result.bookingId);
+
+                }
             }
             else
             {

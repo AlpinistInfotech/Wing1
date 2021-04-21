@@ -35,9 +35,13 @@ namespace B2bApplication
             
             services.AddScoped<ICurrentUsers>(ctx => new CurrentUsers(ctx.GetRequiredService<IHttpContextAccessor>(), ctx.GetRequiredService<DBContext>()));
 
+            services.AddScoped<ICustomerWallet>(ctx => new CustomerWallet(ctx.GetRequiredService<DBContext>()));
+
             #region **************** Flight *********************************
             services.AddScoped<ITripJack> (ctx => new TripJack(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
             services.AddScoped<IBooking>(ctx => new Booking(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>(), ctx.GetRequiredService<ITripJack>()));
+
+
 
             #endregion
 

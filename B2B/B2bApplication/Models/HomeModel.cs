@@ -13,8 +13,8 @@ namespace B2bApplication.Models
         public mdlFareQuotRequest FareQuoteRequest { get; set; }
         public List<mdlFareQuotResponse> FareQuotResponse { get; set; }
         public List<mdlFareRuleResponse> FareRule{ get; set; }
-        public List<string> TraceId { get; set; }
-        public List<string> BookingId { get; set; }
+        //public List<string> TraceId { get; set; }
+        //public List<string> BookingId { get; set; }
         public List< mdlTravellerinfo> travellerInfo { get; set; }
         
         public mdlGstInfo gstInfo { get; set; }        
@@ -100,10 +100,10 @@ namespace B2bApplication.Models
             {
                 return;
             }
-            TraceId = new List<string>();
-            BookingId= new List<string>();
-            BookingId.AddRange(FareQuotResponse.Select(p => p.BookingId));
-            TraceId.AddRange(FareQuotResponse.Select(p => p.TraceId));
+            //TraceId = new List<string>();
+            //BookingId= new List<string>();
+            //BookingId.AddRange(FareQuotResponse.Select(p => p.BookingId));
+            //TraceId.AddRange(FareQuotResponse.Select(p => p.TraceId));
 
             
             travellerInfo = new List<mdlTravellerinfo>();
@@ -133,6 +133,13 @@ namespace B2bApplication.Models
             SetFareQuoteCondtion();
             SetFareAmount();
         }
+    }
+
+    public class mdlFlighBook
+    {
+        public List<mdlFareQuotResponse> FareQuotResponse { get; set; }
+        public List<bool> IsSucess { get; set; }
+        public List<string> BookingId { get; set; }
     }
 
     

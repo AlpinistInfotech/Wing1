@@ -12,10 +12,12 @@ using System.Threading.Tasks;
 namespace B2BClasses
 {
    
+    
     public interface IBooking
     {
         int CustomerId { get; set; }
 
+        Task<mdlBookingResponse> BookingAsync(mdlBookingRequest mdlRq);
         Task<List<mdlFareQuotResponse>> FareQuoteAsync(mdlFareQuotRequest mdlRq);
         Task<List<mdlFareRuleResponse>> FareRule(mdlFareRuleRequest mdlRq);
         Task<List<enmServiceProvider>> GetActiveProviderAsync();
@@ -25,7 +27,7 @@ namespace B2BClasses
         Task<mdlSearchResponse> SearchFlightMinPrices(mdlSearchRequest mdlRq);
     }
 
-    public class Booking :  IBooking
+    public class Booking : IBooking
     {
         private readonly DBContext _context;
         private readonly IConfiguration _config;
@@ -177,10 +179,13 @@ namespace B2BClasses
             {
                 var sp = (enmServiceProvider)Convert.ToInt32(mdlRq.ResultIndex?[i].Split("_").FirstOrDefault());
 
-                int index = mdlRq.ResultIndex[i].IndexOf('_');
-                mdlRq.ResultIndex[i] = mdlRq.ResultIndex[i].Substring(index+1);
-                IWingFlight wingflight = GetFlightObject(sp);
-                mdlRs.Add(await wingflight.FareQuoteAsync(mdlRq));
+                int index = mdlRq.ResultIndex?[i].IndexOf('_') ?? -1;
+                if (index >= 0)
+                {
+                    mdlRq.ResultIndex[i] = mdlRq.ResultIndex?[i].Substring(index + 1);
+                    IWingFlight wingflight = GetFlightObject(sp);
+                    mdlRs.Add(await wingflight.FareQuoteAsync(mdlRq));
+                }
             }
             return mdlRs;
         }
@@ -193,9 +198,23 @@ namespace B2BClasses
                 var sp = (enmServiceProvider)Convert.ToInt32(mdlRq.ResultIndex?[i].Split("_").FirstOrDefault());
 
                 int index = mdlRq.ResultIndex[i].IndexOf('_');
-                mdlRq.ResultIndex[i] = mdlRq.ResultIndex[i].Substring(index+1);
+                mdlRq.ResultIndex[i] = mdlRq.ResultIndex[i].Substring(index + 1);
                 IWingFlight wingflight = GetFlightObject(sp);
                 mdlRs.Add(await wingflight.FareRuleAsync(mdlRq));
+            }
+            return mdlRs;
+        }
+
+        public async Task<mdlBookingResponse> BookingAsync(mdlBookingRequest mdlRq)
+        {
+            mdlBookingResponse mdlRs = new mdlBookingResponse();
+            var sp = (enmServiceProvider)Convert.ToInt32(mdlRq.BookingId?.Split("_").FirstOrDefault());
+            int index = mdlRq.BookingId?.IndexOf('_') ?? -1;
+            if (index >= 0)
+            {
+                mdlRq.BookingId = mdlRq.BookingId.Substring(index + 1);
+                IWingFlight wingflight = GetFlightObject(sp);
+                mdlRs = await wingflight.BookingAsync(mdlRq);
             }
             return mdlRs;
         }

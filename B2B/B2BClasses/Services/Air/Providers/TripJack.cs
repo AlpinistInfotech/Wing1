@@ -1102,7 +1102,7 @@ namespace B2BClasses.Services.Air
 
         #endregion
 
-        #region *******************Fare Quote Class***************************
+        #region *******************Fare Quote ***************************
 
         private async Task RemoveFromDb(mdlFareQuotRequest request)
         {
@@ -1110,7 +1110,7 @@ namespace B2BClasses.Services.Air
             var Existing = _context.tblTripJackTravelDetail.Where(p => p.TraceId == request.TraceId && p.ExpireDt > currentDate).FirstOrDefault();
             if (Existing != null)
             {
-                _context.Database.ExecuteSqlRaw("delete from tblTripJackTravelDetailResult where TravelDetailId=@p0", parameters: new[] { Existing.TravelDetailId });
+                _context.Database.ExecuteSqlRaw("delete from tblTripJackTravelDetailResult where TravelDetailId=@p0 and ResultId>0", parameters: new[] { Existing.TravelDetailId });
                 _context.Database.ExecuteSqlRaw("delete from tblTripJackTravelDetail where TravelDetailId=@p0", parameters: new[] { Existing.TravelDetailId });
                 await _context.SaveChangesAsync();
             }
@@ -1145,11 +1145,12 @@ namespace B2BClasses.Services.Air
 
             if (mdl != null)
             {
+                
                 if (mdl.status.success)//success
                 {
                     List<List<mdlSearchResult>> AllResults = new List<List<mdlSearchResult>>();
                     List<mdlSearchResult> Result1 = new List<mdlSearchResult>();
-
+                    int ServiceProvider = (int)enmServiceProvider.TripJack;
                     if (mdl.tripInfos != null)
                     {
                         Result1.AddRange(SearchResultMap(mdl.tripInfos));
@@ -1164,7 +1165,7 @@ namespace B2BClasses.Services.Air
 
                         ServiceProvider = enmServiceProvider.TripJack,
                         TraceId = request.TraceId,
-                        BookingId = mdl.bookingId,
+                        BookingId = ServiceProvider +"_" +mdl.bookingId,
                         ResponseStatus = 1,
                         IsPriceChanged = mdl.alerts?.Any(p => p.oldFare != p.newFare) ?? false,
                         Error = new mdlError()
@@ -1587,7 +1588,7 @@ namespace B2BClasses.Services.Air
         }
 
 
-        #region *****************Booking Request *************************
+        #region *****************Booking Request classes *************************
 
 
 
@@ -1607,8 +1608,8 @@ namespace B2BClasses.Services.Air
 
         public class Deliveryinfo
         {
-            public string[] emails { get; set; }
-            public string[] contacts { get; set; }
+            public List<string> emails { get; set; }
+            public List< string> contacts { get; set; }
         }
 
         public class Travellerinfo
