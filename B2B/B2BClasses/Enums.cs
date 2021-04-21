@@ -7,7 +7,23 @@ using System.Text;
 
 namespace B2BClasses.Services.Enums
 {
-    
+
+    public enum enmMessageType
+    {
+        Success = 1,
+        Error = 2,
+        Warning = 3,
+        Info = 4,
+    }
+
+    public enum enmMessage
+    {
+        NoFlightDataFound,
+        PassengerLimitExceed,
+        FlightPriceChanged,
+        InsufficientWalletBalence
+    }
+
 
     public enum enmCustomerType
     {
@@ -364,55 +380,55 @@ namespace B2BClasses.Services.Enums
         primary = 5,
         secondary = 6,
     }
-    public enum enmMessage
-    {
-        [Description("Access Denied!!!")]
-        AccessDenied,
-        [Description("Pending for Approval!!!")]
-        PendingApproval,
-        [Description("Save Successfully!!!")]
-        SaveSucessfully,
-        [Description("Update Successfully!!!")]
-        UpdateSucessfully,
-        [Description("Approved Successfully!!!")]
-        ApprovedSucessfully,
-        [Description("Rejected Successfully!!!")]
-        RejectSucessfully,
-        [Description("Enter all Required inputs!!!")]
-        RequiredField,
-        [Description("Invalid Id !!!")]
-        InvalidID,
-        [Description("Invalid Organization !!!")]
-        InvalidOrganization,
-        [Description("Invalid UserId !!!")]
-        InvalidUserID,
-        [Description("Invalid Applicable date !!!")]
-        InvalidApplicableDt,
-        [Description("Invalid Data !!!")]
-        InvalidData,
-        [Description("Invalid User or Password !!!")]
-        InvalidUserOrPassword,
-        [Description("Invalid Operation !!!")]
-        InvalidOperation,
-        [Description("User Blocked !!!")]
-        UserLocked,
-        [Description("Data already exists !!!")]
-        AlreadyExists,
-        [Description("Request already in Processing !!!")]
-        RequestAlreadyInProcessing,
-        [Description("Request already Processed !!!")]
-        RequestAlreadyProcessed,
-        [Description("Data not exists !!!")]
-        DataNotExists,
-        [Description("Concurrency Error !!!")]
-        ConcurrencyError,
-        [Description("Database Error !!!")]
-        DatabaseError,
-        [Description("Undefined Exception!!!")]
-        UndefinedException,
-        [Description("Only one head office can be created!!!")]
-        SingleHeadOfficeException
-    }
+    //public enum enmMessage
+    //{
+    //    [Description("Access Denied!!!")]
+    //    AccessDenied,
+    //    [Description("Pending for Approval!!!")]
+    //    PendingApproval,
+    //    [Description("Save Successfully!!!")]
+    //    SaveSucessfully,
+    //    [Description("Update Successfully!!!")]
+    //    UpdateSucessfully,
+    //    [Description("Approved Successfully!!!")]
+    //    ApprovedSucessfully,
+    //    [Description("Rejected Successfully!!!")]
+    //    RejectSucessfully,
+    //    [Description("Enter all Required inputs!!!")]
+    //    RequiredField,
+    //    [Description("Invalid Id !!!")]
+    //    InvalidID,
+    //    [Description("Invalid Organization !!!")]
+    //    InvalidOrganization,
+    //    [Description("Invalid UserId !!!")]
+    //    InvalidUserID,
+    //    [Description("Invalid Applicable date !!!")]
+    //    InvalidApplicableDt,
+    //    [Description("Invalid Data !!!")]
+    //    InvalidData,
+    //    [Description("Invalid User or Password !!!")]
+    //    InvalidUserOrPassword,
+    //    [Description("Invalid Operation !!!")]
+    //    InvalidOperation,
+    //    [Description("User Blocked !!!")]
+    //    UserLocked,
+    //    [Description("Data already exists !!!")]
+    //    AlreadyExists,
+    //    [Description("Request already in Processing !!!")]
+    //    RequestAlreadyInProcessing,
+    //    [Description("Request already Processed !!!")]
+    //    RequestAlreadyProcessed,
+    //    [Description("Data not exists !!!")]
+    //    DataNotExists,
+    //    [Description("Concurrency Error !!!")]
+    //    ConcurrencyError,
+    //    [Description("Database Error !!!")]
+    //    DatabaseError,
+    //    [Description("Undefined Exception!!!")]
+    //    UndefinedException,
+    //    [Description("Only one head office can be created!!!")]
+    //    SingleHeadOfficeException
+    //}
 
     public static class EnmDescription
     {

@@ -150,7 +150,7 @@ namespace B2BClasses.Services.Air
     public class mdlFareQuotRequest
     {
         public string TraceId { get; set; }
-        public string[] ResultIndex { get; set; }        
+        public string[] ResultIndex { get; set; }
     }
 
     public class mdlFareQuotResponseWraper

@@ -1,2 +1,22 @@
 ﻿<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var ViewBagSaveStatus = parseInt(@ViewBag.SaveStatus);
+            switch (ViewBagSaveStatus) {
+                case 1:
+                    toastr.success("@ViewBag.Message","Success", {timeOut: 2500});
+                    break;
+                case 2:
+                    toastr.error("@ViewBag.Message","Error", {timeOut: 10000});
+                    break;
+                case 3:
+                    toastr.warning("@ViewBag.Message","Warning", {timeOut: 10000});
+                    break;
+                case 4:
+                    toastr.info("@ViewBag.Message","Info", {timeOut: 10000});
+                    break;
+             }
+
+    });
+</script>

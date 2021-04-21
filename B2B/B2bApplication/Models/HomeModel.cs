@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using B2BClasses.Services.Enums;
+using System.ComponentModel.DataAnnotations;
+
 namespace B2bApplication.Models
 {
     public class mdlFlightReview
@@ -20,6 +22,7 @@ namespace B2bApplication.Models
         public mdlGstInfo gstInfo { get; set; }        
         public mdlFareQuoteCondition FareQuoteCondition{ get; set; }
 
+        
         public string emails { get; set; }
         public string contacts { get; set; }
 

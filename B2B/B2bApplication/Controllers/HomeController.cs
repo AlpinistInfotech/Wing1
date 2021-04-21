@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using B2BClasses.Services.Air;
 using B2BClasses.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace B2bApplication.Controllers
 {
@@ -20,12 +21,14 @@ namespace B2bApplication.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly DBContext _context;
         private readonly IBooking _booking;
-        public HomeController(ILogger<HomeController> logger, DBContext context, IBooking booking
-
+        private readonly ISettings _setting;
+        public HomeController(ILogger<HomeController> logger, DBContext context, IBooking booking,
+            ISettings setting
             )
         {
             _context = context;
             _logger = logger;
+            _setting = setting;
             _booking = booking;
         }
 
@@ -49,9 +52,7 @@ namespace B2bApplication.Controllers
 
         [Authorize]
         public async Task<dynamic> GetMenuAsync([FromServices] ICurrentUsers currentUsers,[FromServices] IAccount account)
-        {
-            
-            
+        {   
             List<Document> alldocument = new List<Document>();
             List<Module> allModule = new List<Module>();
             List<SubModule> allSubModule = new List<SubModule>();
@@ -126,8 +127,7 @@ namespace B2bApplication.Controllers
                     
                 }
             };
-            await flightSearch.LoadAirportAsync(_booking);
-            
+            await flightSearch.LoadAirportAsync(_booking);            
             return View(flightSearch);
         }
 
@@ -135,16 +135,33 @@ namespace B2bApplication.Controllers
         //[Authorize(policy: nameof(enmDocumentMaster.Flight))]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> FlightSearch(mdlFlightSearch mdl)
+        public async Task<IActionResult> FlightSearch(mdlFlightSearch mdl, [FromServices]IConfiguration configuration)
         {
             int CustomerId = 1;
+            int PassengerMaxLimit = 5;
+            int.TryParse(configuration["PassengerMaxLimit"], out PassengerMaxLimit);
+            await mdl.LoadAirportAsync(_booking);
+            if (mdl.FlightSearchWraper.AdultCount + mdl.FlightSearchWraper.ChildCount + mdl.FlightSearchWraper.InfantCount > PassengerMaxLimit)
+            {
+                ViewBag.SaveStatus = (int)enmSaveStatus.danger;
+                ViewBag.Message = _setting.GetErrorMessage(enmMessage.PassengerLimitExceed);
+                ModelState.AddModelError(nameof(mdl.FlightSearchWraper.AdultCount), ViewBag.Message);
+                return View(mdl);
+            }
             if (ModelState.IsValid)
             {
                 mdl.LoadDefaultSearchRequestAsync(_booking);
                 _booking.CustomerId = CustomerId;
-                mdl.searchResponse = (await _booking.SearchFlightMinPrices(mdl.searchRequest));                
+                mdl.searchResponse = (await _booking.SearchFlightMinPrices(mdl.searchRequest));
+                
+                if ((mdl?.searchResponse?.Results?.Count() ?? 0) == 0)
+                {
+                    ViewBag.SaveStatus = (int)enmSaveStatus.danger;
+                    ViewBag.Message = _setting.GetErrorMessage(enmMessage.NoFlightDataFound);
+
+                }
             }
-            await mdl.LoadAirportAsync(_booking);
+           
             return View(mdl);
         }
 
@@ -154,12 +171,18 @@ namespace B2bApplication.Controllers
         [HttpPost]        
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> FlightReview(mdlFlightReview mdl,bool IsPriceChanged,string Message)
+        public async Task<IActionResult> FlightReview(mdlFlightReview mdl,enmMessageType? MessageType,string Message)
         {
             int CustomerId = 1;
-            
-            _booking.CustomerId = CustomerId;
 
+            if (MessageType != null)
+            {
+                ViewBag.SaveStatus = (int)MessageType;
+                ViewBag.Message = _setting.GetErrorMessage(enmMessage.NoFlightDataFound);                
+                return View(mdl);
+            }
+
+            _booking.CustomerId = CustomerId;
             mdl.FareQuotResponse = new List<mdlFareQuotResponse>();
             mdl.FareRule = new List<mdlFareRuleResponse>();
             
@@ -197,18 +220,18 @@ namespace B2bApplication.Controllers
                 mdl.FareQuotResponse.Any(p => p.IsPriceChanged);
                 if (IsPriceChanged)
                 {
-                    return RedirectToAction("FlightReview", "Home", new { mdl = mdl, IsPriceChanged = true,Message="Price changed" });
+                    return RedirectToAction("FlightReview", "Home", new { mdl = mdl, MessageType= (int)enmMessageType.Warning , Message=_setting.GetErrorMessage(enmMessage.FlightPriceChanged) });
                 }
 
                 if (mdl.FareQuotResponse.Sum(p => p.TotalPriceInfo?.TotalFare) > mdl.TotalFare)
                 {
-                    return RedirectToAction("FlightReview", "Home", new { mdl = mdl, IsPriceChanged = true, Message = "Price changed" });
+                    return RedirectToAction("FlightReview", "Home", new { mdl = mdl, MessageType = (int)enmMessageType.Warning, Message = _setting.GetErrorMessage(enmMessage.FlightPriceChanged) });
                 }
                 customerWallet.CustomerId = CustomerId;
                 double Walletbalence=await customerWallet.GetBalenceAsync();
                 if (Walletbalence < mdl.TotalFare)
                 {
-                    return RedirectToAction("FlightReview", "Home", new { mdl = mdl, IsPriceChanged = true, Message = "Insufficient Wallet balence" });
+                    return RedirectToAction("FlightReview", "Home", new { mdl = mdl, MessageType = (int)enmMessageType.Warning, Message = _setting.GetErrorMessage(enmMessage.InsufficientWalletBalence) });
                 }
                 else
                 {

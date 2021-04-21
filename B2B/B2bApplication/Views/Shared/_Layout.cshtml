@@ -19,8 +19,8 @@
     <link rel="stylesheet" href="~/assets/css/bootstrap-datepicker3.min.css" />
     <link rel="stylesheet" href="~/assets/css/bootstrap-timepicker.min.css" />
     <link rel="stylesheet" href="~/assets/css/daterangepicker.min.css" />
-    <link rel="stylesheet" href="~/assets/css/bootstrap-datetimepicker.min.css" />
-
+    <link rel="stylesheet" href="~/assets/css/bootstrap-datetimepicker.min.css" />    
+    <link href="~/assets/css/toastr.min.css" rel="stylesheet" />
     <!-- text fonts -->
     <link rel="stylesheet" href="~/assets/css/fonts.googleapis.com.css" />
 
@@ -99,7 +99,7 @@
 
     <!-- page specific plugin scripts -->
     <script src="~/assets/js/select2.min.js"></script>
-    <script src="~/assets/js/jquery-ui.min.js"></script>    
+    <script src="~/assets/js/jquery-ui.min.js"></script>
     <!--[if lte IE 8]>
           <script src="assets/js/excanvas.min.js"></script>
         <![endif]-->
@@ -119,10 +119,16 @@
     <script src="~/assets/js/jquery.inputlimiter.min.js"></script>
     <script src="~/assets/js/jquery.maskedinput.min.js"></script>
     <script src="~/assets/js/bootstrap-tag.min.js"></script>
+    <script src="~/assets/js/toastr.min.js"></script>
+
+
     <!-- ace scripts -->
     <script src="~/assets/js/ace-elements.min.js"></script>
     <script src="~/assets/js/ace.min.js"></script>
     <script src="~/js/SideMenu.js" asp-append-version="true"></script>
+
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
     <!-- inline scripts related to this page -->
     <script type="text/javascript">
         jQuery(function ($) {
