@@ -74,27 +74,32 @@ namespace B2bApplication.Models
 
         public void SetFareQuoteCondtion()
         {
-            FareQuoteCondition = new mdlFareQuoteCondition()
+            if (FareQuoteCondition == null)
             {
-                dob = new mdlDobCondition()
+                FareQuoteCondition = new mdlFareQuoteCondition()
                 {
-                    adobr = FareQuotResponse.Any(p=>p.FareQuoteCondition?.dob?.adobr?? false) ,
-                    cdobr = FareQuotResponse.Any(p => p.FareQuoteCondition?.dob?.cdobr ?? false),
-                    idobr = FareQuotResponse.Any(p => p.FareQuoteCondition?.dob?.idobr ?? false),
-                },
-                GstCondition = new mdlGstCondition()
-                {
-                    IsGstMandatory = FareQuotResponse.Any(p => p.FareQuoteCondition?.GstCondition?.IsGstMandatory ?? false),                    
-                    IsGstApplicable = FareQuotResponse.Any(p => p.FareQuoteCondition?.GstCondition?.IsGstApplicable ?? false),
-                },
-                IsHoldApplicable = FareQuotResponse.All(p => p.FareQuoteCondition?.IsHoldApplicable ?? false),
-                PassportCondition = new mdlPassportCondition()
-                {
-                    IsPassportExpiryDate = FareQuotResponse.Any(p => p.FareQuoteCondition?.PassportCondition?.IsPassportExpiryDate ?? false),
-                    isPassportIssueDate = FareQuotResponse.Any(p => p.FareQuoteCondition?.PassportCondition?.isPassportIssueDate ?? false),
-                    isPassportRequired = FareQuotResponse.Any(p => p.FareQuoteCondition?.PassportCondition?.isPassportRequired ?? false),
-                }
-            };
+                    dob = new mdlDobCondition()
+                    {
+                        adobr = FareQuotResponse.Any(p => p.FareQuoteCondition?.dob?.adobr ?? false),
+                        cdobr = FareQuotResponse.Any(p => p.FareQuoteCondition?.dob?.cdobr ?? false),
+                        idobr = FareQuotResponse.Any(p => p.FareQuoteCondition?.dob?.idobr ?? false),
+                    },
+                    GstCondition = new mdlGstCondition()
+                    {
+                        IsGstMandatory = FareQuotResponse.Any(p => p.FareQuoteCondition?.GstCondition?.IsGstMandatory ?? false),
+                        IsGstApplicable = FareQuotResponse.Any(p => p.FareQuoteCondition?.GstCondition?.IsGstApplicable ?? false),
+                    },
+                    IsHoldApplicable = FareQuotResponse.All(p => p.FareQuoteCondition?.IsHoldApplicable ?? false),
+                    PassportCondition = new mdlPassportCondition()
+                    {
+                        IsPassportExpiryDate = FareQuotResponse.Any(p => p.FareQuoteCondition?.PassportCondition?.IsPassportExpiryDate ?? false),
+                        isPassportIssueDate = FareQuotResponse.Any(p => p.FareQuoteCondition?.PassportCondition?.isPassportIssueDate ?? false),
+                        isPassportRequired = FareQuotResponse.Any(p => p.FareQuoteCondition?.PassportCondition?.isPassportRequired ?? false),
+                    }
+                };
+            }
+
+                
         }
 
         public void BookingRequestDefaultData()
@@ -108,31 +113,36 @@ namespace B2bApplication.Models
             //BookingId.AddRange(FareQuotResponse.Select(p => p.BookingId));
             //TraceId.AddRange(FareQuotResponse.Select(p => p.TraceId));
 
+
+            if (travellerInfo == null)
+            {
+                travellerInfo = new List<mdlTravellerinfo>();
+
+                int AdultCount = FareQuotResponse?.FirstOrDefault()?.SearchQuery?.AdultCount ?? 0;
+                int ChildCount = FareQuotResponse?.FirstOrDefault()?.SearchQuery?.ChildCount ?? 0;
+                int InfantCount = FareQuotResponse?.FirstOrDefault()?.SearchQuery?.InfantCount ?? 0;
+                this.AdultCount = AdultCount;
+                this.ChildCount = ChildCount;
+                this.InfantCount = InfantCount;
+
+                while (AdultCount > 0)
+                {
+                    travellerInfo.Add(new mdlTravellerinfo() { passengerType = enmPassengerType.Adult });
+                    AdultCount--;
+                }
+                while (ChildCount > 0)
+                {
+                    travellerInfo.Add(new mdlTravellerinfo() { passengerType = enmPassengerType.Child });
+                    ChildCount--;
+                }
+                while (InfantCount > 0)
+                {
+                    travellerInfo.Add(new mdlTravellerinfo() { passengerType = enmPassengerType.Infant });
+                    InfantCount--;
+                }
+            }
+
             
-            travellerInfo = new List<mdlTravellerinfo>();
-
-            int AdultCount = FareQuotResponse?.FirstOrDefault()?.SearchQuery?.AdultCount ?? 0;
-            int ChildCount = FareQuotResponse?.FirstOrDefault()?.SearchQuery?.ChildCount ?? 0;
-            int InfantCount = FareQuotResponse?.FirstOrDefault()?.SearchQuery?.InfantCount ?? 0;
-            this.AdultCount = AdultCount;
-            this.ChildCount = ChildCount;
-            this.InfantCount = InfantCount;
-
-            while (AdultCount > 0)
-            {
-                travellerInfo.Add(new mdlTravellerinfo() { passengerType = enmPassengerType.Adult });
-                AdultCount--;
-            }
-            while (ChildCount > 0)
-            {
-                travellerInfo.Add(new mdlTravellerinfo() { passengerType = enmPassengerType.Child});
-                ChildCount--;
-            }
-            while (InfantCount > 0)
-            {
-                travellerInfo.Add(new mdlTravellerinfo() { passengerType = enmPassengerType.Infant});
-                InfantCount--;
-            }
             SetFareQuoteCondtion();
             SetFareAmount();
         }

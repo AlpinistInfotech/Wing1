@@ -1110,8 +1110,8 @@ namespace B2BClasses.Services.Air
             var Existing = _context.tblTripJackTravelDetail.Where(p => p.TraceId == request.TraceId && p.ExpireDt > currentDate).FirstOrDefault();
             if (Existing != null)
             {
-                _context.Database.ExecuteSqlRaw("delete from tblTripJackTravelDetailResult where TravelDetailId=@p0 and ResultId>0", parameters: new[] { Existing.TravelDetailId });
-                _context.Database.ExecuteSqlRaw("delete from tblTripJackTravelDetail where TravelDetailId=@p0", parameters: new[] { Existing.TravelDetailId });
+                _context.Database.ExecuteSqlRaw("delete from tblTripJackTravelDetailResult where TravelDetailId=@p0", Existing.TravelDetailId );
+                _context.Database.ExecuteSqlRaw("delete from tblTripJackTravelDetail where TravelDetailId=@p0",Existing.TravelDetailId );
                 await _context.SaveChangesAsync();
             }
         }

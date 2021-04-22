@@ -13,6 +13,8 @@ using System.Threading.Tasks;
 using B2BClasses.Services.Air;
 using B2BClasses.Models;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Routing;
+using Newtonsoft.Json;
 
 namespace B2bApplication.Controllers
 {
@@ -167,20 +169,35 @@ namespace B2bApplication.Controllers
 
 
 
+        [AcceptVerbs("Get")]
+        public IActionResult FlightReview()
+        {
 
-        [HttpPost]        
+
+            var mdls = TempData["mdl_"] as string;
+            mdlFlightReview mdl = JsonConvert.DeserializeObject<mdlFlightReview>(mdls);
+            ViewBag.SaveStatus = (int)TempData["MessageType"];
+            ViewBag.Message = TempData["Message"];
+            //if (MessageType != null)
+            //{
+            //    ViewBag.SaveStatus = (int)MessageType;
+            //    ViewBag.Message = _setting.GetErrorMessage(enmMessage.NoFlightDataFound);
+
+            //}
+            mdl.BookingRequestDefaultData();
+            return View(mdl);
+        }
+
+
+
+        [AcceptVerbs("Post")]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> FlightReview(mdlFlightReview mdl,enmMessageType? MessageType,string Message)
+        public async Task<IActionResult> FlightReview(mdlFlightReview mdl)
         {
             int CustomerId = 1;
 
-            if (MessageType != null)
-            {
-                ViewBag.SaveStatus = (int)MessageType;
-                ViewBag.Message = _setting.GetErrorMessage(enmMessage.NoFlightDataFound);                
-                return View(mdl);
-            }
+           
 
             _booking.CustomerId = CustomerId;
             mdl.FareQuotResponse = new List<mdlFareQuotResponse>();
@@ -202,7 +219,7 @@ namespace B2bApplication.Controllers
 
 
 
-        [HttpPost]
+        [AcceptVerbs("Get", "Post")]
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> FlightBook(mdlFlightReview mdl, [FromServices]ICustomerWallet customerWallet )
@@ -220,18 +237,39 @@ namespace B2bApplication.Controllers
                 mdl.FareQuotResponse.Any(p => p.IsPriceChanged);
                 if (IsPriceChanged)
                 {
-                    return RedirectToAction("FlightReview", "Home", new { mdl = mdl, MessageType= (int)enmMessageType.Warning , Message=_setting.GetErrorMessage(enmMessage.FlightPriceChanged) });
+                    var s = JsonConvert.SerializeObject(mdl);
+                    TempData["mdl_"] = s;
+                    TempData["MessageType"] = (int)enmMessageType.Warning;
+                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.FlightPriceChanged);
+                    return RedirectToAction("FlightReview");
+                    //return FlightReview(mdl, enmMessageType.Warning, _setting.GetErrorMessage(enmMessage.FlightPriceChanged));
+                    //return RedirectToAction("FlightReview",routeValues:{ Controller:  "Home", new { mdl = mdl, MessageType = (int)enmMessageType.Warning, Message = _setting.GetErrorMessage(enmMessage.FlightPriceChanged) }});
                 }
 
                 if (mdl.FareQuotResponse.Sum(p => p.TotalPriceInfo?.TotalFare) > mdl.TotalFare)
                 {
-                    return RedirectToAction("FlightReview", "Home", new { mdl = mdl, MessageType = (int)enmMessageType.Warning, Message = _setting.GetErrorMessage(enmMessage.FlightPriceChanged) });
+
+                    var s = JsonConvert.SerializeObject(mdl);
+                    TempData["mdl_"] = s;
+                    TempData["MessageType"] = (int)enmMessageType.Warning;
+                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.FlightPriceChanged);
+                    return RedirectToAction("FlightReview");
+
+                    //return FlightReview(mdl, enmMessageType.Warning, _setting.GetErrorMessage(enmMessage.FlightPriceChanged));
+                    //return RedirectToAction("FlightReview", "Home", new { mdl = mdl, MessageType = (int)enmMessageType.Warning, Message = _setting.GetErrorMessage(enmMessage.FlightPriceChanged) });
                 }
                 customerWallet.CustomerId = CustomerId;
                 double Walletbalence=await customerWallet.GetBalenceAsync();
                 if (Walletbalence < mdl.TotalFare)
                 {
-                    return RedirectToAction("FlightReview", "Home", new { mdl = mdl, MessageType = (int)enmMessageType.Warning, Message = _setting.GetErrorMessage(enmMessage.InsufficientWalletBalence) });
+                    var s = JsonConvert.SerializeObject(mdl);
+                    TempData["mdl_"] = s;
+                    TempData["MessageType"] = (int)enmMessageType.Warning;
+                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.InsufficientWalletBalence);
+                    return RedirectToAction("FlightReview");
+
+                    //return FlightReview(mdl, enmMessageType.Warning, _setting.GetErrorMessage(enmMessage.InsufficientWalletBalence));
+                    //return RedirectToAction("FlightReview", "Home", new { mdl = mdl, MessageType = (int)enmMessageType.Warning, Message = _setting.GetErrorMessage(enmMessage.InsufficientWalletBalence) });
                 }
                 else
                 {
@@ -268,7 +306,7 @@ namespace B2bApplication.Controllers
             {
                 return RedirectToAction("FlightSearch", "Home");
             }
-            return View(mdl);
+            return View(mdlres);
         }
 
 

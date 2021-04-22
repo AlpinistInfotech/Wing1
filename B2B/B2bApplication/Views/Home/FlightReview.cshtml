@@ -20,6 +20,9 @@
         {
             <input type="hidden" asp-for="FareQuoteRequest.ResultIndex[i]" />
         }
+        <input type="hidden" asp-for="TotalFare" />
+
+
 
 
         <div class="col-md-4">
@@ -113,7 +116,7 @@
                     </div>
                     <div class="form-actions no-padding align-center">
                         <button type="button" name="btnBookFlight" class="btn btn-success">Book</button>
-                        @if (Model.FareQuoteCondition.IsHoldApplicable)
+                        @if (Model.FareQuoteCondition?.IsHoldApplicable ?? false)
                         {
                             <button type="button" name="btnHoldFlight" class="btn btn-danger">Hold</button>
                         }

@@ -1,84 +1,88 @@
 ﻿@model B2BClasses.Services.Air.mdlSearchResult
-    <div class="widget-box">
-        <div class="clearfix form-actions">
-            <div class="col-sm-12">
+@inject Microsoft.Extensions.Configuration.IConfiguration _Configuration
+@{
+    System.Globalization.CultureInfo nfi = new System.Globalization.CultureInfo(_Configuration["CultureInfo"], false);
+}
+<div class="widget-box">
+    <div class="clearfix form-actions">
+        <div class="col-sm-12">
+            <div class="col-sm-6">
                 <div class="col-sm-6">
-                    <div class="col-sm-6">
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <img src="~/AirlinesLogo/@(Model.Segment.FirstOrDefault()?.Airline?.Code).png" />
-                            </div>
-                            <div class="col-sm-9">
-                                <div class="row">
-                                    @(Model.Segment.FirstOrDefault()?.Airline?.Name)
-                                </div>
-                                <div class="row">
-                                    @(Model.Segment.FirstOrDefault()?.Airline?.FlightNumber)
-                                </div>
-                            </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <img src="~/AirlinesLogo/@(Model.Segment.FirstOrDefault()?.Airline?.Code).png" />
                         </div>
-                        <div class="row">
-                            <button class="btn btn-info" type="Submit" value="Details">Details</button>
+                        <div class="col-sm-9">
+                            <div class="row">
+                                @(Model.Segment.FirstOrDefault()?.Airline?.Name)
+                            </div>
+                            <div class="row">
+                                @(Model.Segment.FirstOrDefault()?.Airline?.FlightNumber)
+                            </div>
                         </div>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="row">
-                            <div class="col-sm-2">
-                                <div class="row">
-                                    @ViewData["FlightFrom"]
-                                </div>
-                                <div class="row">
-                                    @Model.Segment.FirstOrDefault()?.DepartureTime.ToString("HH:mm")
-                                </div>
-                                <div class="row">
-                                    @Model.Segment.FirstOrDefault()?.DepartureTime.ToString("dd-MMM")
-                                </div>
-                            </div>
-                            <div class="col-sm-2 center">
-                                <div class="row">
-                                    <i class="fa fa-arrow-right"></i>
-                                    @for (int i = 1; i < Model.Segment.Count; i++)
-                                    {
-                                        <i class="fa fa-arrow-from-left"></i>
-                                    }
-                                </div>
-                                <div class="row">
-                                    @(TimeSpan.FromMinutes( Model.Segment.Sum(p=>p.Duration)).Hours) : @(TimeSpan.FromMinutes( Model.Segment.Sum(p=>p.Duration)).Minutes)
-                                </div>
-                            </div>
-                            <div class="col-sm-2">
-                                <div class="row">
-                                    @ViewData["FlightTo"]
-                                </div>
-                                <div class="row">
-                                    @Model.Segment.LastOrDefault()?.ArrivalTime.ToString("HH:mm")
-                                </div>
-                                <div class="row">
-                                    @Model.Segment.LastOrDefault()?.ArrivalTime.ToString("dd-MMM")
-                                </div>
-                            </div>
-
-                        </div>
+                    <div class="row">
+                        <button class="btn btn-info" type="Submit" value="Details">Details</button>
                     </div>
                 </div>
-                <div class="col-sm-6">                    
-                        <div class="col-sm-6">
-                            @foreach (var totalpricelist in Model.TotalPriceList)
-                            {
-                                <div class="row">
-                                    <input type="radio" name="ResultIndex" value="@totalpricelist.ResultIndex">
-                                    <label for="ResultIndex">₹ @(totalpricelist.ADULT.FareComponent.TotalFare+ totalpricelist.CHILD.FareComponent.TotalFare+ totalpricelist.INFANT.FareComponent.TotalFare)</label><br>
-                                </div>
-                                <span class="label label-danger arrowed-in">@totalpricelist.ADULT.CabinClass -@totalpricelist.ADULT.ClassOfBooking</span>
-                            }
-
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="row">
+                                @ViewData["FlightFrom"]
+                            </div>
+                            <div class="row">
+                                @Model.Segment.FirstOrDefault()?.DepartureTime.ToString("HH:mm")
+                            </div>
+                            <div class="row">
+                                @Model.Segment.FirstOrDefault()?.DepartureTime.ToString("dd-MMM")
+                            </div>
                         </div>
-                        <div class="col-sm-6">
-                            <button class="btn btn-success" id="btnBook" type="submit" name="bookFlight" value="Book">Book</button>
-                        </div>                    
-                </div>
+                        <div class="col-sm-2 center">
+                            <div class="row">
+                                <i class="fa fa-arrow-right"></i>
+                                @for (int i = 1; i < Model.Segment.Count; i++)
+                                {
+                                    <i class="fa fa-arrow-from-left"></i>
+                                }
+                            </div>
+                            <div class="row">
+                                @(TimeSpan.FromMinutes( Model.Segment.Sum(p=>p.Duration)).Hours) : @(TimeSpan.FromMinutes( Model.Segment.Sum(p=>p.Duration)).Minutes)
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="row">
+                                @ViewData["FlightTo"]
+                            </div>
+                            <div class="row">
+                                @Model.Segment.LastOrDefault()?.ArrivalTime.ToString("HH:mm")
+                            </div>
+                            <div class="row">
+                                @Model.Segment.LastOrDefault()?.ArrivalTime.ToString("dd-MMM")
+                            </div>
+                        </div>
 
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="col-sm-6">
+                    @foreach (var totalpricelist in Model.TotalPriceList)
+                    {
+                        <div class="row">
+                            <input type="radio" name="ResultIndex" value="@totalpricelist.ResultIndex">
+                            <label for="ResultIndex">@((totalpricelist.ADULT.FareComponent.TotalFare+ totalpricelist.CHILD.FareComponent.TotalFare+ totalpricelist.INFANT.FareComponent.TotalFare).ToString("C", nfi))</label><br>
+                        </div>
+                        <span class="label label-danger arrowed-in">@totalpricelist.ADULT.CabinClass -@totalpricelist.ADULT.ClassOfBooking</span>
+                    }
+
+                </div>
+                <div class="col-sm-6">
+                    <button class="btn btn-success" id="btnBook" type="submit" name="bookFlight" value="Book">Book</button>
+                </div>
             </div>
 
         </div>
+
     </div>
+</div>
