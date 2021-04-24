@@ -22,11 +22,15 @@
                         </a>
                     </div>
 
-                    <button class="btn btn-@(Model.IsSucess[i]? "success":"danger") pull-right">Booking Id: @Model.BookingId </button>
+                    <button class="btn btn-@(Model.IsSucess[i]? "success":"danger") pull-right">Booking Id: @Model.BookingId[i] </button>
 
                 </div>
                 <div class="widget-body">
-                    <div class="widget-main @(Model.IsSucess[i]? "success":"danger") ">
+                    <div class="widget-main  ">
+
+                        @if (Model.IsSucess[i])
+                        { 
+                        }
 
                         @foreach (var tr in tripinfo)
                         {
@@ -98,64 +102,64 @@
                             <hr />
                         }
                         @*<div class="row form-actions no-padding clearfix no-margin">
-                            <div class="col-sm-offset-2 col-sm-8">
-                                <table class="table table-striped table-hover">
-                                    <thead class="thin-border-bottom">
-                                        <tr>
-                                            <th>
-                                                <i class="ace-icon fa fa-suitcase"></i>
-                                                Baggage
-                                            </th>
+            <div class="col-sm-offset-2 col-sm-8">
+                <table class="table table-striped table-hover">
+                    <thead class="thin-border-bottom">
+                        <tr>
+                            <th>
+                                <i class="ace-icon fa fa-suitcase"></i>
+                                Baggage
+                            </th>
 
-                                            <th>
-                                                Check In
-                                            </th>
-                                            <th>Cabin</th>
-                                        </tr>
-                                    </thead>
+                            <th>
+                                Check In
+                            </th>
+                            <th>Cabin</th>
+                        </tr>
+                    </thead>
 
-                                    <tbody>
-                                        <tr>
-                                            <td class="">Adult</td>
-                                            <td>
-                                                @(Model.FareQuotResponse[i].Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CheckingBaggage??"-")
-                                            </td>
+                    <tbody>
+                        <tr>
+                            <td class="">Adult</td>
+                            <td>
+                                @(Model.FareQuotResponse[i].Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CheckingBaggage??"-")
+                            </td>
 
-                                            <td class="hidden-480">
-                                                @(Model.FareQuotResponse[i].Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CabinBaggage??"-")
-                                            </td>
-                                        </tr>
-                                        @if ((Model.FareQuotResponse[i].SearchQuery.ChildCount) > 0)
-                                        {
-                                            <tr>
-                                                <td class="">Child</td>
-                                                <td>
-                                                    @(Model.FareQuotResponse[i].Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.BaggageInformation?.CheckingBaggage??"-")
-                                                </td>
+                            <td class="hidden-480">
+                                @(Model.FareQuotResponse[i].Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CabinBaggage??"-")
+                            </td>
+                        </tr>
+                        @if ((Model.FareQuotResponse[i].SearchQuery.ChildCount) > 0)
+                        {
+                            <tr>
+                                <td class="">Child</td>
+                                <td>
+                                    @(Model.FareQuotResponse[i].Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.BaggageInformation?.CheckingBaggage??"-")
+                                </td>
 
-                                                <td class="hidden-480">
-                                                    @(Model.FareQuotResponse[i].Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.BaggageInformation?.CabinBaggage??"-")
-                                                </td>
-                                            </tr>
-                                        }
-                                        @if ((Model.FareQuotResponse[i].SearchQuery.InfantCount) > 0)
-                                        {
-                                            <tr>
-                                                <td class="">Infant</td>
-                                                <td>
-                                                    @(Model.FareQuotResponse[i].Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.INFANT?.BaggageInformation?.CheckingBaggage??"-")
-                                                </td>
+                                <td class="hidden-480">
+                                    @(Model.FareQuotResponse[i].Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.BaggageInformation?.CabinBaggage??"-")
+                                </td>
+                            </tr>
+                        }
+                        @if ((Model.FareQuotResponse[i].SearchQuery.InfantCount) > 0)
+                        {
+                            <tr>
+                                <td class="">Infant</td>
+                                <td>
+                                    @(Model.FareQuotResponse[i].Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.INFANT?.BaggageInformation?.CheckingBaggage??"-")
+                                </td>
 
-                                                <td class="hidden-480">
-                                                    @(Model.FareQuotResponse[i].Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.INFANT?.BaggageInformation?.CabinBaggage??"-")
-                                                </td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
+                                <td class="hidden-480">
+                                    @(Model.FareQuotResponse[i].Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.INFANT?.BaggageInformation?.CabinBaggage??"-")
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
 
-                        </div>*@
+        </div>*@
 
                     </div>
 
