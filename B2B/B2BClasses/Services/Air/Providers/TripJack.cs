@@ -1573,13 +1573,14 @@ namespace B2BClasses.Services.Air
             }
             else
             {
+                dynamic data = JObject.Parse(HaveResponse.Message);
                 mdlS = new mdlBookingResponse()
                 {
                     ResponseStatus = 100,
                     Error = new mdlError()
                     {
                         Code = 100,
-                        Message = "Unable to Process",
+                        Message = data.errors[0].message??"Unable to Process",
                     }
                 };
             }

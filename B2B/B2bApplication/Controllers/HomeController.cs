@@ -298,7 +298,13 @@ namespace B2bApplication.Controllers
                     var Result=  await _booking.BookingAsync(mdlReq);
                     mdlres.FareQuotResponse.Add(mdl.FareQuotResponse[i]);
                     mdlres.IsSucess.Add(Result.ResponseStatus == 1 ? true : false);
-                    mdlres.BookingId.Add(Result.bookingId);
+                    mdlres.BookingId.Add(Result.ResponseStatus == 1 ?Result.bookingId: Result.Error.Message);
+                    if (!(Result.ResponseStatus == 1))
+                    {
+                        ViewBag.SaveStatus = (int)enmMessageType.Warning;
+                        ViewBag.Message = Result.Error.Message;
+                    }
+
 
                 }
             }
