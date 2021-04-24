@@ -5,21 +5,18 @@
 }
 <div class="widget-box">
     <div class="clearfix form-actions">
-
-
         <div class="col-sm-12">
             @if (ViewBag.JourneyType == 2)
             {
                 <label class="pull-right inline">
                     <small class="muted smaller-90">Border:</small>
-
                     <input id="id-button-borders" type="radio" name="@ViewBag.JourneyType1" value="" class="ace ace-switch ace-switch-5">
                     <span class="lbl middle"></span>
                 </label>
             }
 
-            <div class="col-sm-6">
-                <div class="col-sm-6">
+            <div class="col-sm-7">
+                <div class="col-sm-5">
                     <div class="row">
                         <div class="col-sm-3">
                             <img src="~/AirlinesLogo/@(Model.Segment.FirstOrDefault()?.Airline?.Code).png" />
@@ -37,9 +34,9 @@
                         <button class="btn btn-info" type="Submit" value="Details">Details</button>
                     </div>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-7">
                     <div class="row">
-                        <div class="col-sm-2">
+                        <div class="col-sm-4 align-right">
                             <div class="row">
                                 @ViewData["FlightFrom"]
                             </div>
@@ -50,7 +47,7 @@
                                 @Model.Segment.FirstOrDefault()?.DepartureTime.ToString("dd-MMM")
                             </div>
                         </div>
-                        <div class="col-sm-2 center">
+                        <div class="col-sm-4 center">
                             <div class="row">
                                 <i class="fa fa-arrow-right"></i>
                                 @for (int i = 1; i < Model.Segment.Count; i++)
@@ -62,7 +59,7 @@
                                 @(TimeSpan.FromMinutes( Model.Segment.Sum(p=>p.Duration)).Hours) : @(TimeSpan.FromMinutes( Model.Segment.Sum(p=>p.Duration)).Minutes)
                             </div>
                         </div>
-                        <div class="col-sm-2">
+                        <div class="col-sm-4">
                             <div class="row">
                                 @ViewData["FlightTo"]
                             </div>
@@ -77,13 +74,13 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6">
-                <div class="col-sm-6">
+            <div class="col-sm-4 col-md-offset-1">
+                <div class="col-sm-8">
                     @foreach (var totalpricelist in Model.TotalPriceList)
                     {
                         <div class="row">
                             <input type="radio" name="ResultIndex" value="@totalpricelist.ResultIndex">
-                            <label for="ResultIndex">@((totalpricelist.ADULT.FareComponent.TotalFare+ totalpricelist.CHILD.FareComponent.TotalFare+ totalpricelist.INFANT.FareComponent.TotalFare).ToString("C", nfi))</label><br>
+                            <label for="ResultIndex">@((  (totalpricelist.ADULT.FareComponent.TotalFare*ViewBag.AdultCount) + (totalpricelist.CHILD.FareComponent.TotalFare* ViewBag.ChildCount) + (totalpricelist.INFANT.FareComponent.TotalFare * ViewBag.InfantCount)).ToString("C", nfi))</label><br>
                         </div>
                         <span class="label label-danger arrowed-in">@totalpricelist.ADULT.CabinClass -@totalpricelist.ADULT.ClassOfBooking</span>
                     }
@@ -92,7 +89,7 @@
 
                 @if (ViewBag.JourneyType == 1)
                 {
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <button class="btn btn-success" id="btnBook" type="submit" name="bookFlight" value="Book">Book</button>
                     </div>
                 }

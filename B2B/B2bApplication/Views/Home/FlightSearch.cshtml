@@ -151,6 +151,9 @@
     </div>
     @{
         ViewData["JourneyType"] = ((Model.searchResponse?.Results?.Count ?? 0) == 1) ? 1 : 2;
+        ViewBag.AdultCount = Model.FlightSearchWraper.AdultCount;
+        ViewBag.ChildCount = Model.FlightSearchWraper.ChildCount;
+        ViewBag.InfantCount = Model.FlightSearchWraper.InfantCount;
     }
 
     @if ((Model.searchResponse?.Results?.Count ?? 0) == 1)

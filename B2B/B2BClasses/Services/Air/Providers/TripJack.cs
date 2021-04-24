@@ -155,7 +155,11 @@ namespace B2BClasses.Services.Air
                     }
                     else
                     {
-                        response.Results.Add(tempRe.Results.FirstOrDefault());
+                        if (tempRe.Results != null)
+                        {
+                            response.Results.Add(tempRe.Results.FirstOrDefault());
+                        }
+                        
                     }
                 }
             }
@@ -1508,13 +1512,13 @@ namespace B2BClasses.Services.Air
                     emails = request.deliveryInfo?.emails,
                 },
                 travellerInfo= request.travellerInfo.Select(p=>new Travellerinfo {
-                    ti=p.Title,fN=p.FirstName,
+                    ti=p.Title.ToUpper(),fN=p.FirstName,
                     lN=p.LastName,
                     dob=p.dob.HasValue? p.dob.Value.ToString("yyyy-MM-dd"):null,
                     eD=p.PassportExpiryDate.ToString("yyyy-MM-dd"),
                     pid=p.PassportIssueDate.ToString("yyyy-MM-dd"),
                     pNum=p.pNum,
-                    pt=p.passengerType.ToString(),
+                    pt=p.passengerType.ToString().Trim().ToUpper(),
                     ssrBaggageInfos= p.ssrBaggageInfos==null?null:( new SSRS() {key= p.ssrBaggageInfos.key, value= p.ssrBaggageInfos.value}),
                     ssrSeatInfos = p.ssrSeatInfos == null ? null : (new SSRS() { key = p.ssrSeatInfos.key, value = p.ssrSeatInfos.value }),
                     ssrMealInfos = p.ssrMealInfos == null ? null : (new SSRS() { key = p.ssrMealInfos.key, value = p.ssrMealInfos.value }),
@@ -1532,6 +1536,8 @@ namespace B2BClasses.Services.Air
 
             mdlBookingResponse mdlS = null;
             BookingResponse mdl = null;
+            //set the Upper case in pax type
+           
 
             string tboUrl = _config["TripJack:API:Book"];
             string jsonString = System.Text.Json.JsonSerializer.Serialize(BookingRequestMap(request));

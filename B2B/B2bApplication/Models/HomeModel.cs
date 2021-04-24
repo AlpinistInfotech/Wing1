@@ -141,6 +141,12 @@ namespace B2bApplication.Models
                     InfantCount--;
                 }
             }
+            else
+            {
+                this.AdultCount= FareQuotResponse?.FirstOrDefault()?.SearchQuery?.AdultCount ?? 0;
+                this.ChildCount = FareQuotResponse?.FirstOrDefault()?.SearchQuery?.ChildCount ?? 0;
+                this.InfantCount = FareQuotResponse?.FirstOrDefault()?.SearchQuery?.InfantCount ?? 0;
+            }
 
             
             SetFareQuoteCondtion();

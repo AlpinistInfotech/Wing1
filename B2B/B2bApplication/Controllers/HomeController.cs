@@ -160,7 +160,6 @@ namespace B2bApplication.Controllers
                 {
                     ViewBag.SaveStatus = (int)enmSaveStatus.danger;
                     ViewBag.Message = _setting.GetErrorMessage(enmMessage.NoFlightDataFound);
-
                 }
             }
            
@@ -234,7 +233,7 @@ namespace B2bApplication.Controllers
             if (!(mdl == null || mdl.FareQuoteRequest == null))
             {
                 mdl.FareQuotResponse.AddRange(await _booking.FareQuoteAsync(mdl.FareQuoteRequest));
-                mdl.FareQuotResponse.Any(p => p.IsPriceChanged);
+                IsPriceChanged = mdl.FareQuotResponse.Any(p => p.IsPriceChanged);
                 if (IsPriceChanged)
                 {
                     var s = JsonConvert.SerializeObject(mdl);
@@ -245,8 +244,9 @@ namespace B2bApplication.Controllers
                     //return FlightReview(mdl, enmMessageType.Warning, _setting.GetErrorMessage(enmMessage.FlightPriceChanged));
                     //return RedirectToAction("FlightReview",routeValues:{ Controller:  "Home", new { mdl = mdl, MessageType = (int)enmMessageType.Warning, Message = _setting.GetErrorMessage(enmMessage.FlightPriceChanged) }});
                 }
+                double NewFare= mdl.FareQuotResponse.Sum(p => p.TotalPriceInfo?.TotalFare)??0;
 
-                if (mdl.FareQuotResponse.Sum(p => p.TotalPriceInfo?.TotalFare) > mdl.TotalFare)
+                if (NewFare != mdl.TotalFare)
                 {
 
                     var s = JsonConvert.SerializeObject(mdl);
