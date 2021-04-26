@@ -11,7 +11,7 @@ using System.ComponentModel.DataAnnotations;
 namespace B2bApplication.Models
 {
 
-    public class mdlCustomer
+    public class mdlAddCustomer
     {
         [Display(Name = "Customer Type")]
         public enmCustomerType customerType { get; set; }

@@ -51,10 +51,10 @@ namespace B2bApplication.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        [Authorize(policy: nameof(enmDocumentMaster.Customer))]
-        public IActionResult Customer(enmSaveStatus? _enmSaveStatus, enmMessage? _enmMessage)
+        [Authorize]
+        public IActionResult AddCustomer(enmSaveStatus? _enmSaveStatus, enmMessage? _enmMessage)
         {
-            mdlCustomer mdl = new mdlCustomer();
+            mdlAddCustomer mdl = new mdlAddCustomer();
             if (_enmSaveStatus != null)
             {
                 ViewBag.SaveStatus = (int)_enmSaveStatus.Value;
