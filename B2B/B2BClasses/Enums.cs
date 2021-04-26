@@ -125,6 +125,9 @@ namespace B2BClasses.Services.Enums
         Report = 5,
         [Module(EnmApplication: enmApplication.B2B, IsArea: false, DisplayOrder: 10, Name: "Setting", Description: "", Icon: "menu-icon fa fa-cog", AreaName: "", CntrlName: "Setting")]
         Setting = 10,
+
+        [Module(EnmApplication: enmApplication.B2B, IsArea: false, DisplayOrder: 10, Name: "Master", Description: "", Icon: "menu-icon fa fa-cog", AreaName: "", CntrlName: "Master")]
+        Master = 11,
     }
     public enum enmSubModule : int
     {
@@ -182,6 +185,12 @@ namespace B2BClasses.Services.Enums
         [Document(EnmModule: enmModule.Setting, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
             DisplayOrder: 3, Name: "IP Filter", Description: "Filter The IP of Customer", Icon: "far fa-circle nav-icon", ActionName: "IPFilter")]
         IP_Filter = 103,
+
+
+        [Document(EnmModule: enmModule.Master, DocumentType: enmDocumentType.Create | enmDocumentType.DisplayMenu,
+    DisplayOrder: 1, Name: "Customer", Description: "Customer Master", Icon: "far fa-circle nav-icon", ActionName: "/Customer/Customer")]
+        Customer = 111,
+
     }
 
 

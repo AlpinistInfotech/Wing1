@@ -1,0 +1,125 @@
+﻿@model mdlCustomer
+@using B2BClasses.Services.Enums
+@{
+    ViewData["Title"] = enmDocumentMaster.Customer.GetDocumentDetails().Name;
+}
+<div>
+    <div class="row">
+        <div class="col-xs-12">
+            <!-- PAGE CONTENT BEGINS -->
+            <form class="form-horizontal" role="form">
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+
+                            <label asp-for="customerType"></label>
+                            <select asp-for="customerType" class="form-control select2">
+                                @foreach (var data in Enum.GetValues(typeof(enmCustomerType)))
+                                {
+                                    <option value="@(data)">@data.ToString() </option>
+                                }
+                            </select>
+                            <span asp-validation-for="customerType" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+
+                            <label asp-for="CustomerCode"></label>
+                            <input asp-for="CustomerCode" class="form-control" />
+                            <span asp-validation-for="CustomerCode" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="CustomerName"></label>
+                            <input asp-for="CustomerName" class="form-control" />
+                            <span asp-validation-for="CustomerName" class="text-danger"></span>
+
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+
+                            <label asp-for="Email"></label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="MobileNo"></label>
+                            <input asp-for="MobileNo" class="form-control" />
+                            <span asp-validation-for="MobileNo" class="text-danger"></span>
+
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+
+                            <label asp-for="AlternateMobileNo"></label>
+                            <input asp-for="AlternateMobileNo" class="form-control" />
+                            <span asp-validation-for="AlternateMobileNo" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label asp-for="Address"></label>
+                            <input asp-for="Address" class="form-control" />
+                            <span asp-validation-for="Address" class="text-danger"></span>
+
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="clearfix form-actions">
+                    <div class="col-md-offset-3 col-md-9">
+                        <button class="btn btn-info" type="button">
+                            <i class="ace-icon fa fa-check bigger-110"></i>
+                            Submit
+                        </button>
+
+                        &nbsp; &nbsp; &nbsp;
+                        <button class="btn" type="reset">
+                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                            Reset
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+    <script>
+        $(document).ready(function () {
+        bsCustomFileInput.init();
+        });
+    </script>
+}
