@@ -257,7 +257,7 @@ namespace B2bApplication.Controllers
                     var s = JsonConvert.SerializeObject(mdl);
                     TempData["mdl_"] = s;
                     TempData["MessageType"] = (int)enmMessageType.Warning;
-                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.InsufficientWalletBalence);
+                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.InsufficientWalletBalance);
                     return RedirectToAction("FlightReview");
                     
                 }
