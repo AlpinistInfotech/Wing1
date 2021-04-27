@@ -51,8 +51,13 @@ namespace B2BClasses.Database
 
         public DbSet<tblWingMarkupMaster> tblWingMarkupMaster { get; set; }
         public DbSet<tblWingMarkupServiceProvider> tblWingMarkupServiceProvider { get; set; }
+        public DbSet<tblWingMarkupCustomerType> tblWingMarkupCustomerType { get; set; }
         public DbSet<tblWingMarkupCustomerDetails> tblWingMarkupCustomerDetails { get; set; }
         public DbSet<tblWingMarkupPassengerType> tblWingMarkupPassengerType { get; set; }
+        public DbSet<tblWingMarkupFlightClass> tblWingMarkupFlightClass { get; set; }
+        public DbSet<tblWingMarkupAirline> tblWingMarkupAirline { get; set; }
+
+
         public DbSet<tblWingConvenience> tblWingConvenience { get; set; }
         #endregion
 

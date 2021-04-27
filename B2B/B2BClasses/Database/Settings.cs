@@ -8,6 +8,94 @@ using System.Text;
 
 namespace B2BClasses.Database
 {
+
+    #region  ****************** Base Classes ***************************
+
+    public class DbWingMarkupMaster
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        public enmMarkupApplicability Applicability { get; set; }
+        public bool IsAllProvider { get; set; }
+        public bool IsAllCustomerType { get; set; }
+        public bool IsAllCustomer { get; set; }
+        public bool IsAllPessengerType { get; set; }//Applicable For All Pasenger
+        public bool IsAllFlightClass { get; set; }
+        public bool IsAllAirline { get; set; }
+        public enmGender Gender { get; set; }
+        public double MarkupAmt { get; set; }
+        public DateTime EffectiveFromDt { get; set; }
+        public DateTime EffectiveToDt { get; set; }
+        public int CreatedBy { get; set; }
+        public DateTime CreatedDt { get; set; }
+        public bool IsDeleted { get; set; }
+        public int? ModifiedBy { get; set; }
+        public DateTime? ModifiedDt { get; set; }
+    }
+
+    public class DbWingMarkupServiceProvider
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }        
+        public virtual int? MarkupId { get; set; }        
+        public enmServiceProvider ServiceProvider { get; set; }
+    }
+
+    public class DbWingMarkupCustomerType
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }        
+        public virtual int? MarkupId { get; set; }        
+        public enmCustomerType customerType { get; set; }
+    }
+
+    public class DbWingMarkupCustomerDetails
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }        
+        public virtual int? MarkupId { get; set; }        
+        [ForeignKey("tblCustomerMaster")] // Foreign Key here
+        public int? CustomerId { get; set; }
+        public tblCustomerMaster tblCustomerMaster { get; set; }
+    }
+
+    public class DbWingMarkupPassengerType
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }        
+        public virtual int? MarkupId { get; set; }        
+        public enmPassengerType PassengerType { get; set; }
+    }
+
+
+    public class DbWingMarkupFlightClass
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }        
+        public virtual int? MarkupId { get; set; }
+        public string classid { get; set; }
+    }
+
+    public class DbWingMarkupAirline
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }        
+        public virtual int? MarkupId { get; set; }        
+        [ForeignKey("tblAirline")] // Foreign Key here
+        public int? AirlineId { get; set; }
+        public tblAirline tblAirline { get; set; }
+    }
+
+    #endregion
+
+
     public class tblAirlineFareRule
     {
         [Key]
@@ -109,73 +197,52 @@ namespace B2BClasses.Database
         public DateTime? ModifiedDt { get; set; }
     }
 
-    public class tblWingMarkupMaster
+    public class tblWingMarkupMaster: DbWingMarkupMaster
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        public bool IsAllProvider { get; set; }
-        public bool IsAllCustomer { get; set; }
-        public bool IsApplicableOnEachPasenger { get; set; }// Is Markup is applicable on Each Passnger or on Ticket
-        public bool IsAllPessenger { get; set; }//Applicable For All Pasenger
-        public bool IsAllFlightClass { get; set; }
-        public enmGender Gender { get; set; }
-        public double MarkupAmt { get; set; }
-        public DateTime EffectiveFromDt { get; set; }
-        public DateTime EffectiveToDt { get; set; }
-        public int CreatedBy { get; set; }
-        public DateTime CreatedDt { get; set; }
-        public bool IsDeleted { get; set; }
-        public int? ModifiedBy { get; set; }
-        public DateTime? ModifiedDt { get; set; }
+        
+    }
+    public class tblWingMarkupServiceProvider:DbWingMarkupServiceProvider
+    {   
+        [ForeignKey("tblWingMarkupMaster")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingMarkupMaster tblWingMarkupMaster { get; set; }        
+    }
+    public class tblWingMarkupCustomerType: DbWingMarkupCustomerType
+    {
+        [ForeignKey("tblWingMarkupMaster")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingMarkupMaster tblWingMarkupMaster { get; set; }        
+    }
+    public class tblWingMarkupCustomerDetails: DbWingMarkupCustomerDetails
+    {
+        [ForeignKey("tblWingMarkupMaster")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingMarkupMaster tblWingMarkupMaster { get; set; }
+        
+    }
+    public class tblWingMarkupPassengerType : DbWingMarkupPassengerType
+    {   
+        [ForeignKey("tblWingMarkupMaster")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingMarkupMaster tblWingMarkupMaster { get; set; }        
     }
 
+    public class tblWingMarkupFlightClass: DbWingMarkupFlightClass
+    {
+        [ForeignKey("tblWingMarkupMaster")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingMarkupMaster tblWingMarkupMaster { get; set; }
+    }
+    public class tblWingMarkupAirline :DbWingMarkupAirline
+    {
+        [ForeignKey("tblWingMarkupMaster")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingMarkupMaster tblWingMarkupMaster { get; set; }    
+    }
     
 
 
-    public class tblWingMarkupServiceProvider
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        [ForeignKey("tblWingMarkupMaster")] // Foreign Key here
-        public int? MarkupId { get; set; }
-        public tblWingMarkupMaster tblWingMarkupMaster { get; set; }
-        public enmServiceProvider ServiceProvider { get; set; }
-    }
-    public class tblWingMarkupCustomerDetails
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        [ForeignKey("tblWingMarkupMaster")] // Foreign Key here
-        public int? MarkupId { get; set; }
-        public tblWingMarkupMaster tblWingMarkupMaster { get; set; }
-        [ForeignKey("tblCustomerMaster")] // Foreign Key here
-        public int? CustomerId { get; set; }
-        public tblCustomerMaster tblCustomerMaster { get; set; }
-    }
-    public class tblWingMarkupPassengerType
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        [ForeignKey("tblWingMarkupMaster")] // Foreign Key here
-        public int? MarkupId { get; set; }
-        public tblWingMarkupMaster tblWingMarkupMaster { get; set; }
-        public enmPassengerType PassengerType { get; set; }
-    }
 
-    public class tblWingMarkupFlightClass
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        [ForeignKey("tblWingMarkupMaster")] // Foreign Key here
-        public int? MarkupId { get; set; }
-        public tblWingMarkupMaster tblWingMarkupMaster { get; set; }
-        public string classid{ get; set; }
-    }
 
     public class tblWingConvenience
     {

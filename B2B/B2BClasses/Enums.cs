@@ -16,6 +16,17 @@ namespace B2BClasses.Services.Enums
         Info = 4,
     }
 
+    public enum enmMarkupApplicability
+    {
+        OnTicket=1,
+        OnPassenger=2,
+        OnBaggageServices=4,
+        OnMealServices = 8,
+        OnSeatServices=16,
+        OnExtraService=32
+
+    }
+
     public enum enmMessage
     {
         NoFlightDataFound,
