@@ -195,9 +195,6 @@ namespace B2bApplication.Controllers
         public async Task<IActionResult> FlightReview(mdlFlightReview mdl)
         {
             int CustomerId = 1;
-
-           
-
             _booking.CustomerId = CustomerId;
             mdl.FareQuotResponse = new List<mdlFareQuotResponse>();
             mdl.FareRule = new List<mdlFareRuleResponse>();
@@ -240,9 +237,7 @@ namespace B2bApplication.Controllers
                     TempData["mdl_"] = s;
                     TempData["MessageType"] = (int)enmMessageType.Warning;
                     TempData["Message"] = _setting.GetErrorMessage(enmMessage.FlightPriceChanged);
-                    return RedirectToAction("FlightReview");
-                    //return FlightReview(mdl, enmMessageType.Warning, _setting.GetErrorMessage(enmMessage.FlightPriceChanged));
-                    //return RedirectToAction("FlightReview",routeValues:{ Controller:  "Home", new { mdl = mdl, MessageType = (int)enmMessageType.Warning, Message = _setting.GetErrorMessage(enmMessage.FlightPriceChanged) }});
+                    return RedirectToAction("FlightReview");                    
                 }
                 double NewFare= mdl.FareQuotResponse.Sum(p => p.TotalPriceInfo?.TotalFare)??0;
 
@@ -254,9 +249,6 @@ namespace B2bApplication.Controllers
                     TempData["MessageType"] = (int)enmMessageType.Warning;
                     TempData["Message"] = _setting.GetErrorMessage(enmMessage.FlightPriceChanged);
                     return RedirectToAction("FlightReview");
-
-                    //return FlightReview(mdl, enmMessageType.Warning, _setting.GetErrorMessage(enmMessage.FlightPriceChanged));
-                    //return RedirectToAction("FlightReview", "Home", new { mdl = mdl, MessageType = (int)enmMessageType.Warning, Message = _setting.GetErrorMessage(enmMessage.FlightPriceChanged) });
                 }
                 customerWallet.CustomerId = CustomerId;
                 double Walletbalence=await customerWallet.GetBalenceAsync();
@@ -267,9 +259,7 @@ namespace B2bApplication.Controllers
                     TempData["MessageType"] = (int)enmMessageType.Warning;
                     TempData["Message"] = _setting.GetErrorMessage(enmMessage.InsufficientWalletBalance);
                     return RedirectToAction("FlightReview");
-
-                    //return FlightReview(mdl, enmMessageType.Warning, _setting.GetErrorMessage(enmMessage.InsufficientWalletBalence));
-                    //return RedirectToAction("FlightReview", "Home", new { mdl = mdl, MessageType = (int)enmMessageType.Warning, Message = _setting.GetErrorMessage(enmMessage.InsufficientWalletBalence) });
+                    
                 }
                 else
                 {

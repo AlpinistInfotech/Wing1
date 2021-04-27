@@ -52,21 +52,25 @@ namespace B2bApplication.Models
             InfantTotalBaseFare = FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.INFANT?.FareComponent?.BaseFare ?? 0).Sum();
             if (AdultCount > 0)
             {
-                AdultBaseFare = AdultTotalBaseFare / AdultCount;
+                AdultBaseFare = AdultTotalBaseFare ;
+                AdultTotalBaseFare = AdultBaseFare * AdultCount;
             }
             if (ChildCount > 0)
             {
-                ChildBaseFare = ChildTotalBaseFare / ChildCount;
+                ChildBaseFare = ChildTotalBaseFare ;
+                ChildTotalBaseFare = ChildBaseFare * ChildCount;
             }
             if (InfantCount > 0)
             {
-                InfantBaseFare = InfantTotalBaseFare / InfantCount;
+                InfantBaseFare = InfantTotalBaseFare ;
+                InfantTotalBaseFare = InfantBaseFare * InfantBaseFare;
             }
-            TotalBaseFare = AdultBaseFare + ChildBaseFare + InfantBaseFare;
+            TotalBaseFare = AdultTotalBaseFare + ChildTotalBaseFare + InfantTotalBaseFare;
+
             double AdultTotalFare = FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.FareComponent?.TotalFare ?? 0).Sum();
             double ChildTotalFare = FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.FareComponent?.TotalFare ?? 0).Sum();
             double InfantTotalFare = FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.INFANT?.FareComponent?.TotalFare ?? 0).Sum();
-            TotalFare = AdultTotalFare + ChildTotalFare + InfantTotalFare;
+            TotalFare = (AdultTotalFare* AdultCount) + (ChildTotalFare * ChildCount)+ ( InfantTotalFare * InfantCount);
             FeeSurcharge = TotalFare - TotalBaseFare;
             OtherCharge = 0;
             NetFare = TotalFare + OtherCharge;
