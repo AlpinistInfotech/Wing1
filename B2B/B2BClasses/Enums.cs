@@ -21,7 +21,9 @@ namespace B2BClasses.Services.Enums
         NoFlightDataFound,
         PassengerLimitExceed,
         FlightPriceChanged,
-        InsufficientWalletBalence
+        InsufficientWalletBalance,
+        SaveSuccessfully,
+        UpdateSuccessfully
     }
 
 

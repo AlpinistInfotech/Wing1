@@ -22,44 +22,67 @@ namespace B2bApplication.Controllers
     {
         private readonly ILogger<CustomerController> _logger;
         private readonly DBContext _context;
-        private readonly IBooking _booking;
         private readonly ISettings _setting;
-        public CustomerController(ILogger<CustomerController> logger, DBContext context, IBooking booking,
-            ISettings setting
-            )
+        int _userid = 1;
+        public CustomerController(ILogger<CustomerController> logger, DBContext context, ISettings setting)
         {
             _context = context;
             _logger = logger;
             _setting = setting;
-            _booking = booking;
         }
 
+        
+        
         [Authorize]
-        public IActionResult Index()
+        public IActionResult AddCustomer()
         {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        [Authorize]
-        public IActionResult AddCustomer(enmSaveStatus? _enmSaveStatus, enmMessage? _enmMessage)
-        {
+            dynamic messagetype = TempData["MessageType"];
             mdlAddCustomer mdl = new mdlAddCustomer();
-            if (_enmSaveStatus != null)
+            if (messagetype != null)
             {
-                ViewBag.SaveStatus = (int)_enmSaveStatus.Value;
-                ViewBag.Message = _enmMessage?.GetDescription();
+
+                ViewBag.SaveStatus = (int)messagetype;
+                ViewBag.Message = TempData["Message"];
+                
             }
+
+            return View(mdl);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> AddCustomerAsync(mdlAddCustomer mdl)
+        {
+            if (ModelState.IsValid)
+            {
+                
+                {
+                    _context.tblCustomerMaster.Add(new tblCustomerMaster
+                    {
+                        Code = mdl.CustomerCode,
+                        CustomerName = mdl.CustomerName,
+                        CustomerType=mdl.customerType,
+                        Address=mdl.Address,
+                        ContactNo=mdl.MobileNo,
+                        AlternateNo=mdl.AlternateMobileNo,
+                        Email=mdl.Email,
+                        CreatedBy=_userid,
+                        CreatedDt=DateTime.Now,
+                        CreditBalence=0,
+                        WalletBalence=0,
+                        IsActive=true,
+                    });
+                }
+
+                await _context.SaveChangesAsync();
+
+                TempData["MessageType"] = (int)enmMessageType.Success;
+                TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
+
+                return RedirectToAction("AddCustomer");
+            }
+
+
 
             return View(mdl);
         }
