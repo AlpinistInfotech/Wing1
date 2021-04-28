@@ -23,7 +23,9 @@ namespace B2BClasses.Services.Enums
         FlightPriceChanged,
         InsufficientWalletBalance,
         SaveSuccessfully,
-        UpdateSuccessfully
+        UpdateSuccessfully,
+        RecordAlreadyExists,
+        InvalidData
     }
 
 
@@ -371,6 +373,13 @@ namespace B2BClasses.Services.Enums
         Report = 16,
         DisplayMenu = 32,        
 
+    }
+
+    public enum enmStatus 
+    {
+        Active = 1,
+        DeActive = 2,
+        
     }
     public enum enmDocumentPartitionType : byte
     {

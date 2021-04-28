@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using B2BClasses.Services.Enums;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
 
 namespace B2bApplication.Models
 {
@@ -53,7 +54,32 @@ namespace B2bApplication.Models
 
     }
 
-      
+    public class mdlAddCustomerUser
+    {
+
+        [Required]
+        [MaxLength(10)]
+        [Remote(action: "CustomerCodeValidate", controller: "Customer", ErrorMessage = "Invalid Company Code")]
+        [Display(Name = "Customer Code")]
+        public string CustomerCode { set; get; }
+
+        [Required]
+        [MaxLength(50)]
+        [Display(Name = "User Name")]
+        public string UserName { set; get; }
+
+        
+
+        [Required]
+        [MaxLength(50)]
+        [Display(Name = "Password")]
+        public string Password { get; set; }
+                
+        public bool Status { get; set; }
+
+    }
+
+
 }
 
 
