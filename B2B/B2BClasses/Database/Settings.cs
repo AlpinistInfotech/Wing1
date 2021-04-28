@@ -15,7 +15,7 @@ namespace B2BClasses.Database
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public int Id { get; set; }        
         public enmMarkupApplicability Applicability { get; set; }
         public bool IsAllProvider { get; set; }
         public bool IsAllCustomerType { get; set; }
