@@ -17,6 +17,7 @@ namespace B2BClasses.Database
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }        
         public enmMarkupApplicability Applicability { get; set; }
+        public enmDirectFlight DirectFlight { get; set; }
         public bool IsAllProvider { get; set; }
         public bool IsAllCustomerType { get; set; }
         public bool IsAllCustomer { get; set; }
@@ -24,7 +25,7 @@ namespace B2BClasses.Database
         public bool IsAllFlightClass { get; set; }
         public bool IsAllAirline { get; set; }
         public enmGender Gender { get; set; }
-        public double MarkupAmt { get; set; }
+        public double Amount{ get; set; }
         public DateTime EffectiveFromDt { get; set; }
         public DateTime EffectiveToDt { get; set; }
         public int CreatedBy { get; set; }
@@ -32,6 +33,8 @@ namespace B2BClasses.Database
         public bool IsDeleted { get; set; }
         public int? ModifiedBy { get; set; }
         public DateTime? ModifiedDt { get; set; }
+        [MaxLength(500)]
+        public string Remarks { get; set; }
     }
 
     public class DbWingMarkupServiceProvider
@@ -79,7 +82,7 @@ namespace B2BClasses.Database
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }        
         public virtual int? MarkupId { get; set; }
-        public string classid { get; set; }
+        public enmCabinClass CabinClass { get; set; }
     }
 
     public class DbWingMarkupAirline
@@ -197,10 +200,23 @@ namespace B2BClasses.Database
         public DateTime? ModifiedDt { get; set; }
     }
 
-    public class tblWingMarkupMaster: DbWingMarkupMaster
+    public class tblWingMarkupMaster : DbWingMarkupMaster
     {
-        
+        [InverseProperty("tblWingMarkupMaster")]
+        public ICollection<tblWingMarkupServiceProvider> tblWingMarkupServiceProvider { get; set; }
+        [InverseProperty("tblWingMarkupMaster")]
+        public ICollection<tblWingMarkupCustomerType> tblWingMarkupCustomerType { get; set; }
+        [InverseProperty("tblWingMarkupMaster")]
+        public ICollection<tblWingMarkupCustomerDetails> tblWingMarkupCustomerDetails { get; set; }
+        [InverseProperty("tblWingMarkupMaster")]
+        public ICollection<tblWingMarkupPassengerType> tblWingMarkupPassengerType { get; set; }
+        [InverseProperty("tblWingMarkupMaster")]
+        public ICollection<tblWingMarkupFlightClass> tblWingMarkupFlightClass { get; set; }
+        [InverseProperty("tblWingMarkupMaster")]
+        public ICollection<tblWingMarkupAirline> tblWingMarkupAirline { get; set; }
     }
+
+
     public class tblWingMarkupServiceProvider:DbWingMarkupServiceProvider
     {   
         [ForeignKey("tblWingMarkupMaster")] // Foreign Key here
@@ -244,20 +260,60 @@ namespace B2BClasses.Database
 
 
 
-    public class tblWingConvenience
+    public class tblWingConvenience : DbWingMarkupMaster
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        public double ConvenienceAmt { get; set; }
-        public DateTime EffectiveFromDt { get; set; }
-        public DateTime EffectiveToDt { get; set; }
-        public int CreatedBy { get; set; }
-        public DateTime CreatedDt { get; set; }
-        public bool IsDeleted { get; set; }
-        public int? ModifiedBy { get; set; }
-        public DateTime? ModifiedDt { get; set; }
+        [InverseProperty("tblWingConvenience")]
+        public ICollection<tblWingConvenienceServiceProvider> tblWingConvenienceServiceProvider { get; set; }
+        [InverseProperty("tblWingConvenience")]
+        public ICollection<tblWingConvenienceCustomerType> tblWingConvenienceCustomerType { get; set; }
+        [InverseProperty("tblWingConvenience")]
+        public ICollection<tblWingConvenienceCustomerDetails> tblWingConvenienceCustomerDetails { get; set; }
+        [InverseProperty("tblWingConvenience")]
+        public ICollection<tblWingConveniencePassengerType> tblWingConveniencePassengerType { get; set; }
+        [InverseProperty("tblWingConvenience")]
+        public ICollection<tblWingConvenienceFlightClass> tblWingConvenienceFlightClass { get; set; }
+        [InverseProperty("tblWingConvenience")]
+        public ICollection<tblWingConvenienceAirline> tblWingConvenienceAirline { get; set; }
     }
+    public class tblWingConvenienceServiceProvider : DbWingMarkupServiceProvider
+    {
+        [ForeignKey("tblWingConvenience")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingConvenience tblWingConvenience { get; set; }
+    }
+    public class tblWingConvenienceCustomerType : DbWingMarkupCustomerType
+    {
+        [ForeignKey("tblWingConvenience")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingConvenience tblWingConvenience { get; set; }
+    }
+    public class tblWingConvenienceCustomerDetails : DbWingMarkupCustomerDetails
+    {
+        [ForeignKey("tblWingConvenience")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingConvenience tblWingConvenience { get; set; }
+
+    }
+    public class tblWingConveniencePassengerType : DbWingMarkupPassengerType
+    {
+        [ForeignKey("tblWingConvenience")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingConvenience tblWingConvenience { get; set; }
+    }
+    public class tblWingConvenienceFlightClass : DbWingMarkupFlightClass
+    {
+        [ForeignKey("tblWingConvenience")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingConvenience tblWingConvenience { get; set; }
+    }
+    public class tblWingConvenienceAirline : DbWingMarkupAirline
+    {
+        [ForeignKey("tblWingConvenience")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingConvenience tblWingConvenience { get; set; }
+    }
+
+
 
     public class tblAirline
     {
