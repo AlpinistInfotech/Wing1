@@ -312,7 +312,6 @@ namespace B2bApplication.Controllers
         {
 
             // = new SelectList(mdl.GetBanks(_context, false), "BankId", "BankName", mdl.BankId);
-
             //return View(mdl);
             return View();
         }
