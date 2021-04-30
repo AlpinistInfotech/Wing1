@@ -7,6 +7,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using B2BClasses.Services.Enums;
 using System.ComponentModel.DataAnnotations;
+using B2BClasses.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace B2bApplication.Models
 {
@@ -165,6 +167,18 @@ namespace B2bApplication.Models
         public List<string> BookingId { get; set; }
     }
 
+
+    public class mdlWingMarkupWraper
+    { 
+        public mdlWingMarkup WingMarkup { get; set; }
+        public SelectList _CustomerMaster { get; set; }
+        public SelectList _Airline { get; set; }
+
+        public  List<tblCustomerMaster> CustomerMaster { get; set; }
+        public List<tblAirline> Airline { get; set; }
+        
+
+    }
     
 }
 
