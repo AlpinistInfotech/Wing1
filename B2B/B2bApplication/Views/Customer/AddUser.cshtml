@@ -1,4 +1,5 @@
 ﻿@model mdlAddCustomerUser
+
 @using B2BClasses.Services.Enums
 
 <div>
@@ -11,81 +12,129 @@
 
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="CustomerCode" ></label>
-                            <input asp-for="CustomerCode" class="form-control" placeholder="Customer Code" />
-                            <span asp-validation-for="CustomerCode" class="text-danger"></span>
-
-
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="Status"></label>
-                            <select asp-for="Status" class="form-control select2">
-                                <option value="true">De-Active</option>
-                                <option value="false">Active</option>
+                            <label asp-for="CustomerID"></label>
+                            <select asp-for="CustomerID" class="form-control select2" asp-items="ViewBag.CustomerCodeList">
                             </select>
-                            <span asp-validation-for="Status" class="text-danger"></span>
+                            <span asp-validation-for="CustomerID" class="text-danger"></span>
 
 
                         </div>
                     </div>
 
-
-                </div>
-
-                
-
-
-                <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-2">
                         <div class="form-group">
-                            <label asp-for="UserName"></label>
-                            <input asp-for="UserName" class="form-control" />
-                            <span asp-validation-for="UserName" class="text-danger"></span>
+                            <button class="btn btn-info" type="submit" name="submittype" value="LoadData">Load Data</button>
+                           </div>
+                        </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="Status"></label>
+                                    <select asp-for="Status" class="form-control select2">
+                                        <option value="true">De-Active</option>
+                                        <option value="false">Active</option>
+                                    </select>
+                                    <span asp-validation-for="Status" class="text-danger"></span>
+
+
+                                </div>
+                            </div>
 
 
                         </div>
-                    </div>
 
-                    <div class="col-md-6">
-                        <div class="form-group">
 
-                            <label asp-for="Password"></label>
-                            <input asp-for="Password" class="form-control" />
-                            <span asp-validation-for="Password" class="text-danger"></span>
+
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="UserName"></label>
+                                    <input asp-for="UserName" class="form-control" />
+                                    <span asp-validation-for="UserName" class="text-danger"></span>
+
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+
+                                    <label asp-for="Password"></label>
+                                    <input asp-for="Password" class="form-control" />
+                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                </div>
+                            </div>
+
                         </div>
-                    </div>
-
-                </div>
 
 
 
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="clearfix form-actions">
-                            <div class="col-md-offset-3 col-md-9">
-                                <button class="btn btn-info" type="submit">
-                                    <i class="ace-icon fa fa-check bigger-110"></i>
-                                    Submit
-                                </button>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="clearfix form-actions">
+                                    <div class="col-md-offset-3 col-md-9">
+                                        <button class="btn btn-info" type="submit">
+                                            <i class="ace-icon fa fa-check bigger-110"></i>
+                                            Submit
+                                        </button>
 
-                                &nbsp; &nbsp; &nbsp;
-                                <button class="btn" type="reset">
-                                    <i class="ace-icon fa fa-undo bigger-110"></i>
-                                    Reset
-                                </button>
+                                        &nbsp; &nbsp; &nbsp;
+                                        <button class="btn" type="reset">
+                                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                                            Reset
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
+</form>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-primary card-outline card-outline-tabs">
+
+                <div class="card-body">
+                    <table id="tblUserDetails" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Edit</th>
+                                <th>Code</th>
+                                <th>User Name</th>
+                                <th>Password</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+
+                            @for (int i = 0; i < (Model.UserMasters?.Count??0); i++)
+                            {
+                                <tr>
+
+                                    <td><button class="btn btn-info" type="submit" name="submittype" value="EditData_@Model.UserMasters[i].Id">Edit</button></td>
+                                    <td>@Model.UserMasters[i].Id</td>
+                                    <td>@Model.UserMasters[i].UserName</td>
+                                    <td>@Model.UserMasters[i].Password</td>
+                                    <td>@(Model.UserMasters[i].IsActive==true?"Active":"DeActive")</td>
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
-            </form>
+
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-
-
-    }
+    <script>
+        $(document).ready(function () {
+            $("#tblUserDetails").DataTable({ "ajax": null });
+        });
+    </script>
+}

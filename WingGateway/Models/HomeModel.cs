@@ -60,6 +60,7 @@ namespace WingGateway.Models
         [Required]
         [Display(Name = "Select Bank Name")]
         public int BankId { get; set; }
+        
         [StringLength(11, ErrorMessage = "The {0} must be at most {1} characters long.",MinimumLength =11)]
         [Required]
         [Display(Name = "IFSC Code")]

@@ -42,6 +42,7 @@ namespace WingGateway.Models
         [Display(Name = "TcId")]
         [StringLength(11, ErrorMessage = "The {0} must be at {2} characters long.", MinimumLength = 11)]
         [RegularExpression("[a-zA-Z0-9]*$", ErrorMessage = "Invalid {0}, no special charcter")]
+        
         [Remote(action: "IsSponsorValid", controller: "Account", ErrorMessage = "Invalid Id")]
         public string TcId { get; set; }
     }
