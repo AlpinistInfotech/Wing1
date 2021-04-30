@@ -77,6 +77,7 @@ namespace B2bApplication.Models
                 
         public bool Status { get; set; }
 
+        public int userid { get; set; }
 
         public List<tblCustomerMaster> GetCustomerMaster(DBContext context, bool OnlyActive)
         {
@@ -105,9 +106,9 @@ namespace B2bApplication.Models
 
         }
 
-        public List<tblUserMaster> GetCustomerUserData(DBContext context, int customerid,int userid)
+        public tblUserMaster GetCustomerUserData(DBContext context, int userid)
         {
-            return context.tblUserMaster.Where(p => p.CustomerId == customerid && p.Id == userid).ToList();   
+            return context.tblUserMaster.Where(p => p.Id == userid).FirstOrDefault();   
         }
     }
    

@@ -116,8 +116,10 @@ namespace B2bApplication.Controllers
 
         #region Add Customer User
         [Authorize]
-        public IActionResult AddUser()
+        public IActionResult AddUser(string Id)
         {
+           
+
             dynamic messagetype = TempData["MessageType"];
             mdlAddCustomerUser mdl = new mdlAddCustomerUser();
             if (messagetype != null)
@@ -125,6 +127,23 @@ namespace B2bApplication.Controllers
                 ViewBag.SaveStatus = (int)messagetype;
                 ViewBag.Message = TempData["Message"];
 
+            }
+
+            if (Id != null)
+            {
+                var userdata =  mdl.GetCustomerUserData(_context, Convert.ToInt32(Id));
+
+                if (userdata != null)
+                {
+                    mdl.CustomerID =Convert.ToString( userdata.CustomerId);
+                    mdl.UserName = userdata.UserName;
+                    mdl.Password = userdata.Password;
+                    mdl.Status = userdata.IsActive;
+                    mdl.userid = userdata.Id;
+
+                }
+
+                 mdl.UserMasters = mdl.GetCustomerUserList(_context, true, Convert.ToInt32(mdl.CustomerID));
             }
             ViewBag.CustomerCodeList = new SelectList(mdl.GetCustomerMaster(_context, true).Select(p=> new {Code=p.Id,CustomerName=p.CustomerName+"("+p.Code+")"}), "Code", "CustomerName", mdl.CustomerID);
             return View(mdl);
@@ -144,33 +163,30 @@ namespace B2bApplication.Controllers
 
                 }
 
-               else if (submittype.Contains("EditData_"))
-                {
-                    userid = 0; // need to split 
-                    ViewBag.CustomerCodeList = new SelectList(mdl.GetCustomerUserData(_context, Convert.ToInt32(mdl.CustomerID), userid));
-                    mdl.UserMasters = mdl.GetCustomerUserList(_context, true, Convert.ToInt32(mdl.CustomerID));
 
-                }
                 else
                 {
-                    if (mdl.UserName==null || mdl.UserName=="" )
+                    if (mdl.UserName == null || mdl.UserName == "")
                     {
+                        ViewBag.CustomerCodeList = new SelectList(mdl.GetCustomerMaster(_context, true).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
                         mdl.UserMasters = mdl.GetCustomerUserList(_context, true, Convert.ToInt32(mdl.CustomerID));
                         TempData["MessageType"] = (int)enmMessageType.Error;
                         TempData["Message"] = "Please enter User Name";
                         ViewBag.SaveStatus = (int)TempData["MessageType"];
                         ViewBag.Message = TempData["Message"];
-                        
+
                     }
 
-                  else  if (mdl.Password == null || mdl.Password == "")
+                    else if (mdl.Password == null || mdl.Password == "")
                     {
+                        ViewBag.CustomerCodeList = new SelectList(mdl.GetCustomerMaster(_context, true).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
+
                         mdl.UserMasters = mdl.GetCustomerUserList(_context, true, Convert.ToInt32(mdl.CustomerID));
                         TempData["MessageType"] = (int)enmMessageType.Error;
                         TempData["Message"] = "Please enter Password";
                         ViewBag.SaveStatus = (int)TempData["MessageType"];
                         ViewBag.Message = TempData["Message"];
-                       
+
                     }
 
                     //else if (_context.tblUserMaster.Any(p => p.UserName == mdl.UserName && p.Id!=userid))
@@ -182,60 +198,63 @@ namespace B2bApplication.Controllers
                     //    ViewBag.Message = TempData["Message"];
                     //}
 
-
-                    var ExistingData = _context.tblUserMaster.FirstOrDefault(p => p.UserName == mdl.UserName);
-                    if (ExistingData != null)
+                    else
                     {
-                        if (ExistingData.Id != userid) // already exists
+                        var ExistingData = _context.tblUserMaster.FirstOrDefault(p => p.UserName == mdl.UserName);
+                        if (ExistingData != null)
                         {
-                            mdl.UserMasters = mdl.GetCustomerUserList(_context, true, Convert.ToInt32(mdl.CustomerID));
-                            TempData["MessageType"] = (int)enmMessageType.Warning;
-                            TempData["Message"] = _setting.GetErrorMessage(enmMessage.RecordAlreadyExists);
-                            ViewBag.SaveStatus = (int)TempData["MessageType"];
-                            ViewBag.Message = TempData["Message"];
+                            if (ExistingData.Id != mdl.userid) // already exists
+                            {
+                                ViewBag.CustomerCodeList = new SelectList(mdl.GetCustomerMaster(_context, true).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
+
+                                mdl.UserMasters = mdl.GetCustomerUserList(_context, true, Convert.ToInt32(mdl.CustomerID));
+                                TempData["MessageType"] = (int)enmMessageType.Warning;
+                                TempData["Message"] = _setting.GetErrorMessage(enmMessage.RecordAlreadyExists);
+                                ViewBag.SaveStatus = (int)TempData["MessageType"];
+                                ViewBag.Message = TempData["Message"];
+                            }
+                            else  // update 
+                            {
+                                ExistingData.UserName = mdl.UserName;
+                                ExistingData.Password = mdl.Password;
+                                ExistingData.IsActive = mdl.Status;
+                                _context.tblUserMaster.Update(ExistingData);
+
+                                TempData["MessageType"] = (int)enmMessageType.Success;
+                                TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
+
+                                return RedirectToAction("AddUser");
+                            }
+
+
+
+
                         }
-                        else  // update 
+
+                        else
                         {
-                            ExistingData.UserName = mdl.UserName;
-                            ExistingData.Password = mdl.Password;
-                            ExistingData.IsActive = mdl.Status;
-                            _context.tblUserMaster.Update(ExistingData);
+                            _context.tblUserMaster.Add(new tblUserMaster
+                            {
+                                CustomerId = Convert.ToInt32(mdl.CustomerID),
+                                UserName = mdl.UserName,
+                                Password = mdl.Password,
+                                IsActive = mdl.Status,
+                                CreatedBy = _userid,
+                                CreatedDt = DateTime.Now
+
+                            });
+
+
+                            await _context.SaveChangesAsync();
 
                             TempData["MessageType"] = (int)enmMessageType.Success;
                             TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
 
                             return RedirectToAction("AddUser");
                         }
-
-
-
-
-                    }
-
-                    else
-                    {
-                        _context.tblUserMaster.Add(new tblUserMaster
-                        {
-                            CustomerId = Convert.ToInt32( mdl.CustomerID),
-                            UserName = mdl.UserName,
-                            Password = mdl.Password,
-                            IsActive = mdl.Status,
-                            CreatedBy = _userid,
-                            CreatedDt = DateTime.Now
-
-                        });
-
-
-                        await _context.SaveChangesAsync();
-
-                        TempData["MessageType"] = (int)enmMessageType.Success;
-                        TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
-
-                        return RedirectToAction("AddUser");
                     }
                 }
             }
-
           
             return View(mdl);
         }

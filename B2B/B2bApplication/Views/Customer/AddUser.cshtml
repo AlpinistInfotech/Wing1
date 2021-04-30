@@ -87,6 +87,7 @@
                                 </div>
                             </div>
                         </div>
+                <input type="hidden" asp-for="userid" />
 </form>
         </div>
     </div>
@@ -112,15 +113,18 @@
 
                             @for (int i = 0; i < (Model.UserMasters?.Count??0); i++)
                             {
-                                <tr>
+                            <tr>
+                                <td>
+                                    <a href="@Url.Action()/@Model.UserMasters[i].Id" class="btn btn-info" data-toggle="tooltip" title="Edit Record !">
+                                        Edit
+                                    </a>
+                                    </td>
+                                <td>@Model.UserMasters[i].Id</td>
+                                <td>@Model.UserMasters[i].UserName</td>
+                                <td>@Model.UserMasters[i].Password</td>
+                                <td>@(Model.UserMasters[i].IsActive==true?"Active":"DeActive")</td>
 
-                                    <td><button class="btn btn-info" type="submit" name="submittype" value="EditData_@Model.UserMasters[i].Id">Edit</button></td>
-                                    <td>@Model.UserMasters[i].Id</td>
-                                    <td>@Model.UserMasters[i].UserName</td>
-                                    <td>@Model.UserMasters[i].Password</td>
-                                    <td>@(Model.UserMasters[i].IsActive==true?"Active":"DeActive")</td>
-
-                                </tr>
+                            </tr>
                             }
                         </tbody>
                     </table>
