@@ -8,6 +8,12 @@ using System.Text;
 namespace B2BClasses.Services.Enums
 {
 
+    public enum enmDirectFlight
+    {
+        DirectFlight=1,
+        ConnectFlight=2
+    }
+
     public enum enmMessageType
     {
         Success = 1,
@@ -72,6 +78,7 @@ namespace B2BClasses.Services.Enums
 
     public enum enmServiceProvider
     {
+        None=0,
         TBO = 1,
         TripJack = 2,
         Kafila = 3
