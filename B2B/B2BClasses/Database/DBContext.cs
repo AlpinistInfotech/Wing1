@@ -59,6 +59,12 @@ namespace B2BClasses.Database
 
 
         public DbSet<tblWingConvenience> tblWingConvenience { get; set; }
+        public DbSet<tblWingConvenienceServiceProvider> tblWingConvenienceServiceProvider { get; set; }
+        public DbSet<tblWingConvenienceCustomerType> tblWingConvenienceCustomerType { get; set; }
+        public DbSet<tblWingConvenienceCustomerDetails> tblWingConvenienceCustomerDetails { get; set; }
+        public DbSet<tblWingConveniencePassengerType> tblWingConveniencePassengerType { get; set; }
+        public DbSet<tblWingConvenienceFlightClass> tblWingConvenienceFlightClass { get; set; }
+        public DbSet<tblWingConvenienceAirline> tblWingConvenienceAirline { get; set; }
         #endregion
 
         #region ******************* Customer Master ***************************

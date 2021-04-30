@@ -8,6 +8,12 @@ using System.Text;
 namespace B2BClasses.Services.Enums
 {
 
+    public enum enmDirectFlight
+    {
+        DirectFlight=1,
+        ConnectFlight=2
+    }
+
     public enum enmMessageType
     {
         Success = 1,
@@ -34,7 +40,9 @@ namespace B2BClasses.Services.Enums
         FlightPriceChanged,
         InsufficientWalletBalance,
         SaveSuccessfully,
-        UpdateSuccessfully
+        UpdateSuccessfully,
+        RecordAlreadyExists,
+        InvalidData
     }
 
 
@@ -70,6 +78,7 @@ namespace B2BClasses.Services.Enums
 
     public enum enmServiceProvider
     {
+        None=0,
         TBO = 1,
         TripJack = 2,
         Kafila = 3
@@ -382,6 +391,13 @@ namespace B2BClasses.Services.Enums
         Report = 16,
         DisplayMenu = 32,        
 
+    }
+
+    public enum enmStatus 
+    {
+        Active = 1,
+        DeActive = 2,
+        
     }
     public enum enmDocumentPartitionType : byte
     {

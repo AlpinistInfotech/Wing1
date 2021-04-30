@@ -90,12 +90,19 @@ namespace B2BClasses.Services.Air
     public class mdlTotalpricelist
     {
         public string fareIdentifier { get; set; }
+        public double CustomerMarkup { get; set; }
+        public double WingMarkup { get; set; }
+        public double TotalMarkup { get; set; }
         public mdlPassenger ADULT { get; set; }
         public mdlPassenger CHILD { get; set; }
         public mdlPassenger INFANT { get; set; }
         public string ResultIndex { get; set; }
         public string sri { get; set; }
         public List<string> msri { get; set; }
+        public double Convenience { get; set; }
+        public double TotalConvenience { get; set; }
+
+
 
     }
 
@@ -110,6 +117,8 @@ namespace B2BClasses.Services.Air
         public string ClassOfBooking { get; set; }
         public string FareBasis { get; set; }
         public bool IsFreeMeel { get; set; }
+        public double WingMarkup { get; set; }
+        public double Convenience { get; set; }
     }
 
     public class mdlBaggageInformation
