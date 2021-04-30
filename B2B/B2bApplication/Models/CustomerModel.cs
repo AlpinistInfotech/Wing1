@@ -59,26 +59,59 @@ namespace B2bApplication.Models
 
         [Required]
         [MaxLength(10)]
-        [Remote(action: "CustomerCodeValidate", controller: "Customer", ErrorMessage = "Invalid Company Code")]
+        //[Remote(action: "CustomerCodeValidate", controller: "Customer", ErrorMessage = "Invalid Company Code")]
         [Display(Name = "Customer Code")]
-        public string CustomerCode { set; get; }
+        public string CustomerID { set; get; }
 
-        [Required]
+        //[Required]
         [MaxLength(50)]
         [Display(Name = "User Name")]
         public string UserName { set; get; }
 
         
 
-        [Required]
+       // [Required]
         [MaxLength(50)]
         [Display(Name = "Password")]
         public string Password { get; set; }
                 
         public bool Status { get; set; }
 
-    }
+        public int userid { get; set; }
 
+        public List<tblCustomerMaster> GetCustomerMaster(DBContext context, bool OnlyActive)
+        {
+            if (OnlyActive)
+            {
+                return context.tblCustomerMaster.Where(p => p.IsActive).ToList();
+            }
+            else
+            {
+                return context.tblCustomerMaster.ToList();
+            }
+
+        }
+
+        public List<tblUserMaster> UserMasters { get; set; }
+        public List<tblUserMaster> GetCustomerUserList(DBContext context, bool OnlyActive,int customerid)
+        {
+            if (OnlyActive)
+            {
+                return context.tblUserMaster.Where(p => p.IsActive && p.CustomerId == customerid).ToList();
+            }
+            else
+            {
+                return context.tblUserMaster.Where( p => p.CustomerId == customerid).ToList();
+            }
+
+        }
+
+        public tblUserMaster GetCustomerUserData(DBContext context, int userid)
+        {
+            return context.tblUserMaster.Where(p => p.Id == userid).FirstOrDefault();   
+        }
+    }
+   
 
 }
 
