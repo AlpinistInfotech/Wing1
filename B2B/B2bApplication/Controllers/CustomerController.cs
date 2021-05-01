@@ -159,7 +159,7 @@ namespace B2bApplication.Controllers
                 if (submittype == "LoadData")
                 {
                     ViewBag.CustomerCodeList = new SelectList(mdl.GetCustomerMaster(_context, true).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
-                    mdl.UserMasters = mdl.GetCustomerUserList(_context, true, Convert.ToInt32(mdl.CustomerID));
+                    mdl.UserMasters = mdl.GetCustomerUserList(_context, false, Convert.ToInt32(mdl.CustomerID));
 
                 }
 
@@ -169,7 +169,7 @@ namespace B2bApplication.Controllers
                     if (mdl.UserName == null || mdl.UserName == "")
                     {
                         ViewBag.CustomerCodeList = new SelectList(mdl.GetCustomerMaster(_context, true).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
-                        mdl.UserMasters = mdl.GetCustomerUserList(_context, true, Convert.ToInt32(mdl.CustomerID));
+                        mdl.UserMasters = mdl.GetCustomerUserList(_context, false, Convert.ToInt32(mdl.CustomerID));
                         TempData["MessageType"] = (int)enmMessageType.Error;
                         TempData["Message"] = "Please enter User Name";
                         ViewBag.SaveStatus = (int)TempData["MessageType"];
@@ -181,7 +181,7 @@ namespace B2bApplication.Controllers
                     {
                         ViewBag.CustomerCodeList = new SelectList(mdl.GetCustomerMaster(_context, true).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
 
-                        mdl.UserMasters = mdl.GetCustomerUserList(_context, true, Convert.ToInt32(mdl.CustomerID));
+                        mdl.UserMasters = mdl.GetCustomerUserList(_context, false, Convert.ToInt32(mdl.CustomerID));
                         TempData["MessageType"] = (int)enmMessageType.Error;
                         TempData["Message"] = "Please enter Password";
                         ViewBag.SaveStatus = (int)TempData["MessageType"];
@@ -207,7 +207,7 @@ namespace B2bApplication.Controllers
                             {
                                 ViewBag.CustomerCodeList = new SelectList(mdl.GetCustomerMaster(_context, true).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
 
-                                mdl.UserMasters = mdl.GetCustomerUserList(_context, true, Convert.ToInt32(mdl.CustomerID));
+                                mdl.UserMasters = mdl.GetCustomerUserList(_context, false, Convert.ToInt32(mdl.CustomerID));
                                 TempData["MessageType"] = (int)enmMessageType.Warning;
                                 TempData["Message"] = _setting.GetErrorMessage(enmMessage.RecordAlreadyExists);
                                 ViewBag.SaveStatus = (int)TempData["MessageType"];
@@ -221,7 +221,7 @@ namespace B2bApplication.Controllers
                                 _context.tblUserMaster.Update(ExistingData);
 
                                 TempData["MessageType"] = (int)enmMessageType.Success;
-                                TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
+                                TempData["Message"] = _setting.GetErrorMessage(enmMessage.UpdateSuccessfully);
 
                                 return RedirectToAction("AddUser");
                             }

@@ -74,12 +74,13 @@ namespace B2bApplication.Models
         [MaxLength(50)]
         [Display(Name = "Password")]
         public string Password { get; set; }
-                
-        public bool Status { get; set; }
+
+        public bool Status { get; set; } = true;
 
         public int userid { get; set; }
 
         public List<tblCustomerMaster> GetCustomerMaster(DBContext context, bool OnlyActive)
+        
         {
             if (OnlyActive)
             {
