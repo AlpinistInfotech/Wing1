@@ -311,8 +311,7 @@ namespace B2bApplication.Controllers
         public async Task<IActionResult> WingMarkup(string Id)
         {
 
-            // = new SelectList(mdl.GetBanks(_context, false), "BankId", "BankName", mdl.BankId);
-            //return View(mdl);
+            
             return View();
         }
 
