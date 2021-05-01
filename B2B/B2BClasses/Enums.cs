@@ -207,6 +207,9 @@ namespace B2BClasses.Services.Enums
         [Document(EnmModule: enmModule.Setting, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
             DisplayOrder: 3, Name: "IP Filter", Description: "Filter The IP of Customer", Icon: "far fa-circle nav-icon", ActionName: "IPFilter")]
         IP_Filter = 103,
+        [Document(EnmModule: enmModule.Setting, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.Report | enmDocumentType.DisplayMenu,
+            DisplayOrder: 1, Name: "Wing MarkUp", Description: "Wing MarkUp", Icon: "far fa-circle nav-icon", ActionName: "/Home/WingMarkup")]
+        WingMarkup = 104,
 
 
         [Document(EnmModule: enmModule.Master, DocumentType: enmDocumentType.Create | enmDocumentType.DisplayMenu,

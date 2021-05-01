@@ -171,12 +171,94 @@ namespace B2bApplication.Models
     public class mdlWingMarkupWraper
     { 
         public mdlWingMarkup WingMarkup { get; set; }
-        public SelectList _CustomerMaster { get; set; }
-        public SelectList _Airline { get; set; }
+        public MultiSelectList _CustomerMaster { get; set; }
+        public MultiSelectList _Airline { get; set; }
+        public MultiSelectList _CustomerType { get; set; }
+        public MultiSelectList _ServiceProvider { get; set; }
+        public MultiSelectList _PassengerType { get; set; }
+        public MultiSelectList _CabinClass { get; set; }
 
-        public  List<tblCustomerMaster> CustomerMaster { get; set; }
-        public List<tblAirline> Airline { get; set; }
-        
+        public class BasicData
+        {
+            public int Id { get; set; }
+            public string  Name { get; set; }
+        }
+
+        public void SetDefaultDropDown(DBContext _context)
+        {
+            GetAirline(_context);
+            GetCustomer(_context);
+            GetCustomerType();
+            GetServiceProvider();
+            GetPassengerType();
+            GetCabinClass();
+        }
+
+        protected void GetAirline(DBContext _context)
+        {
+          _Airline= new MultiSelectList( _context.tblAirline.Where(p => !p.IsDeleted).Select(p => new { AirlineId = p.Id, AirlineName = p.Name + " - " + p.Code }), "AirlineId", "AirlineName", WingMarkup?.MarkupAirline);
+        }
+        protected void GetCustomer(DBContext _context)
+        {
+            _CustomerMaster = new MultiSelectList(_context.tblCustomerMaster.Where(p => p.IsActive).Select(p => new { CustomerId = p.Id, CustomerName = p.CustomerName + " - " + p.Code }), "CustomerId", "CustomerName", WingMarkup?.MarkupCustomerDetail);
+        }
+        protected void GetCustomerType()
+        {
+            List<BasicData> bd = new List<BasicData>();
+            var temps=Enum.GetValues(typeof(enmCustomerType));
+            foreach (var temp in temps)
+            {
+                bd.Add(new BasicData()
+                {
+                    Id = (int)temp,
+                    Name = ((Enum)temp).GetDescription()?? temp.ToString()
+                });
+            }
+            _CustomerType = new MultiSelectList(bd, "Id", "Name", WingMarkup?.MarkupCustomerType);
+        }
+        protected void GetServiceProvider()
+        {
+            List<BasicData> bd = new List<BasicData>();
+            var temps = Enum.GetValues(typeof(enmServiceProvider));
+            foreach (var temp in temps)
+            {
+                bd.Add(new BasicData()
+                {
+                    Id = (int)temp,
+                    Name = ((Enum)temp).GetDescription() ?? temp.ToString()
+                });
+            }
+            _ServiceProvider = new MultiSelectList(bd, "Id", "Name", WingMarkup?.MarkupServiceProvider);
+        }
+        protected void GetPassengerType()
+        {
+            List<BasicData> bd = new List<BasicData>();
+            var temps = Enum.GetValues(typeof(enmPassengerType));
+            foreach (var temp in temps)
+            {
+                bd.Add(new BasicData()
+                {
+                    Id = (int)temp,
+                    Name = ((Enum)temp).GetDescription() ?? temp.ToString()
+                });
+            }
+            _PassengerType = new MultiSelectList(bd, "Id", "Name", WingMarkup?.MarkupPassengerType);
+        }
+        protected void GetCabinClass()
+        {
+            List<BasicData> bd = new List<BasicData>();
+            var temps = Enum.GetValues(typeof(enmCabinClass));
+            foreach (var temp in temps)
+            {
+                bd.Add(new BasicData()
+                {
+                    Id = (int)temp,
+                    Name = ((Enum)temp).GetDescription() ?? temp.ToString()
+                });
+            }
+            _PassengerType = new MultiSelectList(bd, "Id", "Name", WingMarkup?.MarkupCabinClass);
+        }
+
 
     }
     

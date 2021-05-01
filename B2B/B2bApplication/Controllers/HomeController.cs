@@ -15,6 +15,7 @@ using B2BClasses.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace B2bApplication.Controllers
 {
@@ -308,11 +309,11 @@ namespace B2bApplication.Controllers
         
         
         [Authorize]
-        public async Task<IActionResult> WingMarkup(string Id)
+        public async Task<IActionResult> WingMarkup()
         {
-
-            
-            return View();
+            mdlWingMarkupWraper mdl = new mdlWingMarkupWraper();
+            mdl.SetDefaultDropDown(_context);
+            return View(mdl);
         }
 
 

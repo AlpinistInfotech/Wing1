@@ -18,7 +18,7 @@ namespace B2BClasses.Models
         public enmMarkupApplicability Applicability { get; set; }
         [Display(Name = "Flight Type")]
         public enmDirectFlight DirectFlight { get; set; }
-        [Display(Name = "Provider")]
+        [Display(Name = "Service Provider")]
         public bool IsAllProvider { get; set; }        
         [Display(Name = "Customer Type")]
         public bool IsAllCustomerType { get; set; }        
