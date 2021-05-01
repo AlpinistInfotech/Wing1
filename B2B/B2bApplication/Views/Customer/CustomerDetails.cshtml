@@ -1,0 +1,95 @@
+﻿@model mdlAddCustomer
+
+@using B2BClasses.Services.Enums
+
+<div>
+    <div class="row">
+        <div class="col-md-12">
+            <!-- PAGE CONTENT BEGINS -->
+            <form action="@Url.Action()" method="post">
+
+                <div class="row">
+
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <label asp-for="Status"></label>
+                            <select asp-for="Status" class="form-control select2">
+
+                                <option value="true">Active</option>
+                                <option value="false">All</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <button class="btn btn-info" type="submit" name="submittype" value="LoadData">Load Data</button>
+                           </div>
+                        </div>
+                           
+                        </div>
+
+</form>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-primary card-outline card-outline-tabs">
+
+                <div class="card-body">
+                    <table id="tblCustomerDetails" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Edit</th>
+                                <th>Customer Type</th>
+                                <th>Customer Code</th>
+                                <th>Customer Name</th>
+                                <th>Mobile</th>
+                                <th>Alternate Mobile</th>
+                                <th>Email</th>
+                                <th>Address</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+
+                            @for (int i = 0; i < (Model.CustomerMasters?.Count??0); i++)
+                            {
+                            <tr>
+                                <td>
+                                    <a href="/Customer/AddCustomer/@Model.CustomerMasters[i].Id" class="btn btn-info" data-toggle="tooltip" title="Edit Record !">
+                                        Edit
+                                    </a>
+                                </td>
+                                <td>@Model.CustomerMasters[i].CustomerType</td>
+                                <td>@Model.CustomerMasters[i].Code</td>
+                                <td>@Model.CustomerMasters[i].CustomerName</td>
+                                <td>@Model.CustomerMasters[i].ContactNo</td>
+                                <td>@Model.CustomerMasters[i].AlternateNo</td>
+                                <td>@Model.CustomerMasters[i].Email</td>
+                                <td>@Model.CustomerMasters[i].Address</td>
+                                <td>@(Model.CustomerMasters[i].IsActive==true?"Active":"DeActive")</td>
+
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#tblCustomerDetails").DataTable({ "ajax": null });
+        });
+    </script>
+}
