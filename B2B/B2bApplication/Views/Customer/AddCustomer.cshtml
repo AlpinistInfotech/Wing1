@@ -84,17 +84,31 @@
 
 
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="Address"></label>
                             <input asp-for="Address" class="form-control" />
                             <span asp-validation-for="Address" class="text-danger"></span>
 
                         </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Status"></label>
+                                <select asp-for="Status" class="form-control select2">
+
+                                    <option value="true">Active</option>
+                                    <option value="false">De-Active</option>
+                                </select>
+                                <span asp-validation-for="Status" class="text-danger"></span>
+                                </div>
+
+                            </div>
+                      
+
+
                     </div>
-
-
-                </div>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="clearfix form-actions">
@@ -113,7 +127,8 @@
                         </div>
                     </div>
                 </div>
-</form>
+                <input type="hidden" asp-for="customerid" />
+            </form>
         </div>
     </div>
 </div>

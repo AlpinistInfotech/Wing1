@@ -51,7 +51,15 @@ namespace B2bApplication.Models
         [DataType(DataType.PhoneNumber)]
         [RegularExpression("^[0-9]{10}$", ErrorMessage = "Invalid {0}")]
         public string AlternateMobileNo { get; set; }
+        public bool Status { get; set; } = true;
 
+        public int customerid { get; set; }
+        public List<tblCustomerMaster> CustomerMasters { get; set; }
+
+        public tblCustomerMaster GetCustomerData(DBContext context, int customerid)
+        {
+            return context.tblCustomerMaster.Where(p => p.Id == customerid).FirstOrDefault();
+        }
     }
 
     public class mdlAddCustomerUser
@@ -68,8 +76,7 @@ namespace B2bApplication.Models
         [Display(Name = "User Name")]
         public string UserName { set; get; }
 
-        
-
+       
        // [Required]
         [MaxLength(50)]
         [Display(Name = "Password")]
@@ -79,16 +86,22 @@ namespace B2bApplication.Models
 
         public int userid { get; set; }
 
-        public List<tblCustomerMaster> GetCustomerMaster(DBContext context, bool OnlyActive)
-        
+        public List<tblCustomerMaster> GetCustomerMaster(DBContext context, bool OnlyActive, int customerid)
         {
-            if (OnlyActive)
+            if (customerid > 0)
             {
-                return context.tblCustomerMaster.Where(p => p.IsActive).ToList();
+                return context.tblCustomerMaster.Where(p => p.Id==customerid).ToList();
             }
             else
             {
-                return context.tblCustomerMaster.ToList();
+                if (OnlyActive)
+                {
+                    return context.tblCustomerMaster.Where(p => p.IsActive).ToList();
+                }
+                else
+                {
+                    return context.tblCustomerMaster.ToList();
+                }
             }
 
         }

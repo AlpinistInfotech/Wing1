@@ -51,7 +51,7 @@ namespace B2bApplication.Controllers
 
         #region Add Customer        
         [Authorize]
-        public IActionResult AddCustomer()
+        public IActionResult AddCustomer(string Id)
         {
             dynamic messagetype = TempData["MessageType"];
             mdlAddCustomer mdl = new mdlAddCustomer();
@@ -61,9 +61,27 @@ namespace B2bApplication.Controllers
                 ViewBag.Message = TempData["Message"];
                 
             }
-            
-     
-            return View(mdl);
+
+            if (Id != null)
+            {
+                
+                var userdata = mdl.GetCustomerData(_context,Convert.ToInt32(Id));
+
+                if (userdata != null)
+                {
+                    mdl.CustomerCode = userdata.Code;
+                    mdl.CustomerName = userdata.CustomerName;
+                    mdl.customerType = userdata.CustomerType;
+                    mdl.Address = userdata.Address;
+                    mdl.MobileNo = userdata.ContactNo;
+                    mdl.AlternateMobileNo = userdata.AlternateNo;
+                    mdl.Email = userdata.Email;
+                    mdl.customerid = userdata.Id;
+                    mdl.Status = userdata.IsActive;
+
+                }
+            }
+                return View(mdl);
         }
 
         [HttpPost]
@@ -72,14 +90,46 @@ namespace B2bApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (_context.tblCustomerMaster.Any(p => p.Code == mdl.CustomerCode))
+                //if (_context.tblCustomerMaster.Any(p => p.Code == mdl.CustomerCode))
+                //{
+                //    TempData["MessageType"] = (int)enmMessageType.Warning;
+                //    TempData["Message"] = _setting.GetErrorMessage(enmMessage.RecordAlreadyExists);
+                //}
+
+                var ExistingData = _context.tblCustomerMaster.FirstOrDefault(p => p.Code == mdl.CustomerCode);
+                if (ExistingData != null)
                 {
-                    TempData["MessageType"] = (int)enmMessageType.Warning;
-                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.RecordAlreadyExists);
+                    if (ExistingData.Id != mdl.customerid) // already exists
+                    {
+                        TempData["MessageType"] = (int)enmMessageType.Warning;
+                        TempData["Message"] = _setting.GetErrorMessage(enmMessage.RecordAlreadyExists);
+                        ViewBag.SaveStatus = (int)TempData["MessageType"];
+                        ViewBag.Message = TempData["Message"];
+                    }
+                    else  // update 
+                    {
+                         
+                        ExistingData.Address = mdl.Address;
+                        ExistingData.ContactNo = mdl.MobileNo;
+                        ExistingData.AlternateNo = mdl.AlternateMobileNo;
+                        ExistingData.Email = mdl.Email;
+                        ExistingData.IsActive = mdl.Status;
+                        
+                         _context.tblCustomerMaster.Update(ExistingData);
+                        await _context.SaveChangesAsync();
+                        TempData["MessageType"] = (int)enmMessageType.Success;
+                        TempData["Message"] = _setting.GetErrorMessage(enmMessage.UpdateSuccessfully);
+
+                        return RedirectToAction("AddCustomer");
+                    }
+
                 }
 
                 else
                 {
+
+
+
                     _context.tblCustomerMaster.Add(new tblCustomerMaster
                     {
                         Code = mdl.CustomerCode,
@@ -93,7 +143,7 @@ namespace B2bApplication.Controllers
                         CreatedDt = DateTime.Now,
                         CreditBalence = 0,
                         WalletBalence = 0,
-                        IsActive = true,
+                        IsActive = mdl.Status,
                     });
 
 
@@ -118,7 +168,6 @@ namespace B2bApplication.Controllers
         [Authorize]
         public IActionResult AddUser(string Id)
         {
-           
 
             dynamic messagetype = TempData["MessageType"];
             mdlAddCustomerUser mdl = new mdlAddCustomerUser();
@@ -145,7 +194,7 @@ namespace B2bApplication.Controllers
 
                  mdl.UserMasters = mdl.GetCustomerUserList(_context, true, Convert.ToInt32(mdl.CustomerID));
             }
-            ViewBag.CustomerCodeList = new SelectList(mdl.GetCustomerMaster(_context, true).Select(p=> new {Code=p.Id,CustomerName=p.CustomerName+"("+p.Code+")"}), "Code", "CustomerName", mdl.CustomerID);
+            ViewBag.CustomerCodeList = new SelectList(mdl.GetCustomerMaster(_context, true,0).Select(p=> new {Code=p.Id,CustomerName=p.CustomerName+"("+p.Code+")"}), "Code", "CustomerName", mdl.CustomerID);
             return View(mdl);
         }
 
@@ -155,10 +204,10 @@ namespace B2bApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                int userid = 0; // need to split 
+                
                 if (submittype == "LoadData")
                 {
-                    ViewBag.CustomerCodeList = new SelectList(mdl.GetCustomerMaster(_context, true).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
+                    ViewBag.CustomerCodeList = new SelectList(mdl.GetCustomerMaster(_context, true,0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
                     mdl.UserMasters = mdl.GetCustomerUserList(_context, false, Convert.ToInt32(mdl.CustomerID));
 
                 }
@@ -168,7 +217,7 @@ namespace B2bApplication.Controllers
                 {
                     if (mdl.UserName == null || mdl.UserName == "")
                     {
-                        ViewBag.CustomerCodeList = new SelectList(mdl.GetCustomerMaster(_context, true).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
+                        ViewBag.CustomerCodeList = new SelectList(mdl.GetCustomerMaster(_context, true,0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
                         mdl.UserMasters = mdl.GetCustomerUserList(_context, false, Convert.ToInt32(mdl.CustomerID));
                         TempData["MessageType"] = (int)enmMessageType.Error;
                         TempData["Message"] = "Please enter User Name";
@@ -179,7 +228,7 @@ namespace B2bApplication.Controllers
 
                     else if (mdl.Password == null || mdl.Password == "")
                     {
-                        ViewBag.CustomerCodeList = new SelectList(mdl.GetCustomerMaster(_context, true).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
+                        ViewBag.CustomerCodeList = new SelectList(mdl.GetCustomerMaster(_context, true,0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
 
                         mdl.UserMasters = mdl.GetCustomerUserList(_context, false, Convert.ToInt32(mdl.CustomerID));
                         TempData["MessageType"] = (int)enmMessageType.Error;
@@ -205,7 +254,7 @@ namespace B2bApplication.Controllers
                         {
                             if (ExistingData.Id != mdl.userid) // already exists
                             {
-                                ViewBag.CustomerCodeList = new SelectList(mdl.GetCustomerMaster(_context, true).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
+                                ViewBag.CustomerCodeList = new SelectList(mdl.GetCustomerMaster(_context, true,0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
 
                                 mdl.UserMasters = mdl.GetCustomerUserList(_context, false, Convert.ToInt32(mdl.CustomerID));
                                 TempData["MessageType"] = (int)enmMessageType.Warning;
@@ -219,7 +268,7 @@ namespace B2bApplication.Controllers
                                 ExistingData.Password = mdl.Password;
                                 ExistingData.IsActive = mdl.Status;
                                 _context.tblUserMaster.Update(ExistingData);
-
+                                await _context.SaveChangesAsync();
                                 TempData["MessageType"] = (int)enmMessageType.Success;
                                 TempData["Message"] = _setting.GetErrorMessage(enmMessage.UpdateSuccessfully);
 
@@ -261,5 +310,34 @@ namespace B2bApplication.Controllers
 
         #endregion
 
+
+        #region  Customer Details
+        [Authorize]
+        public IActionResult CustomerDetails()
+        {
+            dynamic messagetype = TempData["MessageType"];
+            mdlAddCustomer mdl = new mdlAddCustomer();
+            if (messagetype != null)
+            {
+                ViewBag.SaveStatus = (int)messagetype;
+                ViewBag.Message = TempData["Message"];
+
+            }
+            return View(mdl);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> CustomerDetailsAsync(mdlAddCustomer mdl)
+        {
+           
+                mdlAddCustomerUser customeruser = new mdlAddCustomerUser();
+                mdl.CustomerMasters = customeruser.GetCustomerMaster(_context, mdl.Status,0);
+
+        
+            return View(mdl);
+        }
+
+        #endregion
     }
 }
