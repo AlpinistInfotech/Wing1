@@ -256,7 +256,7 @@ namespace B2bApplication.Models
                     Name = ((Enum)temp).GetDescription() ?? temp.ToString()
                 });
             }
-            _PassengerType = new MultiSelectList(bd, "Id", "Name", WingMarkup?.MarkupCabinClass);
+            _CabinClass = new MultiSelectList(bd, "Id", "Name", WingMarkup?.MarkupCabinClass);
         }
 
 

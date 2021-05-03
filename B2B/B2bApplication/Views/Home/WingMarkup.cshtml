@@ -48,6 +48,9 @@
                     <div class="form-group">
 
                         <label asp-for="WingMarkup.IsAllProvider"></label>
+                        &nbsp;
+                        <input type="checkbox" asp-for="WingMarkup.IsAllProvider"> All</input>
+
                         <select asp-for="_ServiceProvider" class="form-control select2" multiple="multiple" asp-items="Model._ServiceProvider">
                         </select>
                         <span asp-validation-for="WingMarkup.Applicability" class="text-danger"></span>
@@ -58,6 +61,8 @@
                     <div class="form-group">
 
                         <label asp-for="WingMarkup.IsAllCustomerType"></label>
+                        &nbsp;
+                        <input type="checkbox" asp-for="WingMarkup.IsAllCustomerType"> All</input>
                         <select asp-for="_CustomerType" class="form-control select2" multiple="multiple" asp-items="Model._CustomerType">
                         </select>
                         <span asp-validation-for="WingMarkup.IsAllCustomerType" class="text-danger"></span>
@@ -72,6 +77,7 @@
                     <div class="form-group">
 
                         <label asp-for="WingMarkup.IsAllCustomer"></label>
+                        <input type="checkbox" asp-for="WingMarkup.IsAllCustomer"> All</input>
                         <select asp-for="_CustomerMaster" class="form-control select2" multiple="multiple" asp-items="Model._CustomerMaster">
                         </select>
                         <span asp-validation-for="WingMarkup.IsAllCustomer" class="text-danger"></span>
@@ -82,6 +88,7 @@
                     <div class="form-group">
 
                         <label asp-for="WingMarkup.IsAllPessengerType"></label>
+                        <input type="checkbox" asp-for="WingMarkup.IsAllPessengerType"> All</input>
                         <select asp-for="_PassengerType" class="form-control select2" multiple="multiple" asp-items="Model._PassengerType">
                         </select>
                         <span asp-validation-for="WingMarkup.IsAllPessengerType" class="text-danger"></span>
@@ -93,6 +100,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label asp-for="WingMarkup.IsAllFlightClass"></label>
+                        <input type="checkbox" asp-for="WingMarkup.IsAllFlightClass"> All</input>
                         <select asp-for="_CabinClass" class="form-control select2" multiple="multiple" asp-items="Model._CabinClass">
                         </select>
                         <span asp-validation-for="WingMarkup.IsAllFlightClass" class="text-danger"></span>
@@ -103,6 +111,7 @@
                     <div class="form-group">
 
                         <label asp-for="WingMarkup.IsAllAirline"></label>
+                        <input type="checkbox" asp-for="WingMarkup.IsAllAirline"> All</input>
                         <select asp-for="_Airline" class="form-control select2" multiple="multiple" asp-items="Model._Airline">
                         </select>
                         <span asp-validation-for="WingMarkup.IsAllAirline" class="text-danger"></span>
@@ -110,6 +119,24 @@
                 </div>
             </div>
 
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="WingMarkup.Amount"></label>                        
+                        <input type="text" asp-for="WingMarkup.Amount" />                         
+                        <span asp-validation-for="WingMarkup.Amount" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="WingMarkup.remarks"></label>
+                        <input type="text" asp-for="WingMarkup.remarks" />
+                        <span asp-validation-for="WingMarkup.remarks" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
 
             <div class="row">
                 <div class="col-md-12">
