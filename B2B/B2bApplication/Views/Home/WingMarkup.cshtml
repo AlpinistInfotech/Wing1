@@ -1,0 +1,185 @@
+﻿@model B2bApplication.Models.mdlWingMarkupWraper
+@using B2BClasses.Services.Enums
+@{
+    ViewData["Title"] = enmDocumentMaster.WingMarkup.GetDocumentDetails().Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- PAGE CONTENT BEGINS -->
+        <form action="@Url.Action()" method="post">
+
+            <input type="hidden" asp-for="WingMarkup.Id" />
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+
+                        <label asp-for="WingMarkup.Applicability"></label>
+                        <select asp-for="WingMarkup.Applicability" class="form-control select2">
+                            <option value="@(enmMarkupApplicability.OnTicket)"> On Ticket </option>
+                            <option value="@(enmMarkupApplicability.OnPassenger)"> On Passenger</option>
+
+                        </select>
+                        <span asp-validation-for="WingMarkup.Applicability" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+
+                        <label asp-for="WingMarkup.DirectFlight"></label>
+                        <select asp-for="WingMarkup.DirectFlight" class="form-control select2">
+                            <option value="@(enmDirectFlight.ConnectFlight | enmDirectFlight.DirectFlight)"> All </option>
+                            <option value="@(enmDirectFlight.ConnectFlight)"> Connected Flight</option>
+                            <option value="@(enmDirectFlight.DirectFlight)"> Direct Flight</option>
+
+                        </select>
+                        <span asp-validation-for="WingMarkup.DirectFlight" class="text-danger"></span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+
+                        <label asp-for="WingMarkup.IsAllProvider"></label>
+                        &nbsp;
+                        <input type="checkbox" asp-for="WingMarkup.IsAllProvider"> All</input>
+
+                        <select asp-for="_ServiceProvider" class="form-control select2" multiple="multiple" asp-items="Model._ServiceProvider">
+                        </select>
+                        <span asp-validation-for="WingMarkup.Applicability" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+
+                        <label asp-for="WingMarkup.IsAllCustomerType"></label>
+                        &nbsp;
+                        <input type="checkbox" asp-for="WingMarkup.IsAllCustomerType"> All</input>
+                        <select asp-for="_CustomerType" class="form-control select2" multiple="multiple" asp-items="Model._CustomerType">
+                        </select>
+                        <span asp-validation-for="WingMarkup.IsAllCustomerType" class="text-danger"></span>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+
+                        <label asp-for="WingMarkup.IsAllCustomer"></label>
+                        <input type="checkbox" asp-for="WingMarkup.IsAllCustomer"> All</input>
+                        <select asp-for="_CustomerMaster" class="form-control select2" multiple="multiple" asp-items="Model._CustomerMaster">
+                        </select>
+                        <span asp-validation-for="WingMarkup.IsAllCustomer" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+
+                        <label asp-for="WingMarkup.IsAllPessengerType"></label>
+                        <input type="checkbox" asp-for="WingMarkup.IsAllPessengerType"> All</input>
+                        <select asp-for="_PassengerType" class="form-control select2" multiple="multiple" asp-items="Model._PassengerType">
+                        </select>
+                        <span asp-validation-for="WingMarkup.IsAllPessengerType" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="WingMarkup.IsAllFlightClass"></label>
+                        <input type="checkbox" asp-for="WingMarkup.IsAllFlightClass"> All</input>
+                        <select asp-for="_CabinClass" class="form-control select2" multiple="multiple" asp-items="Model._CabinClass">
+                        </select>
+                        <span asp-validation-for="WingMarkup.IsAllFlightClass" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+
+                        <label asp-for="WingMarkup.IsAllAirline"></label>
+                        <input type="checkbox" asp-for="WingMarkup.IsAllAirline"> All</input>
+                        <select asp-for="_Airline" class="form-control select2" multiple="multiple" asp-items="Model._Airline">
+                        </select>
+                        <span asp-validation-for="WingMarkup.IsAllAirline" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="WingMarkup.Amount"></label>                        
+                        <input type="text" asp-for="WingMarkup.Amount" />                         
+                        <span asp-validation-for="WingMarkup.Amount" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="WingMarkup.remarks"></label>
+                        <input type="text" asp-for="WingMarkup.remarks" />
+                        <span asp-validation-for="WingMarkup.remarks" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="clearfix form-actions">
+                        <div class="col-md-offset-3 col-md-9">
+                            <button class="btn btn-info" type="submit">
+                                <i class="ace-icon fa fa-check bigger-110"></i>
+                                Submit
+                            </button>
+
+                            &nbsp; &nbsp; &nbsp;
+                            <button class="btn" type="reset">
+                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+
+    <script type="text/javascript">
+        jQuery(function ($) {
+            $('.select2').select2({ allowClear: true });
+            $('.multiselect').multiselect({
+                enableFiltering: true,
+                enableHTML: true,
+                buttonClass: 'btn btn-white btn-primary',
+                templates: {
+                    button: '<button type="button" class="multiselect dropdown-toggle" data-toggle="dropdown"><span class="multiselect-selected-text"></span> &nbsp;<b class="fa fa-caret-down"></b></button>',
+                    ul: '<ul class="multiselect-container dropdown-menu"></ul>',
+                    filter: '<li class="multiselect-item filter"><div class="input-group"><span class="input-group-addon"><i class="fa fa-search"></i></span><input class="form-control multiselect-search" type="text"></div></li>',
+                    filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default btn-white btn-grey multiselect-clear-filter" type="button"><i class="fa fa-times-circle red2"></i></button></span>',
+                    li: '<li><a tabindex="0"><label></label></a></li>',
+                    divider: '<li class="multiselect-item divider"></li>',
+                    liGroup: '<li class="multiselect-item multiselect-group"><label></label></li>'
+                }
+            });
+
+
+        });
+    </script>
+}
