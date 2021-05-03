@@ -103,7 +103,7 @@
                         <thead>
                             <tr>
                                 <th>Edit</th>
-                                <th>Code</th>
+                                <th>Customer Name (Code)</th>
                                 <th>User Name</th>
                                 <th>Password</th>
                                 <th>Status</th>
@@ -116,11 +116,11 @@
                             {
                             <tr>
                                 <td>
-                                    <a href="@Url.Action()/@Model.UserMasters[i].Id" class="btn btn-info" data-toggle="tooltip" title="Edit Record !">
+                                    <a href="/Customer/AddUser/@Model.UserMasters[i].Id" class="btn btn-info" data-toggle="tooltip" title="Edit Record !">
                                         Edit
                                     </a>
                                     </td>
-                                <td>@Model.UserMasters[i].Id</td>
+                                <td>@Model.UserMasters[i].tblCustomerMaster.CustomerName (@Model.UserMasters[i].tblCustomerMaster.Code)</td>
                                 <td>@Model.UserMasters[i].UserName</td>
                                 <td>@Model.UserMasters[i].Password</td>
                                 <td>@(Model.UserMasters[i].IsActive==true?"Active":"DeActive")</td>

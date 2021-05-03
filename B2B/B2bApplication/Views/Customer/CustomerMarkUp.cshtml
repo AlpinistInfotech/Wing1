@@ -1,0 +1,103 @@
+﻿@model mdlCustomerMarkup
+@using B2BClasses.Services.Enums
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary">
+
+            <form action="@Url.Action()" method="post">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="CustomerID"></label>
+
+                                <select asp-for="CustomerID" class="form-control select2" asp-items="ViewBag.CustomerCodeList">
+                                </select>
+                                <span asp-validation-for="CustomerID" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="MarkupValue"></label>
+                                <input asp-for="MarkupValue" class="form-control" placeholder="Markup Value" />
+                                <span asp-validation-for="MarkupValue" class="text-danger"></span>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+
+                <input type="hidden" asp-for="markupid" />
+            </form>
+
+
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-primary card-outline card-outline-tabs">
+
+                <div class="card-body">
+                    <table id="tblCustomerMarkUpDetails" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Edit</th>
+                                <th>Customer Name</th>
+                                <th>MarkUp Value</th>
+                                <th>Created By</th>
+                                <th>Created DateTime</th>
+                                <th>Last Modified By</th>
+                                <th>Last Modified DateTime</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+
+                            @for (int i = 0; i < (Model.MarkupData?.Count ?? 0); i++)
+                            {
+                            <tr>
+                                <td>
+                                    <a href="/Customer/CustomerMarkUp/@Model.MarkupData[i].Id" class="btn btn-info" data-toggle="tooltip" title="Edit Record !">
+                                        Edit
+                                    </a>
+                                </td>
+                                 
+                                <td>@Model.MarkupData[i].tblCustomerMaster.CustomerName (@Model.MarkupData[i].tblCustomerMaster.Code)</td>
+                                <td>@Model.MarkupData[i].MarkupAmt</td>
+                                <td>@Model.MarkupData[i].CreatedBy</td>
+                                <td>@(Model.MarkupData[i].CreatedDt.ToString("dd-MMM-yyyy hh:mm tt"))</td>
+                                <td>@Model.MarkupData[i].ModifiedBy</td>
+                                <td>@(Model.MarkupData[i].ModifiedDt?.ToString("dd-MMM-yyyy hh:mm tt"))</td>
+
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#tblCustomerMarkUpDetails").DataTable({ "ajax": null });
+        });
+    </script>
+}

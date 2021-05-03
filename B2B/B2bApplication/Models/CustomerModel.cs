@@ -56,10 +56,7 @@ namespace B2bApplication.Models
         public int customerid { get; set; }
         public List<tblCustomerMaster> CustomerMasters { get; set; }
 
-        public tblCustomerMaster GetCustomerData(DBContext context, int customerid)
-        {
-            return context.tblCustomerMaster.Where(p => p.Id == customerid).FirstOrDefault();
-        }
+        
     }
 
     public class mdlAddCustomerUser
@@ -85,47 +82,31 @@ namespace B2bApplication.Models
         public bool Status { get; set; } = true;
 
         public int userid { get; set; }
-
-        public List<tblCustomerMaster> GetCustomerMaster(DBContext context, bool OnlyActive, int customerid)
-        {
-            if (customerid > 0)
-            {
-                return context.tblCustomerMaster.Where(p => p.Id==customerid).ToList();
-            }
-            else
-            {
-                if (OnlyActive)
-                {
-                    return context.tblCustomerMaster.Where(p => p.IsActive).ToList();
-                }
-                else
-                {
-                    return context.tblCustomerMaster.ToList();
-                }
-            }
-
-        }
-
         public List<tblUserMaster> UserMasters { get; set; }
-        public List<tblUserMaster> GetCustomerUserList(DBContext context, bool OnlyActive,int customerid)
-        {
-            if (OnlyActive)
-            {
-                return context.tblUserMaster.Where(p => p.IsActive && p.CustomerId == customerid).ToList();
-            }
-            else
-            {
-                return context.tblUserMaster.Where( p => p.CustomerId == customerid).ToList();
-            }
+         
 
-        }
-
-        public tblUserMaster GetCustomerUserData(DBContext context, int userid)
-        {
-            return context.tblUserMaster.Where(p => p.Id == userid).FirstOrDefault();   
-        }
+        
+      
     }
-   
+
+    public class mdlCustomerMarkup
+    {
+        [Required]
+        [Display(Name = "Customer Type")]
+        public string CustomerID { set; get; }
+        
+        [Required]
+        [Range(0, 10000)]
+        [Display(Name = "MarkUp Value")]
+        public double MarkupValue { get; set; }
+
+        public int markupid { get; set; }
+
+        public List<tblCustomerMaster> CustomerMasters { get; set; }
+
+        public List<tblCustomerMarkup> MarkupData{ get; set; }
+    }
+
 
 }
 

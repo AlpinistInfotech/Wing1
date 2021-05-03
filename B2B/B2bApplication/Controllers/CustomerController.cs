@@ -65,7 +65,7 @@ namespace B2bApplication.Controllers
             if (Id != null)
             {
                 
-                var userdata = mdl.GetCustomerData(_context,Convert.ToInt32(Id));
+                var userdata =  GetCustomerData(_context,Convert.ToInt32(Id));
 
                 if (userdata != null)
                 {
@@ -180,7 +180,7 @@ namespace B2bApplication.Controllers
 
             if (Id != null)
             {
-                var userdata =  mdl.GetCustomerUserData(_context, Convert.ToInt32(Id));
+                var userdata =   GetCustomerUserData(_context, Convert.ToInt32(Id));
 
                 if (userdata != null)
                 {
@@ -192,9 +192,9 @@ namespace B2bApplication.Controllers
 
                 }
 
-                 mdl.UserMasters = mdl.GetCustomerUserList(_context, true, Convert.ToInt32(mdl.CustomerID));
+                 mdl.UserMasters =  GetCustomerUserList(_context, true, Convert.ToInt32(mdl.CustomerID));
             }
-            ViewBag.CustomerCodeList = new SelectList(mdl.GetCustomerMaster(_context, true,0).Select(p=> new {Code=p.Id,CustomerName=p.CustomerName+"("+p.Code+")"}), "Code", "CustomerName", mdl.CustomerID);
+            ViewBag.CustomerCodeList = new SelectList( GetCustomerMaster(_context, true,0).Select(p=> new {Code=p.Id,CustomerName=p.CustomerName+"("+p.Code+")"}), "Code", "CustomerName", mdl.CustomerID);
             return View(mdl);
         }
 
@@ -207,46 +207,21 @@ namespace B2bApplication.Controllers
                 
                 if (submittype == "LoadData")
                 {
-                    ViewBag.CustomerCodeList = new SelectList(mdl.GetCustomerMaster(_context, true,0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
-                    mdl.UserMasters = mdl.GetCustomerUserList(_context, false, Convert.ToInt32(mdl.CustomerID));
+                    ViewBag.CustomerCodeList = new SelectList( GetCustomerMaster(_context, true,0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
+                    mdl.UserMasters =  GetCustomerUserList(_context, false, Convert.ToInt32(mdl.CustomerID));
 
                 }
-
-
                 else
                 {
                     if (mdl.UserName == null || mdl.UserName == "")
                     {
-                        ViewBag.CustomerCodeList = new SelectList(mdl.GetCustomerMaster(_context, true,0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
-                        mdl.UserMasters = mdl.GetCustomerUserList(_context, false, Convert.ToInt32(mdl.CustomerID));
-                        TempData["MessageType"] = (int)enmMessageType.Error;
-                        TempData["Message"] = "Please enter User Name";
-                        ViewBag.SaveStatus = (int)TempData["MessageType"];
-                        ViewBag.Message = TempData["Message"];
-
+                        CallCustomerUserDefaultSetting(0,mdl);
                     }
 
                     else if (mdl.Password == null || mdl.Password == "")
                     {
-                        ViewBag.CustomerCodeList = new SelectList(mdl.GetCustomerMaster(_context, true,0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
-
-                        mdl.UserMasters = mdl.GetCustomerUserList(_context, false, Convert.ToInt32(mdl.CustomerID));
-                        TempData["MessageType"] = (int)enmMessageType.Error;
-                        TempData["Message"] = "Please enter Password";
-                        ViewBag.SaveStatus = (int)TempData["MessageType"];
-                        ViewBag.Message = TempData["Message"];
-
+                         CallCustomerUserDefaultSetting(1, mdl);
                     }
-
-                    //else if (_context.tblUserMaster.Any(p => p.UserName == mdl.UserName && p.Id!=userid))
-                    //{
-                    //    mdl.UserMasters = mdl.GetCustomerUserList(_context, true, Convert.ToInt32(mdl.CustomerID));
-                    //    TempData["MessageType"] = (int)enmMessageType.Warning;
-                    //    TempData["Message"] = _setting.GetErrorMessage(enmMessage.RecordAlreadyExists);
-                    //    ViewBag.SaveStatus = (int)TempData["MessageType"];
-                    //    ViewBag.Message = TempData["Message"];
-                    //}
-
                     else
                     {
                         var ExistingData = _context.tblUserMaster.FirstOrDefault(p => p.UserName == mdl.UserName);
@@ -254,13 +229,7 @@ namespace B2bApplication.Controllers
                         {
                             if (ExistingData.Id != mdl.userid) // already exists
                             {
-                                ViewBag.CustomerCodeList = new SelectList(mdl.GetCustomerMaster(_context, true,0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
-
-                                mdl.UserMasters = mdl.GetCustomerUserList(_context, false, Convert.ToInt32(mdl.CustomerID));
-                                TempData["MessageType"] = (int)enmMessageType.Warning;
-                                TempData["Message"] = _setting.GetErrorMessage(enmMessage.RecordAlreadyExists);
-                                ViewBag.SaveStatus = (int)TempData["MessageType"];
-                                ViewBag.Message = TempData["Message"];
+                                CallCustomerUserDefaultSetting(2, mdl);
                             }
                             else  // update 
                             {
@@ -308,6 +277,126 @@ namespace B2bApplication.Controllers
             return View(mdl);
         }
 
+        private void CallCustomerUserDefaultSetting(int value, mdlAddCustomerUser mdl)
+        {
+            if (value == 0)
+            {
+                TempData["MessageType"] = (int)enmMessageType.Error;
+                TempData["Message"] = "Please enter User Name";
+            }
+            else if (value == 1)
+            {
+                TempData["MessageType"] = (int)enmMessageType.Error;
+                TempData["Message"] = "Please enter Password";
+            }
+            else if (value == 2)
+            {
+                TempData["MessageType"] = (int)enmMessageType.Warning;
+                TempData["Message"] = _setting.GetErrorMessage(enmMessage.RecordAlreadyExists);
+            }
+           
+            ViewBag.CustomerCodeList = new SelectList(GetCustomerMaster(_context, true, 0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
+            mdl.UserMasters = GetCustomerUserList(_context, false, Convert.ToInt32(mdl.CustomerID));
+            ViewBag.SaveStatus = (int)TempData["MessageType"];
+            ViewBag.Message = TempData["Message"];
+        }
+
+        #endregion
+
+        #region Customer Markup
+        [Authorize]
+        public IActionResult CustomerMarkUp(string Id)
+        {
+
+            dynamic messagetype = TempData["MessageType"];
+            mdlCustomerMarkup mdl = new mdlCustomerMarkup();
+            if (messagetype != null)
+            {
+                ViewBag.SaveStatus = (int)messagetype;
+                ViewBag.Message = TempData["Message"];
+
+            }
+
+            if (Id != null)
+            {
+                var markupdata = GetCustomerMarkUpData(_context, Convert.ToInt32(Id));// fetch data through query string
+
+                if (markupdata != null)
+                {
+                    mdl.CustomerID = Convert.ToString(markupdata.CustomerId);
+                    mdl.MarkupValue = markupdata.MarkupAmt;
+                    mdl.markupid = markupdata.Id;
+                }
+            }
+            if (_userid == 1) // if admin the show all customer id
+            {
+                mdl.MarkupData = GetCustomerMarkUpList(_context, 0);
+                ViewBag.CustomerCodeList = new SelectList(GetCustomerMaster(_context, true, 0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
+            }
+            else
+            {
+                mdl.MarkupData = GetCustomerMarkUpList(_context, _userid);
+                ViewBag.CustomerCodeList = new SelectList(GetCustomerMaster(_context, true, _userid).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
+            }
+            return View(mdl);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> CustomerMarkUpAsync(mdlCustomerMarkup mdl )
+        {
+            if (ModelState.IsValid)
+            {
+                        var ExistingData = _context.tblCustomerMarkup.FirstOrDefault(p => p.CustomerId == Convert.ToInt32(mdl.CustomerID));
+                        if (ExistingData != null)
+                        {
+                            //if (ExistingData.Id != mdl.markupid) // already exists
+                            //{
+                            //    TempData["MessageType"] = (int)enmMessageType.Warning;
+                            //    TempData["Message"] = _setting.GetErrorMessage(enmMessage.RecordAlreadyExists);
+                            //    ViewBag.SaveStatus = (int)TempData["MessageType"];
+                            //    ViewBag.Message = TempData["Message"];
+                            //}
+                            //else  // update 
+                            {
+                                ExistingData.MarkupAmt = mdl.MarkupValue;
+                                  
+                                ExistingData.ModifiedBy= _userid;
+                                ExistingData.CustomerId = Convert.ToInt32(mdl.CustomerID);
+                                ExistingData.ModifiedDt = DateTime.Now;
+                                _context.tblCustomerMarkup.Update(ExistingData);
+                                await _context.SaveChangesAsync();
+                                TempData["MessageType"] = (int)enmMessageType.Success;
+                                TempData["Message"] = _setting.GetErrorMessage(enmMessage.UpdateSuccessfully);
+
+                                return RedirectToAction("CustomerMarkUp");
+                            }
+                        }
+
+                        else
+                        {
+                            _context.tblCustomerMarkup.Add(new tblCustomerMarkup
+                            {
+                                CustomerId = Convert.ToInt32(mdl.CustomerID),
+                                MarkupAmt = mdl.MarkupValue,
+                                CreatedBy = _userid,
+                                CreatedDt = DateTime.Now
+
+                            });
+
+
+                            await _context.SaveChangesAsync();
+
+                            TempData["MessageType"] = (int)enmMessageType.Success;
+                            TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
+
+                            return RedirectToAction("CustomerMarkUp");
+                        }
+                    }
+            return View(mdl);
+        }
+
+
         #endregion
 
 
@@ -330,14 +419,69 @@ namespace B2bApplication.Controllers
         [Authorize]
         public async Task<IActionResult> CustomerDetailsAsync(mdlAddCustomer mdl)
         {
-           
-                mdlAddCustomerUser customeruser = new mdlAddCustomerUser();
-                mdl.CustomerMasters = customeruser.GetCustomerMaster(_context, mdl.Status,0);
-
-        
+            mdl.CustomerMasters = GetCustomerMaster(_context, mdl.Status, 0);
             return View(mdl);
         }
 
         #endregion
+
+
+        public List<tblCustomerMaster> GetCustomerMaster(DBContext context, bool OnlyActive, int customerid)
+        {
+            if (customerid > 0)
+            {
+                return context.tblCustomerMaster.Where(p => p.Id == customerid).ToList();
+            }
+            else
+            {
+                if (OnlyActive)
+                {
+                    return context.tblCustomerMaster.Where(p => p.IsActive).ToList();
+                }
+                else
+                {
+                    return context.tblCustomerMaster.ToList();
+                }
+            }
+
+        }
+
+        public List<tblUserMaster> GetCustomerUserList(DBContext context, bool OnlyActive, int customerid)
+        {
+            if (OnlyActive)
+            {
+                return context.tblUserMaster.Where(p => p.IsActive && p.CustomerId == customerid).ToList();
+            }
+            else
+            {
+                return context.tblUserMaster.Where(p => p.CustomerId == customerid).ToList();
+            }
+
+        }
+
+        public List<tblCustomerMarkup> GetCustomerMarkUpList(DBContext context, int customerid)
+        {
+
+            if (customerid > 0)
+                return context.tblCustomerMarkup.Where(p => p.CustomerId == customerid).ToList();
+            else
+                return context.tblCustomerMarkup.ToList();
+
+        }
+
+        public tblUserMaster GetCustomerUserData(DBContext context, int userid)
+        {
+            return context.tblUserMaster.Where(p => p.Id == userid).FirstOrDefault();
+        }
+
+        public tblCustomerMarkup GetCustomerMarkUpData(DBContext context, int markupid)
+        {
+            return context.tblCustomerMarkup.Where(p => p.Id == markupid).FirstOrDefault();
+        }
+        public tblCustomerMaster GetCustomerData(DBContext context, int customerid)
+        {
+            return context.tblCustomerMaster.Where(p => p.Id == customerid).FirstOrDefault();
+        }
+
     }
 }
