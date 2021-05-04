@@ -222,6 +222,11 @@ namespace B2bApplication.Models
             var temps = Enum.GetValues(typeof(enmServiceProvider));
             foreach (var temp in temps)
             {
+                if ((enmServiceProvider)temp == enmServiceProvider.None)
+                {
+                    continue;
+                }
+
                 bd.Add(new BasicData()
                 {
                     Id = (int)temp,

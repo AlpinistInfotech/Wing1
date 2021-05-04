@@ -25,6 +25,7 @@ namespace B2bApplication.Controllers
         private readonly DBContext _context;
         private readonly IBooking _booking;
         private readonly ISettings _setting;
+        int _customerId,_userId;
         public HomeController(ILogger<HomeController> logger, DBContext context, IBooking booking,
             ISettings setting
             )
@@ -311,11 +312,116 @@ namespace B2bApplication.Controllers
         [Authorize]
         public async Task<IActionResult> WingMarkup()
         {
-            mdlWingMarkupWraper mdl = new mdlWingMarkupWraper();
+
+            
+            
+            ViewBag.Message = TempData["Message"];
+            if (ViewBag.Message != null)
+            {
+                ViewBag.SaveStatus = (int)TempData["MessageType"];
+            }
+
+                mdlWingMarkupWraper mdl = new mdlWingMarkupWraper();
+            mdl.WingMarkup = new mdlWingMarkup();
             mdl.SetDefaultDropDown(_context);
             return View(mdl);
         }
 
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> WingMarkup(mdlWingMarkupWraper mdl,[FromServices]IMarkup markup)
+        {
+            bool IsUpdated = false;
+            if (mdl.WingMarkup.Id>0)
+            {
+                IsUpdated = true;
+            }
+            if (mdl.WingMarkup == null)
+            {
+                ModelState.AddModelError("", "Invalid Data");
+            }
+            else
+            {
+                if (!mdl.WingMarkup.IsAllCustomerType)
+                {
+                    if (mdl.WingMarkup.MarkupCustomerType == null || mdl.WingMarkup.MarkupCustomerType.Count == 0)
+                    {
+                        ModelState.AddModelError("WingMarkup.IsAllCustomerType", "Select Customer Type");
+                    }
+                }
+                if (!mdl.WingMarkup.IsAllCustomer)
+                {
+                    if (mdl.WingMarkup.MarkupCustomerDetail == null || mdl.WingMarkup.MarkupCustomerDetail.Count == 0)
+                    {
+                        ModelState.AddModelError("WingMarkup.IsAllCustomer", "Select Customer");
+                    }
+                }
+                if (!mdl.WingMarkup.IsAllPessengerType)
+                {
+                    if (mdl.WingMarkup.MarkupPassengerType == null || mdl.WingMarkup.MarkupPassengerType.Count == 0)
+                    {
+                        ModelState.AddModelError("WingMarkup.IsAllPessengerType", "Select Passenger Type");
+                    }
+                }
+                if (!mdl.WingMarkup.IsAllProvider)
+                {
+                    if (mdl.WingMarkup.MarkupServiceProvider == null || mdl.WingMarkup.MarkupServiceProvider.Count == 0)
+                    {
+                        ModelState.AddModelError("WingMarkup.IsAllProvider", "Select Service Provider");
+                    }
+                }
+                if (!mdl.WingMarkup.IsAllFlightClass)
+                {
+                    if (mdl.WingMarkup.MarkupCabinClass == null || mdl.WingMarkup.MarkupCabinClass.Count == 0)
+                    {
+                        ModelState.AddModelError("WingMarkup.IsAllFlightClass", "Select Flight Class");
+                    }
+                }
+                if (!mdl.WingMarkup.IsAllAirline)
+                {
+                    if (mdl.WingMarkup.MarkupAirline == null || mdl.WingMarkup.MarkupAirline.Count == 0)
+                    {
+                        ModelState.AddModelError("WingMarkup.IsAllAirline", "Select Airlines");
+                    }
+                }
+                if (mdl.WingMarkup.EffectiveFromDt < Convert.ToDateTime( DateTime.Now.ToString("dd-MMM-yyyy")))
+                {
+                    ModelState.AddModelError("WingMarkup.EffectiveFromDt", "Effective FromDate should be greater then Today");
+                }
+                if (mdl.WingMarkup.Amount <= 0)
+                {
+                    ModelState.AddModelError("WingMarkup.Amount", "Amount Should be Greater then 0");
+                }
+            }
+            if (ModelState.IsValid)
+            {
+                if (IsUpdated)
+                {
+                    if (markup.RemoveMarkup(mdl.WingMarkup.Id, _userId) && markup.AddMarkup(mdl.WingMarkup, _userId))
+                    {
+                        TempData["MessageType"] = (int)enmMessageType.Success;
+                        TempData["Message"] = _setting.GetErrorMessage(enmMessage.UpdateSuccessfully);
+                        return RedirectToAction("WingMarkup");
+                    }
+                }
+                else
+                {
+                    if (markup.AddMarkup(mdl.WingMarkup, _userId))
+                    {
+                        TempData["MessageType"] = (int)enmMessageType.Success;
+                        TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
+                        return RedirectToAction("WingMarkup");
+                    }
+                }
+            }
+            else 
+            {
+                ViewBag.MessageType =(int) enmMessageType.Warning;
+                ViewBag.Message = "Data not valid";
+            }
+            mdl.SetDefaultDropDown(_context);
+            return View(mdl);
+        }
 
     }
 }

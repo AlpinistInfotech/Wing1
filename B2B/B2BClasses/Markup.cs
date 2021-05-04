@@ -11,7 +11,21 @@ using System.Text;
 
 namespace B2BClasses
 {
-    public class Markup
+    public interface IMarkup
+    {
+        int CustomerId { get; set; }
+        DateTime EffectiveFromDt { get; set; }
+        bool AddConvenience(mdlWingMarkup mdl, int UserId);
+        bool AddMarkup(mdlWingMarkup mdl, int UserId);
+        void CustomerMarkup(List<List<mdlSearchResult>> mdl);
+        List<mdlWingMarkup> LoadConvenience(int Id = 0, bool FromEffectiveDt = false, bool IsForCustomer = false);
+        List<mdlWingMarkup> LoadMarkup(int Id = 0, bool FromEffectiveDt = false, bool IsForCustomer = false);
+        bool PassengerTypeConvenience(mdlWingMarkup mdlA, int AdultCount, int ChildCount, int InfantCount);
+        bool RemoveMarkup(int Id, int UserId);
+        void WingConvenienceAmount(mdlFareQuotResponse mdl, List<mdlTravellerinfo> travellerInfo);
+        void WingMarkupAmount(List<List<mdlSearchResult>> mdl, int AdultCount = 1, int ChildCount = 0, int InfantCount = 0);
+    }
+    public class Markup : IMarkup
     {
         private readonly DBContext _context;
         private readonly IConfiguration _config;
@@ -31,7 +45,7 @@ namespace B2BClasses
             _DefaultAirServiceProvider = _config["DefaultAirServiceProvider"];
         }
 
-        public List<mdlWingMarkup> LoadMarkup(int Id = 0,bool FromEffectiveDt=false, bool IsForCustomer=false )
+        public List<mdlWingMarkup> LoadMarkup(int Id = 0, bool FromEffectiveDt = false, bool IsForCustomer = false)
         {
             List<mdlWingMarkup> _mdl = null;
             if (Id > 0)
@@ -91,36 +105,36 @@ namespace B2BClasses
             }
             else if (IsForCustomer)
             {
-                enmCustomerType CustomerType = _context.tblCustomerMaster.Where(p => p.Id == CustomerId).FirstOrDefault()?.CustomerType?? enmCustomerType.B2C;
-                   _mdl = _context.tblWingMarkupMaster.Where(p => p.EffectiveFromDt <= this._EffectiveFromDt && 
-                ((p.IsAllCustomer && p.IsAllCustomerType ) ||
-                (p.IsAllCustomer && p.tblWingMarkupCustomerType.Where(p=>p.customerType== CustomerType).Count()>0)||
-                (p.tblWingMarkupCustomerDetails.Where(p=>p.CustomerId==_CustomerId ).Count()>0)
-                )
-                && !p.IsDeleted).Select(p => new mdlWingMarkup
-                {
-                    Id = p.Id,
-                    Applicability = p.Applicability,
-                    DirectFlight = p.DirectFlight,
-                    IsAllProvider = p.IsAllProvider,
-                    IsAllCustomerType = p.IsAllCustomerType,
-                    IsAllCustomer = p.IsAllCustomer,
-                    IsAllPessengerType = p.IsAllPessengerType,
-                    IsAllFlightClass = p.IsAllFlightClass,
-                    IsAllAirline = p.IsAllAirline,
-                    Gender = p.Gender,
-                    Amount = p.Amount,
-                    EffectiveFromDt = p.EffectiveFromDt,
-                    ModifiedBy = p.ModifiedBy,
-                    ModifiedDt = p.ModifiedDt,
-                    remarks = p.Remarks,
-                    MarkupServiceProvider = p.tblWingMarkupServiceProvider.Select(p => p.ServiceProvider).ToList(),
-                    MarkupCustomerType = p.tblWingMarkupCustomerType.Select(p => p.customerType).ToList(),
-                    MarkupCustomerDetail = p.tblWingMarkupCustomerDetails.Select(p => p.CustomerId.Value).ToList(),
-                    MarkupPassengerType = p.tblWingMarkupPassengerType.Select(p => p.PassengerType).ToList(),
-                    MarkupCabinClass = p.tblWingMarkupFlightClass.Select(p => p.CabinClass).ToList(),
-                    MarkupAirline = p.tblWingMarkupAirline.Select(p => p.AirlineId.Value).ToList()
-                }).ToList();
+                enmCustomerType CustomerType = _context.tblCustomerMaster.Where(p => p.Id == CustomerId).FirstOrDefault()?.CustomerType ?? enmCustomerType.B2C;
+                _mdl = _context.tblWingMarkupMaster.Where(p => p.EffectiveFromDt <= this._EffectiveFromDt &&
+             ((p.IsAllCustomer && p.IsAllCustomerType) ||
+             (p.IsAllCustomer && p.tblWingMarkupCustomerType.Where(p => p.customerType == CustomerType).Count() > 0) ||
+             (p.tblWingMarkupCustomerDetails.Where(p => p.CustomerId == _CustomerId).Count() > 0)
+             )
+             && !p.IsDeleted).Select(p => new mdlWingMarkup
+             {
+                 Id = p.Id,
+                 Applicability = p.Applicability,
+                 DirectFlight = p.DirectFlight,
+                 IsAllProvider = p.IsAllProvider,
+                 IsAllCustomerType = p.IsAllCustomerType,
+                 IsAllCustomer = p.IsAllCustomer,
+                 IsAllPessengerType = p.IsAllPessengerType,
+                 IsAllFlightClass = p.IsAllFlightClass,
+                 IsAllAirline = p.IsAllAirline,
+                 Gender = p.Gender,
+                 Amount = p.Amount,
+                 EffectiveFromDt = p.EffectiveFromDt,
+                 ModifiedBy = p.ModifiedBy,
+                 ModifiedDt = p.ModifiedDt,
+                 remarks = p.Remarks,
+                 MarkupServiceProvider = p.tblWingMarkupServiceProvider.Select(p => p.ServiceProvider).ToList(),
+                 MarkupCustomerType = p.tblWingMarkupCustomerType.Select(p => p.customerType).ToList(),
+                 MarkupCustomerDetail = p.tblWingMarkupCustomerDetails.Select(p => p.CustomerId.Value).ToList(),
+                 MarkupPassengerType = p.tblWingMarkupPassengerType.Select(p => p.PassengerType).ToList(),
+                 MarkupCabinClass = p.tblWingMarkupFlightClass.Select(p => p.CabinClass).ToList(),
+                 MarkupAirline = p.tblWingMarkupAirline.Select(p => p.AirlineId.Value).ToList()
+             }).ToList();
             }
             else
             {
@@ -155,7 +169,7 @@ namespace B2BClasses
                 _mdl = new List<mdlWingMarkup>();
             }
             var MarkupAirlineIds = _mdl.SelectMany(p => p.MarkupAirline).ToList();
-            var AirlineDetails=_context.tblAirline.Where(p => MarkupAirlineIds.Contains(p.Id)).ToList();
+            var AirlineDetails = _context.tblAirline.Where(p => MarkupAirlineIds.Contains(p.Id)).ToList();
             foreach (var md in _mdl)
             {
                 if (md.MarkupAirline == null)
@@ -168,7 +182,7 @@ namespace B2BClasses
                                         join t2 in AirlineDetails on t1 equals t2.Id
                                         select t2.Code).ToList();
             }
-                return _mdl;
+            return _mdl;
         }
 
         public List<mdlWingMarkup> LoadConvenience(int Id = 0, bool FromEffectiveDt = false, bool IsForCustomer = false)
@@ -334,20 +348,20 @@ namespace B2BClasses
             {
                 return true;
             }
-            
-            var sp = (enmServiceProvider)Convert.ToInt32(mdlS.TotalPriceList.FirstOrDefault().ResultIndex?.Split("_").FirstOrDefault()??_DefaultAirServiceProvider);
-            if (sp== enmServiceProvider.None)
+
+            var sp = (enmServiceProvider)Convert.ToInt32(mdlS.TotalPriceList.FirstOrDefault().ResultIndex?.Split("_").FirstOrDefault() ?? _DefaultAirServiceProvider);
+            if (sp == enmServiceProvider.None)
             {
-                if(mdlA.MarkupServiceProvider.Any(q => q == sp))
+                if (mdlA.MarkupServiceProvider.Any(q => q == sp))
                 {
                     return true;
                 }
             }
-             
+
             return false;
         }
 
-        private bool FlightCabinClass(mdlWingMarkup mdlA,mdlTotalpricelist mdlP)
+        private bool FlightCabinClass(mdlWingMarkup mdlA, mdlTotalpricelist mdlP)
         {
             if (mdlA.IsAllFlightClass)
             {
@@ -358,12 +372,12 @@ namespace B2BClasses
                 return true;
             }
             return false;
-            
+
         }
 
         private bool FlightDirectMarkup(mdlWingMarkup mdlA, mdlSearchResult mdlS)
         {
-            if (mdlA.DirectFlight.HasFlag(enmDirectFlight.DirectFlight) && (mdlS.Segment?.Count()??0) ==1 )
+            if (mdlA.DirectFlight.HasFlag(enmDirectFlight.DirectFlight) && (mdlS.Segment?.Count() ?? 0) == 1)
             {
                 return true;
             }
@@ -374,9 +388,9 @@ namespace B2BClasses
             return false;
         }
 
-        public void WingMarkupAmount(List<List<mdlSearchResult>> mdl, int AdultCount=1, int ChildCount=0, int InfantCount=0)
-        {   
-            List <mdlWingMarkup> allMarkup= LoadMarkup(0, false, true);
+        public void WingMarkupAmount(List<List<mdlSearchResult>> mdl, int AdultCount = 1, int ChildCount = 0, int InfantCount = 0)
+        {
+            List<mdlWingMarkup> allMarkup = LoadMarkup(0, false, true);
             for (int i = 0; i < mdl.Count; i++)
             {
                 for (int j = 0; j < mdl[i].Count; j++)
@@ -408,20 +422,20 @@ namespace B2BClasses
                                     if (FlightCabinClass(allMarkup[k], mdl[i][j].TotalPriceList[j1]))
                                     {
                                         //Adult Markup
-                                        if (allMarkup[k].MarkupPassengerType.Any(p=>p== enmPassengerType.Adult) )
+                                        if (allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Adult))
                                         {
                                             mdl[i][j].TotalPriceList[j1].ADULT.WingMarkup =
-                                            mdl[i][j].TotalPriceList[j1].ADULT.WingMarkup + (allMarkup[k].Amount* AdultCount);
+                                            mdl[i][j].TotalPriceList[j1].ADULT.WingMarkup + (allMarkup[k].Amount * AdultCount);
                                         }
-                                        if (ChildCount>0 && allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Child))
+                                        if (ChildCount > 0 && allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Child))
                                         {
                                             mdl[i][j].TotalPriceList[j1].CHILD.WingMarkup =
-                                            mdl[i][j].TotalPriceList[j1].CHILD.WingMarkup + (allMarkup[k].Amount* ChildCount);
+                                            mdl[i][j].TotalPriceList[j1].CHILD.WingMarkup + (allMarkup[k].Amount * ChildCount);
                                         }
-                                        if (InfantCount>0 && allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Infant))
+                                        if (InfantCount > 0 && allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Infant))
                                         {
                                             mdl[i][j].TotalPriceList[j1].INFANT.WingMarkup =
-                                            mdl[i][j].TotalPriceList[j1].INFANT.WingMarkup + (allMarkup[k].Amount* InfantCount );
+                                            mdl[i][j].TotalPriceList[j1].INFANT.WingMarkup + (allMarkup[k].Amount * InfantCount);
                                         }
                                     }
                                 }
@@ -429,9 +443,9 @@ namespace B2BClasses
 
                         }
 
-                        
-                        
-                        
+
+
+
                     }
 
                 }
@@ -441,7 +455,7 @@ namespace B2BClasses
         public void CustomerMarkup(List<List<mdlSearchResult>> mdl)
         {
             double MarkupAmount = 0;
-            MarkupAmount = _context.tblCustomerMarkup.Where(p => !p.IsDeleted ).Sum(p=>p.MarkupAmt);
+            MarkupAmount = _context.tblCustomerMarkup.Where(p => !p.IsDeleted).Sum(p => p.MarkupAmt);
             for (int i = 0; i < mdl.Count; i++)
             {
                 for (int j = 0; j < mdl[i].Count; j++)
@@ -449,17 +463,17 @@ namespace B2BClasses
                     for (int j1 = 0; j1 < mdl[i][j].TotalPriceList.Count; j1++)
                     {
                         mdl[i][j].TotalPriceList[j1].CustomerMarkup = MarkupAmount;
-                    }                     
+                    }
                 }
             }
         }
 
-        public bool PassengerTypeConvenience(mdlWingMarkup mdlA,int AdultCount,int ChildCount, int InfantCount)
+        public bool PassengerTypeConvenience(mdlWingMarkup mdlA, int AdultCount, int ChildCount, int InfantCount)
         {
             bool returndata = false;
             if (AdultCount > 0)
             {
-                returndata =mdlA.MarkupPassengerType.Any(p => p == enmPassengerType.Adult);
+                returndata = mdlA.MarkupPassengerType.Any(p => p == enmPassengerType.Adult);
             }
             if (ChildCount > 0)
             {
@@ -474,7 +488,7 @@ namespace B2BClasses
 
         public void WingConvenienceAmount(mdlFareQuotResponse mdl, List<mdlTravellerinfo> travellerInfo)
         {
-            int AdultMaleCount = travellerInfo?.Where(p => p.passengerType == enmPassengerType.Adult && (p.Title.Trim().ToLower() == "mr" || p.Title.Trim().ToLower() == "master")).Count()??0;
+            int AdultMaleCount = travellerInfo?.Where(p => p.passengerType == enmPassengerType.Adult && (p.Title.Trim().ToLower() == "mr" || p.Title.Trim().ToLower() == "master")).Count() ?? 0;
             int AdultFemaleCount = travellerInfo?.Where(p => p.passengerType == enmPassengerType.Adult && (p.Title.Trim().ToLower() == "ms" || p.Title.Trim().ToLower() == "mrs")).Count() ?? 0;
             int ChildMaleCount = travellerInfo?.Where(p => p.passengerType == enmPassengerType.Child && (p.Title.Trim().ToLower() == "mr" || p.Title.Trim().ToLower() == "master")).Count() ?? 0;
             int ChildFemaleCount = travellerInfo?.Where(p => p.passengerType == enmPassengerType.Child && (p.Title.Trim().ToLower() == "ms" || p.Title.Trim().ToLower() == "mrs")).Count() ?? 0;
@@ -492,7 +506,7 @@ namespace B2BClasses
                         if (AirlineApplicability(allMarkup[k], mdl.Results[i][j]) &&
                             ServiceProviderApplicability(allMarkup[k], mdl.Results[i][j]) &&
                             FlightDirectMarkup(allMarkup[k], mdl.Results[i][j]) &&
-                            PassengerTypeConvenience(allMarkup[k], AdultMaleCount+ AdultFemaleCount, ChildMaleCount+ChildFemaleCount, InfantMaleCount+InfantFemaleCount)
+                            PassengerTypeConvenience(allMarkup[k], AdultMaleCount + AdultFemaleCount, ChildMaleCount + ChildFemaleCount, InfantMaleCount + InfantFemaleCount)
                             )
                         {
 
@@ -535,22 +549,22 @@ namespace B2BClasses
                                             if (allMarkup[k].Gender.HasFlag(enmGender.Male) && allMarkup[k].Gender.HasFlag(enmGender.Female) && allMarkup[k].Gender.HasFlag(enmGender.Other))
                                             {
                                                 mdl.Results[i][j].TotalPriceList[j1].ADULT.Convenience =
-                                            mdl.Results[i][j].TotalPriceList[j1].ADULT.Convenience + (allMarkup[k].Amount * (AdultMaleCount+AdultFemaleCount) );
+                                            mdl.Results[i][j].TotalPriceList[j1].ADULT.Convenience + (allMarkup[k].Amount * (AdultMaleCount + AdultFemaleCount));
                                             }
-                                            else if (allMarkup[k].Gender.HasFlag(enmGender.Male) && AdultMaleCount>0)
+                                            else if (allMarkup[k].Gender.HasFlag(enmGender.Male) && AdultMaleCount > 0)
                                             {
                                                 mdl.Results[i][j].TotalPriceList[j1].ADULT.Convenience =
-                                            mdl.Results[i][j].TotalPriceList[j1].ADULT.Convenience + (allMarkup[k].Amount * (AdultMaleCount ));
+                                            mdl.Results[i][j].TotalPriceList[j1].ADULT.Convenience + (allMarkup[k].Amount * (AdultMaleCount));
                                             }
-                                            else if (allMarkup[k].Gender.HasFlag(enmGender.Female) && AdultFemaleCount>0)
+                                            else if (allMarkup[k].Gender.HasFlag(enmGender.Female) && AdultFemaleCount > 0)
                                             {
                                                 mdl.Results[i][j].TotalPriceList[j1].ADULT.Convenience =
                                                 mdl.Results[i][j].TotalPriceList[j1].ADULT.Convenience + (allMarkup[k].Amount * (AdultFemaleCount));
                                             }
 
-                                            
+
                                         }
-                                        if (mdl.SearchQuery.ChildCount>0 && allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Child))
+                                        if (mdl.SearchQuery.ChildCount > 0 && allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Child))
                                         {
                                             if (allMarkup[k].Gender.HasFlag(enmGender.Male) && allMarkup[k].Gender.HasFlag(enmGender.Female) && allMarkup[k].Gender.HasFlag(enmGender.Other))
                                             {
@@ -568,7 +582,7 @@ namespace B2BClasses
                                                 mdl.Results[i][j].TotalPriceList[j1].CHILD.Convenience + (allMarkup[k].Amount * (ChildFemaleCount));
                                             }
                                         }
-                                        if (mdl.SearchQuery.InfantCount > 0  && allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Infant))
+                                        if (mdl.SearchQuery.InfantCount > 0 && allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Infant))
                                         {
                                             if (allMarkup[k].Gender.HasFlag(enmGender.Male) && allMarkup[k].Gender.HasFlag(enmGender.Female) && allMarkup[k].Gender.HasFlag(enmGender.Other))
                                             {
@@ -601,7 +615,7 @@ namespace B2BClasses
             }
         }
 
-        public bool AddMarkup(mdlWingMarkup mdl,int UserId)
+        public bool AddMarkup(mdlWingMarkup mdl, int UserId)
         {
             tblWingMarkupMaster data = new tblWingMarkupMaster();
 
@@ -616,34 +630,34 @@ namespace B2BClasses
             data.Gender = mdl.Gender;
             data.Amount = mdl.Amount;
             data.EffectiveFromDt = mdl.EffectiveFromDt;
-            data.EffectiveToDt = new DateTime(2999,1,1);
+            data.EffectiveToDt = new DateTime(2999, 1, 1);
             data.CreatedBy = UserId;
             data.CreatedDt = DateTime.Now;
             data.IsDeleted = false;
             data.ModifiedBy = UserId;
             data.ModifiedDt = DateTime.Now;
             data.Remarks = mdl.remarks;
-            data.tblWingMarkupServiceProvider = mdl.MarkupServiceProvider.Select(p => new tblWingMarkupServiceProvider
+            data.tblWingMarkupServiceProvider = mdl.MarkupServiceProvider?.Select(p => new tblWingMarkupServiceProvider
             {
                 ServiceProvider = p
             }).ToList();
-            data.tblWingMarkupCustomerType = mdl.MarkupCustomerType.Select(p => new tblWingMarkupCustomerType
+            data.tblWingMarkupCustomerType = mdl.MarkupCustomerType?.Select(p => new tblWingMarkupCustomerType
             {
-                customerType=p
+                customerType = p
             }).ToList();
-            data.tblWingMarkupCustomerDetails = mdl.MarkupCustomerDetail.Select(p => new tblWingMarkupCustomerDetails
+            data.tblWingMarkupCustomerDetails = mdl.MarkupCustomerDetail?.Select(p => new tblWingMarkupCustomerDetails
             {
-                 CustomerId=p
+                CustomerId = p
             }).ToList();
-            data.tblWingMarkupPassengerType = mdl.MarkupPassengerType.Select(p => new tblWingMarkupPassengerType
+            data.tblWingMarkupPassengerType = mdl.MarkupPassengerType?.Select(p => new tblWingMarkupPassengerType
             {
                 PassengerType = p
             }).ToList();
-            data.tblWingMarkupFlightClass = mdl.MarkupCabinClass.Select(p => new tblWingMarkupFlightClass
+            data.tblWingMarkupFlightClass = mdl.MarkupCabinClass?.Select(p => new tblWingMarkupFlightClass
             {
                 CabinClass = p
             }).ToList();
-            data.tblWingMarkupAirline = mdl.MarkupAirline.Select(p => new tblWingMarkupAirline
+            data.tblWingMarkupAirline = mdl.MarkupAirline?.Select(p => new tblWingMarkupAirline
             {
                 AirlineId = p
             }).ToList();
@@ -653,6 +667,16 @@ namespace B2BClasses
 
             return true;
 
+        }
+
+        public bool RemoveMarkup(int Id, int UserId)
+        {
+            var _markupuMaster = _context.tblWingMarkupMaster.Where(p => p.Id == Id).FirstOrDefault();
+            _markupuMaster.IsDeleted = true;
+            _markupuMaster.ModifiedBy = UserId;
+            _markupuMaster.ModifiedDt = DateTime.Now;
+            _context.SaveChanges();
+            return true;
         }
 
         public bool AddConvenience(mdlWingMarkup mdl, int UserId)
@@ -677,27 +701,27 @@ namespace B2BClasses
             data.ModifiedBy = UserId;
             data.ModifiedDt = DateTime.Now;
             data.Remarks = mdl.remarks;
-            data.tblWingConvenienceServiceProvider = mdl.MarkupServiceProvider.Select(p => new tblWingConvenienceServiceProvider
+            data.tblWingConvenienceServiceProvider = mdl.MarkupServiceProvider?.Select(p => new tblWingConvenienceServiceProvider
             {
                 ServiceProvider = p
             }).ToList();
-            data.tblWingConvenienceCustomerType = mdl.MarkupCustomerType.Select(p => new tblWingConvenienceCustomerType
+            data.tblWingConvenienceCustomerType = mdl.MarkupCustomerType?.Select(p => new tblWingConvenienceCustomerType
             {
                 customerType = p
             }).ToList();
-            data.tblWingConvenienceCustomerDetails = mdl.MarkupCustomerDetail.Select(p => new tblWingConvenienceCustomerDetails
+            data.tblWingConvenienceCustomerDetails = mdl.MarkupCustomerDetail?.Select(p => new tblWingConvenienceCustomerDetails
             {
                 CustomerId = p
             }).ToList();
-            data.tblWingConveniencePassengerType = mdl.MarkupPassengerType.Select(p => new tblWingConveniencePassengerType
+            data.tblWingConveniencePassengerType = mdl.MarkupPassengerType?.Select(p => new tblWingConveniencePassengerType
             {
                 PassengerType = p
             }).ToList();
-            data.tblWingConvenienceFlightClass = mdl.MarkupCabinClass.Select(p => new tblWingConvenienceFlightClass
+            data.tblWingConvenienceFlightClass = mdl.MarkupCabinClass?.Select(p => new tblWingConvenienceFlightClass
             {
                 CabinClass = p
             }).ToList();
-            data.tblWingConvenienceAirline = mdl.MarkupAirline.Select(p => new tblWingConvenienceAirline
+            data.tblWingConvenienceAirline = mdl.MarkupAirline?.Select(p => new tblWingConvenienceAirline
             {
                 AirlineId = p
             }).ToList();

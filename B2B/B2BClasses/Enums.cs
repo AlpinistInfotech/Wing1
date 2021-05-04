@@ -11,7 +11,8 @@ namespace B2BClasses.Services.Enums
     public enum enmDirectFlight
     {
         DirectFlight=1,
-        ConnectFlight=2
+        ConnectFlight=2,
+        ALL = 3
     }
 
     public enum enmMessageType

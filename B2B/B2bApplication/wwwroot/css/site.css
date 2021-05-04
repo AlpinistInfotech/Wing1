@@ -1,6 +1,29 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
+.select2-container .select2-selection--multiple {
+    height: auto !important;
+    margin: 0;
+    padding: 0;
+    line-height: inherit;
+    border-radius: 0;
+}
+
+.select2-container .select2-search--inline .select2-search__field {
+    margin: 0;
+    padding: 0;
+    min-height: 0;
+}
+
+.select2-container .select2-search--inline {
+    line-height: inherit;
+}
+
+.input-group-addon-custom {
+    background-color: #fff !important;
+    border: none !important;
+}
+
 
 .main-container {
     background-color: #E4E6E9 !important;
