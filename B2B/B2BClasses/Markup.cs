@@ -321,7 +321,7 @@ namespace B2BClasses
             var AirlineDetails = _context.tblAirline.Where(p => MarkupAirlineIds.Contains(p.Id)).ToList();
             foreach (var md in _mdl)
             {
-                if (md.MarkupAirline == null)
+                if (md.MarkupAirline == null || md.MarkupAirline.Count ==0)
                 {
                     md.MarkupAirline = new List<int>();
                     md.MarkupAirlineCode = new List<string>();
@@ -339,7 +339,7 @@ namespace B2BClasses
             var CustomerDetails = _context.tblCustomerMaster.Where(p => MarkupCustomerIds.Contains(p.Id)).ToList();
             foreach (var md in _mdl)
             {
-                if (md.MarkupCustomerDetail == null)
+                if (md.MarkupCustomerDetail == null || md.MarkupCustomerDetail.Count==0)
                 {
                     md.MarkupCustomerDetail = new List<int>();
                     md.MarkupCustomerCode = new List<string>();
