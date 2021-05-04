@@ -15,16 +15,20 @@ namespace B2BClasses
     {
         int CustomerId { get; set; }
         DateTime EffectiveFromDt { get; set; }
+
         bool AddConvenience(mdlWingMarkup mdl, int UserId);
         bool AddMarkup(mdlWingMarkup mdl, int UserId);
         void CustomerMarkup(List<List<mdlSearchResult>> mdl);
         List<mdlWingMarkup> LoadConvenience(int Id = 0, bool FromEffectiveDt = false, bool IsForCustomer = false);
         List<mdlWingMarkup> LoadMarkup(int Id = 0, bool FromEffectiveDt = false, bool IsForCustomer = false);
+        void LoadMarkupAirlineCode(List<mdlWingMarkup> _mdl);
+        void LoadMarkupCustomerCode(List<mdlWingMarkup> _mdl);
         bool PassengerTypeConvenience(mdlWingMarkup mdlA, int AdultCount, int ChildCount, int InfantCount);
         bool RemoveMarkup(int Id, int UserId);
         void WingConvenienceAmount(mdlFareQuotResponse mdl, List<mdlTravellerinfo> travellerInfo);
         void WingMarkupAmount(List<List<mdlSearchResult>> mdl, int AdultCount = 1, int ChildCount = 0, int InfantCount = 0);
     }
+
     public class Markup : IMarkup
     {
         private readonly DBContext _context;
@@ -167,20 +171,6 @@ namespace B2BClasses
             if (_mdl == null)
             {
                 _mdl = new List<mdlWingMarkup>();
-            }
-            var MarkupAirlineIds = _mdl.SelectMany(p => p.MarkupAirline).ToList();
-            var AirlineDetails = _context.tblAirline.Where(p => MarkupAirlineIds.Contains(p.Id)).ToList();
-            foreach (var md in _mdl)
-            {
-                if (md.MarkupAirline == null)
-                {
-                    md.MarkupAirline = new List<int>();
-                    md.MarkupAirlineCode = new List<string>();
-                    continue;
-                }
-                md.MarkupAirlineCode = (from t1 in md.MarkupAirline
-                                        join t2 in AirlineDetails on t1 equals t2.Id
-                                        select t2.Code).ToList();
             }
             return _mdl;
         }
@@ -325,6 +315,41 @@ namespace B2BClasses
             return _mdl;
         }
 
+        public void LoadMarkupAirlineCode(List<mdlWingMarkup> _mdl)
+        {
+            var MarkupAirlineIds = _mdl.SelectMany(p => p.MarkupAirline).ToList();
+            var AirlineDetails = _context.tblAirline.Where(p => MarkupAirlineIds.Contains(p.Id)).ToList();
+            foreach (var md in _mdl)
+            {
+                if (md.MarkupAirline == null)
+                {
+                    md.MarkupAirline = new List<int>();
+                    md.MarkupAirlineCode = new List<string>();
+                    continue;
+                }
+                md.MarkupAirlineCode = (from t1 in md.MarkupAirline
+                                        join t2 in AirlineDetails on t1 equals t2.Id
+                                        select t2.Code).ToList();
+            }
+        }
+
+        public void LoadMarkupCustomerCode(List<mdlWingMarkup> _mdl)
+        {
+            var MarkupCustomerIds = _mdl.SelectMany(p => p.MarkupCustomerDetail).ToList();
+            var CustomerDetails = _context.tblCustomerMaster.Where(p => MarkupCustomerIds.Contains(p.Id)).ToList();
+            foreach (var md in _mdl)
+            {
+                if (md.MarkupCustomerCode == null)
+                {
+                    md.MarkupCustomerCode = new List<string>();
+                    continue;
+                }
+                md.MarkupCustomerCode = (from t1 in md.MarkupCustomerDetail
+                                         join t2 in CustomerDetails on t1 equals t2.Id
+                                         select t2.Code).ToList();
+            }
+        }
+
         private bool AirlineApplicability(mdlWingMarkup mdlA, mdlSearchResult mdlS)
         {
             if (mdlA.IsAllAirline)
@@ -391,6 +416,7 @@ namespace B2BClasses
         public void WingMarkupAmount(List<List<mdlSearchResult>> mdl, int AdultCount = 1, int ChildCount = 0, int InfantCount = 0)
         {
             List<mdlWingMarkup> allMarkup = LoadMarkup(0, false, true);
+            LoadMarkupAirlineCode(allMarkup);
             for (int i = 0; i < mdl.Count; i++)
             {
                 for (int j = 0; j < mdl[i].Count; j++)
@@ -495,7 +521,8 @@ namespace B2BClasses
             int InfantMaleCount = travellerInfo?.Where(p => p.passengerType == enmPassengerType.Child && (p.Title.Trim().ToLower() == "mr" || p.Title.Trim().ToLower() == "master")).Count() ?? 0;
             int InfantFemaleCount = travellerInfo?.Where(p => p.passengerType == enmPassengerType.Child && (p.Title.Trim().ToLower() == "ms" || p.Title.Trim().ToLower() == "mrs")).Count() ?? 0;
 
-            List<mdlWingMarkup> allMarkup = LoadMarkup(0, false, true);
+            List<mdlWingMarkup> allMarkup = LoadConvenience(0, false, true);
+            LoadMarkupAirlineCode(allMarkup);
             for (int i = 0; i < mdl.Results.Count; i++)
             {
                 for (int j = 0; j < mdl.Results[i].Count; j++)

@@ -47,7 +47,8 @@ namespace B2BClasses.Models
 
         public List<enmServiceProvider> MarkupServiceProvider { get; set; }
         public List<enmCustomerType> MarkupCustomerType { get; set; }        
-        public List<int> MarkupCustomerDetail { get; set; }        
+        public List<int> MarkupCustomerDetail { get; set; }
+        public List<string> MarkupCustomerCode { get; set; }
         public List<enmPassengerType> MarkupPassengerType { get; set; }
         public List<enmCabinClass> MarkupCabinClass { get; set; }        
         public List<int> MarkupAirline { get; set; }

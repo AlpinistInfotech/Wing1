@@ -168,6 +168,8 @@ namespace B2bApplication.Models
     }
 
 
+
+
     public class mdlWingMarkupWraper
     { 
         public mdlWingMarkup WingMarkup { get; set; }
@@ -266,7 +268,26 @@ namespace B2bApplication.Models
 
 
     }
-    
+
+
+    public class mdlWingMarkupReport
+    {
+        public int Id{ get; set; }
+        public string Applicability { get; set; }
+        public string FlightType { get; set; }
+        public string ServiceProvider{ get; set; }
+        public string CustomerType{ get; set; }
+        public string Customer { get; set; }
+        public string PassengerType{ get; set; }
+        public string FlightClass{ get; set; }
+        public string Airline { get; set; }
+        public double Amount { get; set; }
+        public DateTime EffectiveFromDt { get; set; }
+        public DateTime ModifiedDt { get; set; }
+        public string ModifiedBy { get; set; }
+        public string remarks { get; set; }
+
+    }
 }
 
 
