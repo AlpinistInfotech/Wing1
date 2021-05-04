@@ -339,8 +339,9 @@ namespace B2BClasses
             var CustomerDetails = _context.tblCustomerMaster.Where(p => MarkupCustomerIds.Contains(p.Id)).ToList();
             foreach (var md in _mdl)
             {
-                if (md.MarkupCustomerCode == null)
+                if (md.MarkupCustomerDetail == null)
                 {
+                    md.MarkupCustomerDetail = new List<int>();
                     md.MarkupCustomerCode = new List<string>();
                     continue;
                 }

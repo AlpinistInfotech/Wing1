@@ -75,7 +75,7 @@
                                                 <input id="cboxIsAllCustomerType" class="ace ace-switch" type="checkbox" asp-for="WingMarkup.IsAllCustomerType">
                                                 <span class="lbl" data-lbl="ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT"></span>
                                             </label>
-                                            <select id="selectIsAllCustomerType" asp-for="_CustomerType" class="form-control select2" multiple asp-items="Model._CustomerType">
+                                            <select id="selectIsAllCustomerType" asp-for="WingMarkup.MarkupCustomerType" class="form-control select2" multiple asp-items="Model._CustomerType">
                                             </select>
                                         </div>
                                         <span asp-validation-for="WingMarkup.IsAllCustomerType" class="text-danger"></span>
@@ -91,7 +91,7 @@
                                                 <input id="cboxIsAllCustomer" class="ace ace-switch" type="checkbox" asp-for="WingMarkup.IsAllCustomer" />
                                                 <span class="lbl" data-lbl="ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT"></span>
                                             </label>
-                                            <select id="selectIsAllCustomer" asp-for="_CustomerMaster" class="form-control select2" multiple="multiple" asp-items="Model._CustomerMaster">
+                                            <select id="selectIsAllCustomer" asp-for="WingMarkup.MarkupCustomerDetail" class="form-control select2" multiple="multiple" asp-items="Model._CustomerMaster">
                                             </select>
                                         </div>
                                         <span asp-validation-for="WingMarkup.IsAllCustomer" class="text-danger"></span>
@@ -109,7 +109,7 @@
                                                 <span class="lbl" data-lbl="ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT"></span>
                                             </label>
 
-                                            <select id="selectIsAllPessengerType" asp-for="_PassengerType" class="form-control select2" multiple="multiple" asp-items="Model._PassengerType">
+                                            <select id="selectIsAllPessengerType" asp-for="WingMarkup.MarkupPassengerType" class="form-control select2" multiple="multiple" asp-items="Model._PassengerType">
                                             </select>
                                         </div>
                                         <span asp-validation-for="WingMarkup.IsAllPessengerType" class="text-danger"></span>
@@ -129,7 +129,7 @@
                                                 <span class="lbl" data-lbl="ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT"></span>
                                             </label>
 
-                                            <select id="selectIsAllProvider" asp-for="_ServiceProvider" class="form-control select2" multiple asp-items="Model._ServiceProvider">
+                                            <select id="selectIsAllProvider" asp-for="WingMarkup.MarkupServiceProvider" class="form-control select2" multiple asp-items="Model._ServiceProvider">
                                             </select>
                                         </div>
                                         <span asp-validation-for="WingMarkup.Applicability" class="text-danger"></span>
@@ -147,7 +147,7 @@
                                                 <span class="lbl" data-lbl="ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT"></span>
                                             </label>
 
-                                            <select id="selectIsAllFlightClass" asp-for="_CabinClass" class="form-control select2" multiple asp-items="Model._CabinClass">
+                                            <select id="selectIsAllFlightClass" asp-for="WingMarkup.MarkupCabinClass" class="form-control select2" multiple asp-items="Model._CabinClass">
                                             </select>
                                         </div>
                                         <span asp-validation-for="WingMarkup.IsAllFlightClass" class="text-danger"></span>
@@ -164,7 +164,7 @@
                                                 <input id="cboxIsAllAirline" class="ace ace-switch" type="checkbox" asp-for="WingMarkup.IsAllAirline" />
                                                 <span class="lbl" data-lbl="ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT"></span>
                                             </label>
-                                            <select id="selectIsAllAirline" asp-for="_Airline" class="form-control select2" multiple asp-items="Model._Airline">
+                                            <select id="selectIsAllAirline" asp-for="WingMarkup.MarkupAirline" class="form-control select2" multiple asp-items="Model._Airline">
                                             </select>
                                         </div>
                                         <span asp-validation-for="WingMarkup.IsAllAirline" class="text-danger"></span>

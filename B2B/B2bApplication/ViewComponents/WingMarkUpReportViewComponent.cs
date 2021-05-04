@@ -15,8 +15,7 @@ namespace B2bApplication.ViewComponents
     {   private readonly IMarkup _markup;        
         public WingMarkUpReportViewComponent(IMarkup markup)
         {
-            _markup = markup;
-         
+            _markup = markup;         
         }
         public async Task<IViewComponentResult> InvokeAsync()
         {
