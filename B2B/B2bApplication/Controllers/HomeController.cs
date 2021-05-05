@@ -311,7 +311,7 @@ namespace B2bApplication.Controllers
         
         [Authorize]
         public async Task<IActionResult> WingMarkup(string Id,[FromServices] IMarkup markup)
-        {
+        {   
             ViewBag.Message = TempData["Message"];
             if (ViewBag.Message != null)
             {
