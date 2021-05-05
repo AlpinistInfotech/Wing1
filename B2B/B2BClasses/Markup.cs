@@ -298,20 +298,20 @@ namespace B2BClasses
             {
                 _mdl = new List<mdlWingMarkup>();
             }
-            var MarkupAirlineIds = _mdl.SelectMany(p => p.MarkupAirline).ToList();
-            var AirlineDetails = _context.tblAirline.Where(p => MarkupAirlineIds.Contains(p.Id)).ToList();
-            foreach (var md in _mdl)
-            {
-                if (md.MarkupAirline == null)
-                {
-                    md.MarkupAirline = new List<int>();
-                    md.MarkupAirlineCode = new List<string>();
-                    continue;
-                }
-                md.MarkupAirlineCode = (from t1 in md.MarkupAirline
-                                        join t2 in AirlineDetails on t1 equals t2.Id
-                                        select t2.Code).ToList();
-            }
+            //var MarkupAirlineIds = _mdl.SelectMany(p => p.MarkupAirline).ToList();
+            //var AirlineDetails = _context.tblAirline.Where(p => MarkupAirlineIds.Contains(p.Id)).ToList();
+            //foreach (var md in _mdl)
+            //{
+            //    if (md.MarkupAirline == null)
+            //    {
+            //        md.MarkupAirline = new List<int>();
+            //        md.MarkupAirlineCode = new List<string>();
+            //        continue;
+            //    }
+            //    md.MarkupAirlineCode = (from t1 in md.MarkupAirline
+            //                            join t2 in AirlineDetails on t1 equals t2.Id
+            //                            select t2.Code).ToList();
+            //}
             return _mdl;
         }
 
