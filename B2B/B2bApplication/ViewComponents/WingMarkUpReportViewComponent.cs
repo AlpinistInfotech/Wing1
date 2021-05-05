@@ -22,7 +22,7 @@ namespace B2bApplication.ViewComponents
             var returndata= _markup.LoadMarkup();
             _markup.LoadMarkupAirlineCode(returndata);
             _markup.LoadMarkupCustomerCode(returndata);            
-            List<mdlWingMarkupReport> result =  _markup.LoadMarkup().Select(p=>new mdlWingMarkupReport { 
+            List<mdlWingMarkupReport> result = returndata.Select(p=>new mdlWingMarkupReport { 
                 Id=p.Id,
                 Applicability=p.Applicability.ToString(),
                 FlightType=p.DirectFlight.ToString(),
