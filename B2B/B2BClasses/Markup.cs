@@ -25,6 +25,7 @@ namespace B2BClasses
         void LoadMarkupCustomerCode(List<mdlWingMarkup> _mdl);
         bool PassengerTypeConvenience(mdlWingMarkup mdlA, int AdultCount, int ChildCount, int InfantCount);
         bool RemoveMarkup(int Id, int UserId);
+        bool RemoveConvenience(int Id, int UserId);
         void WingConvenienceAmount(mdlFareQuotResponse mdl, List<mdlTravellerinfo> travellerInfo);
         void WingMarkupAmount(List<List<mdlSearchResult>> mdl, int AdultCount = 1, int ChildCount = 0, int InfantCount = 0);
     }
@@ -759,6 +760,16 @@ namespace B2BClasses
 
             return true;
 
+        }
+
+        public bool RemoveConvenience(int Id, int UserId)
+        {
+            var _markupuMaster = _context.tblWingConvenience.Where(p => p.Id == Id).FirstOrDefault();
+            _markupuMaster.IsDeleted = true;
+            _markupuMaster.ModifiedBy = UserId;
+            _markupuMaster.ModifiedDt = DateTime.Now;
+            _context.SaveChanges();
+            return true;
         }
 
     }

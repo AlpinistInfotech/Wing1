@@ -76,7 +76,7 @@ namespace B2BClasses.Database
         public DbSet<tblWalletDetailLedger> tblWalletDetailLedger { get; set; }
         public DbSet<tblWalletDetailLedgerLog> tblWalletDetailLedgerLog { get; set; }
         public DbSet<tblWalletBalanceAlert> tblWalletBalanceAlert { get; set; }
-        public DbSet<tblCustomerMarkup> tblCustomerMarkup { get; set; }        
+        public DbSet<tblCustomerMarkup> tblCustomerMarkup { get; set; }
         #endregion
 
     }

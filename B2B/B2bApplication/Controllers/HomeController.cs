@@ -451,5 +451,148 @@ namespace B2bApplication.Controllers
             return View(mdl);
         }
 
+
+        [Authorize]
+        public async Task<IActionResult> Convenience(string Id, [FromServices] IMarkup markup)
+        {
+            ViewBag.Message = TempData["Message"];
+            if (ViewBag.Message != null)
+            {
+                ViewBag.SaveStatus = (int)TempData["MessageType"];
+            }
+            mdlWingMarkupWraper mdl = new mdlWingMarkupWraper();
+            if (Id != null)
+            {
+                int ID = 0;
+                int.TryParse(Id, out ID);
+                if (ID > 0)
+                {
+                    mdl.WingMarkup = markup.LoadMarkup(0).FirstOrDefault();
+                }
+
+            }
+            if (mdl.WingMarkup == null)
+            {
+                mdl.WingMarkup = new mdlWingMarkup();
+            }
+
+            mdl.SetDefaultDropDown(_context);
+            return View(mdl);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Convenience(mdlWingMarkupWraper mdl, string submitData, [FromServices] IMarkup markup)
+        {
+            bool IsUpdated = false;
+            if (mdl.WingMarkup.Id > 0)
+            {
+                IsUpdated = true;
+            }
+            if (mdl.WingMarkup == null)
+            {
+                ModelState.AddModelError("", "Invalid Data");
+            }
+            else
+            {
+                if (!mdl.WingMarkup.IsAllCustomerType)
+                {
+                    if (mdl.WingMarkup.MarkupCustomerType == null || mdl.WingMarkup.MarkupCustomerType.Count == 0)
+                    {
+                        ModelState.AddModelError("Convenience.IsAllCustomerType", "Select Customer Type");
+                    }
+                }
+                if (!mdl.WingMarkup.IsAllCustomer)
+                {
+                    if (mdl.WingMarkup.MarkupCustomerDetail == null || mdl.WingMarkup.MarkupCustomerDetail.Count == 0)
+                    {
+                        ModelState.AddModelError("Convenience.IsAllCustomer", "Select Customer");
+                    }
+                }
+                if (!mdl.WingMarkup.IsAllPessengerType)
+                {
+                    if (mdl.WingMarkup.MarkupPassengerType == null || mdl.WingMarkup.MarkupPassengerType.Count == 0)
+                    {
+                        ModelState.AddModelError("Convenience.IsAllPessengerType", "Select Passenger Type");
+                    }
+                }
+                if (!mdl.WingMarkup.IsAllProvider)
+                {
+                    if (mdl.WingMarkup.MarkupServiceProvider == null || mdl.WingMarkup.MarkupServiceProvider.Count == 0)
+                    {
+                        ModelState.AddModelError("Convenience.IsAllProvider", "Select Service Provider");
+                    }
+                }
+                if (!mdl.WingMarkup.IsAllFlightClass)
+                {
+                    if (mdl.WingMarkup.MarkupCabinClass == null || mdl.WingMarkup.MarkupCabinClass.Count == 0)
+                    {
+                        ModelState.AddModelError("Convenience.IsAllFlightClass", "Select Flight Class");
+                    }
+                }
+                if (!mdl.WingMarkup.IsAllAirline)
+                {
+                    if (mdl.WingMarkup.MarkupAirline == null || mdl.WingMarkup.MarkupAirline.Count == 0)
+                    {
+                        ModelState.AddModelError("Convenience.IsAllAirline", "Select Airlines");
+                    }
+                }
+                if (mdl.WingMarkup.Id == 0)
+                {
+                    if (mdl.WingMarkup.EffectiveFromDt < Convert.ToDateTime(DateTime.Now.ToString("dd-MMM-yyyy")))
+                    {
+                        ModelState.AddModelError("Convenience.EffectiveFromDt", "Effective FromDate should be greater then Today");
+                    }
+                }
+
+                if (mdl.WingMarkup.Amount <= 0)
+                {
+                    ModelState.AddModelError("Convenience.Amount", "Amount Should be Greater then 0");
+                }
+            }
+            if (ModelState.IsValid)
+            {
+                if (submitData == "deleteData")
+                {
+                    if (markup.RemoveConvenience(mdl.WingMarkup.Id, _userId))
+                    {
+                        TempData["MessageType"] = (int)enmMessageType.Success;
+                        TempData["Message"] = _setting.GetErrorMessage(enmMessage.DeleteSuccessfully);
+                        return RedirectToAction("Convenience");
+                    }
+                }
+                else
+                {
+                    if (IsUpdated)
+                    {
+                        if (markup.RemoveConvenience(mdl.WingMarkup.Id, _userId) && markup.AddConvenience(mdl.WingMarkup, _userId))
+                        {
+                            TempData["MessageType"] = (int)enmMessageType.Success;
+                            TempData["Message"] = _setting.GetErrorMessage(enmMessage.UpdateSuccessfully);
+                            return RedirectToAction("Convenience");
+                        }
+                    }
+                    else
+                    {
+                        if (markup.AddConvenience(mdl.WingMarkup, _userId))
+                        {
+                            TempData["MessageType"] = (int)enmMessageType.Success;
+                            TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
+                            return RedirectToAction("Convenience");
+                        }
+                    }
+                }
+
+
+            }
+            else
+            {
+                ViewBag.MessageType = (int)enmMessageType.Warning;
+                ViewBag.Message = "Data not valid";
+            }
+            mdl.SetDefaultDropDown(_context);
+            return View(mdl);
+        }
+
     }
 }

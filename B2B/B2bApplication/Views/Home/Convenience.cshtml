@@ -1,0 +1,581 @@
+﻿@model B2bApplication.Models.mdlWingMarkupWraper
+@using B2BClasses.Services.Enums
+@{
+    ViewData["Title"] = enmDocumentMaster.convenience_fee.GetDocumentDetails().Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- PAGE CONTENT BEGINS -->
+        <form action="@Url.Action()" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <input type="hidden" asp-for="WingMarkup.Id" />
+            <div class="widget-box">
+                <div class="widget-header">
+                    <h4 class="widget-title">@ViewData["Title"]</h4>
+                    <div class="widget-toolbar">
+                        <a href="#" data-action="collapse">
+                            <i class="ace-icon fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="widget-body">
+                    <div class="widget-main">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="WingMarkup.Applicability" class="col-sm-4 control-label"></label>
+                                    <div class="col-sm-8">
+                                        <select asp-for="WingMarkup.Applicability" class="form-control select2">
+                                            @foreach (var data in Enum.GetValues(typeof(enmMarkupApplicability)))
+                                            {
+                                                <option value="@(data)">@data.ToString() </option>
+                                            }
+                                        </select>
+                                        <span asp-validation-for="WingMarkup.Applicability" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="WingMarkup.DirectFlight" class="col-sm-4 control-label"></label>
+                                    <div class="col-sm-8">
+                                        <select asp-for="WingMarkup.DirectFlight" class="form-control select2">
+                                            <option value="@(enmDirectFlight.ALL )"> All </option>
+                                            <option value="@(enmDirectFlight.ConnectFlight)"> Connected Flight</option>
+                                            <option value="@(enmDirectFlight.DirectFlight)"> Direct Flight</option>
+                                        </select>
+                                        <span asp-validation-for="WingMarkup.DirectFlight" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="WingMarkup.Amount" class="col-sm-4 control-label"></label>
+                                    <div class="col-sm-8">
+                                        <input type="text" asp-for="WingMarkup.Amount" class="form-control" />
+                                        <span asp-validation-for="WingMarkup.Amount" class="text-danger"></span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="WingMarkup.IsAllCustomerType" class="col-sm-4 control-label"></label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <label class="input-group-addon input-group-addon-custom">
+                                                <input id="cboxIsAllCustomerType" class="ace ace-switch" type="checkbox" asp-for="WingMarkup.IsAllCustomerType">
+                                                <span class="lbl" data-lbl="ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT"></span>
+                                            </label>
+                                            <select id="selectIsAllCustomerType" asp-for="WingMarkup.MarkupCustomerType" class="form-control select2" multiple asp-items="Model._CustomerType">
+                                            </select>
+                                        </div>
+                                        <span asp-validation-for="WingMarkup.IsAllCustomerType" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="WingMarkup.IsAllCustomer" class="col-sm-4 control-label"></label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <label class="input-group-addon input-group-addon-custom">
+                                                <input id="cboxIsAllCustomer" class="ace ace-switch" type="checkbox" asp-for="WingMarkup.IsAllCustomer" />
+                                                <span class="lbl" data-lbl="ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT"></span>
+                                            </label>
+                                            <select id="selectIsAllCustomer" asp-for="WingMarkup.MarkupCustomerDetail" class="form-control select2" multiple="multiple" asp-items="Model._CustomerMaster">
+                                            </select>
+                                        </div>
+                                        <span asp-validation-for="WingMarkup.IsAllCustomer" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="WingMarkup.IsAllPessengerType" class="col-sm-4 control-label"></label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <label class="input-group-addon input-group-addon-custom">
+                                                <input id="cboxIsAllPessengerType" class="ace ace-switch" type="checkbox" asp-for="WingMarkup.IsAllPessengerType" />
+                                                <span class="lbl" data-lbl="ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT"></span>
+                                            </label>
+
+                                            <select id="selectIsAllPessengerType" asp-for="WingMarkup.MarkupPassengerType" class="form-control select2" multiple="multiple" asp-items="Model._PassengerType">
+                                            </select>
+                                        </div>
+                                        <span asp-validation-for="WingMarkup.IsAllPessengerType" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="WingMarkup.IsAllProvider" class="col-sm-4 control-label"></label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <label class="input-group-addon input-group-addon-custom">
+                                                <input id="cboxIsAllProvider" class="ace ace-switch" type="checkbox" asp-for="WingMarkup.IsAllProvider">
+                                                <span class="lbl" data-lbl="ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT"></span>
+                                            </label>
+
+                                            <select id="selectIsAllProvider" asp-for="WingMarkup.MarkupServiceProvider" class="form-control select2" multiple asp-items="Model._ServiceProvider">
+                                            </select>
+                                        </div>
+                                        <span asp-validation-for="WingMarkup.Applicability" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="WingMarkup.IsAllFlightClass" class="col-sm-4 control-label"></label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <label class="input-group-addon input-group-addon-custom">
+                                                <input id="cboxIsAllFlightClass" class="ace ace-switch" type="checkbox" asp-for="WingMarkup.IsAllFlightClass" />
+                                                <span class="lbl" data-lbl="ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT"></span>
+                                            </label>
+
+                                            <select id="selectIsAllFlightClass" asp-for="WingMarkup.MarkupCabinClass" class="form-control select2" multiple asp-items="Model._CabinClass">
+                                            </select>
+                                        </div>
+                                        <span asp-validation-for="WingMarkup.IsAllFlightClass" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="WingMarkup.IsAllAirline" class="col-sm-4 control-label"></label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <label class="input-group-addon input-group-addon-custom">
+                                                <input id="cboxIsAllAirline" class="ace ace-switch" type="checkbox" asp-for="WingMarkup.IsAllAirline" />
+                                                <span class="lbl" data-lbl="ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT"></span>
+                                            </label>
+                                            <select id="selectIsAllAirline" asp-for="WingMarkup.MarkupAirline" class="form-control select2" multiple asp-items="Model._Airline">
+                                            </select>
+                                        </div>
+                                        <span asp-validation-for="WingMarkup.IsAllAirline" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="WingMarkup.remarks" class="col-sm-4 control-label"></label>
+                                    <div class="col-sm-8">
+                                        <input type="text" asp-for="WingMarkup.remarks" class="form-control" />
+                                        <span asp-validation-for="WingMarkup.remarks" class="text-danger"></span>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="WingMarkup.EffectiveFromDt" class="col-sm-4 control-label"></label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <input class="form-control date-picker" asp-for="WingMarkup.EffectiveFromDt" asp-format="{0:dd-MMM-yyyy}" type="text" data-date-format="d-M-yyyy" />
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar bigger-110"></i>
+                                            </span>
+                                        </div>
+                                        <span asp-validation-for="WingMarkup.EffectiveFromDt" class="text-danger"></span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="WingMarkup.Gender" class="col-sm-4 control-label"></label>
+                                    <div class="col-sm-8">
+                                        <select asp-for="WingMarkup.Gender" class="form-control select2">
+                                           
+                                                @foreach (var data in Enum.GetValues(typeof(enmGender)))
+                                                {
+                                                    <option value="@(data)">@data.ToString() </option>
+                                                }
+                                            
+                                        </select>
+                                        <span asp-validation-for="WingMarkup.Gender" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="clearfix form-actions">
+                                    <div class="col-md-offset-3 col-md-9">
+                                        <button class="btn btn-info" type="submit">
+                                            <i class="ace-icon fa fa-check bigger-110"></i>
+                                            @(Model.WingMarkup.Id > 0? "update":"Save")
+                                        </button>
+                                        &nbsp;
+                                        <a href="/Home/WingMarkup" class="btn" >
+                                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                                            Reset
+                                        </a>
+                                        &nbsp;
+                                        @if (Model.WingMarkup.Id > 0)
+                                        {
+                                            <button class="btn btn-danger" type="submit" name="submitData" value="deleteData">
+                                                <i class="ace-icon fa fa-trash-o bigger-110"></i>
+                                                Delete
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+        </form>
+    </div>
+</div>
+
+@await Component.InvokeAsync("WingMarkUpReport")
+
+@section Scripts {
+    <script src="~/assets/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/js/jquery.dataTables.bootstrap.min.js"></script>
+    <script src="~/assets/js/dataTables.buttons.min.js"></script>
+    <script src="~/assets/js/buttons.flash.min.js"></script>
+    <script src="~/assets/js/buttons.html5.min.js"></script>
+    <script src="~/assets/js/buttons.print.min.js"></script>
+    <script src="~/assets/js/buttons.colVis.min.js"></script>
+    <script src="~/assets/js/dataTables.select.min.js"></script>
+
+
+    <script type="text/javascript">
+
+
+        jQuery(function ($) {
+            $('.select2').select2();
+            $('.date-picker').datepicker({
+                autoclose: true,
+                todayHighlight: true
+            })
+            //initiate dataTables plugin
+            var myTable =
+                $('#dynamic-table')
+                    //.wrap("<div class='dataTables_borderWrap' />")   //if you are applying horizontal scrolling (sScrollX)
+                    .DataTable({
+                        bAutoWidth: false,
+                        "aoColumns": [
+                            { "bSortable": false },
+                            null, null, null, null, null, null, null, null, null, null
+
+                        ],
+                        "aaSorting": [],
+
+
+                        //"bProcessing": true,
+                        //"bServerSide": true,
+                        //"sAjaxSource": "http://127.0.0.1/table.php"	,
+
+                        //,
+                        //"sScrollY": "200px",
+                        //"bPaginate": false,
+
+                        //"sScrollX": "100%",
+                        //"sScrollXInner": "120%",
+                        //"bScrollCollapse": true,
+                        //Note: if you are applying horizontal scrolling (sScrollX) on a ".table-bordered"
+                        //you may want to wrap the table inside a "div.dataTables_borderWrap" element
+
+                        //"iDisplayLength": 50
+
+
+                        select: {
+                            style: 'multi'
+                        }
+                    });
+
+
+
+            $.fn.dataTable.Buttons.defaults.dom.container.className = 'dt-buttons btn-overlap btn-group btn-overlap';
+
+            new $.fn.dataTable.Buttons(myTable, {
+                buttons: [
+                    {
+                        "extend": "colvis",
+                        "text": "<i class='fa fa-search bigger-110 blue'></i> <span class='hidden'>Show/hide columns</span>",
+                        "className": "btn btn-white btn-primary btn-bold",
+                        columns: ':not(:first):not(:last)'
+                    },
+                    {
+                        "extend": "copy",
+                        "text": "<i class='fa fa-copy bigger-110 pink'></i> <span class='hidden'>Copy to clipboard</span>",
+                        "className": "btn btn-white btn-primary btn-bold"
+                    },
+                    {
+                        "extend": "csv",
+                        "text": "<i class='fa fa-database bigger-110 orange'></i> <span class='hidden'>Export to CSV</span>",
+                        "className": "btn btn-white btn-primary btn-bold"
+                    },
+                    {
+                        "extend": "excel",
+                        "text": "<i class='fa fa-file-excel-o bigger-110 green'></i> <span class='hidden'>Export to Excel</span>",
+                        "className": "btn btn-white btn-primary btn-bold"
+                    },
+                    {
+                        "extend": "pdf",
+                        "text": "<i class='fa fa-file-pdf-o bigger-110 red'></i> <span class='hidden'>Export to PDF</span>",
+                        "className": "btn btn-white btn-primary btn-bold"
+                    },
+                    {
+                        "extend": "print",
+                        "text": "<i class='fa fa-print bigger-110 grey'></i> <span class='hidden'>Print</span>",
+                        "className": "btn btn-white btn-primary btn-bold",
+                        autoPrint: false,
+                        message: 'This print was produced using the Print button for DataTables'
+                    }
+                ]
+            });
+            myTable.buttons().container().appendTo($('.tableTools-container'));
+
+            //style the message box
+            var defaultCopyAction = myTable.button(1).action();
+            myTable.button(1).action(function (e, dt, button, config) {
+                defaultCopyAction(e, dt, button, config);
+                $('.dt-button-info').addClass('gritter-item-wrapper gritter-info gritter-center white');
+            });
+
+
+            var defaultColvisAction = myTable.button(0).action();
+            myTable.button(0).action(function (e, dt, button, config) {
+
+                defaultColvisAction(e, dt, button, config);
+
+
+                if ($('.dt-button-collection > .dropdown-menu').length == 0) {
+                    $('.dt-button-collection')
+                        .wrapInner('<ul class="dropdown-menu dropdown-light dropdown-caret dropdown-caret" />')
+                        .find('a').attr('href', '#').wrap("<li />")
+                }
+                $('.dt-button-collection').appendTo('.tableTools-container .dt-buttons')
+            });
+
+            ////
+
+            setTimeout(function () {
+                $($('.tableTools-container')).find('a.dt-button').each(function () {
+                    var div = $(this).find(' > div').first();
+                    if (div.length == 1) div.tooltip({ container: 'body', title: div.parent().text() });
+                    else $(this).tooltip({ container: 'body', title: $(this).text() });
+                });
+            }, 500);
+
+
+
+
+
+            myTable.on('select', function (e, dt, type, index) {
+                if (type === 'row') {
+                    $(myTable.row(index).node()).find('input:checkbox').prop('checked', true);
+                }
+            });
+            myTable.on('deselect', function (e, dt, type, index) {
+                if (type === 'row') {
+                    $(myTable.row(index).node()).find('input:checkbox').prop('checked', false);
+                }
+            });
+
+
+
+
+            /////////////////////////////////
+            //table checkboxes
+            $('th input[type=checkbox], td input[type=checkbox]').prop('checked', false);
+
+            //select/deselect all rows according to table header checkbox
+            $('#dynamic-table > thead > tr > th input[type=checkbox], #dynamic-table_wrapper input[type=checkbox]').eq(0).on('click', function () {
+                var th_checked = this.checked;//checkbox inside "TH" table header
+
+                $('#dynamic-table').find('tbody > tr').each(function () {
+                    var row = this;
+                    if (th_checked) myTable.row(row).select();
+                    else myTable.row(row).deselect();
+                });
+            });
+
+            //select/deselect a row when the checkbox is checked/unchecked
+            $('#dynamic-table').on('click', 'td input[type=checkbox]', function () {
+                var row = $(this).closest('tr').get(0);
+                if (this.checked) myTable.row(row).deselect();
+                else myTable.row(row).select();
+            });
+
+
+
+            $(document).on('click', '#dynamic-table .dropdown-toggle', function (e) {
+                e.stopImmediatePropagation();
+                e.stopPropagation();
+                e.preventDefault();
+            });
+
+
+
+            //And for the first simple table, which doesn't have TableTools or dataTables
+            //select/deselect all rows according to table header checkbox
+            var active_class = 'active';
+            $('#simple-table > thead > tr > th input[type=checkbox]').eq(0).on('click', function () {
+                var th_checked = this.checked;//checkbox inside "TH" table header
+
+                $(this).closest('table').find('tbody > tr').each(function () {
+                    var row = this;
+                    if (th_checked) $(row).addClass(active_class).find('input[type=checkbox]').eq(0).prop('checked', true);
+                    else $(row).removeClass(active_class).find('input[type=checkbox]').eq(0).prop('checked', false);
+                });
+            });
+
+            //select/deselect a row when the checkbox is checked/unchecked
+            $('#simple-table').on('click', 'td input[type=checkbox]', function () {
+                var $row = $(this).closest('tr');
+                if ($row.is('.detail-row ')) return;
+                if (this.checked) $row.addClass(active_class);
+                else $row.removeClass(active_class);
+            });
+
+
+
+            /********************************/
+            //add tooltip for small view action buttons in dropdown menu
+            $('[data-rel="tooltip"]').tooltip({ placement: tooltip_placement });
+
+            //tooltip placement on right or left
+            function tooltip_placement(context, source) {
+                var $source = $(source);
+                var $parent = $source.closest('table')
+                var off1 = $parent.offset();
+                var w1 = $parent.width();
+
+                var off2 = $source.offset();
+                //var w2 = $source.width();
+
+                if (parseInt(off2.left) < parseInt(off1.left) + parseInt(w1 / 2)) return 'right';
+                return 'left';
+            }
+
+
+
+
+            /***************/
+            $('.show-details-btn').on('click', function (e) {
+                e.preventDefault();
+                $(this).closest('tr').next().toggleClass('open');
+                $(this).find(ace.vars['.icon']).toggleClass('fa-angle-double-down').toggleClass('fa-angle-double-up');
+            });
+            /***************/
+
+        });
+
+
+        $(document).ready(function () {
+            $(window).load(function () {
+                //insert all your ajax callback code here.
+                //on Load Check
+                if ($("#cboxIsAllProvider").prop("checked") == true) {
+                    $('#selectIsAllProvider').next(".select2-container").hide();
+                } else {
+                    $('#selectIsAllProvider').next(".select2-container").show();
+                }
+                if ($("#cboxIsAllCustomerType").prop("checked") == true) {
+                    $('#selectIsAllCustomerType').next(".select2-container").hide();
+                } else {
+                    $('#selectIsAllCustomerType').next(".select2-container").show();
+                }
+                if ($("#cboxIsAllCustomer").prop("checked") == true) {
+                    $('#selectIsAllCustomer').next(".select2-container").hide();
+                } else {
+                    $('#selectIsAllCustomer').next(".select2-container").show();
+                }
+                if ($("#cboxIsAllPessengerType").prop("checked") == true) {
+                    $('#selectIsAllPessengerType').next(".select2-container").hide();
+                } else {
+                    $('#selectIsAllPessengerType').next(".select2-container").show();
+                }
+                if ($("#cboxIsAllFlightClass").prop("checked") == true) {
+                    $('#selectIsAllFlightClass').next(".select2-container").hide();
+                } else {
+                    $('#selectIsAllFlightClass').next(".select2-container").show();
+                }
+                if ($("#cboxIsAllAirline").prop("checked") == true) {
+                    $('#selectIsAllAirline').next(".select2-container").hide();
+                } else {
+                    $('#selectIsAllAirline').next(".select2-container").show();
+                }
+            });
+
+            $("#cboxIsAllProvider").change(function () {
+                if (this.checked) {
+                    $('#selectIsAllProvider').next(".select2-container").hide();
+                } else {
+                    $('#selectIsAllProvider').next(".select2-container").show();
+                }
+            });
+            $("#cboxIsAllCustomerType").change(function () {
+                if (this.checked) {
+                    $('#selectIsAllCustomerType').next(".select2-container").hide();
+                } else {
+                    $('#selectIsAllCustomerType').next(".select2-container").show();
+                }
+            });
+            $("#cboxIsAllCustomer").change(function () {
+                if (this.checked) {
+                    $('#selectIsAllCustomer').next(".select2-container").hide();
+                } else {
+                    $('#selectIsAllCustomer').next(".select2-container").show();
+                }
+            });
+            $("#cboxIsAllPessengerType").change(function () {
+                if (this.checked) {
+                    $('#selectIsAllPessengerType').next(".select2-container").hide();
+                } else {
+                    $('#selectIsAllPessengerType').next(".select2-container").show();
+                }
+            });
+            $("#cboxIsAllFlightClass").change(function () {
+                if (this.checked) {
+                    $('#selectIsAllFlightClass').next(".select2-container").hide();
+                } else {
+                    $('#selectIsAllFlightClass').next(".select2-container").show();
+                }
+            });
+            $("#cboxIsAllAirline").change(function () {
+                if (this.checked) {
+                    $('#selectIsAllAirline').next(".select2-container").hide();
+                } else {
+                    $('#selectIsAllAirline').next(".select2-container").show();
+                }
+            });
+
+        });
+
+
+    </script>
+}
