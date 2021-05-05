@@ -394,10 +394,14 @@ namespace B2bApplication.Controllers
                         ModelState.AddModelError("WingMarkup.IsAllAirline", "Select Airlines");
                     }
                 }
-                if (mdl.WingMarkup.EffectiveFromDt < Convert.ToDateTime( DateTime.Now.ToString("dd-MMM-yyyy")))
+                if (mdl.WingMarkup.Id == 0)
                 {
-                    ModelState.AddModelError("WingMarkup.EffectiveFromDt", "Effective FromDate should be greater then Today");
+                    if (mdl.WingMarkup.EffectiveFromDt < Convert.ToDateTime(DateTime.Now.ToString("dd-MMM-yyyy")))
+                    {
+                        ModelState.AddModelError("WingMarkup.EffectiveFromDt", "Effective FromDate should be greater then Today");
+                    }
                 }
+                
                 if (mdl.WingMarkup.Amount <= 0)
                 {
                     ModelState.AddModelError("WingMarkup.Amount", "Amount Should be Greater then 0");
