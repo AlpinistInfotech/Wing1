@@ -42,6 +42,7 @@ namespace B2BClasses.Services.Enums
         InsufficientWalletBalance,
         SaveSuccessfully,
         UpdateSuccessfully,
+        DeleteSuccessfully,
         RecordAlreadyExists,
         InvalidData
     }

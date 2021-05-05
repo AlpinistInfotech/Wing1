@@ -310,26 +310,36 @@ namespace B2bApplication.Controllers
         
         
         [Authorize]
-        public async Task<IActionResult> WingMarkup()
+        public async Task<IActionResult> WingMarkup(string Id,[FromServices] IMarkup markup)
         {
-
-            
-            
             ViewBag.Message = TempData["Message"];
             if (ViewBag.Message != null)
             {
                 ViewBag.SaveStatus = (int)TempData["MessageType"];
             }
-
-                mdlWingMarkupWraper mdl = new mdlWingMarkupWraper();
-            mdl.WingMarkup = new mdlWingMarkup();
+            mdlWingMarkupWraper mdl = new mdlWingMarkupWraper();
+            if (Id != null)
+            {
+                int ID = 0;
+                int.TryParse(Id, out ID);
+                if (ID > 0)
+                {
+                    mdl.WingMarkup = markup.LoadMarkup(0).FirstOrDefault();
+                }
+                
+            }
+            if (mdl.WingMarkup == null)
+            {
+                mdl.WingMarkup = new mdlWingMarkup();
+            }
+            
             mdl.SetDefaultDropDown(_context);
             return View(mdl);
         }
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> WingMarkup(mdlWingMarkupWraper mdl,[FromServices]IMarkup markup)
+        public async Task<IActionResult> WingMarkup(mdlWingMarkupWraper mdl,string submitData, [FromServices]IMarkup markup)
         {
             bool IsUpdated = false;
             if (mdl.WingMarkup.Id>0)
@@ -395,24 +405,38 @@ namespace B2bApplication.Controllers
             }
             if (ModelState.IsValid)
             {
-                if (IsUpdated)
+                if (submitData == "deleteData")
                 {
-                    if (markup.RemoveMarkup(mdl.WingMarkup.Id, _userId) && markup.AddMarkup(mdl.WingMarkup, _userId))
+                    if (markup.RemoveMarkup(mdl.WingMarkup.Id, _userId))
                     {
                         TempData["MessageType"] = (int)enmMessageType.Success;
-                        TempData["Message"] = _setting.GetErrorMessage(enmMessage.UpdateSuccessfully);
+                        TempData["Message"] = _setting.GetErrorMessage(enmMessage.DeleteSuccessfully);
                         return RedirectToAction("WingMarkup");
                     }
                 }
                 else
                 {
-                    if (markup.AddMarkup(mdl.WingMarkup, _userId))
+                    if (IsUpdated)
                     {
-                        TempData["MessageType"] = (int)enmMessageType.Success;
-                        TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
-                        return RedirectToAction("WingMarkup");
+                        if (markup.RemoveMarkup(mdl.WingMarkup.Id, _userId) && markup.AddMarkup(mdl.WingMarkup, _userId))
+                        {
+                            TempData["MessageType"] = (int)enmMessageType.Success;
+                            TempData["Message"] = _setting.GetErrorMessage(enmMessage.UpdateSuccessfully);
+                            return RedirectToAction("WingMarkup");
+                        }
+                    }
+                    else
+                    {
+                        if (markup.AddMarkup(mdl.WingMarkup, _userId))
+                        {
+                            TempData["MessageType"] = (int)enmMessageType.Success;
+                            TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
+                            return RedirectToAction("WingMarkup");
+                        }
                     }
                 }
+
+                
             }
             else 
             {
