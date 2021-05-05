@@ -467,7 +467,7 @@ namespace B2bApplication.Controllers
                 int.TryParse(Id, out ID);
                 if (ID > 0)
                 {
-                    mdl.WingMarkup = markup.LoadMarkup(0).FirstOrDefault();
+                    mdl.WingMarkup = markup.LoadConvenience(0).FirstOrDefault();
                 }
 
             }

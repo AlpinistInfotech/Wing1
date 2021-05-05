@@ -1,4 +1,4 @@
-﻿@model List<mdlWingMarkupReport>
+﻿@model List<mdlConvenienceReport>
 
 <div class="row">
     <div class="col-xs-12">        
@@ -6,7 +6,7 @@
             <div class="pull-right tableTools-container"></div>
         </div>
         <div class="table-header">
-            Results for "All Markup"
+            Results for "All Convenience"
         </div>
 
         <!-- div.table-responsive -->
@@ -27,6 +27,7 @@
                         <th>Flight Class</th>
                         <th>Airline</th>
                         <th>Amount</th>
+                        <th>Gender</th>
                         <th>Effective FromDt</th>
                     </tr>
                 </thead>
@@ -40,10 +41,10 @@
                                 <a class="blue" href="#">
                                     <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                 </a>
-                                <a class="green" href="/Home/WingMarkup/@md.Id">
+                                <a class="green" href="/Home/Convenience/@md.Id">
                                     <i class="ace-icon fa fa-pencil bigger-130"></i>
                                 </a>
-                                <a class="red" href="/Home/WingMarkup/@md.Id">
+                                <a class="red" href="/Home/Convenience/@md.Id">
                                     <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                 </a>
                             </div>
@@ -64,7 +65,7 @@
                                         </li>
 
                                         <li>
-                                            <a href="/Home/WingMarkup/@md.Id" class="tooltip-success" data-rel="tooltip" title="Edit">
+                                            <a href="/Home/Convenience/@md.Id" class="tooltip-success" data-rel="tooltip" title="Edit">
                                                 <span class="green">
                                                     <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
                                                 </span>
@@ -72,7 +73,7 @@
                                         </li>
 
                                         <li>
-                                            <a href="/Home/WingMarkup/@md.Id" class="tooltip-error" data-rel="tooltip" title="Delete">
+                                            <a href="/Home/Convenience/@md.Id" class="tooltip-error" data-rel="tooltip" title="Delete">
                                                 <span class="red">
                                                     <i class="ace-icon fa fa-trash-o bigger-120"></i>
                                                 </span>
@@ -108,6 +109,9 @@
                         </td>
                         <td>
                             @md.Amount
+                        </td>
+                        <td>
+                            @md.gender
                         </td>
                         <td>
                             @md.EffectiveFromDt.ToString("dd-MMM-yyyy")
