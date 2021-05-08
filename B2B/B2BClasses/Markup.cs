@@ -772,5 +772,56 @@ namespace B2BClasses
             return true;
         }
 
+        public bool CopyInActualGrandTotal(List<List<mdlSearchResult>> mdls)
+        {
+            foreach (var mdl in mdls)
+            {
+                foreach (var md in mdl)
+                {
+                    foreach (var tp in md.TotalPriceList)
+                    {
+                        if (tp?.ADULT?.FareComponent?.ActualTotalFare != null)
+                        {
+                            tp.ADULT.FareComponent.ActualTotalFare = tp?.ADULT?.FareComponent?.TotalFare ?? 0;
+                        }
+                        if (tp?.CHILD?.FareComponent?.ActualTotalFare != null)
+                        {
+                            tp.CHILD.FareComponent.ActualTotalFare = tp?.CHILD?.FareComponent?.TotalFare ?? 0;
+                        }
+                        if (tp?.INFANT?.FareComponent?.ActualTotalFare != null)
+                        {
+                            tp.INFANT.FareComponent.ActualTotalFare = tp?.INFANT?.FareComponent?.TotalFare ?? 0;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+
+        public bool CalculateTotalPriceAfterMarkupConven(List<List<mdlSearchResult>> mdls)
+        {
+            foreach (var mdl in mdls)
+            {
+                foreach (var md in mdl)
+                {
+                    foreach (var tp in md.TotalPriceList)
+                    {
+                        if (tp?.ADULT?.FareComponent?.ActualTotalFare != null)
+                        {
+                            tp.ADULT.FareComponent.ActualTotalFare = tp?.ADULT?.FareComponent?.TotalFare ?? 0;
+                        }
+                        if (tp?.CHILD?.FareComponent?.ActualTotalFare != null)
+                        {
+                            tp.CHILD.FareComponent.ActualTotalFare = tp?.CHILD?.FareComponent?.TotalFare ?? 0;
+                        }
+                        if (tp?.INFANT?.FareComponent?.ActualTotalFare != null)
+                        {
+                            tp.INFANT.FareComponent.ActualTotalFare = tp?.INFANT?.FareComponent?.TotalFare ?? 0;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
     }
 }
