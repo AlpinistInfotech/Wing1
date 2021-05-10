@@ -18,14 +18,16 @@ namespace B2BClasses
 
         bool AddConvenience(mdlWingMarkup mdl, int UserId);
         bool AddMarkup(mdlWingMarkup mdl, int UserId);
+        bool CalculateTotalPriceAfterMarkup(List<List<mdlSearchResult>> mdls, int AdultCount, int ChildCount, int InfantCount);
+        bool CopyInActualGrandTotal(List<List<mdlSearchResult>> mdls);
         void CustomerMarkup(List<List<mdlSearchResult>> mdl);
         List<mdlWingMarkup> LoadConvenience(int Id = 0, bool FromEffectiveDt = false, bool IsForCustomer = false);
         List<mdlWingMarkup> LoadMarkup(int Id = 0, bool FromEffectiveDt = false, bool IsForCustomer = false);
         void LoadMarkupAirlineCode(List<mdlWingMarkup> _mdl);
         void LoadMarkupCustomerCode(List<mdlWingMarkup> _mdl);
         bool PassengerTypeConvenience(mdlWingMarkup mdlA, int AdultCount, int ChildCount, int InfantCount);
-        bool RemoveMarkup(int Id, int UserId);
         bool RemoveConvenience(int Id, int UserId);
+        bool RemoveMarkup(int Id, int UserId);
         void WingConvenienceAmount(mdlFareQuotResponse mdl, List<mdlTravellerinfo> travellerInfo);
         void WingMarkupAmount(List<List<mdlSearchResult>> mdl, int AdultCount = 1, int ChildCount = 0, int InfantCount = 0);
     }
@@ -322,7 +324,7 @@ namespace B2BClasses
             var AirlineDetails = _context.tblAirline.Where(p => MarkupAirlineIds.Contains(p.Id)).ToList();
             foreach (var md in _mdl)
             {
-                if (md.MarkupAirline == null || md.MarkupAirline.Count ==0)
+                if (md.MarkupAirline == null || md.MarkupAirline.Count == 0)
                 {
                     md.MarkupAirline = new List<int>();
                     md.MarkupAirlineCode = new List<string>();
@@ -340,7 +342,7 @@ namespace B2BClasses
             var CustomerDetails = _context.tblCustomerMaster.Where(p => MarkupCustomerIds.Contains(p.Id)).ToList();
             foreach (var md in _mdl)
             {
-                if (md.MarkupCustomerDetail == null || md.MarkupCustomerDetail.Count==0)
+                if (md.MarkupCustomerDetail == null || md.MarkupCustomerDetail.Count == 0)
                 {
                     md.MarkupCustomerDetail = new List<int>();
                     md.MarkupCustomerCode = new List<string>();
@@ -452,18 +454,18 @@ namespace B2BClasses
                                         //Adult Markup
                                         if (allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Adult))
                                         {
-                                            mdl[i][j].TotalPriceList[j1].ADULT.WingMarkup =
-                                            mdl[i][j].TotalPriceList[j1].ADULT.WingMarkup + (allMarkup[k].Amount * AdultCount);
+                                            mdl[i][j].TotalPriceList[j1].ADULT.FareComponent.WingMarkup =
+                                            mdl[i][j].TotalPriceList[j1].ADULT?.FareComponent?.WingMarkup ?? 0 + (allMarkup[k].Amount);
                                         }
                                         if (ChildCount > 0 && allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Child))
                                         {
-                                            mdl[i][j].TotalPriceList[j1].CHILD.WingMarkup =
-                                            mdl[i][j].TotalPriceList[j1].CHILD.WingMarkup + (allMarkup[k].Amount * ChildCount);
+                                            mdl[i][j].TotalPriceList[j1].CHILD.FareComponent.WingMarkup =
+                                            mdl[i][j].TotalPriceList[j1].CHILD?.FareComponent?.WingMarkup ?? 0 + (allMarkup[k].Amount);
                                         }
                                         if (InfantCount > 0 && allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Infant))
                                         {
-                                            mdl[i][j].TotalPriceList[j1].INFANT.WingMarkup =
-                                            mdl[i][j].TotalPriceList[j1].INFANT.WingMarkup + (allMarkup[k].Amount * InfantCount);
+                                            mdl[i][j].TotalPriceList[j1].INFANT.FareComponent.WingMarkup =
+                                            mdl[i][j].TotalPriceList[j1].INFANT?.FareComponent?.WingMarkup ?? 0 + (allMarkup[k].Amount);
                                         }
                                     }
                                 }
@@ -798,7 +800,7 @@ namespace B2BClasses
             return true;
         }
 
-        public bool CalculateTotalPriceAfterMarkupConven(List<List<mdlSearchResult>> mdls)
+        public bool CalculateTotalPriceAfterMarkup(List<List<mdlSearchResult>> mdls, int AdultCount, int ChildCount, int InfantCount)
         {
             foreach (var mdl in mdls)
             {
@@ -821,6 +823,37 @@ namespace B2BClasses
                     }
                 }
             }
+
+
+            double WingbaseFare = 0;
+            //update with markup
+            foreach (var mdl in mdls)
+            {
+                foreach (var md in mdl)
+                {
+                    foreach (var tp in md.TotalPriceList)
+                    {
+                        WingbaseFare = 0;
+                        if (tp?.ADULT?.FareComponent?.TotalFare != null)
+                        {
+                            WingbaseFare = WingbaseFare + ((tp?.ADULT?.FareComponent?.TotalFare ?? 0) + (tp?.ADULT?.FareComponent?.WingMarkup ?? 0) * AdultCount);
+                        }
+                        if (tp?.CHILD?.FareComponent?.ActualTotalFare != null)
+                        {
+                            WingbaseFare = WingbaseFare + ((tp?.CHILD?.FareComponent?.TotalFare ?? 0) + (tp?.CHILD?.FareComponent?.WingMarkup ?? 0) * ChildCount);
+
+                        }
+                        if (tp?.INFANT?.FareComponent?.ActualTotalFare != null)
+                        {
+                            WingbaseFare = WingbaseFare + ((tp?.INFANT?.FareComponent?.TotalFare ?? 0) + (tp?.INFANT?.FareComponent?.WingMarkup ?? 0) * InfantCount);
+                        }
+                        tp.BaseFare = WingbaseFare;
+                        tp.TotalPrice = tp.BaseFare + tp.WingMarkup + tp.CustomerMarkup;
+
+                    }
+                }
+            }
+
             return true;
         }
     }

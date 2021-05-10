@@ -25,15 +25,17 @@ namespace B2bApplication.Controllers
         private readonly DBContext _context;
         private readonly IBooking _booking;
         private readonly ISettings _setting;
+        private readonly IMarkup _markup;
         int _customerId,_userId;
         public HomeController(ILogger<HomeController> logger, DBContext context, IBooking booking,
-            ISettings setting
+            ISettings setting, IMarkup markup
             )
         {
             _context = context;
             _logger = logger;
             _setting = setting;
             _booking = booking;
+            _markup = markup;
         }
 
         [Authorize]
@@ -157,7 +159,8 @@ namespace B2bApplication.Controllers
                 mdl.LoadDefaultSearchRequestAsync(_booking);
                 _booking.CustomerId = CustomerId;
                 mdl.searchResponse = (await _booking.SearchFlightMinPrices(mdl.searchRequest));
-                
+                _markup.WingMarkupAmount(mdl.searchResponse.Results, mdl.FlightSearchWraper.AdultCount, mdl.FlightSearchWraper.ChildCount, mdl.FlightSearchWraper.InfantCount);
+                _markup.CalculateTotalPriceAfterMarkup(mdl.searchResponse.Results, mdl.FlightSearchWraper.AdultCount, mdl.FlightSearchWraper.ChildCount, mdl.FlightSearchWraper.InfantCount);
                 if ((mdl?.searchResponse?.Results?.Count() ?? 0) == 0)
                 {
                     ViewBag.SaveStatus = (int)enmSaveStatus.danger;

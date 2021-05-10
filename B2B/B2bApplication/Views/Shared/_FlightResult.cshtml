@@ -84,7 +84,7 @@
                                 <input type="checkbox" name="ResultIndex" value="@totalpricelist.ResultIndex" class="ace ace-switch ace-switch-4">
                                 <span class="lbl middle"></span>
 
-                                <small>@((  (totalpricelist.ADULT.FareComponent.TotalFare*ViewBag.AdultCount) + (totalpricelist.CHILD.FareComponent.TotalFare* ViewBag.ChildCount) + (totalpricelist.INFANT.FareComponent.TotalFare * ViewBag.InfantCount)).ToString("C", nfi))</small>
+                                <small>@(totalpricelist.TotalPrice.ToString("C", nfi))</small>
                             </label>
                         </div>
                         <span class="label label-danger arrowed-in">@totalpricelist.ADULT.CabinClass -@totalpricelist.ADULT.ClassOfBooking</span>
