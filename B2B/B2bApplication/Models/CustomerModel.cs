@@ -107,6 +107,35 @@ namespace B2bApplication.Models
         public List<tblCustomerMarkup> MarkupData{ get; set; }
     }
 
+    public class mdlCustomerWallet
+    {
+        [Required]
+        [Display(Name = "Customer Type")]
+        public string CustomerID { set; get; }
+
+
+        [Required]
+        [Display(Name = "Transaction Type")]
+        public enmCreditDebit creditDebit { set; get; }
+
+
+        [Display(Name = "Transaction Details")]
+        public string TransactionDetails { set; get; }
+
+        [Display(Name = "Remarks")]
+        public string Remarks { set; get; }
+
+
+        [Required]
+        [Range(0, 100000)]
+        [Display(Name = "Wallet Amt")]
+        public double WalletAmt { get; set; }
+
+        [Required]
+        [Display(Name = "Transaction Date")]
+        public DateTime TransactionDate { get; set; } = DateTime.Now;
+
+    }
 
 }
 

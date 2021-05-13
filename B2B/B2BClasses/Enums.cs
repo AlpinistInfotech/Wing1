@@ -57,6 +57,13 @@ namespace B2BClasses.Services.Enums
         InHouse
     }
 
+
+    public enum enmCreditDebit
+    {
+        Credit = 0,
+        Debit = 1
+    }
+
     public enum enmTransactionType
     {
         TicketBook,

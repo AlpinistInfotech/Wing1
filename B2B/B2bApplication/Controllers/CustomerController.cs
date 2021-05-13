@@ -426,6 +426,59 @@ namespace B2bApplication.Controllers
         #endregion
 
 
+        #region Customer Wallet
+        [Authorize]
+        public IActionResult CustomerWallet()
+        {
+
+            dynamic messagetype = TempData["MessageType"];
+            mdlCustomerWallet mdl = new mdlCustomerWallet();
+            if (messagetype != null)
+            {
+                ViewBag.SaveStatus = (int)messagetype;
+                ViewBag.Message = TempData["Message"];
+
+            }
+
+            ViewBag.CustomerCodeList = new SelectList(GetCustomerMaster(_context, true, 0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
+            return View(mdl);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> CustomerWalletAsync(mdlCustomerWallet mdl)
+        {
+            {
+                _context.tblWalletDetailLedger.Add(new tblWalletDetailLedger
+                {
+                    CustomerId = Convert.ToInt32(mdl.CustomerID),
+                    Credit = mdl.creditDebit == 0 ? mdl.WalletAmt : 0,
+                    Debit = mdl.creditDebit == 0 ? 0 : mdl.WalletAmt,
+                    Remarks = mdl.Remarks,
+                    TransactionDetails = mdl.TransactionDetails,
+                    TransactionDt = mdl.TransactionDate
+                });
+
+                var ExistingData = _context.tblCustomerMaster.FirstOrDefault(p => p.Id == Convert.ToInt32(mdl.CustomerID));
+                {
+                    ExistingData.WalletBalence = mdl.creditDebit == 0 ? mdl.WalletAmt : 0 - mdl.WalletAmt;
+                    _context.tblCustomerMaster.Update(ExistingData);
+                }
+
+                await _context.SaveChangesAsync();
+
+                TempData["MessageType"] = (int)enmMessageType.Success;
+                TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
+
+                return RedirectToAction("CustomerWallet");
+
+         //       return View(mdl);
+            }
+        }
+
+
+        #endregion
+
         public List<tblCustomerMaster> GetCustomerMaster(DBContext context, bool OnlyActive, int customerid)
         {
             if (customerid > 0)
