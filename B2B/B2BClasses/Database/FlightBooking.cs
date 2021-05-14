@@ -22,6 +22,21 @@ namespace B2BClasses.Database
         public DateTime CreatedDt { get; set; }
         [InverseProperty("tblFlightBookingMaster")]
         public ICollection<tblFlightBookingSegment> tblFlightBookingSegments { get; set; }
+        [InverseProperty("tblFlightBookingMaster")]
+        public ICollection<tblFlightBookingProviderTraceIds> tblFlightBookingProviderTraceIds { get; set; }
+    }
+
+    public class tblFlightBookingProviderTraceIds
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        public int SegmentDisplayOrder { get; set; }
+        public enmServiceProvider ServiceProvider { get; set; }
+        public string ProviderTraceId { get; set; }
+        [ForeignKey("tblFlightBookingMaster")] // Foreign Key here
+        public string TraceId { get; set; }
+        public tblFlightBookingMaster tblFlightBookingMaster { get; set; }
     }
 
     public class tblFlightBookingSegment
@@ -29,8 +44,9 @@ namespace B2BClasses.Database
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string Origin { get; set; }
+        public string Origin { get; set; }        
         public string Destination { get; set; }
+        public int SegmentDisplayOrder { get; set; }
         public enmCabinClass CabinClass { get; set; }
         public string ClassOfBooking { get; set; }
         public DateTime TravelDt { get; set; }
@@ -39,8 +55,7 @@ namespace B2BClasses.Database
         public string Airline { get; set; }
         public string AirlineCode { get; set; }
         public string FlightNumber { get; set; }
-        public enmServiceProvider ServiceProvider { get; set; }
-        public string ProviderTraceId{ get; set; }
+        public enmServiceProvider ServiceProvider { get; set; }        
         public string ProviderResultIndex { get; set; }
         [ForeignKey("tblFlightBookingMaster")] // Foreign Key here
         public string TraceId { get; set; }

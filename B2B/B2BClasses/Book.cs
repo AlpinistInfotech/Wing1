@@ -81,10 +81,10 @@ namespace B2BClasses
             return await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> CustomerFlightDetailSave(string TraceId, List<mdlFareQuotResponse>mdls)
-        { 
-            
-        }
+        //public async Task<bool> CustomerFlightDetailSave(string TraceId, List<mdlFareQuotResponse>mdls)
+        //{
+        //    return null;   
+        //}
 
 
 
@@ -116,10 +116,22 @@ namespace B2BClasses
             foreach (var sp in serviceProviders)
             {
                 IWingFlight wingflight = GetFlightObject(sp);
-                mdlRs.Add(await wingflight.SearchAsync(mdlRq, _CustomerId));
+
+                if (mdlRq.JourneyType == enmJourneyType.SpecialReturn)
+                {
+                    throw new NotImplementedException();
+                }
+                else if (mdlRq.JourneyType == enmJourneyType.OneWay)
+                {
+                    mdlRs.Add(await wingflight.SearchAsync(mdlRq, _CustomerId));
+                }
+                else if (mdlRq.JourneyType == enmJourneyType.Return)
+                { 
+                }
+
             }
 
-            await CustomerDataSave(mdlRs.FirstOrDefault().TraceId, mdlRq);
+            await CustomerDataSave(mdlRq);
             return mdlRs;
         }
 
