@@ -1288,7 +1288,6 @@ namespace B2BClasses.Services.Air
             mdlFareRuleResponse mdlS = null;
             FareRuleResponse mdl = null;
             string tboUrl = _config["TripJack:API:FareRule"];
-
             string jsonString = System.Text.Json.JsonSerializer.Serialize(FareRuleRequestMap(request));
             var HaveResponse = GetResponse(jsonString, tboUrl);
             if (HaveResponse.Code == 0)

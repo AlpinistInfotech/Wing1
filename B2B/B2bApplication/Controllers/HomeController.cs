@@ -159,6 +159,7 @@ namespace B2bApplication.Controllers
                 mdl.LoadDefaultSearchRequestAsync(_booking);
                 _booking.CustomerId = CustomerId;
                 mdl.searchResponse = (await _booking.SearchFlightMinPrices(mdl.searchRequest));
+                _markup.CustomerMarkup(mdl.searchResponse.Results);
                 _markup.WingMarkupAmount(mdl.searchResponse.Results, mdl.FlightSearchWraper.AdultCount, mdl.FlightSearchWraper.ChildCount, mdl.FlightSearchWraper.InfantCount);
                 _markup.CalculateTotalPriceAfterMarkup(mdl.searchResponse.Results, mdl.FlightSearchWraper.AdultCount, mdl.FlightSearchWraper.ChildCount, mdl.FlightSearchWraper.InfantCount);
                 if ((mdl?.searchResponse?.Results?.Count() ?? 0) == 0)
@@ -208,13 +209,22 @@ namespace B2bApplication.Controllers
             if (!(mdl == null || mdl.FareQuoteRequest==null))
             {
                 mdl.FareQuotResponse.AddRange( await _booking.FareQuoteAsync(mdl.FareQuoteRequest));
-                //mdl.FareRule.AddRange(await _booking.FareRule(new mdlFareRuleRequest() { TraceId= mdl.FareQuoteRequest.TraceId, ResultIndex= mdl.FareQuoteRequest.ResultIndex }));
-                mdl.BookingRequestDefaultData();
+                //mdl.FareRule.AddRange(await _booking.FareRule(new mdlFareRuleRequest() { TraceId= mdl.FareQuoteRequest.TraceId, ResultIndex= mdl.FareQuoteRequest.ResultIndex }));                
             }
             else
             {
                 return RedirectToAction("FlightSearch", "Home");
             }
+
+            foreach(var md in mdl.FareQuotResponse)
+            {
+                _markup.CustomerMarkup(md.Results);
+                _markup.WingMarkupAmount(md.Results, mdl.AdultCount, mdl.ChildCount, mdl.InfantCount);
+                _markup.WingConvenienceAmount(md , mdl.travellerInfo);
+                _markup.CalculateTotalPriceAfterMarkup(md.Results, mdl.AdultCount, mdl.ChildCount, mdl.InfantCount);
+            }
+            mdl.BookingRequestDefaultData();
+
             return View(mdl);
         }
 

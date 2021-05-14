@@ -131,7 +131,7 @@ namespace B2BClasses.Services.Air
         public double NetFare { get; set; }
         public double BaseFare { get; set; }
         public double TotalFare { get; set; }
-        public double ActualTotalFare { get; set; }
+        public double NewTotalFare { get; set; }
         public double IGST { get; set; }
         public double NetCommission { get; set; }
         public double SSRP { get; set; }

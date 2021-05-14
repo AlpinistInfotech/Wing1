@@ -34,8 +34,10 @@ namespace B2BClasses
         private readonly IWingFlight _tripJack;
 
         private int _CustomerId;
+        private int _userId;
 
         public int CustomerId { get { return _CustomerId; } set { _CustomerId = value; } }
+        public int UserId { get { return _userId; } set { _userId = value; } }
 
 
         public Booking(DBContext context, IConfiguration config, ITripJack tripJack)
@@ -57,6 +59,34 @@ namespace B2BClasses
 
 
         #region ***********************Flight********************************
+
+        public async Task<int> CustomerDataSave(mdlSearchRequest mdlRq)
+        {
+            tblFlightBookingMaster tbl = new tblFlightBookingMaster()
+            {
+                CustomerId = _CustomerId,
+                AdultCount = mdlRq.AdultCount,
+                ChildCount = mdlRq.ChildCount,
+                InfantCount = mdlRq.InfantCount,
+                DirectFlight = mdlRq.DirectFlight,
+                JourneyType = mdlRq.JourneyType,                
+                CreatedBy = _userId,
+                CreatedDt = DateTime.Now,
+                tblFlightBookingSegments = mdlRq.Segments.Select(p => new tblFlightBookingSegment { Airline=string.Empty ,
+                 AirlineCode=string.Empty,ArrivalTime=p.TravelDt, TravelDt=p.TravelDt, CabinClass=p.FlightCabinClass, ClassOfBooking=string.Empty,
+                Origin=p.Origin,Destination=p.Destination, FlightNumber=string.Empty, ProviderResultIndex=string.Empty, ServiceProvider=enmServiceProvider.None,
+                 DepartureTime=p.TravelDt}).ToList()
+            };
+            _context.tblFlightBookingMaster.Add(tbl);
+            return await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> CustomerFlightDetailSave(string TraceId, List<mdlFareQuotResponse>mdls)
+        { 
+            
+        }
+
+
 
         public async Task<List<enmServiceProvider>> GetActiveProviderAsync()
         {
@@ -89,7 +119,7 @@ namespace B2BClasses
                 mdlRs.Add(await wingflight.SearchAsync(mdlRq, _CustomerId));
             }
 
-
+            await CustomerDataSave(mdlRs.FirstOrDefault().TraceId, mdlRq);
             return mdlRs;
         }
 

@@ -8,6 +8,22 @@ using System.Text;
 namespace B2BClasses.Services.Enums
 {
 
+    public enum enmBookingStatus
+    {
+        Pending=0,
+        Booked=1,
+        Refund=2,
+        PartialBooked=3,
+
+    }
+    public enum enmFlightBookingServiceType
+    {
+        Baggage=1,
+        Meal=2,
+        Seat=3,
+        Extra=4
+    }
+
     public enum enmDirectFlight
     {
         DirectFlight=1,

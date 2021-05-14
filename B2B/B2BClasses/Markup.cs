@@ -18,8 +18,7 @@ namespace B2BClasses
 
         bool AddConvenience(mdlWingMarkup mdl, int UserId);
         bool AddMarkup(mdlWingMarkup mdl, int UserId);
-        bool CalculateTotalPriceAfterMarkup(List<List<mdlSearchResult>> mdls, int AdultCount, int ChildCount, int InfantCount);
-        bool CopyInActualGrandTotal(List<List<mdlSearchResult>> mdls);
+        bool CalculateTotalPriceAfterMarkup(List<List<mdlSearchResult>> mdls, int AdultCount, int ChildCount, int InfantCount);        
         void CustomerMarkup(List<List<mdlSearchResult>> mdl);
         List<mdlWingMarkup> LoadConvenience(int Id = 0, bool FromEffectiveDt = false, bool IsForCustomer = false);
         List<mdlWingMarkup> LoadMarkup(int Id = 0, bool FromEffectiveDt = false, bool IsForCustomer = false);
@@ -518,6 +517,11 @@ namespace B2BClasses
 
         public void WingConvenienceAmount(mdlFareQuotResponse mdl, List<mdlTravellerinfo> travellerInfo)
         {
+
+            if (mdl == null)
+            {
+                return;
+            }
             int AdultMaleCount = travellerInfo?.Where(p => p.passengerType == enmPassengerType.Adult && (p.Title.Trim().ToLower() == "mr" || p.Title.Trim().ToLower() == "master")).Count() ?? 0;
             int AdultFemaleCount = travellerInfo?.Where(p => p.passengerType == enmPassengerType.Adult && (p.Title.Trim().ToLower() == "ms" || p.Title.Trim().ToLower() == "mrs")).Count() ?? 0;
             int ChildMaleCount = travellerInfo?.Where(p => p.passengerType == enmPassengerType.Child && (p.Title.Trim().ToLower() == "mr" || p.Title.Trim().ToLower() == "master")).Count() ?? 0;
@@ -579,18 +583,18 @@ namespace B2BClasses
                                         {
                                             if (allMarkup[k].Gender.HasFlag(enmGender.Male) && allMarkup[k].Gender.HasFlag(enmGender.Female) && allMarkup[k].Gender.HasFlag(enmGender.Other))
                                             {
-                                                mdl.Results[i][j].TotalPriceList[j1].ADULT.Convenience =
-                                            mdl.Results[i][j].TotalPriceList[j1].ADULT.Convenience + (allMarkup[k].Amount * (AdultMaleCount + AdultFemaleCount));
+                                                mdl.Results[i][j].TotalPriceList[j1].Convenience =
+                                            mdl.Results[i][j].TotalPriceList[j1].Convenience + (allMarkup[k].Amount * (AdultMaleCount + AdultFemaleCount));
                                             }
                                             else if (allMarkup[k].Gender.HasFlag(enmGender.Male) && AdultMaleCount > 0)
                                             {
-                                                mdl.Results[i][j].TotalPriceList[j1].ADULT.Convenience =
-                                            mdl.Results[i][j].TotalPriceList[j1].ADULT.Convenience + (allMarkup[k].Amount * (AdultMaleCount));
+                                                mdl.Results[i][j].TotalPriceList[j1].Convenience =
+                                                mdl.Results[i][j].TotalPriceList[j1].Convenience + (allMarkup[k].Amount * (AdultMaleCount));                                                
                                             }
                                             else if (allMarkup[k].Gender.HasFlag(enmGender.Female) && AdultFemaleCount > 0)
                                             {
-                                                mdl.Results[i][j].TotalPriceList[j1].ADULT.Convenience =
-                                                mdl.Results[i][j].TotalPriceList[j1].ADULT.Convenience + (allMarkup[k].Amount * (AdultFemaleCount));
+                                                mdl.Results[i][j].TotalPriceList[j1].Convenience =
+                                                mdl.Results[i][j].TotalPriceList[j1].Convenience + (allMarkup[k].Amount * (AdultFemaleCount));                                                
                                             }
 
 
@@ -599,36 +603,40 @@ namespace B2BClasses
                                         {
                                             if (allMarkup[k].Gender.HasFlag(enmGender.Male) && allMarkup[k].Gender.HasFlag(enmGender.Female) && allMarkup[k].Gender.HasFlag(enmGender.Other))
                                             {
-                                                mdl.Results[i][j].TotalPriceList[j1].CHILD.Convenience =
-                                                 mdl.Results[i][j].TotalPriceList[j1].CHILD.Convenience + (allMarkup[k].Amount * (ChildMaleCount + ChildFemaleCount));
+                                                mdl.Results[i][j].TotalPriceList[j1].Convenience =
+                                               mdl.Results[i][j].TotalPriceList[j1].Convenience + (allMarkup[k].Amount * (ChildMaleCount + ChildFemaleCount));
+                                                
                                             }
                                             else if (allMarkup[k].Gender.HasFlag(enmGender.Male) && ChildMaleCount > 0)
                                             {
-                                                mdl.Results[i][j].TotalPriceList[j1].CHILD.Convenience =
-                                            mdl.Results[i][j].TotalPriceList[j1].CHILD.Convenience + (allMarkup[k].Amount * (ChildMaleCount));
+                                                mdl.Results[i][j].TotalPriceList[j1].Convenience =
+                                               mdl.Results[i][j].TotalPriceList[j1].Convenience + (allMarkup[k].Amount * (ChildMaleCount ));
+                                                
                                             }
                                             else if (allMarkup[k].Gender.HasFlag(enmGender.Female) && ChildFemaleCount > 0)
                                             {
-                                                mdl.Results[i][j].TotalPriceList[j1].CHILD.Convenience =
-                                                mdl.Results[i][j].TotalPriceList[j1].CHILD.Convenience + (allMarkup[k].Amount * (ChildFemaleCount));
+                                                mdl.Results[i][j].TotalPriceList[j1].Convenience =
+                                               mdl.Results[i][j].TotalPriceList[j1].Convenience + (allMarkup[k].Amount * ( ChildFemaleCount));
                                             }
                                         }
                                         if (mdl.SearchQuery.InfantCount > 0 && allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Infant))
                                         {
                                             if (allMarkup[k].Gender.HasFlag(enmGender.Male) && allMarkup[k].Gender.HasFlag(enmGender.Female) && allMarkup[k].Gender.HasFlag(enmGender.Other))
                                             {
-                                                mdl.Results[i][j].TotalPriceList[j1].CHILD.Convenience =
-                                                 mdl.Results[i][j].TotalPriceList[j1].CHILD.Convenience + (allMarkup[k].Amount * (InfantMaleCount + InfantFemaleCount));
+                                                mdl.Results[i][j].TotalPriceList[j1].Convenience =
+                                              mdl.Results[i][j].TotalPriceList[j1].Convenience + (allMarkup[k].Amount * (InfantMaleCount + InfantFemaleCount));
+
                                             }
                                             else if (allMarkup[k].Gender.HasFlag(enmGender.Male) && InfantMaleCount > 0)
                                             {
-                                                mdl.Results[i][j].TotalPriceList[j1].CHILD.Convenience =
-                                            mdl.Results[i][j].TotalPriceList[j1].CHILD.Convenience + (allMarkup[k].Amount * (InfantMaleCount));
+                                                mdl.Results[i][j].TotalPriceList[j1].Convenience =
+                                                mdl.Results[i][j].TotalPriceList[j1].Convenience + (allMarkup[k].Amount * (InfantMaleCount));
+                                                
                                             }
                                             else if (allMarkup[k].Gender.HasFlag(enmGender.Female) && InfantFemaleCount > 0)
                                             {
-                                                mdl.Results[i][j].TotalPriceList[j1].CHILD.Convenience =
-                                                mdl.Results[i][j].TotalPriceList[j1].CHILD.Convenience + (allMarkup[k].Amount * (InfantFemaleCount));
+                                                mdl.Results[i][j].TotalPriceList[j1].Convenience =
+                                                mdl.Results[i][j].TotalPriceList[j1].Convenience + (allMarkup[k].Amount * (InfantFemaleCount));                                                
                                             }
                                         }
                                     }
@@ -774,55 +782,10 @@ namespace B2BClasses
             return true;
         }
 
-        public bool CopyInActualGrandTotal(List<List<mdlSearchResult>> mdls)
-        {
-            foreach (var mdl in mdls)
-            {
-                foreach (var md in mdl)
-                {
-                    foreach (var tp in md.TotalPriceList)
-                    {
-                        if (tp?.ADULT?.FareComponent?.ActualTotalFare != null)
-                        {
-                            tp.ADULT.FareComponent.ActualTotalFare = tp?.ADULT?.FareComponent?.TotalFare ?? 0;
-                        }
-                        if (tp?.CHILD?.FareComponent?.ActualTotalFare != null)
-                        {
-                            tp.CHILD.FareComponent.ActualTotalFare = tp?.CHILD?.FareComponent?.TotalFare ?? 0;
-                        }
-                        if (tp?.INFANT?.FareComponent?.ActualTotalFare != null)
-                        {
-                            tp.INFANT.FareComponent.ActualTotalFare = tp?.INFANT?.FareComponent?.TotalFare ?? 0;
-                        }
-                    }
-                }
-            }
-            return true;
-        }
-
+        
         public bool CalculateTotalPriceAfterMarkup(List<List<mdlSearchResult>> mdls, int AdultCount, int ChildCount, int InfantCount)
         {
-            foreach (var mdl in mdls)
-            {
-                foreach (var md in mdl)
-                {
-                    foreach (var tp in md.TotalPriceList)
-                    {
-                        if (tp?.ADULT?.FareComponent?.ActualTotalFare != null)
-                        {
-                            tp.ADULT.FareComponent.ActualTotalFare = tp?.ADULT?.FareComponent?.TotalFare ?? 0;
-                        }
-                        if (tp?.CHILD?.FareComponent?.ActualTotalFare != null)
-                        {
-                            tp.CHILD.FareComponent.ActualTotalFare = tp?.CHILD?.FareComponent?.TotalFare ?? 0;
-                        }
-                        if (tp?.INFANT?.FareComponent?.ActualTotalFare != null)
-                        {
-                            tp.INFANT.FareComponent.ActualTotalFare = tp?.INFANT?.FareComponent?.TotalFare ?? 0;
-                        }
-                    }
-                }
-            }
+            
 
 
             double WingbaseFare = 0;
@@ -836,24 +799,26 @@ namespace B2BClasses
                         WingbaseFare = 0;
                         if (tp?.ADULT?.FareComponent?.TotalFare != null)
                         {
-                            WingbaseFare = WingbaseFare + ((tp?.ADULT?.FareComponent?.TotalFare ?? 0) + (tp?.ADULT?.FareComponent?.WingMarkup ?? 0) * AdultCount);
+                            tp.ADULT.FareComponent.NewTotalFare = (tp?.ADULT?.FareComponent?.TotalFare ?? 0) + (tp?.ADULT?.FareComponent?.WingMarkup ?? 0);
+                            WingbaseFare = WingbaseFare + (tp.ADULT.FareComponent.NewTotalFare * AdultCount);
                         }
-                        if (tp?.CHILD?.FareComponent?.ActualTotalFare != null)
+                        if (tp?.CHILD?.FareComponent?.TotalFare != null)
                         {
-                            WingbaseFare = WingbaseFare + ((tp?.CHILD?.FareComponent?.TotalFare ?? 0) + (tp?.CHILD?.FareComponent?.WingMarkup ?? 0) * ChildCount);
+                            tp.CHILD.FareComponent.NewTotalFare = (tp?.CHILD?.FareComponent?.TotalFare ?? 0) + (tp?.CHILD?.FareComponent?.WingMarkup ?? 0);
+                            WingbaseFare = WingbaseFare + (tp.CHILD.FareComponent.NewTotalFare * ChildCount);
 
                         }
-                        if (tp?.INFANT?.FareComponent?.ActualTotalFare != null)
+                        if (tp?.INFANT?.FareComponent?.TotalFare != null)
                         {
-                            WingbaseFare = WingbaseFare + ((tp?.INFANT?.FareComponent?.TotalFare ?? 0) + (tp?.INFANT?.FareComponent?.WingMarkup ?? 0) * InfantCount);
+                            tp.INFANT.FareComponent.NewTotalFare = (tp?.INFANT?.FareComponent?.TotalFare ?? 0) + (tp?.INFANT?.FareComponent?.WingMarkup ?? 0);
+                            WingbaseFare = WingbaseFare + (tp.INFANT.FareComponent.NewTotalFare * InfantCount);
                         }
                         tp.BaseFare = WingbaseFare;
                         tp.TotalPrice = tp.BaseFare + tp.WingMarkup + tp.CustomerMarkup;
-
+                        tp.NetPrice = tp.TotalPrice + tp.Convenience;
                     }
                 }
             }
-
             return true;
         }
     }

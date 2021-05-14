@@ -43,6 +43,18 @@ namespace B2BClasses.Database
         public DbSet<tblAirlineFareRule> tblAirlineFareRule { get; set; }
 
 
+        #region ************************* Fligh Booking **********************************
+        public DbSet<tblFlightBookingMaster> tblFlightBookingMaster { get; set; }
+        public DbSet<tblFlightBookingSegment> tblFlightBookingSegment { get; set; }
+        public DbSet<tblFlightBookingPassengerDetails> tblFlightBookingPassengerDetails { get; set; }
+        public DbSet<tblFlightBookingServices> tblFlightBookingServices { get; set; }
+        public DbSet<tblFlightBookingFareDetails> tblFlightBookingFareDetails { get; set; }
+        public DbSet<tblFlightBookingFarePurchaseDetails> tblFlightBookingFarePurchaseDetails { get; set; }       
+        
+
+        #endregion
+
+
         #region*************** Masters ***************************
         public DbSet<tblMinBalenceAlert> tblMinBalenceAlert { get; set; }
         public DbSet<tblMinBalenceAlertDetails> tblMinBalenceAlertDetails { get; set; }
