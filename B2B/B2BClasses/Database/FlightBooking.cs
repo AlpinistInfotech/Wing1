@@ -18,6 +18,9 @@ namespace B2BClasses.Database
         public bool DirectFlight { get; set; }
         public enmJourneyType JourneyType { get; set; } = enmJourneyType.OneWay;                        
         public enmBookingStatus BookingStatus { get; set; } = enmBookingStatus.Pending;
+        public string ContactNo { get; set; }
+        public string Email{ get; set; }
+
         public int CreatedBy { get; set; }
         public DateTime CreatedDt { get; set; }
         [InverseProperty("tblFlightBookingMaster")]
@@ -80,8 +83,22 @@ namespace B2BClasses.Database
         [ForeignKey("tblFlightBookingMaster")] // Foreign Key here
         public string TraceId { get; set; }
         public tblFlightBookingMaster tblFlightBookingMaster { get; set; }
-
     }
+    public class tblFlightBookingGSTDetails
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        public string gstNumber { get; set; }
+        public string email { get; set; }
+        public string registeredName { get; set; }
+        public string mobile { get; set; }
+        public string address { get; set; }
+        [ForeignKey("tblFlightBookingMaster")] // Foreign Key here
+        public string TraceId { get; set; }
+        public tblFlightBookingMaster tblFlightBookingMaster { get; set; }
+    }
+
 
     public class tblFlightBookingServices
     {

@@ -84,7 +84,7 @@ namespace B2BClasses
             return tbl.Id;
         }
 
-        public bool CustomerFlightDetailSave(string traceId, List<mdlFareQuotResponse> mdls)
+        public async Task< bool> CustomerFlightDetailSave(string traceId, List<mdlFareQuotResponse> mdls)
         {
             _context.tblFlightBookingSegment.RemoveRange( _context.tblFlightBookingSegment.Where(p => p.TraceId == traceId));
             int index = 1;
@@ -107,8 +107,52 @@ namespace B2BClasses
                  );
                 index = index + 1;
             }
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
+            return true;
+        }
+
+        public bool CustomerPassengerDetailSave(mdlBookingRequest mdlRq, enmBookingStatus bookingStatus)
+        {
+
+            var tm =_context.tblFlightBookingMaster.Where(p => p.Id == mdlRq.TraceId).FirstOrDefault();
+            tm.ContactNo = (mdlRq.deliveryInfo?.contacts.FirstOrDefault()??string.Empty);
+            tm.Email= (mdlRq.deliveryInfo?.emails.FirstOrDefault() ?? string.Empty);
+            tm.BookingStatus = bookingStatus;
+            _context.tblFlightBookingMaster.Update(tm);
+
+            _context.tblFlightBookingPassengerDetails.RemoveRange(_context.tblFlightBookingPassengerDetails.Where(p => p.TraceId == mdlRq.TraceId));
+            _context.tblFlightBookingPassengerDetails.AddRange(
+            mdlRq.travellerInfo.Select(p => new tblFlightBookingPassengerDetails
+            {
+                Title = p.Title,
+                passengerType = p.passengerType,
+                FirstName = p.FirstName,
+                LastName = p.LastName,
+                TraceId = mdlRq.TraceId,
+                dob = p.dob,
+                PassportExpiryDate = p.PassportExpiryDate,
+                PassportIssueDate = p.PassportIssueDate,
+                pNum = p.pNum
+            }));
+
+            _context.tblFlightBookingGSTDetails.RemoveRange(_context.tblFlightBookingGSTDetails.Where(p => p.TraceId == mdlRq.TraceId));
+            if (mdlRq.gstInfo != null)
+            {
+                _context.tblFlightBookingGSTDetails.Add(new tblFlightBookingGSTDetails()
+                {
+                     TraceId= mdlRq.TraceId,
+                     address= mdlRq.gstInfo.address,
+                     email= mdlRq.gstInfo.email,
+                     mobile= mdlRq.gstInfo.mobile,
+                     gstNumber= mdlRq.gstInfo.gstNumber,
+                      registeredName= mdlRq.gstInfo.registeredName,
+                      
+                }
+                 );
+            }
+            
+            _context.SaveChanges();
             return true;
         }
 
