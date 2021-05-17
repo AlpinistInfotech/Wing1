@@ -60,7 +60,7 @@ namespace B2BClasses
 
         #region ***********************Flight********************************
 
-        public async Task<int> CustomerDataSave(mdlSearchRequest mdlRq)
+        public async Task<string> CustomerDataSave(mdlSearchRequest mdlRq, List<tblFlightBookingProviderTraceId> traceIds)
         {
             tblFlightBookingMaster tbl = new tblFlightBookingMaster()
             {
@@ -72,19 +72,45 @@ namespace B2BClasses
                 JourneyType = mdlRq.JourneyType,                
                 CreatedBy = _userId,
                 CreatedDt = DateTime.Now,
+                tblFlightBookingProviderTraceIds = traceIds,
                 tblFlightBookingSegments = mdlRq.Segments.Select(p => new tblFlightBookingSegment { Airline=string.Empty ,
                  AirlineCode=string.Empty,ArrivalTime=p.TravelDt, TravelDt=p.TravelDt, CabinClass=p.FlightCabinClass, ClassOfBooking=string.Empty,
                 Origin=p.Origin,Destination=p.Destination, FlightNumber=string.Empty, ProviderResultIndex=string.Empty, ServiceProvider=enmServiceProvider.None,
-                 DepartureTime=p.TravelDt}).ToList()
+                 DepartureTime=p.TravelDt}
+                 ).ToList()                 
             };
             _context.tblFlightBookingMaster.Add(tbl);
-            return await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
+            return tbl.Id;
         }
 
-        //public async Task<bool> CustomerFlightDetailSave(string TraceId, List<mdlFareQuotResponse>mdls)
-        //{
-        //    return null;   
-        //}
+        public bool CustomerFlightDetailSave(string traceId, List<mdlFareQuotResponse> mdls)
+        {
+            _context.tblFlightBookingSegment.RemoveRange( _context.tblFlightBookingSegment.Where(p => p.TraceId == traceId));
+            int index = 1;
+            foreach (var mdl in mdls)
+            {
+                var TPL=mdl.Results.FirstOrDefault().FirstOrDefault().TotalPriceList.FirstOrDefault();
+
+                _context.tblFlightBookingSegment.AddRange(
+                    mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.Segment?.Select(p=> new tblFlightBookingSegment { Airline= p.Airline.Name,
+                     AirlineCode=p.Airline.Code,SegmentDisplayOrder=index, ArrivalTime=p.ArrivalTime,DepartureTime=p.DepartureTime,Origin=p.Origin.CityCode,Destination=p.Destination.CityCode,
+                    CabinClass=TPL.ADULT.CabinClass,
+                    ClassOfBooking= TPL.ADULT.ClassOfBooking,
+                    FlightNumber=p.Airline.FlightNumber,
+                    ProviderResultIndex= TPL.ResultIndex,
+                    ServiceProvider= mdl.ServiceProvider,
+                    TraceId= traceId,
+                    TripIndicator=p.TripIndicator,
+                    TravelDt =p.DepartureTime.Date
+                    })
+                 );
+                index = index + 1;
+            }
+            _context.SaveChangesAsync();
+
+            return true;
+        }
 
 
 
@@ -110,29 +136,69 @@ namespace B2BClasses
         public async Task<IEnumerable<mdlSearchResponse>> SearchFlight(
           mdlSearchRequest mdlRq)
         {
-            //Get the All Active Service Provider
+            
             List<mdlSearchResponse> mdlRs = new List<mdlSearchResponse>();
             List<enmServiceProvider> serviceProviders = await GetActiveProviderAsync();
+            List<tblFlightBookingProviderTraceId> traceIds = new List<tblFlightBookingProviderTraceId>();
+
             foreach (var sp in serviceProviders)
             {
+                mdlSearchResponse mdlR = null;
                 IWingFlight wingflight = GetFlightObject(sp);
-
                 if (mdlRq.JourneyType == enmJourneyType.SpecialReturn)
                 {
                     throw new NotImplementedException();
                 }
                 else if (mdlRq.JourneyType == enmJourneyType.OneWay)
                 {
-                    mdlRs.Add(await wingflight.SearchAsync(mdlRq, _CustomerId));
+                    mdlR = await wingflight.SearchAsync(mdlRq, _CustomerId);                    
+                    traceIds.Add(new tblFlightBookingProviderTraceId()
+                    {
+                        ProviderTraceId= mdlR.TraceId,
+                        ServiceProvider= sp,
+                        SegmentDisplayOrder=1
+                    });
+                    mdlRs.Add(mdlR);
                 }
-                else if (mdlRq.JourneyType == enmJourneyType.Return)
-                { 
+                else if (mdlRq.JourneyType == enmJourneyType.Return || mdlRq.JourneyType == enmJourneyType.MultiStop)
+                {
+
+                    mdlRq.JourneyType = enmJourneyType.OneWay;
+                    var lst = mdlRq.Segments.ToList();
+                    for (int i = 0; i < lst.Count; i++)
+                    {
+                        mdlRq.Segments = new List<mdlSegmentRequest>();
+                        mdlRq.Segments.Add(lst[i]);
+                        var md = await wingflight.SearchAsync(mdlRq, _CustomerId);
+                        traceIds.Add(new tblFlightBookingProviderTraceId()
+                        {
+                            ProviderTraceId = md.TraceId,
+                            ServiceProvider = sp,
+                            SegmentDisplayOrder = i + 1
+                        });
+                        if (mdlR == null)
+                        {
+                            mdlR = md;
+                        }
+                        else
+                        {
+                            mdlR.Results.Add(md.Results.FirstOrDefault());
+                        }
+                    }
+                    mdlRs.Add(mdlR);
                 }
-
-            }
-
-            await CustomerDataSave(mdlRq);
+             }
+            string NewTraceID=await CustomerDataSave(mdlRq, traceIds);
+            ChangeNewTraceIds(mdlRs, NewTraceID);
             return mdlRs;
+        }
+
+        private void ChangeNewTraceIds(List<mdlSearchResponse> mdls,string newTraceId)
+        {
+            foreach (var md in mdls)
+            {
+                md.TraceId = newTraceId;
+            }
         }
 
         public async Task<mdlSearchResponse> SearchFlightMinPrices(mdlSearchRequest mdlRq)
@@ -211,10 +277,6 @@ namespace B2BClasses
             return searchResponse;
 
         }
-
-
-
-
         public async Task<List<mdlFareQuotResponse>> FareQuoteAsync(
              mdlFareQuotRequest mdlRq)
         {
@@ -223,19 +285,22 @@ namespace B2BClasses
             {
                 var sp = (enmServiceProvider)Convert.ToInt32(mdlRq.ResultIndex?[i].Split("_").FirstOrDefault());
 
-                
                 int index = mdlRq.ResultIndex?[i].IndexOf('_') ?? -1;
                 if (index >= 0)
                 {
+                    var ClientTraceID = _context.tblFlightBookingProviderTraceId.Where(p => p.TraceId == mdlRq.TraceId && p.SegmentDisplayOrder == (i + 1) && p.ServiceProvider == sp).FirstOrDefault()?.ProviderTraceId??"";
                     List<string> resIndex = new List<string>();
                     resIndex.Add(mdlRq.ResultIndex?[i].Substring(index + 1));
                     IWingFlight wingflight = GetFlightObject(sp);
-                    mdlRs.Add(await wingflight.FareQuoteAsync(new mdlFareQuotRequest() { TraceId = mdlRq.TraceId, ResultIndex = resIndex.ToArray() }));                    
+                    mdlRs.Add(await wingflight.FareQuoteAsync(new mdlFareQuotRequest() { TraceId = ClientTraceID, ResultIndex = resIndex.ToArray() }));
 
                 }
             }
+
+            CustomerFlightDetailSave(mdlRq.TraceId,mdlRs);
             return mdlRs;
         }
+
         public async Task<List<mdlFareRuleResponse>> FareRule(
              mdlFareRuleRequest mdlRq)
         {

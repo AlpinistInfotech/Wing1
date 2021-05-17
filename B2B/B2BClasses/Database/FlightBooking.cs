@@ -23,10 +23,10 @@ namespace B2BClasses.Database
         [InverseProperty("tblFlightBookingMaster")]
         public ICollection<tblFlightBookingSegment> tblFlightBookingSegments { get; set; }
         [InverseProperty("tblFlightBookingMaster")]
-        public ICollection<tblFlightBookingProviderTraceIds> tblFlightBookingProviderTraceIds { get; set; }
+        public ICollection<tblFlightBookingProviderTraceId> tblFlightBookingProviderTraceIds { get; set; }
     }
 
-    public class tblFlightBookingProviderTraceIds
+    public class tblFlightBookingProviderTraceId
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -46,6 +46,7 @@ namespace B2BClasses.Database
         public int Id { get; set; }
         public string Origin { get; set; }        
         public string Destination { get; set; }
+        public int TripIndicator { get; set; }
         public int SegmentDisplayOrder { get; set; }
         public enmCabinClass CabinClass { get; set; }
         public string ClassOfBooking { get; set; }
@@ -60,6 +61,7 @@ namespace B2BClasses.Database
         [ForeignKey("tblFlightBookingMaster")] // Foreign Key here
         public string TraceId { get; set; }
         public tblFlightBookingMaster tblFlightBookingMaster { get; set; }
+        
     }
 
     public class tblFlightBookingPassengerDetails
