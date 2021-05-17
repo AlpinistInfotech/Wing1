@@ -1,0 +1,44 @@
+USE [TravelWingB2B_new]
+GO
+/****** Object:  StoredProcedure [dbo].[proc_wallet_search]    Script Date: 14-05-2021 22:08:37 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- exec proc_wallet_search '01-jan-2021','30-MAY-2021',1,0,0
+ALTER proc [dbo].[proc_wallet_search]
+@datefrom date,
+@dateto date,
+@id int,
+@session_nid int,
+@spmode tinyint
+
+as
+
+if @spmode=0 -- search as per date 
+begin
+set @dateto = DATEADD(D,1,@dateto)
+declare @current_ewallet_amt decimal(10,2)=0
+select  @current_ewallet_amt=WalletBalence from tblCustomerMaster with(nolock) where Id=@id
+
+set @current_ewallet_amt=isnull(@current_ewallet_amt,0)
+
+create table #temp_wallet(sno int ,date_ datetime,credit decimal(10,2),debit decimal(10,2),balance decimal(10,2),particulars varchar(1000))
+Insert into #temp_wallet (sno,date_,particulars,credit,debit,balance)
+select  1,format( cast(@datefrom as date),'dd-MMM-yyyy') as Date_,'Opening Balance' as Particulars,isnull(sum(credit-debit),0),0,0
+from tblWalletDetailLedger with(nolock) where CustomerId=@id and cast(TransactionDt  as date) < @datefrom
+
+Insert into #temp_wallet (sno,date_,particulars,credit,debit,balance)
+select ROW_NUMBER() over (order by TransactionDt )+1 as srNo,
+TransactionDt as Date_, ISNULL(remarks,'') +' - '+ISNULL(TransactionDetails,''),credit,debit, 0 
+from tblWalletDetailLedger with(nolock) where CustomerId=@id and TransactionDt between @datefrom and @dateto order by  TransactionDt
+
+update #temp_wallet set balance=(isnull(balance,0)+ isnull(credit,0)) - isnull(debit,0)
+
+select sno, format(Date_,'dd-MMM-yyyy') as Date_,Particulars,isnull(credit,0) as credit,isnull(debit,0) as debit, 
+sum(balance) over (order by sno) as  balance,@current_ewallet_amt as current_ewallet_amt 
+from #temp_wallet order by sno
+
+drop table #temp_wallet
+
+end

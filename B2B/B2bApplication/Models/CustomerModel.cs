@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using B2BClasses.Services.Enums;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using Database;
 
 namespace B2bApplication.Models
 {
@@ -134,6 +135,26 @@ namespace B2bApplication.Models
         [Required]
         [Display(Name = "Transaction Date")]
         public DateTime TransactionDate { get; set; } = DateTime.Now;
+
+    }
+
+    public class mdlCustomerWalletReport
+    {
+        [Required]
+        [Display(Name = "FromDate")]
+        [DataType(DataType.Date)]
+        public DateTime FromDt { get; set; } = DateTime.Now.AddMonths(-1);
+
+        [Required]
+        [Display(Name = "ToDate")]
+        [DataType(DataType.Date)]
+        public DateTime ToDt { get; set; } = DateTime.Now.AddDays(1);
+
+        [Required]
+        [Display(Name = "Customer Type")]
+        public string CustomerID { set; get; }
+        public List<ProcWalletSearch> mdlTcWalletWraper { get; set; }
+
 
     }
 

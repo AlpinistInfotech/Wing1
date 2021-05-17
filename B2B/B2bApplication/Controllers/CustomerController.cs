@@ -16,6 +16,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Database;
+using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace B2bApplication.Controllers
 {
@@ -24,12 +27,14 @@ namespace B2bApplication.Controllers
         private readonly ILogger<CustomerController> _logger;
         private readonly DBContext _context;
         private readonly ISettings _setting;
-        int _userid = 1;
-        public CustomerController(ILogger<CustomerController> logger, DBContext context, ISettings setting)
+        private readonly IConfiguration _config;
+        int _userid = 0;
+        public CustomerController(ILogger<CustomerController> logger, DBContext context, ISettings setting,IConfiguration config)
         {
             _context = context;
             _logger = logger;
             _setting = setting;
+            _config = config;
         }
 
         [AcceptVerbs("Get", "Post")]
@@ -478,6 +483,70 @@ namespace B2bApplication.Controllers
 
 
         #endregion
+
+        #region Wallet Statement
+
+        public IActionResult CustomerwalletReport()
+        {
+            mdlCustomerWallet mdl = new mdlCustomerWallet();
+            ViewBag.CustomerCodeList = new SelectList(GetCustomerMaster(_context, true, 0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
+            
+            mdlCustomerWalletReport returnDataMdl = new mdlCustomerWalletReport();
+            returnDataMdl.mdlTcWalletWraper = new List<ProcWalletSearch>();
+            return View(returnDataMdl);
+            //return View(mdl);
+
+        }
+
+        [HttpPost]
+        public IActionResult CustomerwalletReport(mdlCustomerWalletReport mdl, string submitdata)
+        {
+            ViewBag.CustomerCodeList = new SelectList(GetCustomerMaster(_context, true, 0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
+
+            mdl.mdlTcWalletWraper = GetTCWalletStatement(mdl, 0, 0, true);
+            return View(mdl);
+        }
+
+        #endregion
+
+        public List<ProcWalletSearch> GetTCWalletStatement(mdlCustomerWalletReport mdl, int Nid, int spmode, bool LoadImage)
+        {
+            List<ProcWalletSearch> returnData = new List<ProcWalletSearch>();
+
+            using (SqlConnection sqlconnection = new SqlConnection(_config["ConnectionStrings:DefaultConnection"]))
+            {
+                using (SqlCommand sqlcmd = new SqlCommand("proc_wallet_search", sqlconnection))
+                {
+                    sqlcmd.CommandType = CommandType.StoredProcedure;
+                    sqlcmd.Parameters.Add(new SqlParameter("datefrom", mdl.FromDt));
+                    sqlcmd.Parameters.Add(new SqlParameter("dateto", mdl.ToDt));
+                    sqlcmd.Parameters.Add(new SqlParameter("id", mdl.CustomerID));
+                    sqlcmd.Parameters.Add(new SqlParameter("session_nid", Nid));
+                    sqlcmd.Parameters.Add(new SqlParameter("spmode", spmode));
+
+
+                    sqlconnection.Open();
+                    SqlDataReader rd = sqlcmd.ExecuteReader();
+                    while (rd.Read())
+                    {
+                        returnData.Add(new ProcWalletSearch()
+                        {
+                            Date = Convert.ToString(rd["date_"]),
+                            Particulars = Convert.ToString(rd["Particulars"]),
+                            Credit = Convert.ToDecimal(rd["Credit"]),
+                            Debit = Convert.ToDecimal(rd["Debit"]),
+                            Balance = Convert.ToDecimal(rd["Balance"]),
+                            current_ewallet_amt = Convert.ToDecimal(rd["current_ewallet_amt"]),
+                        });
+                    }
+                }
+
+            }
+
+            return returnData;
+
+        }
+
 
         public List<tblCustomerMaster> GetCustomerMaster(DBContext context, bool OnlyActive, int customerid)
         {

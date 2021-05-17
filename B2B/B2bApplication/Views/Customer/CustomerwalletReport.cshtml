@@ -1,0 +1,111 @@
+﻿@model mdlCustomerWalletReport
+
+@using B2BClasses.Services.Enums
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary">
+
+            <form action="@Url.Action()" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="FromDt" class="col-form-label"></label>
+                                <input asp-for="FromDt" class="form-control" type="date" />
+                                <span asp-validation-for="FromDt" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="ToDt" class="col-form-label"></label>
+                                <input asp-for="ToDt" class="form-control" type="date" />
+                                <span asp-validation-for="ToDt" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="CustomerID"></label>
+                                <select asp-for="CustomerID" class="form-control select2" asp-items="ViewBag.CustomerCodeList">
+                                </select>
+                                <span asp-validation-for="CustomerID" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <button type="submit" name="submitdata" value="LoadData" class="btn btn-primary">Load Data</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <div class="info-box mb-3">
+                                <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-rupee-sign"></i></span>
+
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Wallet Balance</span>
+
+                                    <span class="info-box-number">@((Model.mdlTcWalletWraper?.FirstOrDefault()?.current_ewallet_amt)??0)</span>
+                                </div>
+                                <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
+                        </div>
+
+
+                    </div>
+
+                    <div class="card-body">
+                        <table id="tblWalletStatementDetails" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="display:none">Edit</th>
+                                    <th style="width:200px">Date</th>
+                                    <th style="width:200px">Particulars</th>
+                                    <th>Credit</th>
+                                    <th>Debit</th>
+                                    <th>Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.mdlTcWalletWraper.Count(); i++)
+                                {
+                                    <tr>
+
+                                        <td style="display:none"><a href="javascript:DoPost(@Model.CustomerID)" data-toggle="tooltip" title="Edit Record !"><i class="nav-icon fas fa-edit"></i></a></td>
+                                        <td>@Model.mdlTcWalletWraper[i].Date</td>
+                                        <td>@Model.mdlTcWalletWraper[i].Particulars</td>
+                                        <td>@Model.mdlTcWalletWraper[i].Credit</td>
+                                        <td>@Model.mdlTcWalletWraper[i].Debit</td>
+                                        <td>@Model.mdlTcWalletWraper[i].Balance</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#tblWalletStatementDetails").DataTable({ "ajax": null });
+        });
+
+    </script>
+}
