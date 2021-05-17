@@ -107,6 +107,10 @@ namespace B2BClasses
                  );
                 index = index + 1;
             }
+
+            //_context.tblFlightBookingFareDetails.Remove()
+
+
             await _context.SaveChangesAsync();
 
             return true;
