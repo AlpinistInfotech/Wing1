@@ -175,7 +175,7 @@ namespace B2bApplication.Controllers
 
 
         [AcceptVerbs("Get")]
-        public IActionResult FlightReview()
+        public async Task<IActionResult> FlightReviewAsync()
         {
 
 
@@ -189,6 +189,16 @@ namespace B2bApplication.Controllers
             //    ViewBag.Message = _setting.GetErrorMessage(enmMessage.NoFlightDataFound);
 
             //}
+            foreach (var md in mdl.FareQuotResponse)
+            {
+                _markup.CustomerMarkup(md.Results);
+                _markup.WingMarkupAmount(md.Results, mdl.AdultCount, mdl.ChildCount, mdl.InfantCount);
+                _markup.WingConvenienceAmount(md, mdl.travellerInfo);
+                _markup.CalculateTotalPriceAfterMarkup(md.Results, mdl.AdultCount, mdl.ChildCount, mdl.InfantCount);
+            }
+            //save Data
+            await _booking.CustomerFlightDetailSave(mdl.FareQuoteRequest.TraceId, mdl.FareQuotResponse);
+
             mdl.BookingRequestDefaultData();
             return View(mdl);
         }
@@ -205,7 +215,6 @@ namespace B2bApplication.Controllers
             mdl.FareQuotResponse = new List<mdlFareQuotResponse>();
             mdl.FareRule = new List<mdlFareRuleResponse>();
             
-
             if (!(mdl == null || mdl.FareQuoteRequest==null))
             {
                 mdl.FareQuotResponse.AddRange( await _booking.FareQuoteAsync(mdl.FareQuoteRequest));
@@ -215,7 +224,6 @@ namespace B2bApplication.Controllers
             {
                 return RedirectToAction("FlightSearch", "Home");
             }
-
             foreach(var md in mdl.FareQuotResponse)
             {
                 _markup.CustomerMarkup(md.Results);
@@ -223,8 +231,9 @@ namespace B2bApplication.Controllers
                 _markup.WingConvenienceAmount(md , mdl.travellerInfo);
                 _markup.CalculateTotalPriceAfterMarkup(md.Results, mdl.AdultCount, mdl.ChildCount, mdl.InfantCount);
             }
+            //save Data
+            await _booking.CustomerFlightDetailSave(mdl.FareQuoteRequest.TraceId,mdl.FareQuotResponse);
             mdl.BookingRequestDefaultData();
-
             return View(mdl);
         }
 

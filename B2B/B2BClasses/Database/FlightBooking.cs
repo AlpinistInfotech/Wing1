@@ -106,8 +106,10 @@ namespace B2BClasses.Database
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public enmFlightBookingServiceType ServiceType { get; set; }
-        public string key { get; set; }
-        public string value { get; set; }
+        public int SegmentDisplayOrder { get; set; }
+        public string Code{ get; set; }
+        public string Description { get; set; }
+        public double Amount { get; set; }
         [ForeignKey("tblFlightBookingPassengerDetails")] // Foreign Key here
         public int? PassengerId { get; set; }
         public tblFlightBookingPassengerDetails tblFlightBookingPassengerDetails { get; set; }
@@ -118,9 +120,10 @@ namespace B2BClasses.Database
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        [ForeignKey("tblFlightBookingSegment")] // Foreign Key here
-        public int? SegmentId { get; set; }
-        public tblFlightBookingSegment tblFlightBookingSegment { get; set; }
+        public int SegmentDisplayOrder { get; set; }
+        [ForeignKey("tblFlightBookingMaster")] // Foreign Key here
+        public string TraceId { get; set; }
+        public tblFlightBookingMaster tblFlightBookingMaster { get; set; }
         public double WingAdultMarkup { get; set; }
         public double WingChildMarkup { get; set; }
         public double WingInfantMarkup { get; set; }
@@ -129,6 +132,7 @@ namespace B2BClasses.Database
         public double TotalFare { get; set; }
         public double convenience { get; set; }        
         public double NetFare { get; set; }
+
     }
     
     public class tblFlightBookingFarePurchaseDetails
@@ -136,9 +140,10 @@ namespace B2BClasses.Database
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        [ForeignKey("tblFlightBookingSegment")] // Foreign Key here
-        public int? SegmentId { get; set; }
-        public tblFlightBookingSegment tblFlightBookingSegment { get; set; }
+        public int SegmentDisplayOrder { get; set; }
+        [ForeignKey("tblFlightBookingMaster")] // Foreign Key here
+        public string TraceId { get; set; }
+        public tblFlightBookingMaster tblFlightBookingMaster { get; set; }
         public enmServiceProvider Provider { get; set; }
         public double AdultBaseFare { get; set; }
         public double ChildBaseFare { get; set; }
