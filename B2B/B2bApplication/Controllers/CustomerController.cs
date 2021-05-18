@@ -587,7 +587,6 @@ namespace B2bApplication.Controllers
                 {
                     mdl.IPFilterReport = GetCustomerIPFilterList(_context, true, Convert.ToInt32(mdl.CustomerID));
                     ViewBag.CustomerCodeList = new SelectList(GetCustomerMaster(_context, true, 0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
-
                 }
                 else
                 {
@@ -603,30 +602,28 @@ namespace B2bApplication.Controllers
 
                                 return RedirectToAction("CustomerIPFilter");
                         }
-
                         else
                         {
-
-                            _context.tblCustomerIPFilter.Add(new tblCustomerIPFilter
+                            tblCustomerIPFilter ipfilter_ = new tblCustomerIPFilter()
                             {
                                 CustomerId = Convert.ToInt32(mdl.CustomerID),
-                                AllowedAllIp= mdl.allipapplicable,
+                                AllowedAllIp = mdl.allipapplicable,
                                 CreatedBy = _userid,
                                 CreatedDt = DateTime.Now
 
-                            });
+                            };
+                            _context.tblCustomerIPFilter.Add(ipfilter_);
                             _context.SaveChanges();
-
 
                             if (mdl.allipapplicable == true)
                             {
-                                _context.tblCustomerIPFilterDetails.Add(new tblCustomerIPFilterDetails
+                                tblCustomerIPFilterDetails ipfilterdetails_ = new tblCustomerIPFilterDetails()
                                 {
-                                    FilterId = 0,
+
+                                    FilterId = ipfilter_.Id,
                                     IPAddress = mdl.IPAddess,
-
-
-                                });
+                                };
+                                _context.tblCustomerIPFilterDetails.Add(ipfilterdetails_);
                             }
 
                             await _context.SaveChangesAsync();
@@ -634,7 +631,7 @@ namespace B2bApplication.Controllers
                             TempData["MessageType"] = (int)enmMessageType.Success;
                             TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
 
-                            return RedirectToAction("AddUser");
+                            return RedirectToAction("CustomerIPFilter");
                         }
                     }
                 }

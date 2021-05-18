@@ -32,10 +32,10 @@
                             <div class="col-sm-8">
                                 <div class="input-group">
                                     <label class="input-group-addon input-group-addon-custom">
-                                        <input id="cboxIsAllCustomerType" class="ace ace-switch" type="checkbox" asp-for="allipapplicable">
-                                        <span class="lbl" data-lbl="ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT"></span>
+                                        <input id="cboxIsAllIPFilter" class="ace ace-switch" type="checkbox" asp-for="allipapplicable">
+                                        <span class="lbl" ></span>
                                     </label>
-                                    <input asp-for="IPAddess" class="form-control" />
+                                    <input id="ipfiltertextbox" asp-for="IPAddess" class="form-control" />
                                 </div>
                                 <span asp-validation-for="allipapplicable" class="text-danger"></span>
                             </div>
@@ -117,5 +117,14 @@
         $(document).ready(function () {
             $("#tblCustomerIPDetails").DataTable({ "ajax": null });
         });
+
+        $("#cboxIsAllIPFilter").change(function () {
+            if (this.checked) {
+                $('#ipfiltertextbox').hide();
+            } else {
+                $('#ipfiltertextbox').show();
+            }
+        });
+
     </script>
 }
