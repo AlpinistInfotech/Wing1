@@ -19,7 +19,7 @@ namespace B2bApplication.Models
         public List<mdlFareRuleResponse> FareRule{ get; set; }
         //public List<string> TraceId { get; set; }
         //public List<string> BookingId { get; set; }
-        public List< mdlTravellerinfo> travellerInfo { get; set; }
+        public List<mdlTravellerinfo> travellerInfo { get; set; }
         
         public mdlGstInfo gstInfo { get; set; }        
         public mdlFareQuoteCondition FareQuoteCondition{ get; set; }

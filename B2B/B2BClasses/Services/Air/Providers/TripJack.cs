@@ -722,7 +722,6 @@ namespace B2BClasses.Services.Air
             return mdlS;
         }
 
-
         private mdlSearchResponse SearchFromDb(mdlSearchRequest request)
         {
             mdlSearchResponse mdlSearchResponse = null;
