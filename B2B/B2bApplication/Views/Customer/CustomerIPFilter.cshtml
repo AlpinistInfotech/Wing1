@@ -31,11 +31,11 @@
                             <label asp-for="allipapplicable" class="col-sm-4 control-label"></label>
                             <div class="col-sm-8">
                                 <div class="input-group">
-                                    <label class="input-group-addon input-group-addon-custom">
+                                    <label class="input-group-addon">
                                         <input id="cboxIsAllIPFilter" class="ace ace-switch" type="checkbox" asp-for="allipapplicable">
                                         <span class="lbl" ></span>
                                     </label>
-                                    <input id="ipfiltertextbox" asp-for="IPAddess" class="form-control" />
+                                    <input id="ipfiltertextbox"  asp-for="IPAddess" class="form-control" />
                                 </div>
                                 <span asp-validation-for="allipapplicable" class="text-danger"></span>
                             </div>
@@ -94,7 +94,7 @@
                             <tr>
                                 <td>
                                     <a href="/Customer/CustomerIPFilter/@Model.IPFilterReport[i].Id" class="btn btn-info" data-toggle="tooltip" title="Edit Record !">
-                                        Edit
+                                        Delete
                                     </a>
                                     </td>
                                 <td>@Model.IPFilterReport[i].tblCustomerMaster.CustomerName (@Model.IPFilterReport[i].tblCustomerMaster.Code)</td>
@@ -114,17 +114,32 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function () {
+        $(document).ready(function ()
+        {
             $("#tblCustomerIPDetails").DataTable({ "ajax": null });
+
+
+            $(window).load(function () {
+
+                if ($("#cboxIsAllIPFilter").prop("checked") == true) {
+                    $('#ipfiltertextbox').hide();
+                } else {
+                    $('#ipfiltertextbox').show();
+                }
+            })
+
+            $("#cboxIsAllIPFilter").change(function () {
+                if (this.checked) {
+                    $('#ipfiltertextbox').hide();
+                } else {
+                    $('#ipfiltertextbox').show();
+                }
+            });
+
+
         });
 
-        $("#cboxIsAllIPFilter").change(function () {
-            if (this.checked) {
-                $('#ipfiltertextbox').hide();
-            } else {
-                $('#ipfiltertextbox').show();
-            }
-        });
+
 
     </script>
 }
