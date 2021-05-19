@@ -74,6 +74,8 @@ namespace B2BClasses.Database
         public bool IsDeleted { get; set; }        
         public int? ModifiedBy { get; set; }
         public DateTime? ModifiedDt { get; set; }
+        [InverseProperty("tblCustomerIPFilter")]
+        public ICollection<tblCustomerIPFilterDetails> tblCustomerIPFilterDetails { get; set; }
     }
 
     public class tblCustomerIPFilterDetails

@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Database;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace B2bApplication.Controllers
 {
@@ -679,7 +680,7 @@ namespace B2bApplication.Controllers
         //
         public List<tblCustomerIPFilter> GetCustomerIPFilterList(DBContext context, bool OnlyActive, int customerid)
         {
-            return context.tblCustomerIPFilter.Where(p => p.CustomerId == customerid).ToList();
+            return context.tblCustomerIPFilter.Where(p => p.CustomerId == customerid && !p.IsDeleted).Include(p=>p.tblCustomerIPFilterDetails).ToList();
         }
 
         // need to join with ipfilter detail table
