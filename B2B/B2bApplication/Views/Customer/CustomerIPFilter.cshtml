@@ -1,0 +1,145 @@
+﻿@model mdlCustomerIPFilter
+
+@using B2BClasses.Services.Enums
+
+<div>
+    <div class="row">
+        <div class="col-md-12">
+            <!-- PAGE CONTENT BEGINS -->
+            <form action="@Url.Action()" method="post">
+
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="CustomerID"></label>
+                            <select asp-for="CustomerID" class="form-control select2" asp-items="ViewBag.CustomerCodeList">
+                            </select>
+                            <span asp-validation-for="CustomerID" class="text-danger"></span>
+
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <button class="btn btn-info" type="submit" name="submittype" value="LoadData">Load Data</button>
+                           </div>
+                        </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="allipapplicable" class="col-sm-4 control-label"></label>
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <label class="input-group-addon">
+                                        <input id="cboxIsAllIPFilter" class="ace ace-switch" type="checkbox" asp-for="allipapplicable">
+                                        <span class="lbl" ></span>
+                                    </label>
+                                    <input id="ipfiltertextbox"  asp-for="IPAddess" class="form-control" />
+                                </div>
+                                <span asp-validation-for="allipapplicable" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                        </div>
+
+                       
+
+
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="clearfix form-actions">
+                                    <div class="col-md-offset-3 col-md-9">
+                                        <button class="btn btn-info" type="submit">
+                                            <i class="ace-icon fa fa-check bigger-110"></i>
+                                            Submit
+                                        </button>
+
+                                        &nbsp; &nbsp; &nbsp;
+                                        <button class="btn" type="reset">
+                                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                                            Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                <input type="hidden" asp-for="IPFilterId" />
+</form>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-primary card-outline card-outline-tabs">
+
+                <div class="card-body">
+                    <table id="tblCustomerIPDetails" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Delete</th>
+                                <th>Customer Name (Code)</th>
+                                <th>Is All IP Applicable</th>
+                                <th>IP Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+
+                            @for (int i = 0; i < (Model.IPFilterReport?.Count??0); i++)
+                            {
+                            <tr>
+                                <td>
+                                    <a href="/Customer/CustomerIPFilter/@Model.IPFilterReport[i].Id" class="btn btn-info" data-toggle="tooltip" title="Edit Record !">
+                                        Delete
+                                    </a>
+                                    </td>
+                                <td>@Model.IPFilterReport[i].tblCustomerMaster.CustomerName (@Model.IPFilterReport[i].tblCustomerMaster.Code)</td>
+                                <td>@Model.IPFilterReport[i].AllowedAllIp</td>
+                                <td></td>
+                                
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function ()
+        {
+            $("#tblCustomerIPDetails").DataTable({ "ajax": null });
+
+
+            $(window).load(function () {
+
+                if ($("#cboxIsAllIPFilter").prop("checked") == true) {
+                    $('#ipfiltertextbox').hide();
+                } else {
+                    $('#ipfiltertextbox').show();
+                }
+            })
+
+            $("#cboxIsAllIPFilter").change(function () {
+                if (this.checked) {
+                    $('#ipfiltertextbox').hide();
+                } else {
+                    $('#ipfiltertextbox').show();
+                }
+            });
+
+
+        });
+
+
+
+    </script>
+}

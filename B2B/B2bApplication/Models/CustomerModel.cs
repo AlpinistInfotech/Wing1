@@ -84,9 +84,6 @@ namespace B2bApplication.Models
 
         public int userid { get; set; }
         public List<tblUserMaster> UserMasters { get; set; }
-         
-
-        
       
     }
 
@@ -154,6 +151,24 @@ namespace B2bApplication.Models
         [Display(Name = "Customer Type")]
         public string CustomerID { set; get; }
         public List<ProcWalletSearch> mdlTcWalletWraper { get; set; }
+    }
+
+
+    public class mdlCustomerIPFilter
+    {
+        [Required]
+        [Display(Name = "Customer Type")]
+        public int CustomerID { set; get; }
+
+        [Display(Name = "All IP Applicable")]
+        public bool allipapplicable { set; get; }
+
+        [Display(Name = "IP Address")]
+        public string IPAddess { set; get; }
+
+        public int IPFilterId { set; get; }
+
+        public List<tblCustomerIPFilter> IPFilterReport { get; set; }
 
 
     }

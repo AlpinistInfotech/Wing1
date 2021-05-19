@@ -194,11 +194,9 @@ namespace B2bApplication.Controllers
                     mdl.Password = userdata.Password;
                     mdl.Status = userdata.IsActive;
                     mdl.userid = userdata.Id;
-
                 }
-
-                 mdl.UserMasters =  GetCustomerUserList(_context, true, Convert.ToInt32(mdl.CustomerID));
             }
+            mdl.UserMasters = GetCustomerUserList(_context, true, Convert.ToInt32(mdl.CustomerID));
             ViewBag.CustomerCodeList = new SelectList( GetCustomerMaster(_context, true,0).Select(p=> new {Code=p.Id,CustomerName=p.CustomerName+"("+p.Code+")"}), "Code", "CustomerName", mdl.CustomerID);
             return View(mdl);
         }
@@ -547,6 +545,103 @@ namespace B2bApplication.Controllers
 
         }
 
+        #region CustomerIPFilter
+        public IActionResult CustomerIPFilter(string ipfilterid)
+        {
+            mdlCustomerIPFilter mdl = new mdlCustomerIPFilter();
+            dynamic messagetype = TempData["MessageType"];
+            if (messagetype != null)
+            {
+                ViewBag.SaveStatus = (int)messagetype;
+                ViewBag.Message = TempData["Message"];
+            }
+
+            
+            if (ipfilterid  != null)
+            {
+                var ipfilterdata = GetIPFilterData(_context, Convert.ToInt32(ipfilterid));
+
+                if (ipfilterdata  != null)
+                {
+                    mdl.CustomerID = Convert.ToInt32(ipfilterdata.CustomerId);
+                    mdl.allipapplicable = ipfilterdata.AllowedAllIp;
+                    mdl.IPFilterId = ipfilterdata.Id;
+                    mdl.IPAddess = "";
+                }
+            }
+
+            mdl.IPFilterReport = GetCustomerIPFilterList(_context, true, Convert.ToInt32(mdl.CustomerID));
+            ViewBag.CustomerCodeList = new SelectList(GetCustomerMaster(_context, true, 0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
+            return View(mdl);
+        }
+
+     
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> CustomerIPFilterAsync(mdlCustomerIPFilter mdl,string submittype)
+        {
+            if (ModelState.IsValid)
+            {
+
+                if (submittype == "LoadData")
+                {
+                    mdl.IPFilterReport = GetCustomerIPFilterList(_context, true, Convert.ToInt32(mdl.CustomerID));
+                    ViewBag.CustomerCodeList = new SelectList(GetCustomerMaster(_context, true, 0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
+                }
+                else
+                {
+                    {
+                        var ExistingData = _context.tblCustomerIPFilter.FirstOrDefault(p => p.Id == mdl.IPFilterId);
+                        if (ExistingData != null)
+                        {
+                                // run delete command
+                                _context.tblCustomerIPFilter.Remove(ExistingData);
+                                await _context.SaveChangesAsync();
+                                TempData["MessageType"] = (int)enmMessageType.Success;
+                                TempData["Message"] = _setting.GetErrorMessage(enmMessage.DeleteSuccessfully);
+
+                                return RedirectToAction("CustomerIPFilter");
+                        }
+                        else
+                        {
+                            tblCustomerIPFilter ipfilter_ = new tblCustomerIPFilter()
+                            {
+                                CustomerId = Convert.ToInt32(mdl.CustomerID),
+                                AllowedAllIp = mdl.allipapplicable,
+                                CreatedBy = _userid,
+                                CreatedDt = DateTime.Now
+
+                            };
+                            _context.tblCustomerIPFilter.Add(ipfilter_);
+                            _context.SaveChanges();
+
+                            if (mdl.allipapplicable == true)
+                            {
+                                tblCustomerIPFilterDetails ipfilterdetails_ = new tblCustomerIPFilterDetails()
+                                {
+
+                                    FilterId = ipfilter_.Id,
+                                    IPAddress = mdl.IPAddess,
+                                };
+                                _context.tblCustomerIPFilterDetails.Add(ipfilterdetails_);
+                            }
+
+                            await _context.SaveChangesAsync();
+
+                            TempData["MessageType"] = (int)enmMessageType.Success;
+                            TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
+
+                            return RedirectToAction("CustomerIPFilter");
+                        }
+                    }
+                }
+            }
+
+            return View(mdl);
+        }
+
+
+        #endregion
 
         public List<tblCustomerMaster> GetCustomerMaster(DBContext context, bool OnlyActive, int customerid)
         {
@@ -578,7 +673,19 @@ namespace B2bApplication.Controllers
             {
                 return context.tblUserMaster.Where(p => p.CustomerId == customerid).ToList();
             }
+        }
 
+        // need to join with ipfilter detail table
+        //
+        public List<tblCustomerIPFilter> GetCustomerIPFilterList(DBContext context, bool OnlyActive, int customerid)
+        {
+            return context.tblCustomerIPFilter.Where(p => p.CustomerId == customerid).ToList();
+        }
+
+        // need to join with ipfilter detail table
+        public tblCustomerIPFilter GetIPFilterData(DBContext context, int ipfilterid)
+        {
+            return context.tblCustomerIPFilter.Where(p => p.Id == ipfilterid).FirstOrDefault();
         }
 
         public List<tblCustomerMarkup> GetCustomerMarkUpList(DBContext context, int customerid)
