@@ -14,6 +14,7 @@ namespace B2BClasses.Services.Enums
         Booked=1,
         Refund=2,
         PartialBooked=3,
+        Failed=4
 
     }
     public enum enmFlightBookingServiceType

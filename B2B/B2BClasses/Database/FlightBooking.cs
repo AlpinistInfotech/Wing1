@@ -83,6 +83,8 @@ namespace B2BClasses.Database
         [ForeignKey("tblFlightBookingMaster")] // Foreign Key here
         public string TraceId { get; set; }
         public tblFlightBookingMaster tblFlightBookingMaster { get; set; }
+        public string BookingId { get; set; }
+        public enmServiceProvider ServiceProvider { get; set; }
     }
     public class tblFlightBookingGSTDetails
     {

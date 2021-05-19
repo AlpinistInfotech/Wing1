@@ -267,7 +267,6 @@ namespace B2bApplication.Controllers
 
                 if (NewFare != mdl.TotalFare)
                 {
-
                     var s = JsonConvert.SerializeObject(mdl);
                     TempData["mdl_"] = s;
                     TempData["MessageType"] = (int)enmMessageType.Warning;
@@ -318,14 +317,37 @@ namespace B2bApplication.Controllers
                         ViewBag.SaveStatus = (int)enmMessageType.Warning;
                         ViewBag.Message = Result.Error.Message;
                     }
-
-
+                    
                 }
             }
             else
             {
                 return RedirectToAction("FlightSearch", "Home");
             }
+
+            enmBookingStatus bookingStatus = enmBookingStatus.Pending;
+            if (mdlres.IsSucess.Count > 0)
+            {
+                if (mdlres.IsSucess.Any(p => !p))
+                {
+                    if (mdlres.IsSucess.Any(p => p))
+                    {
+                        bookingStatus = enmBookingStatus.PartialBooked;                        
+                    }
+                    else
+                    {
+                        bookingStatus = enmBookingStatus.Failed;
+                    }                      
+                }
+                else
+                {
+                    bookingStatus = enmBookingStatus.Booked;
+                }
+            }
+            _booking.CompleteBooking(mdl.FareQuotResponse.FirstOrDefault()?.TraceId ?? "", bookingStatus);
+
+
+
             return View(mdlres);
         }
 
