@@ -36,6 +36,8 @@ namespace B2bApplication.Controllers
             _setting = setting;
             _booking = booking;
             _markup = markup;
+            _customerId = 1;
+            _userId = 1;
         }
 
         [Authorize]
@@ -177,28 +179,18 @@ namespace B2bApplication.Controllers
         [AcceptVerbs("Get")]
         public async Task<IActionResult> FlightReviewAsync()
         {
-
-
             var mdls = TempData["mdl_"] as string;
             mdlFlightReview mdl = JsonConvert.DeserializeObject<mdlFlightReview>(mdls);
             ViewBag.SaveStatus = (int)TempData["MessageType"];
             ViewBag.Message = TempData["Message"];
-            //if (MessageType != null)
-            //{
-            //    ViewBag.SaveStatus = (int)MessageType;
-            //    ViewBag.Message = _setting.GetErrorMessage(enmMessage.NoFlightDataFound);
-
-            //}
-            foreach (var md in mdl.FareQuotResponse)
+            if (mdl == null)
             {
-                _markup.CustomerMarkup(md.Results);
-                _markup.WingMarkupAmount(md.Results, mdl.AdultCount, mdl.ChildCount, mdl.InfantCount);
-                _markup.WingConvenienceAmount(md, mdl.travellerInfo);
-                _markup.CalculateTotalPriceAfterMarkup(md.Results, mdl.AdultCount, mdl.ChildCount, mdl.InfantCount);
+                mdl = new mdlFlightReview();
             }
+            await mdl.LoadFareQuotationAsync(_customerId, _booking, _markup);
+
             //save Data
             await _booking.CustomerFlightDetailSave(mdl.FareQuoteRequest.TraceId, mdl.FareQuotResponse);
-
             mdl.BookingRequestDefaultData();
             return View(mdl);
         }
@@ -210,63 +202,12 @@ namespace B2bApplication.Controllers
         [Authorize]
         public async Task<IActionResult> FlightReview(mdlFlightReview mdl)
         {
-            int CustomerId = 1;
-            _booking.CustomerId = CustomerId;
-            mdl.FareQuotResponse = new List<mdlFareQuotResponse>();
-            mdl.FareRule = new List<mdlFareRuleResponse>();
             
-            if (!(mdl == null || mdl.FareQuoteRequest==null))
+            if (mdl == null)
             {
-                mdl.FareQuotResponse.AddRange( await _booking.FareQuoteAsync(mdl.FareQuoteRequest));
-                //mdl.FareRule.AddRange(await _booking.FareRule(new mdlFareRuleRequest() { TraceId= mdl.FareQuoteRequest.TraceId, ResultIndex= mdl.FareQuoteRequest.ResultIndex }));                
+                mdl = new mdlFlightReview();
             }
-            else
-            {
-                return RedirectToAction("FlightSearch", "Home");
-            }
-            foreach(var md in mdl.FareQuotResponse)
-            {
-                _markup.CustomerId = CustomerId;
-                _markup.CustomerMarkup(md.Results);
-                _markup.WingMarkupAmount(md.Results, md.SearchQuery.AdultCount, md.SearchQuery.ChildCount, md.SearchQuery.InfantCount);
-                if (mdl.travellerInfo == null)
-                {
-                    mdl.travellerInfo = new List<mdlTravellerinfo>();
-                    for (int i = 0; i < md.SearchQuery.AdultCount; i++)
-                    {
-                        mdl.travellerInfo.Add(new mdlTravellerinfo()
-                        {
-                            Title="MR",
-                            passengerType= enmPassengerType.Adult,
-                            FirstName=string.Empty,
-                            LastName= string.Empty,                            
-                        });
-                    }
-                    for (int i = 0; i < md.SearchQuery.ChildCount; i++)
-                    {
-                        mdl.travellerInfo.Add(new mdlTravellerinfo()
-                        {
-                            Title = "MASTER",
-                            passengerType = enmPassengerType.Child,
-                            FirstName = string.Empty,
-                            LastName = string.Empty,
-                        });
-                    }
-                    for (int i = 0; i < md.SearchQuery.InfantCount; i++)
-                    {
-                        mdl.travellerInfo.Add(new mdlTravellerinfo()
-                        {
-                            Title = "MASTER",
-                            passengerType = enmPassengerType.Infant,
-                            FirstName = string.Empty,
-                            LastName = string.Empty,
-                        });
-                    }
-
-                }
-                _markup.WingConvenienceAmount(md , mdl.travellerInfo);
-                _markup.CalculateTotalPriceAfterMarkup(md.Results, md.SearchQuery.AdultCount, md.SearchQuery.ChildCount, md.SearchQuery.InfantCount);
-            }
+            await mdl.LoadFareQuotationAsync(_customerId, _booking, _markup);
             //save Data
             await _booking.CustomerFlightDetailSave(mdl.FareQuoteRequest.TraceId,mdl.FareQuotResponse);
             mdl.BookingRequestDefaultData();
@@ -282,38 +223,44 @@ namespace B2bApplication.Controllers
         {
             mdlFlighBook mdlres = new mdlFlighBook() {FareQuotResponse= new List<mdlFareQuotResponse>(), IsSucess=new List<bool>() , BookingId= new List<string>()};
             
-            int CustomerId = 1;
-            _booking.CustomerId = CustomerId;
-            mdl.FareQuotResponse = new List<mdlFareQuotResponse>();
-            mdl.FareRule = new List<mdlFareRuleResponse>();
+            
+
             bool IsPriceChanged = false;
             if (!(mdl == null || mdl.FareQuoteRequest == null))
             {
-                mdl.FareQuotResponse.AddRange(await _booking.FareQuoteAsync(mdl.FareQuoteRequest));
+                var s = JsonConvert.SerializeObject(mdl);
+                if (mdl.contacts == null)
+                {
+                    TempData["mdl_"] = s;
+                    TempData["MessageType"] = (int)enmMessageType.Warning;
+                    TempData["Message"] = "Required Contact no";
+                    return RedirectToAction("FlightReview");
+                }
+                else if (mdl.emails == null)
+                {
+                    TempData["mdl_"] = s;
+                    TempData["MessageType"] = (int)enmMessageType.Warning;
+                    TempData["Message"] = "Required Email Address";
+                    return RedirectToAction("FlightReview");
+                }
+
+
+
+                await mdl.LoadFareQuotationAsync(_customerId, _booking, _markup);
                 IsPriceChanged = mdl.FareQuotResponse.Any(p => p.IsPriceChanged);
                 if (IsPriceChanged)
                 {
-                    var s = JsonConvert.SerializeObject(mdl);
+                    
                     TempData["mdl_"] = s;
                     TempData["MessageType"] = (int)enmMessageType.Warning;
                     TempData["Message"] = _setting.GetErrorMessage(enmMessage.FlightPriceChanged);
                     return RedirectToAction("FlightReview");                    
                 }
-                double NewFare= mdl.FareQuotResponse.Sum(p => p.TotalPriceInfo?.TotalFare)??0;
-
-                if (NewFare != mdl.TotalFare)
-                {
-                    var s = JsonConvert.SerializeObject(mdl);
-                    TempData["mdl_"] = s;
-                    TempData["MessageType"] = (int)enmMessageType.Warning;
-                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.FlightPriceChanged);
-                    return RedirectToAction("FlightReview");
-                }
-                customerWallet.CustomerId = CustomerId;
+                
+                customerWallet.CustomerId = _customerId;
                 double Walletbalence=await customerWallet.GetBalenceAsync();
-                if (Walletbalence < mdl.TotalFare)
-                {
-                    var s = JsonConvert.SerializeObject(mdl);
+                if (Walletbalence < mdl.NetFare)
+                {                    
                     TempData["mdl_"] = s;
                     TempData["MessageType"] = (int)enmMessageType.Warning;
                     TempData["Message"] = _setting.GetErrorMessage(enmMessage.InsufficientWalletBalance);
