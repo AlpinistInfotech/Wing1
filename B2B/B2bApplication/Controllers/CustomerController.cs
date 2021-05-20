@@ -567,7 +567,7 @@ namespace B2bApplication.Controllers
                     mdl.CustomerID = Convert.ToInt32(ipfilterdata.CustomerId);
                     mdl.allipapplicable = ipfilterdata.AllowedAllIp;
                     mdl.IPFilterId = ipfilterdata.Id;
-                    mdl.IPAddess = "";
+                    mdl.IPAddess = string.Join(',',ipfilterdata.tblCustomerIPFilterDetails.Select(p=>p.IPAddress));
                 }
             }
 
@@ -592,19 +592,33 @@ namespace B2bApplication.Controllers
                 else
                 {
                     {
-                        var ExistingData = _context.tblCustomerIPFilter.FirstOrDefault(p => p.Id == mdl.IPFilterId);
-                        if (ExistingData != null)
+                        var ExistingData_ipfilter = _context.tblCustomerIPFilter.FirstOrDefault(p => p.Id == mdl.IPFilterId);
+                        if (ExistingData_ipfilter != null)
                         {
-                                // run delete command
-                                _context.tblCustomerIPFilter.Remove(ExistingData);
-                                await _context.SaveChangesAsync();
-                                TempData["MessageType"] = (int)enmMessageType.Success;
-                                TempData["Message"] = _setting.GetErrorMessage(enmMessage.DeleteSuccessfully);
+                            // run delete command
+                            ExistingData_ipfilter.IsDeleted = true;
+                            ExistingData_ipfilter.ModifiedDt = DateTime.Now;
+                            ExistingData_ipfilter.ModifiedBy = _userid;
 
-                                return RedirectToAction("CustomerIPFilter");
+                            await _context.SaveChangesAsync();
+                            TempData["MessageType"] = (int)enmMessageType.Success;
+                            TempData["Message"] = _setting.GetErrorMessage(enmMessage.DeleteSuccessfully);
+                            return RedirectToAction("CustomerIPFilter");
                         }
-                        else
+                        else // save button call
                         {
+
+                            var ExistingData_check = _context.tblCustomerIPFilter.FirstOrDefault(p => p.CustomerId == mdl.CustomerID );
+                            if (ExistingData_check != null)
+                            {
+                                ExistingData_check.IsDeleted = true;
+                                ExistingData_check.ModifiedDt = DateTime.Now;
+                                ExistingData_check.ModifiedBy = _userid;
+                            }
+                            _context.tblCustomerIPFilter.Add(ExistingData_check);
+
+                            // check ip address
+
                             tblCustomerIPFilter ipfilter_ = new tblCustomerIPFilter()
                             {
                                 CustomerId = Convert.ToInt32(mdl.CustomerID),
@@ -613,18 +627,23 @@ namespace B2bApplication.Controllers
                                 CreatedDt = DateTime.Now
 
                             };
+
+
                             _context.tblCustomerIPFilter.Add(ipfilter_);
-                            _context.SaveChanges();
 
-                            if (mdl.allipapplicable == true)
+                            if (mdl.allipapplicable == false)
                             {
-                                tblCustomerIPFilterDetails ipfilterdetails_ = new tblCustomerIPFilterDetails()
+                                int ipaddresslength = mdl.IPAddess.Split(",").Length;
+                                for (int count =0; count <= ipaddresslength; count++ )
                                 {
+                                    tblCustomerIPFilterDetails ipfilterdetails_ = new tblCustomerIPFilterDetails()
+                                    {
+                                        FilterId = ipfilter_.Id,
+                                        IPAddress = mdl.IPAddess.Split(",")[count],
+                                    };
+                                    _context.tblCustomerIPFilterDetails.Add(ipfilterdetails_);
+                                }
 
-                                    FilterId = ipfilter_.Id,
-                                    IPAddress = mdl.IPAddess,
-                                };
-                                _context.tblCustomerIPFilterDetails.Add(ipfilterdetails_);
                             }
 
                             await _context.SaveChangesAsync();
@@ -680,13 +699,13 @@ namespace B2bApplication.Controllers
         //
         public List<tblCustomerIPFilter> GetCustomerIPFilterList(DBContext context, bool OnlyActive, int customerid)
         {
-            return context.tblCustomerIPFilter.Where(p => p.CustomerId == customerid && !p.IsDeleted).Include(p=>p.tblCustomerIPFilterDetails).ToList();
+            return context.tblCustomerIPFilter.Where(p => p.CustomerId == customerid && !p.IsDeleted).Include(p => p.tblCustomerIPFilterDetails).ToList();
         }
 
         // need to join with ipfilter detail table
         public tblCustomerIPFilter GetIPFilterData(DBContext context, int ipfilterid)
         {
-            return context.tblCustomerIPFilter.Where(p => p.Id == ipfilterid).FirstOrDefault();
+            return context.tblCustomerIPFilter.Where(p => p.Id == ipfilterid && !p.IsDeleted).Include(p => p.tblCustomerIPFilterDetails).FirstOrDefault();
         }
 
         public List<tblCustomerMarkup> GetCustomerMarkUpList(DBContext context, int customerid)

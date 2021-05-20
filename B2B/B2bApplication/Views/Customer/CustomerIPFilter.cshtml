@@ -179,7 +179,7 @@
                                 </div>
                             </td>
                             <td>
-                                @md.tblCustomerMaster.CustomerName
+                                @md.tblCustomerMaster.CustomerName - @md.tblCustomerMaster.Code
                             </td>
                             <td>
                                 @(md.AllowedAllIp?"All":  string.Join(", ", md.tblCustomerIPFilterDetails.Select(p=>p.IPAddress) ))
