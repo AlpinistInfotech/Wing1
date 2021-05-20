@@ -418,6 +418,10 @@ namespace B2BClasses
 
         public void WingMarkupAmount(List<List<mdlSearchResult>> mdl, int AdultCount = 1, int ChildCount = 0, int InfantCount = 0)
         {
+            if (mdl == null)
+            {
+                return;
+            }
             List<mdlWingMarkup> allMarkup = LoadMarkup(0, false, true);
             LoadMarkupAirlineCode(allMarkup);
             for (int i = 0; i < mdl.Count; i++)
@@ -500,18 +504,35 @@ namespace B2BClasses
         public bool PassengerTypeConvenience(mdlWingMarkup mdlA, int AdultCount, int ChildCount, int InfantCount)
         {
             bool returndata = false;
+            if (mdlA.IsAllCustomerType)
+            {
+                return true;
+            }
             if (AdultCount > 0)
             {
                 returndata = mdlA.MarkupPassengerType.Any(p => p == enmPassengerType.Adult);
+                if (returndata)
+                {
+                    return true;
+                }
             }
             if (ChildCount > 0)
             {
                 returndata = mdlA.MarkupPassengerType.Any(p => p == enmPassengerType.Child);
+                if (returndata)
+                {
+                    return true;
+                }
             }
             if (InfantCount > 0)
             {
                 returndata = mdlA.MarkupPassengerType.Any(p => p == enmPassengerType.Infant);
+                if (returndata)
+                {
+                    return true;
+                }
             }
+            
             return returndata;
         }
 
@@ -785,8 +806,10 @@ namespace B2BClasses
         
         public bool CalculateTotalPriceAfterMarkup(List<List<mdlSearchResult>> mdls, int AdultCount, int ChildCount, int InfantCount)
         {
-            
-
+            if (mdls == null)
+            {
+                return false;
+            }
 
             double WingbaseFare = 0;
             //update with markup

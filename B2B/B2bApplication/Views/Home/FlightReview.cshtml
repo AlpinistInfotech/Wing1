@@ -93,15 +93,31 @@
                                 <h3 class="accordion-header">
                                     Other Charge
                                     <span class="pull-right">
-                                        @(Model.OtherCharge.ToString("C", nfi))
+                                        @(Model.TotalOtherCharge.ToString("C", nfi))
                                     </span>
                                 </h3>
-                                <div class="Row">
-                                    Other Charge
-                                    <span class="pull-right">
-                                        @(Model.OtherCharge.ToString("C", nfi))
-                                    </span>
-                                </div>
+                                @if (Model.OtherCharge > 0)
+                                {
+                                    <div class="Row">
+                                        Other Charge
+                                        <span class="pull-right">
+                                            @(Model.OtherCharge.ToString("C", nfi))
+                                        </span>
+                                    </div>
+                                }
+                                @if (Model.Convenience > 0)
+                                {
+                                    <div class="Row">
+                                        <div class="col-sm-12">
+                                            convenience
+                                            <span class="pull-right">
+                                                @(Model.Convenience.ToString("C", nfi))
+                                            </span>
+                                        </div>
+                                    </div>
+                                }
+
+
                             </div>
                         </div>
                         <h4>

@@ -421,6 +421,10 @@ namespace B2BClasses
             List<mdlFareQuotResponse> mdlRs = new List<mdlFareQuotResponse>();
             for (int i = 0; i < mdlRq.ResultIndex.Count(); i++)
             {
+                if (mdlRq.ResultIndex[i] == null)
+                {
+                    continue;                
+                }
                 var sp = (enmServiceProvider)Convert.ToInt32(mdlRq.ResultIndex?[i].Split("_").FirstOrDefault());
 
                 int index = mdlRq.ResultIndex?[i].IndexOf('_') ?? -1;

@@ -207,7 +207,7 @@
                                 <div class="form-group">
                                     <label asp-for="WingMarkup.Gender" class="col-sm-4 control-label"></label>
                                     <div class="col-sm-8">
-                                        <select asp-for="WingMarkup.Gender" class="form-control select2">
+                                        <select asp-for="WingMarkup.Gender" class="form-control select2" >
                                            
                                                 @foreach (var data in Enum.GetValues(typeof(enmGender)))
                                                 {

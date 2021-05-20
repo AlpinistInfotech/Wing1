@@ -98,8 +98,8 @@ namespace B2BClasses.Services.Enums
     {
         Male = 1,
         Female = 2,
-        Other = 4
-
+        Other = 4,
+        All = Male| Female| Other
     }
 
     public enum enmServiceProvider

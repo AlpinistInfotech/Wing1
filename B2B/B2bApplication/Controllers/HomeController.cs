@@ -226,10 +226,46 @@ namespace B2bApplication.Controllers
             }
             foreach(var md in mdl.FareQuotResponse)
             {
+                _markup.CustomerId = CustomerId;
                 _markup.CustomerMarkup(md.Results);
-                _markup.WingMarkupAmount(md.Results, mdl.AdultCount, mdl.ChildCount, mdl.InfantCount);
+                _markup.WingMarkupAmount(md.Results, md.SearchQuery.AdultCount, md.SearchQuery.ChildCount, md.SearchQuery.InfantCount);
+                if (mdl.travellerInfo == null)
+                {
+                    mdl.travellerInfo = new List<mdlTravellerinfo>();
+                    for (int i = 0; i < md.SearchQuery.AdultCount; i++)
+                    {
+                        mdl.travellerInfo.Add(new mdlTravellerinfo()
+                        {
+                            Title="MR",
+                            passengerType= enmPassengerType.Adult,
+                            FirstName=string.Empty,
+                            LastName= string.Empty,                            
+                        });
+                    }
+                    for (int i = 0; i < md.SearchQuery.ChildCount; i++)
+                    {
+                        mdl.travellerInfo.Add(new mdlTravellerinfo()
+                        {
+                            Title = "MASTER",
+                            passengerType = enmPassengerType.Child,
+                            FirstName = string.Empty,
+                            LastName = string.Empty,
+                        });
+                    }
+                    for (int i = 0; i < md.SearchQuery.InfantCount; i++)
+                    {
+                        mdl.travellerInfo.Add(new mdlTravellerinfo()
+                        {
+                            Title = "MASTER",
+                            passengerType = enmPassengerType.Infant,
+                            FirstName = string.Empty,
+                            LastName = string.Empty,
+                        });
+                    }
+
+                }
                 _markup.WingConvenienceAmount(md , mdl.travellerInfo);
-                _markup.CalculateTotalPriceAfterMarkup(md.Results, mdl.AdultCount, mdl.ChildCount, mdl.InfantCount);
+                _markup.CalculateTotalPriceAfterMarkup(md.Results, md.SearchQuery.AdultCount, md.SearchQuery.ChildCount, md.SearchQuery.InfantCount);
             }
             //save Data
             await _booking.CustomerFlightDetailSave(mdl.FareQuoteRequest.TraceId,mdl.FareQuotResponse);
