@@ -485,7 +485,7 @@ namespace B2BClasses
         {
             double MarkupAmount = 0;
             MarkupAmount = _context.tblCustomerMarkup.Where(p => !p.IsDeleted).Sum(p => p.MarkupAmt);
-            for (int i = 0; i < mdl.Count; i++)
+            for (int i = 0; i < ((mdl?.Count)??0); i++)
             {
                 for (int j = 0; j < mdl[i].Count; j++)
                 {

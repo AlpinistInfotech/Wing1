@@ -6,15 +6,7 @@
 <div class="widget-box">
     <div class="clearfix form-actions">
         <div class="col-sm-12">
-            @if (ViewBag.JourneyType == 2)
-            {
-                <label class="pull-right inline">
-                    <small class="muted smaller-90">Border:</small>
-                    <input id="id-button-borders" type="radio" name="@ViewBag.JourneyType1" value="" class="ace ace-switch ace-switch-5">
-                    <span class="lbl middle"></span>
-                </label>
-            }
-
+           
             <div class="col-sm-7">
                 <div class="col-sm-5">
                     <div class="row">
@@ -81,9 +73,8 @@
                         <div class="row">
 
                             <label>
-                                <input type="checkbox" name="ResultIndex" value="@totalpricelist.ResultIndex" class="ace ace-switch ace-switch-4">
+                                <input type="radio" name="@ViewBag.JourneyType1" value="@totalpricelist.ResultIndex" data-price="@totalpricelist.TotalPrice" class="ace ace-switch ace-switch-4">
                                 <span class="lbl middle"></span>
-
                                 <small>@(totalpricelist.TotalPrice.ToString("C", nfi))</small>
                             </label>
                         </div>
@@ -91,14 +82,6 @@
                     }
 
                 </div>
-
-                @if (ViewBag.JourneyType == 1)
-                {
-                    <div class="col-sm-4">
-                        <button class="btn btn-success" id="btnBook" type="submit" name="bookFlight" value="Book">Book</button>
-                    </div>
-                }
-
             </div>
         </div>
 
