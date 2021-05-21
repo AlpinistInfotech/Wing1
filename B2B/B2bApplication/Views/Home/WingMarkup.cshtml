@@ -10,6 +10,7 @@
     <div class="col-md-12">
         <!-- PAGE CONTENT BEGINS -->
         <form action="@Url.Action()" method="post">
+            @Html.AntiForgeryToken()
             <div asp-validation-summary="All" class="text-danger"></div>
             <input type="hidden" asp-for="WingMarkup.Id" />
             <div class="widget-box">
@@ -211,7 +212,7 @@
                                             @(Model.WingMarkup.Id > 0? "update":"Save")
                                         </button>
                                         &nbsp;
-                                        <a href="/Home/WingMarkup" class="btn" >
+                                        <a href="/Home/WingMarkup" class="btn">
                                             <i class="ace-icon fa fa-undo bigger-110"></i>
                                             Reset
                                         </a>

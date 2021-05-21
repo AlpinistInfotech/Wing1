@@ -30,12 +30,14 @@ namespace B2bApplication.Controllers
         private readonly ISettings _setting;
         private readonly IConfiguration _config;
         int _userid = 0;
+        int _customerId = 0;
         public CustomerController(ILogger<CustomerController> logger, DBContext context, ISettings setting,IConfiguration config)
         {
             _context = context;
             _logger = logger;
             _setting = setting;
             _config = config;
+            _customerId = 1;
         }
 
         [AcceptVerbs("Get", "Post")]
@@ -620,13 +622,11 @@ namespace B2bApplication.Controllers
 
                             // check ip address
 
-                            List<tblCustomerIPFilterDetails> tpd = new List<tblCustomerIPFilterDetails>();
-                            
+                            List<tblCustomerIPFilterDetails> tpd = new List<tblCustomerIPFilterDetails>();                            
                             if (!mdl.allipapplicable &&  ( mdl.IPAddess==null || mdl.IPAddess.Trim().Length == 0))
                             {
                                 TempData["MessageType"] = (int)enmMessageType.Success;
                                 TempData["Message"] = _setting.GetErrorMessage(enmMessage.DeleteSuccessfully);
-
                             }
                             else
                             {
@@ -731,6 +731,29 @@ namespace B2bApplication.Controllers
         {
             return context.tblCustomerMaster.Where(p => p.Id == customerid).FirstOrDefault();
         }
+
+
+        #region ********************* Customer Flight Booking Report *****************************
+        [Authorize]
+        [HttpGet]
+        public IActionResult FlightBookingReport()
+        {
+            mdlFlightBookingReport mdl = new mdlFlightBookingReport();
+            return View(mdl);
+        }
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult FlightBookingReport(mdlFlightBookingReport mdl,[FromServices]IBooking _booking)
+        {
+            if (ModelState.IsValid)
+            {
+                mdl.loadBookingData(_booking,_customerId);
+            }
+            return View(mdl);
+        }
+
+        #endregion
 
     }
 }

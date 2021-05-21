@@ -27,6 +27,14 @@ namespace B2BClasses.Database
         public ICollection<tblFlightBookingSegment> tblFlightBookingSegments { get; set; }
         [InverseProperty("tblFlightBookingMaster")]
         public ICollection<tblFlightBookingProviderTraceId> tblFlightBookingProviderTraceIds { get; set; }
+        [InverseProperty("tblFlightBookingMaster")]
+        public ICollection<tblFlightBookingPassengerDetails> tblFlightBookingPassengerDetails { get; set; }
+        [InverseProperty("tblFlightBookingMaster")]
+        public ICollection<tblFlightBookingGSTDetails> tblFlightBookingGSTDetails { get; set; }
+
+        [InverseProperty("tblFlightBookingMaster")]
+        public ICollection<tblFlightBookingFareDetails> tblFlightBookingFareDetails { get; set; }
+        public ICollection<tblFlightBookingFarePurchaseDetails> tblFlightBookingFarePurchaseDetails { get; set; }
     }
 
     public class tblFlightBookingProviderTraceId
@@ -86,6 +94,7 @@ namespace B2BClasses.Database
         public string BookingId { get; set; }
         public enmServiceProvider ServiceProvider { get; set; }
     }
+
     public class tblFlightBookingGSTDetails
     {
         [Key]

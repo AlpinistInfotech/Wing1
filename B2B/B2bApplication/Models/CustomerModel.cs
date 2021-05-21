@@ -173,6 +173,37 @@ namespace B2bApplication.Models
 
     }
 
+    public class mdlFlightBookingReport
+    {
+        [Display(Name = "From Dt")]
+        public DateTime FromDt { get; set; } = DateTime.Now.AddDays(-2);
+        [Display(Name = "To Dt")]
+        public DateTime ToDt { get; set; } = DateTime.Now;
+        [Display(Name = "Status")]
+        public enmBookingStatus bookingStatus { get; set; } = enmBookingStatus.All;
+        [Display(Name = "Filter By")]
+        public int DateFliterType { get; set; } = 1; //1 = on Booking Date, 2 on Travel Date
+        public List<tblFlightBookingMaster> FBMs { get; set; } = new List<tblFlightBookingMaster>();
+        public void loadBookingData(IBooking _booking, int CustomerId)
+        {
+            _booking.CustomerId = CustomerId;
+            FBMs = _booking.FlighBookReport(FromDt, ToDt, (DateFliterType == 2 ? false : true), false,false ,bookingStatus);
+        }
+        public string GetLabelClass(enmBookingStatus bookingStatus)
+        {
+            switch (bookingStatus)
+            {
+                case enmBookingStatus.Pending:return "label-info";
+                case enmBookingStatus.Booked: return "label-success arrowed-in";
+                case enmBookingStatus.Refund: return "label-danger";
+                case enmBookingStatus.PartialBooked: return "label-warning arrowed-in";
+                
+            }
+            return "label-inverse";
+        }
+
+    }
+
 }
 
 

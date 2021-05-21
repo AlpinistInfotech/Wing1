@@ -28,6 +28,7 @@ namespace B2BClasses
         bool CustomerPassengerDetailSave(mdlBookingRequest mdlRq, enmBookingStatus bookingStatus, enmServiceProvider sp);
         Task<List<mdlFareQuotResponse>> FareQuoteAsync(mdlFareQuotRequest mdlRq);
         Task<List<mdlFareRuleResponse>> FareRule(mdlFareRuleRequest mdlRq);
+        List<tblFlightBookingMaster> FlighBookReport(DateTime FromDt, DateTime ToDate, bool OnBookingDt = true, bool AllCustomer = false, bool IncludePurchaseFare = false, enmBookingStatus bookingStatus= enmBookingStatus.All);
         Task<List<enmServiceProvider>> GetActiveProviderAsync();
         Task<List<tblAirline>> GetAirlinesAsync();
         Task<List<tblAirport>> GetAirportAsync();
@@ -67,6 +68,39 @@ namespace B2BClasses
 
 
         #region ***********************Flight********************************
+
+
+        public List<tblFlightBookingMaster> FlighBookReport(DateTime FromDt, DateTime ToDate, bool OnBookingDt = true, bool AllCustomer = false, bool IncludePurchaseFare = false, enmBookingStatus bookingStatus= enmBookingStatus.All)
+        {
+            ToDate = Convert.ToDateTime(ToDate.AddDays(1).ToString("yyyy-MM-dd"));
+            FromDt = Convert.ToDateTime(FromDt.ToString("yyyy-MM-dd"));
+
+            IQueryable<tblFlightBookingMaster> Query = null;
+            if (OnBookingDt)
+            {
+                Query = _context.tblFlightBookingMaster.Where(p => p.CreatedDt >= FromDt && p.CreatedDt < ToDate);
+            }
+            else
+            {
+                Query = _context.tblFlightBookingSegment.Where(p => p.TravelDt >= FromDt && p.TravelDt < ToDate).Select(p => p.tblFlightBookingMaster).Distinct();
+            }
+            if (bookingStatus != enmBookingStatus.All)
+            {
+                Query = Query.Where(p => p.BookingStatus == bookingStatus);
+            }
+
+            if (!AllCustomer)
+            {
+                Query = Query.Where(p => p.CustomerId == CustomerId);
+            }
+            if (IncludePurchaseFare)
+            {
+                Query = Query.Include(p => p.tblFlightBookingFarePurchaseDetails);
+            }
+
+            Query = Query.Include(p => p.tblFlightBookingSegments).Include(p => p.tblFlightBookingPassengerDetails).Include(p => p.tblFlightBookingFareDetails).Include(p => p.tblFlightBookingGSTDetails);
+            return Query.OrderByDescending(p=>p.CreatedDt).ToList();
+        }
 
         public async Task<string> CustomerDataSave(mdlSearchRequest mdlRq, List<tblFlightBookingProviderTraceId> traceIds)
         {
@@ -174,8 +208,8 @@ namespace B2BClasses
                     AdultNetFare = AdultNetFare_,
                     ChildNetFare = ChildNetFare_,
                     InfantNetFare = InfantNetFare_,
-                    NetFare = (mdl?.SearchQuery?.AdultCount ?? 0 * AdultNetFare_) + (mdl?.SearchQuery?.ChildCount ?? 0 * ChildNetFare_) + (mdl?.SearchQuery?.InfantCount ?? 0 * InfantNetFare_),
-                    TotalFare = (mdl?.SearchQuery?.AdultCount ?? 0 * AdultTotalFare_) + (mdl?.SearchQuery?.ChildCount ?? 0 * ChildTotalFare_) + (mdl?.SearchQuery?.InfantCount ?? 0 * InfantTotalFare_),
+                    NetFare = ((mdl?.SearchQuery?.AdultCount ?? 0) * AdultNetFare_) + ((mdl?.SearchQuery?.ChildCount ?? 0) * ChildNetFare_) + ((mdl?.SearchQuery?.InfantCount ?? 0) * InfantNetFare_),
+                    TotalFare = ((mdl?.SearchQuery?.AdultCount ?? 0) * AdultTotalFare_) + ((mdl?.SearchQuery?.ChildCount ?? 0) * ChildTotalFare_) + ((mdl?.SearchQuery?.InfantCount ?? 0) * InfantTotalFare_),
                     SegmentDisplayOrder = index
                 });
                 index = index + 1;
@@ -423,7 +457,7 @@ namespace B2BClasses
             {
                 if (mdlRq.ResultIndex[i] == null)
                 {
-                    continue;                
+                    continue;
                 }
                 var sp = (enmServiceProvider)Convert.ToInt32(mdlRq.ResultIndex?[i].Split("_").FirstOrDefault());
 
