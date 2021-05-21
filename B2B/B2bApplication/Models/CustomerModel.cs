@@ -153,7 +153,6 @@ namespace B2bApplication.Models
         public List<ProcWalletSearch> mdlTcWalletWraper { get; set; }
     }
 
-
     public class mdlCustomerIPFilter
     {
         [Required]
@@ -170,6 +169,25 @@ namespace B2bApplication.Models
 
         public List<tblCustomerIPFilter> IPFilterReport { get; set; }
 
+
+    }
+
+    public class mdlCreditRequest
+    {
+
+        [Required]
+        [MaxLength(10)]
+        [Display(Name = "Customer Code")]
+        public int CustomerID { set; get; }
+
+        [Required]
+        [MaxLength(50)]
+        [Display(Name = "Credit Amount")]
+        public int CreditAmt { set; get; }
+
+        [MaxLength(250)]
+        [Display(Name = "Remarks")]
+        public string Remarks { get; set; }
 
     }
 

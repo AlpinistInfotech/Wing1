@@ -654,6 +654,56 @@ namespace B2bApplication.Controllers
 
         #endregion
 
+        #region CreditRequest
+
+        [Authorize]
+        public IActionResult CreditRequest()
+        {
+
+            dynamic messagetype = TempData["MessageType"];
+            mdlCustomerWallet mdl = new mdlCustomerWallet();
+            if (messagetype != null)
+            {
+                ViewBag.SaveStatus = (int)messagetype;
+                ViewBag.Message = TempData["Message"];
+
+            }
+
+            ViewBag.CustomerCodeList = new SelectList(GetCustomerMaster(_context, true, 0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
+            return View(mdl);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> CreditRequestAsync(mdlCreditRequest mdl)
+        {
+
+            var ExistingData = _context.tblCreditRequest.FirstOrDefault(p => p.CustomerId == mdl.CustomerID && p.CreditAmt == mdl.CreditAmt && Convert.ToDateTime(p.CreatedDt).ToString("dd-MMM-yyyy") == Convert.ToDateTime(DateTime.Now).ToString("dd-MMM-yyyy"));
+            {
+                TempData["MessageType"] = (int)enmMessageType.Warning;
+                TempData["Message"] = _setting.GetErrorMessage(enmMessage.RecordAlreadyExists);
+                return RedirectToAction("CreditRequest");
+            }
+
+
+            _context.tblCreditRequest.Add(new tblCreditRequest
+            {
+                CustomerId = Convert.ToInt32(mdl.CustomerID),
+                CreditAmt = mdl.CreditAmt,
+                CreatedRemarks = mdl.Remarks,
+                CreatedBy = _userid,
+                CreatedDt = DateTime.Now
+            });
+
+            await _context.SaveChangesAsync();
+            TempData["MessageType"] = (int)enmMessageType.Success;
+            TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
+            return RedirectToAction("CreditRequest");
+
+        }
+
+        #endregion
+
         public List<tblCustomerMaster> GetCustomerMaster(DBContext context, bool OnlyActive, int customerid)
         {
             if (customerid > 0)

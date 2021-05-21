@@ -154,4 +154,29 @@ namespace B2BClasses.Database
         public int? ModifiedBy { get; set; }
         public DateTime? ModifiedDt { get; set; }
     }
+
+
+    public class tblCreditRequest
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+   
+        [ForeignKey("tblCustomerMaster")] // Foreign Key here
+        public int? CustomerId { get; set; }
+        public tblCustomerMaster tblCustomerMaster { get; set; }
+        public double CreditAmt { get; set; }
+        public enmApprovalStatus IsApproved { get; set; }
+        public int CreatedBy { get; set; }
+        public DateTime CreatedDt { get; set; }
+        public string CreatedRemarks { get; set; }
+
+        public bool IsDeleted { get; set; }
+        public int? ModifiedBy { get; set; }
+        public DateTime? ModifiedDt { get; set; }
+        public string ModifiedRemarks { get; set; }
+
+
+    }
+
 }

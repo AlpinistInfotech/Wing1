@@ -1,0 +1,85 @@
+﻿@model mdlCreditRequest
+
+@using B2BClasses.Services.Enums
+
+<div>
+    <div class="row">
+        <div class="col-md-12">
+            <!-- PAGE CONTENT BEGINS -->
+            <form action="@Url.Action()" method="post">
+
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="CustomerID"></label>
+                            <select asp-for="CustomerID" class="form-control select2" asp-items="ViewBag.CustomerCodeList">
+                            </select>
+                            <span asp-validation-for="CustomerID" class="text-danger"></span>
+
+
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="CreditAmt"></label>
+                            <input asp-for="CreditAmt" class="form-control" />                            
+                            <span asp-validation-for="CreditAmt" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+
+                <div class="row">
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Remarks"></label>
+                            <input asp-for="Remarks" class="form-control" />
+                            <span asp-validation-for="Remarks" class="text-danger"></span>
+
+
+                        </div>
+                    </div>
+
+                    
+
+                </div>
+
+                
+
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="clearfix form-actions">
+                            <div class="col-md-offset-3 col-md-9">
+                                <button class="btn btn-info" type="submit">
+                                    <i class="ace-icon fa fa-check bigger-110"></i>
+                                    Submit
+                                </button>
+
+                                &nbsp; &nbsp; &nbsp;
+                                <button class="btn" type="reset">
+                                    <i class="ace-icon fa fa-undo bigger-110"></i>
+                                    Reset
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    
+</div>
+
+@section Scripts {
+    
+}

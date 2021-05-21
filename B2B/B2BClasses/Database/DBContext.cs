@@ -92,11 +92,13 @@ namespace B2BClasses.Database
         public DbSet<tblWalletDetailLedgerLog> tblWalletDetailLedgerLog { get; set; }
         public DbSet<tblWalletBalanceAlert> tblWalletBalanceAlert { get; set; }
         public DbSet<tblCustomerMarkup> tblCustomerMarkup { get; set; }
+
+        public DbSet<tblCreditRequest> tblCreditRequest { get; set; }
         #endregion
 
     }
 
 
-    
+
 
 }

@@ -210,7 +210,7 @@ namespace B2BClasses.Services.Enums
             DisplayOrder: 1, Name: "Add Wallet", Description: "Add Wallet", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CustomerWallet")]
         Add_Wallet = 22,
         [Document(EnmSubModule: enmSubModule.Credit, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "Credit Request", Description: "Credit Request", Icon: "far fa-circle nav-icon", ActionName: "/Wing/WalletStatement")]
+            DisplayOrder: 1, Name: "Credit Request", Description: "Credit Request", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CreditRequest")]
         CreditRequest = 23,
         [Document(EnmSubModule: enmSubModule.Credit, DocumentType: enmDocumentType.Approval | enmDocumentType.DisplayMenu,
             DisplayOrder: 1, Name: "Credit Approval", Description: "Credit Approval", Icon: "far fa-circle nav-icon", ActionName: "/Wing/WalletStatement")]
@@ -433,6 +433,14 @@ namespace B2BClasses.Services.Enums
         Active = 1,
         DeActive = 2,
         
+    }
+
+
+    public enum enmApprovalStatus
+    {
+        Pending = 0,
+        Approved = 1,
+        Reject=2,
     }
     public enum enmDocumentPartitionType : byte
     {
