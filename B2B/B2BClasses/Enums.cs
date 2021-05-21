@@ -14,8 +14,8 @@ namespace B2BClasses.Services.Enums
         Booked=1,
         Refund=2,
         PartialBooked=3,
-        Failed=4
-
+        Failed=4,
+        All=100,
     }
     public enum enmFlightBookingServiceType
     {
@@ -222,6 +222,11 @@ namespace B2BClasses.Services.Enums
         [Document(EnmModule: enmModule.Incentive, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
             DisplayOrder: 1, Name: "Incentive Statement", Description: "Incentive Statement", Icon: "far fa-circle nav-icon", ActionName: "/Wing/AddWallet")]
         Incentive_Statement = 20,
+
+
+        [Document(EnmModule: enmModule.Report, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
+            DisplayOrder: 1, Name: "Flight Booking", Description: "Flight", Icon: "fa fa-plane", ActionName: "/Customer/FlightBookingReport")]
+        Flight_Booking_Report = 51,
 
         [Document(EnmModule: enmModule.Setting, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.Report | enmDocumentType.DisplayMenu,
             DisplayOrder: 1, Name: "MarkUp", Description: "MarkUp", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CustomerMarkUp")]

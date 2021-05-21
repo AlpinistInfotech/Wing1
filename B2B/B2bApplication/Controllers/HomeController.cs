@@ -284,7 +284,7 @@ namespace B2bApplication.Controllers
 
                     mdlBookingRequest mdlReq = new mdlBookingRequest()
                     {
-                        TraceId = mdl.FareQuotResponse[i].TraceId,
+                        TraceId = mdl.FareQuoteRequest.TraceId,
                         BookingId = mdl.FareQuotResponse[i].BookingId,
                         travellerInfo = mdl.travellerInfo,
                         deliveryInfo = new mdlDeliveryinfo() { contacts = cont, emails = eml },
@@ -327,7 +327,7 @@ namespace B2bApplication.Controllers
                     bookingStatus = enmBookingStatus.Booked;
                 }
             }
-            _booking.CompleteBooking(mdl.FareQuotResponse.FirstOrDefault()?.TraceId ?? "", bookingStatus);
+            _booking.CompleteBooking(mdl.FareQuoteRequest.TraceId ?? "", bookingStatus);
 
 
 
