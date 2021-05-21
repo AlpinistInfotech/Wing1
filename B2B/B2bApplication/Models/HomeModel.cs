@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace B2bApplication.Models
 {
+
     public class mdlFlightReview
     {
         public mdlFareQuotRequest FareQuoteRequest { get; set; }

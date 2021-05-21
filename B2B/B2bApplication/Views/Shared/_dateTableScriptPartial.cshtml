@@ -1,7 +1,8 @@
-﻿@{
+﻿
+@*@{
     int TableColumsCount = 1;
     TableColumsCount = (ViewBag.TableColumsCount ?? 1);
-}
+}*@
 <script src="~/assets/js/jquery.dataTables.min.js"></script>
 <script src="~/assets/js/jquery.dataTables.bootstrap.min.js"></script>
 <script src="~/assets/js/dataTables.buttons.min.js"></script>
@@ -21,11 +22,11 @@
                         bAutoWidth: false,
                         "aoColumns": [
                             { "bSortable": false }
-                            @for (int i = 0; i < TableColumsCount; i++){
-                                Html.Raw(", null");
+                            @for (int i = 1; i < Model; i++)
+                            {
+                              @Html.Raw(  ", null");
                             }
                             
-
                         ],
                         "aaSorting": [],
 
