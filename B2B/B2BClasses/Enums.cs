@@ -169,7 +169,7 @@ namespace B2BClasses.Services.Enums
         Wallet = 3,
         [Module(EnmApplication: enmApplication.B2B, IsArea: false, DisplayOrder: 4, Name: "Incentive", Description: "", Icon: "menu-icon fa fa-rupee", AreaName: "", CntrlName: "Incentive")]
         Incentive = 4,
-        [Module(EnmApplication: enmApplication.B2B, IsArea: false, DisplayOrder: 5, Name: "Report", Description: "", Icon: "menu-icon fa fa-chart-bar", AreaName: "", CntrlName: "Report")]
+        [Module(EnmApplication: enmApplication.B2B, IsArea: false, DisplayOrder: 5, Name: "Report", Description: "", Icon: "menu-icon fa fa-book", AreaName: "", CntrlName: "Report")]
         Report = 5,
         [Module(EnmApplication: enmApplication.B2B, IsArea: false, DisplayOrder: 10, Name: "Setting", Description: "", Icon: "menu-icon fa fa-cog", AreaName: "", CntrlName: "Setting")]
         Setting = 10,

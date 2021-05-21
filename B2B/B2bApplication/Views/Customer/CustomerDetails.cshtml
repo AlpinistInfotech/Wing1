@@ -26,12 +26,12 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <button class="btn btn-info" type="submit" name="submittype" value="LoadData">Load Data</button>
-                           </div>
                         </div>
-                           
-                        </div>
+                    </div>
 
-</form>
+                </div>
+
+            </form>
         </div>
     </div>
 
@@ -41,7 +41,7 @@
             <div class="card card-primary card-outline card-outline-tabs">
 
                 <div class="card-body">
-                    <table id="tblCustomerDetails" class="table table-bordered table-hover">
+                    <table id="dynamic-table" class="table table-bordered table-hover">
                         <thead>
                             <tr>
                                 <th>Edit</th>
@@ -56,26 +56,26 @@
                             </tr>
                         </thead>
                         <tbody>
-                            
 
-                            @for (int i = 0; i < (Model.CustomerMasters?.Count??0); i++)
+
+                            @for (int i = 0; i < (Model.CustomerMasters?.Count ?? 0); i++)
                             {
-                            <tr>
-                                <td>
-                                    <a href="/Customer/AddCustomer/@Model.CustomerMasters[i].Id" class="btn btn-info" data-toggle="tooltip" title="Edit Record !">
-                                        Edit
-                                    </a>
-                                </td>
-                                <td>@Model.CustomerMasters[i].CustomerType</td>
-                                <td>@Model.CustomerMasters[i].Code</td>
-                                <td>@Model.CustomerMasters[i].CustomerName</td>
-                                <td>@Model.CustomerMasters[i].ContactNo</td>
-                                <td>@Model.CustomerMasters[i].AlternateNo</td>
-                                <td>@Model.CustomerMasters[i].Email</td>
-                                <td>@Model.CustomerMasters[i].Address</td>
-                                <td>@(Model.CustomerMasters[i].IsActive==true?"Active":"DeActive")</td>
+                                <tr>
+                                    <td>
+                                        <a href="/Customer/AddCustomer/@Model.CustomerMasters[i].Id" class="btn btn-info" data-toggle="tooltip" title="Edit Record !">
+                                            Edit
+                                        </a>
+                                    </td>
+                                    <td>@Model.CustomerMasters[i].CustomerType</td>
+                                    <td>@Model.CustomerMasters[i].Code</td>
+                                    <td>@Model.CustomerMasters[i].CustomerName</td>
+                                    <td>@Model.CustomerMasters[i].ContactNo</td>
+                                    <td>@Model.CustomerMasters[i].AlternateNo</td>
+                                    <td>@Model.CustomerMasters[i].Email</td>
+                                    <td>@Model.CustomerMasters[i].Address</td>
+                                    <td>@(Model.CustomerMasters[i].IsActive==true?"Active":"DeActive")</td>
 
-                            </tr>
+                                </tr>
                             }
                         </tbody>
                     </table>
@@ -87,9 +87,5 @@
 </div>
 
 @section Scripts {
-    <script>
-        $(document).ready(function () {
-            $("#tblCustomerDetails").DataTable({ "ajax": null });
-        });
-    </script>
+    @(await Html.PartialAsync("_dateTableScriptPartial",8))
 }

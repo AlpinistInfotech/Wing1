@@ -70,7 +70,7 @@
 
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <input type="submit" class="btn btn-info" value="Load Data" />
                             </div>
 
@@ -102,7 +102,7 @@
             <table id="dynamic-table" class="table table-striped table-bordered table-hover">
                 <thead>
                     <tr>
-                        <th >
+                        <th>
                             View
                         </th>
                         <th>Booking Status</th>
@@ -179,18 +179,18 @@
                             @md.JourneyType
                         </td>
                         <td>
-                            @string.Join(", ", md.tblFlightBookingSegments.OrderBy(p => p.SegmentDisplayOrder).Select(p => new { Segment = p.Origin + " " + p.Destination }))
+                            @string.Join(", ", md.tblFlightBookingSegments.OrderBy(p => p.SegmentDisplayOrder).Select(p => new { Segment = p.Origin + " " + p.Destination }).Select(p=>p.Segment).Distinct())
                         </td>
 
                         <td>
-                            @string.Join(", ", md.tblFlightBookingSegments.OrderBy(p => p.SegmentDisplayOrder).Select(p => new { Airline = p.Airline + " (" + p.AirlineCode + "-"+p.FlightNumber + ")" }))
+                            @string.Join(", ", md.tblFlightBookingSegments.OrderBy(p => p.SegmentDisplayOrder).Select(p => new { Airline = p.Airline + " (" + p.AirlineCode + "-"+p.FlightNumber + ")" }).Select(p => p.Airline).Distinct())
                         </td>
                         <td>
                             @md.CreatedDt.ToString("dd-MMM-yyyy hh:mm tt")
                         </td>
 
                         <td>
-                            @string.Join(", ", md.tblFlightBookingSegments.OrderBy(p => p.SegmentDisplayOrder).Select(p => new { TravelDt = p.TravelDt.ToString("dd-MMM-yyyy") }))
+                            @string.Join(", ", md.tblFlightBookingSegments.OrderBy(p => p.SegmentDisplayOrder).Select(p => new { TravelDt = p.TravelDt.ToString("dd-MMM-yyyy") }).Select(p => p.TravelDt).Distinct())
                         </td>
                         <td>
                             @md.ContactNo
@@ -199,13 +199,13 @@
                             @md.Email
                         </td>
                         <td>
-                            @string.Join(", ", md.tblFlightBookingPassengerDetails.Select(p => new { Passenger =p.Title +" "+p.FirstName }))
+                            @string.Join(", ", md.tblFlightBookingPassengerDetails.Select(p => new { Passenger =p.Title +" "+p.FirstName }).Select(p => p.Passenger).Distinct())
                         </td>
                         <td>
-                            @md.tblFlightBookingFareDetails.Sum(p => p.NetFare);
+                            @md.tblFlightBookingFareDetails.Sum(p => p.NetFare)
                         </td>
                         <td>
-                            @md.tblFlightBookingFareDetails.Sum(p => p.CustomerMarkup);
+                            @md.tblFlightBookingFareDetails.Sum(p => p.CustomerMarkup)
                         </td>
 
                     </tr>
@@ -216,14 +216,10 @@
     </div>
 </div>
 
-@section Scripts {
-
-    @(ViewBag.TableColumsCount=12)
-    @await Html.PartialAsync("_dateTableScriptPartial")
-
+@section Scripts {    
+    @(await Html.PartialAsync("_dateTableScriptPartial",12))
 
     <script type="text/javascript">
-
         jQuery(function ($) {
             $('.select2').select2();
             $('.input-daterange').datepicker({ autoclose: true, format: 'd-M-yyyy', startDate: '3d' });
