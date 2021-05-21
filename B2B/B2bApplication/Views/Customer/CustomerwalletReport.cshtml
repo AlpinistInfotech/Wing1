@@ -70,7 +70,7 @@
                     </div>
 
                     <div class="card-body">
-                        <table id="tblWalletStatementDetails" class="table table-bordered table-hover">
+                        <table id="dynamic-table" class="table table-bordered table-hover">
                             <thead>
                                 <tr>
                                     <th style="display:none">Edit</th>
@@ -109,9 +109,7 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function () {
-            $("#tblWalletStatementDetails").DataTable({ "ajax": null });
-        });
+        @(await Html.PartialAsync("_dateTableScriptPartial",6))
 
     </script>
 }
