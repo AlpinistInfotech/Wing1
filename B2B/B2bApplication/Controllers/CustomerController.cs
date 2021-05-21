@@ -663,7 +663,7 @@ namespace B2bApplication.Controllers
         {
 
             dynamic messagetype = TempData["MessageType"];
-            mdlCustomerWallet mdl = new mdlCustomerWallet();
+            mdlCreditRequest mdl = new mdlCreditRequest();
             if (messagetype != null)
             {
                 ViewBag.SaveStatus = (int)messagetype;
@@ -680,31 +680,66 @@ namespace B2bApplication.Controllers
         public async Task<IActionResult> CreditRequestAsync(mdlCreditRequest mdl)
         {
 
-            var ExistingData = _context.tblCreditRequest.FirstOrDefault(p => p.CustomerId == mdl.CustomerID && p.CreditAmt == mdl.CreditAmt && Convert.ToDateTime(p.CreatedDt).ToString("dd-MMM-yyyy") == Convert.ToDateTime(DateTime.Now).ToString("dd-MMM-yyyy"));
+            DateTime fromdate= Convert.ToDateTime(DateTime.Now.ToString("dd-MMM-yyyy"));
+            DateTime todate= Convert.ToDateTime(DateTime.Now.AddDays(1).ToString("dd-MMM-yyyy"));
+            var ExistingData = _context.tblCreditRequest.FirstOrDefault(p => p.CustomerId == mdl.CustomerID && p.CreditAmt == mdl.CreditAmt && p.CreatedDt >= fromdate && p.CreatedDt < todate);
+            if (ExistingData!=null)
             {
                 TempData["MessageType"] = (int)enmMessageType.Warning;
-                TempData["Message"] = _setting.GetErrorMessage(enmMessage.RecordAlreadyExists);
-                return RedirectToAction("CreditRequest");
+                TempData["Message"] = _setting.GetErrorMessage(enmMessage.RecordAlreadyExists);   
             }
-
-
-            _context.tblCreditRequest.Add(new tblCreditRequest
+            else
             {
-                CustomerId = Convert.ToInt32(mdl.CustomerID),
-                CreditAmt = mdl.CreditAmt,
-                CreatedRemarks = mdl.Remarks,
-                CreatedBy = _userid,
-                CreatedDt = DateTime.Now
-            });
+                _context.tblCreditRequest.Add(new tblCreditRequest
+                {
+                    CustomerId = Convert.ToInt32(mdl.CustomerID),
+                    CreditAmt = mdl.CreditAmt,
+                    CreatedRemarks = mdl.Remarks,
+                    CreatedBy = _userid,
+                    CreatedDt = DateTime.Now
+                });
 
-            await _context.SaveChangesAsync();
-            TempData["MessageType"] = (int)enmMessageType.Success;
-            TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
-            return RedirectToAction("CreditRequest");
+                await _context.SaveChangesAsync();
+
+                TempData["MessageType"] = (int)enmMessageType.Success;
+                TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
+            }
+                return RedirectToAction("CreditRequest");
 
         }
 
         #endregion
+
+
+        #region Credit Approval
+
+        public IActionResult CreditApproval()
+        {
+            dynamic messagetype = TempData["MessageType"];
+            mdlCreditRequest mdl = new mdlCreditRequest();
+            if (messagetype != null)
+            {
+                ViewBag.SaveStatus = (int)messagetype;
+                ViewBag.Message = TempData["Message"];
+            }
+            mdl.CreditRequestList = GetCreditRequest(_context, 0, 0);
+            return View(mdl);
+        }
+
+        [HttpPost]
+        public IActionResult CreditApproval(mdlCreditRequest mdl, string submitdata)
+        {
+
+            return View(mdl);
+        }
+
+        #endregion
+
+
+        public List<tblCreditRequest> GetCreditRequest(DBContext context, enmApprovalStatus status, int customerid)
+        {
+            return context.tblCreditRequest.Where(p => p.Status == status).ToList();
+        }
 
         public List<tblCustomerMaster> GetCustomerMaster(DBContext context, bool OnlyActive, int customerid)
         {

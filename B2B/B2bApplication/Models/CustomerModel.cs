@@ -111,7 +111,6 @@ namespace B2bApplication.Models
         [Display(Name = "Customer Type")]
         public string CustomerID { set; get; }
 
-
         [Required]
         [Display(Name = "Transaction Type")]
         public enmCreditDebit creditDebit { set; get; }
@@ -122,7 +121,6 @@ namespace B2bApplication.Models
 
         [Display(Name = "Remarks")]
         public string Remarks { set; get; }
-
 
         [Required]
         [Range(0, 100000)]
@@ -176,18 +174,22 @@ namespace B2bApplication.Models
     {
 
         [Required]
-        [MaxLength(10)]
         [Display(Name = "Customer Code")]
         public int CustomerID { set; get; }
 
         [Required]
-        [MaxLength(50)]
+        [Range(1,1000000) ]
         [Display(Name = "Credit Amount")]
-        public int CreditAmt { set; get; }
+        public double CreditAmt { set; get; }
 
         [MaxLength(250)]
         [Display(Name = "Remarks")]
         public string Remarks { get; set; }
+
+        [Display(Name = "Status")]
+        public enmApprovalStatus Status { set; get; }
+
+        public List<tblCreditRequest> CreditRequestList { get; set; }
 
     }
 
