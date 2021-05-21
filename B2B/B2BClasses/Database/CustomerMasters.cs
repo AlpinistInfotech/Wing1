@@ -166,7 +166,7 @@ namespace B2BClasses.Database
         public int? CustomerId { get; set; }
         public tblCustomerMaster tblCustomerMaster { get; set; }
         public double CreditAmt { get; set; }
-        public enmApprovalStatus IsApproved { get; set; }
+        public enmApprovalStatus Status { get; set; }
         public int CreatedBy { get; set; }
         public DateTime CreatedDt { get; set; }
         public string CreatedRemarks { get; set; }
