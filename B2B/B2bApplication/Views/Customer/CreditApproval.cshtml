@@ -91,7 +91,7 @@
                         <th>Credit Amount</th>
                         <th>Request DateTime</th>
                         <th>Remarks</th>
-                        </tr>
+                    </tr>
                 </thead>
 
                 <tbody>
@@ -104,7 +104,6 @@
                                 <input type="checkbox" class="ace" name="CreditRequestList.creditrequestid" />
                                 <span class="lbl"></span>
                             </label>
-
                         </td>
 
                         <td>
@@ -134,7 +133,7 @@
 
 @section Scripts {
 
-    @*@(ViewBag.TableColumsCount=12)
-    @await Html.PartialAsync("_dateTableScriptPartial")*@
+    
+    @await Html.PartialAsync("_dateTableScriptPartial",5)
 
 }

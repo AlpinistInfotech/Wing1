@@ -208,8 +208,6 @@ namespace B2bApplication.Models
         public List<mdltblCreditRequestWraper> CreditRequestList { get; set; }
 
 
-
-
     }
 
     public class mdltblCreditRequestWraper : tblCreditRequest
