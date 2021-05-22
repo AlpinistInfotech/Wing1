@@ -547,6 +547,12 @@ namespace B2bApplication.Controllers
             return returnData;
 
         }
+        
+        public IActionResult CustomerChangePassword()
+        {
+            
+            return View();
+        }
 
         #region CustomerIPFilter
         public IActionResult CustomerIPFilter(string Id)
