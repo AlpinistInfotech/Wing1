@@ -730,15 +730,17 @@ namespace B2bApplication.Controllers
         public IActionResult CreditApproval(mdlCreditRequest mdl, string submitdata)
         {
 
+
+
             return View(mdl);
         }
 
         #endregion
 
 
-        public List<tblCreditRequest> GetCreditRequest(DBContext context, enmApprovalStatus status, int customerid)
+        public List<mdltblCreditRequestWraper> GetCreditRequest(DBContext context, enmApprovalStatus status, int customerid)
         {
-            return context.tblCreditRequest.Where(p => p.Status == status).ToList();
+            return context.tblCreditRequest.Where(p => p.Status == status).Select(p=>new mdltblCreditRequestWraper { Id= p.Id, CreatedDt=p.CreatedDt, CustomerId=p.CustomerId, CreditAmt=p.CreditAmt , CreatedRemarks=p.CreatedRemarks,CustomerName=p.tblCustomerMaster.CustomerName,Code=p.tblCustomerMaster.Code  }).ToList();
         }
 
         public List<tblCustomerMaster> GetCustomerMaster(DBContext context, bool OnlyActive, int customerid)

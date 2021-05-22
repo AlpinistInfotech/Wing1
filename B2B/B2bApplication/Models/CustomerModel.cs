@@ -189,7 +189,19 @@ namespace B2bApplication.Models
         [Display(Name = "Status")]
         public enmApprovalStatus Status { set; get; }
 
-        public List<tblCreditRequest> CreditRequestList { get; set; }
+        public List<mdltblCreditRequestWraper> CreditRequestList { get; set; }
+
+
+
+
+    }
+
+    public class mdltblCreditRequestWraper : tblCreditRequest
+    {
+        public bool creditrequestid { get; set; }
+
+        public string CustomerName { get; set; }
+        public string Code { get; set; }
 
     }
 
