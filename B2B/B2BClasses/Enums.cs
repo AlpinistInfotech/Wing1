@@ -213,10 +213,10 @@ namespace B2BClasses.Services.Enums
             DisplayOrder: 1, Name: "Credit Request", Description: "Credit Request", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CreditRequest")]
         CreditRequest = 23,
         [Document(EnmSubModule: enmSubModule.Credit, DocumentType: enmDocumentType.Approval | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "Credit Approval", Description: "Credit Approval", Icon: "far fa-circle nav-icon", ActionName: "/Wing/WalletStatement")]
+            DisplayOrder: 1, Name: "Credit Approval", Description: "Credit Approval", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CreditApproval")]
         CreditApproval = 24,
         [Document(EnmSubModule: enmSubModule.Credit, DocumentType: enmDocumentType.Report | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "Credit Report", Description: "Credit Report", Icon: "far fa-circle nav-icon", ActionName: "/Wing/WalletStatement")]
+            DisplayOrder: 1, Name: "Credit Report", Description: "Credit Report", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CreditReport")]
         CreditReport = 25,
 
         [Document(EnmModule: enmModule.Incentive, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
