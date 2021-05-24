@@ -2,7 +2,58 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row">
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-info1 elevation-1"><i class="ace-icon fa fa-search"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text"><small>Today</small> - Flight Search</span>
+                <span class="info-box-number">
+                    @(ViewBag.FlightSearch??0)
+                </span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box mb-3">
+            <span class="info-box-icon bg-danger1 elevation-1"><i class="ace-icon fa fa-paper-plane"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-text"><small>Today</small> - Flight Book </span>
+                <span class="info-box-number">@(ViewBag.FlightBook??0)</span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-warning1 elevation-1"><i class="fa fa-search"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text"><small>Week</small> - Flight Search</span>
+                <span class="info-box-number">
+                    @(ViewBag.FlightSearchWeek ?? 0)
+                </span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box mb-3">
+            <span class="info-box-icon bg-success1 elevation-1"><i class="ace-icon fa fa-paper-plane"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-text"><small>Week</small> - Flight Book</span>
+                <span class="info-box-number">@(ViewBag.FlightBookWeek ?? 0)</span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
 </div>
