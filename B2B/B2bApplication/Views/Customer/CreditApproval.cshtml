@@ -1,4 +1,4 @@
-﻿@model B2bApplication.Models.mdlCreditRequest
+﻿@model B2bApplication.Models.mdlPaymentRequest
 @using B2BClasses.Services.Enums
 @{
     ViewData["Title"] = enmDocumentMaster.CreditApproval.GetDocumentDetails().Name;
@@ -60,76 +60,79 @@
 
             </div>
 
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="clearfix">
+                            <div class="pull-right tableTools-container"></div>
+                        </div>
+                        <div class="table-header">
+                            Results for "Pending Request"
+                        </div>
 
+                        <!-- div.table-responsive -->
+                        <!-- div.dataTables_borderWrap -->
+                        <div>
+                            <table id="dynamic-table" class="table table-striped table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="center">
+                                            <label class="pos-rel">
+                                                <input type="checkbox" class="ace" />
+                                                <span class="lbl"></span>
+                                            </label>
+                                        </th>
+                                        <th>Request Type</th>
+                                        <th>Customer Name - Code</th>
+                                        <th>Requested Amount</th>
+                                        <th>Request DateTime</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @*@foreach (var md in Model.PaymentRequestList)*@
+                                    @for (int i = 0; i < @Model.PaymentRequestList.Count; i++)
+                                    {
+                                    <tr>
+                                        <td class="center">
+                                            <label class="pos-rel">
+                                                <input type="checkbox" class="ace" asp-for="@Model.PaymentRequestList[i].paymentrequestid" />
+                                                <span class="lbl"></span>
+                                            </label>
+                                        </td>
+                                        <td>
+                                            @Model.PaymentRequestList[i].RequestType
+                                        </td>
+                                        <td>
+                                            @Model.PaymentRequestList[i].CustomerName -  @Model.PaymentRequestList[i].Code
+                                            <input type="hidden" asp-for="@Model.PaymentRequestList[i].Id" />
+
+                                        </td>
+                                        <td>
+                                            @Model.PaymentRequestList[i].RequestedAmt
+                                        </td>
+
+                                        <td>
+                                            @Model.PaymentRequestList[i].CreatedDt.ToString("dd-MMM-yyyy hh:mm tt")
+                                        </td>
+
+                                        <td>
+                                            @Model.PaymentRequestList[i].CreatedRemarks
+                                        </td>
+
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 
         </form>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-xs-12">
-        <div class="clearfix">
-            <div class="pull-right tableTools-container"></div>
-        </div>
-        <div class="table-header">
-            Results for "Credit Pending Request"
-        </div>
 
-        <!-- div.table-responsive -->
-        <!-- div.dataTables_borderWrap -->
-        <div>
-            <table id="dynamic-table" class="table table-striped table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th align="center">
-                            <label class="pos-rel">
-                                <input type="checkbox" class="ace" />
-                                <span class="lbl"></span>
-                            </label>
-                        </th>
-                        <th>Customer Name - Code</th>
-                        <th>Credit Amount</th>
-                        <th>Request DateTime</th>
-                        <th>Remarks</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @*@foreach (var md in Model.CreditRequestList)*@
-                    @for (int i=0; i<@Model.CreditRequestList.Count;i++)
-                    {
-                    <tr>
-                        <td class="center">
-                            <label class="pos-rel">
-                                <input type="checkbox" class="ace" name="CreditRequestList.creditrequestid" />
-                                <span class="lbl"></span>
-                            </label>
-                        </td>
-
-                        <td>
-                            @Model.CreditRequestList[i].CustomerName -  @Model.CreditRequestList[i].Code
-                            <input type="hidden" asp-for="@Model.CreditRequestList[i].Id" />
-
-                        </td>
-                        <td>
-                            @Model.CreditRequestList[i].CreditAmt
-                        </td>
-
-                        <td>
-                            @Model.CreditRequestList[i].CreatedDt.ToString("dd-MMM-yyyy hh:mm tt")
-                        </td>
-
-                        <td>
-                            @Model.CreditRequestList[i].CreatedRemarks
-                        </td>
-
-                    </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
 
 @section Scripts {
 

@@ -9,6 +9,7 @@ using B2BClasses.Services.Enums;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Database;
+using Microsoft.AspNetCore.Http;
 
 namespace B2bApplication.Models
 {
@@ -186,7 +187,7 @@ namespace B2bApplication.Models
         public string ConfirmNewPassword { get; set; }
     }
 
-    public class mdlCreditRequest
+    public class mdlPaymentRequest
     {
 
         [Required]
@@ -205,15 +206,20 @@ namespace B2bApplication.Models
         [Display(Name = "Status")]
         public enmApprovalStatus Status { set; get; }
 
-        public List<mdltblCreditRequestWraper> CreditRequestList { get; set; }
+        [Display(Name = "Request Type")]
+        public enmRequestType RequestType { set; get; }
+
+        [Required]
+        [Display(Name = "Upload Document")]
+        public List<IFormFile> UploadImages { set; get; }
+        public List<mdlPaymentRequestWraper> PaymentRequestList { get; set; }
 
 
     }
 
-    public class mdltblCreditRequestWraper : tblCreditRequest
+    public class mdlPaymentRequestWraper : tblPaymentRequest
     {
-        public bool creditrequestid { get; set; }
-
+        public bool paymentrequestid { get; set; }
         public string CustomerName { get; set; }
         public string Code { get; set; }
 
