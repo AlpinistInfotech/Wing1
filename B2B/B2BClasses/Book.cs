@@ -23,7 +23,7 @@ namespace B2BClasses
 
         Task<mdlBookingResponse> BookingAsync(mdlBookingRequest mdlRq);
         bool CompleteBooking(string traceIds, enmBookingStatus bookingStatus);
-        Task<string> CustomerDataSave(mdlSearchRequest mdlRq, List<tblFlightBookingProviderTraceId> traceIds);
+        Task<string> CustomerDataSave(mdlSearchRequest mdlRq, List<tblFlightBookingProviderTraceId> traceIds,enmJourneyType journeyType);
         Task<bool> CustomerFlightDetailSave(string traceId, List<mdlFareQuotResponse> mdls);
         bool CustomerPassengerDetailSave(mdlBookingRequest mdlRq, enmBookingStatus bookingStatus, enmServiceProvider sp);
         Task<List<mdlFareQuotResponse>> FareQuoteAsync(mdlFareQuotRequest mdlRq);
@@ -102,7 +102,7 @@ namespace B2BClasses
             return Query.OrderByDescending(p=>p.CreatedDt).ToList();
         }
 
-        public async Task<string> CustomerDataSave(mdlSearchRequest mdlRq, List<tblFlightBookingProviderTraceId> traceIds)
+        public async Task<string> CustomerDataSave(mdlSearchRequest mdlRq, List<tblFlightBookingProviderTraceId> traceIds, enmJourneyType journeyType)
         {
             tblFlightBookingMaster tbl = new tblFlightBookingMaster()
             {
@@ -111,7 +111,7 @@ namespace B2BClasses
                 ChildCount = mdlRq.ChildCount,
                 InfantCount = mdlRq.InfantCount,
                 DirectFlight = mdlRq.DirectFlight,
-                JourneyType = mdlRq.JourneyType,
+                JourneyType = journeyType,
                 CreatedBy = _userId,
                 CreatedDt = DateTime.Now,
                 tblFlightBookingProviderTraceIds = traceIds,
@@ -312,6 +312,8 @@ namespace B2BClasses
             List<enmServiceProvider> serviceProviders = await GetActiveProviderAsync();
             List<tblFlightBookingProviderTraceId> traceIds = new List<tblFlightBookingProviderTraceId>();
 
+            enmJourneyType actualJourneyType = mdlRq.JourneyType;
+
             foreach (var sp in serviceProviders)
             {
                 mdlSearchResponse mdlR = null;
@@ -359,7 +361,7 @@ namespace B2BClasses
                     mdlRs.Add(mdlR);
                 }
             }
-            string NewTraceID = await CustomerDataSave(mdlRq, traceIds);
+            string NewTraceID = await CustomerDataSave(mdlRq, traceIds, actualJourneyType);
             ChangeNewTraceIds(mdlRs, NewTraceID);
             return mdlRs;
         }

@@ -551,7 +551,10 @@ namespace B2bApplication.Controllers
         
         public IActionResult CustomerChangePassword()
         {
-            
+            if (ModelState.IsValid)
+            { 
+                
+            }
             return View();
         }
 

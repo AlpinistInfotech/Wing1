@@ -58,7 +58,7 @@
                                 <div class="form-group">
                                     <label asp-for="bookingStatus" class="col-sm-4 control-label"></label>
                                     <div class="col-sm-8">
-                                        <select asp-for="DateFliterType" class="form-control select2">
+                                        <select asp-for="bookingStatus" class="form-control select2">
                                             <option value="@((int)enmBookingStatus.All)">All</option>
                                             <option value="@((int)enmBookingStatus.Pending)"> Pending</option>
                                             <option value="@((int)enmBookingStatus.Booked)"> Booked</option>
@@ -222,7 +222,7 @@
     <script type="text/javascript">
         jQuery(function ($) {
             $('.select2').select2();
-            $('.input-daterange').datepicker({ autoclose: true, format: 'd-M-yyyy', startDate: '3d' });
+            $('.input-daterange').datepicker({ autoclose: true, format: 'd-M-yyyy' });
         });
 
     </script>
