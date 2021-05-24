@@ -1,4 +1,4 @@
-﻿@model mdlCreditRequest
+﻿@model mdlPaymentRequest
 
 @using B2BClasses.Services.Enums
 
@@ -33,8 +33,6 @@
                                         <select asp-for="CustomerID" class="form-control select2" asp-items="ViewBag.CustomerCodeList">
                                         </select>
                                         <span asp-validation-for="CustomerID" class="text-danger"></span>
-
-
                                     </div>
                                 </div>
 
@@ -53,7 +51,19 @@
 
 
                             <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <select asp-for="RequestType" class="form-control select2">
+                                            @foreach (var data in Enum.GetValues(typeof(enmRequestType)))
+                                            {
+                                                <option value="@(data)">@data.ToString() </option>
+                                            }
+                                        </select>
+                                        <span asp-validation-for="RequestType" class="text-danger"></span>
 
+
+                                    </div>
+                                </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label asp-for="Remarks"></label>
@@ -68,7 +78,21 @@
 
                             </div>
 
+                            <div class="row">
 
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label asp-for="UploadImages"></label>
+                                        <div class="input-group">
+                                            <div class="custom-file">
+                                                <input asp-for="UploadImages" class="custom-file-input" accept="image/x-png,image/jpeg" multiple />
+                                                <label class="custom-file-label" asp-for="UploadImages">Choose file</label>
+                                            </div>
+                                        </div>
+                                        <span asp-validation-for="UploadImages" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
 
 
                             <div class="row">

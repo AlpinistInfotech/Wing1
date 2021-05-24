@@ -20,6 +20,7 @@ using Database;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
 
 namespace B2bApplication.Controllers
 {
@@ -665,14 +666,14 @@ namespace B2bApplication.Controllers
 
         #endregion
 
-        #region CreditRequest
+        #region PaymentRequest
 
         [Authorize]
-        public IActionResult CreditRequest()
+        public IActionResult PaymentRequest()
         {
 
             dynamic messagetype = TempData["MessageType"];
-            mdlCreditRequest mdl = new mdlCreditRequest();
+            mdlPaymentRequest mdl = new mdlPaymentRequest();
             if (messagetype != null)
             {
                 ViewBag.SaveStatus = (int)messagetype;
@@ -686,12 +687,12 @@ namespace B2bApplication.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> CreditRequestAsync(mdlCreditRequest mdl)
+        public async Task<IActionResult> PaymentRequestAsync(mdlPaymentRequest mdl)
         {
 
             DateTime fromdate= Convert.ToDateTime(DateTime.Now.ToString("dd-MMM-yyyy"));
             DateTime todate= Convert.ToDateTime(DateTime.Now.AddDays(1).ToString("dd-MMM-yyyy"));
-            var ExistingData = _context.tblCreditRequest.FirstOrDefault(p => p.CustomerId == mdl.CustomerID && p.CreditAmt == mdl.CreditAmt && p.CreatedDt >= fromdate && p.CreatedDt < todate);
+            var ExistingData = _context.tblPaymentRequest.FirstOrDefault(p => p.CustomerId == mdl.CustomerID && p.RequestedAmt == mdl.CreditAmt && p.CreatedDt >= fromdate && p.CreatedDt < todate);
             if (ExistingData!=null)
             {
                 TempData["MessageType"] = (int)enmMessageType.Warning;
@@ -699,13 +700,44 @@ namespace B2bApplication.Controllers
             }
             else
             {
-                _context.tblCreditRequest.Add(new tblCreditRequest
+                string filePath = _config["FileUpload:PaymentRequestFilePath"];
+
+                var path = Path.Combine(
+                         Directory.GetCurrentDirectory(),
+                         "wwwroot/" + filePath);
+                if (mdl.UploadImages == null || mdl.UploadImages.Count == 0 || mdl.UploadImages[0] == null || mdl.UploadImages[0].Length == 0)
+                {
+ 
+                    TempData["MessageType"] = enmSaveStatus.danger;
+                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidDocument);
+                    return RedirectToAction("PaymentRequest");
+                }
+
+                List<string> AllFileName = new List<string>();
+
+                bool exists = System.IO.Directory.Exists(path);
+                if (!exists)
+                    System.IO.Directory.CreateDirectory(path);
+
+                foreach (var file in mdl.UploadImages)
+                {
+                    var filename = Guid.NewGuid().ToString() + ".jpeg";
+                    using (var stream = new FileStream(string.Concat(path, filename), FileMode.Create))
+                    {
+                        AllFileName.Add(filename);
+                        await file.CopyToAsync(stream);
+                    }
+                }
+
+                _context.tblPaymentRequest.Add(new tblPaymentRequest
                 {
                     CustomerId = Convert.ToInt32(mdl.CustomerID),
-                    CreditAmt = mdl.CreditAmt,
+                    RequestedAmt = mdl.CreditAmt,
                     CreatedRemarks = mdl.Remarks,
+                    RequestType=mdl.RequestType,
                     CreatedBy = _userid,
-                    CreatedDt = DateTime.Now
+                    CreatedDt = DateTime.Now,
+                    UploadImages = string.Join<string>(",", AllFileName)
                 });
 
                 await _context.SaveChangesAsync();
@@ -713,7 +745,7 @@ namespace B2bApplication.Controllers
                 TempData["MessageType"] = (int)enmMessageType.Success;
                 TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
             }
-                return RedirectToAction("CreditRequest");
+                return RedirectToAction("PaymentRequest");
 
         }
 
@@ -725,31 +757,56 @@ namespace B2bApplication.Controllers
         public IActionResult CreditApproval()
         {
             dynamic messagetype = TempData["MessageType"];
-            mdlCreditRequest mdl = new mdlCreditRequest();
+            mdlPaymentRequest mdl = new mdlPaymentRequest();
             if (messagetype != null)
             {
                 ViewBag.SaveStatus = (int)messagetype;
                 ViewBag.Message = TempData["Message"];
             }
-            mdl.CreditRequestList = GetCreditRequest(_context, 0, 0);
+            mdl.PaymentRequestList = GetPaymentRequest(_context, 0, 0);
             return View(mdl);
         }
 
         [HttpPost]
-        public IActionResult CreditApproval(mdlCreditRequest mdl, string submitdata)
+        public async Task<IActionResult> CreditApprovalAsync(mdlPaymentRequest mdl, [FromServices] ICustomerWallet customerWallet)
         {
+            List<int> creditpending_checkedlist = mdl.PaymentRequestList.Where(p => p.paymentrequestid).Select(p => p.Id).ToList();
+            var TobeUpdated = _context.tblPaymentRequest.Where(p => creditpending_checkedlist.Contains(p.Id) && p.Status == enmApprovalStatus.Pending).ToList();
 
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                 TobeUpdated.ForEach(p =>
+            {
+                p.Status = mdl.Status;
+                p.ModifiedDt = DateTime.Now;
+                p.ModifiedBy = _userid;
+                p.ModifiedRemarks = mdl.Remarks;
+                if (mdl.Status == enmApprovalStatus.Approved)
+                {
+                    customerWallet.AddBalenceAsync(DateTime.Now, p.RequestedAmt, enmTransactionType.OnCreditUpdate, p.CreatedRemarks, mdl.Remarks);
+                }
+            });
+                    await _context.SaveChangesAsync();
+                    transaction.Commit();
 
-
+                }
+                catch
+                {
+                    transaction.Rollback();
+                }
+            }
+            mdl.PaymentRequestList = GetPaymentRequest(_context, 0, 0);
             return View(mdl);
         }
 
         #endregion
 
 
-        public List<mdltblCreditRequestWraper> GetCreditRequest(DBContext context, enmApprovalStatus status, int customerid)
+        public List<mdlPaymentRequestWraper> GetPaymentRequest(DBContext context, enmApprovalStatus status, int customerid)
         {
-            return context.tblCreditRequest.Where(p => p.Status == status).Select(p=>new mdltblCreditRequestWraper { Id= p.Id, CreatedDt=p.CreatedDt, CustomerId=p.CustomerId, CreditAmt=p.CreditAmt , CreatedRemarks=p.CreatedRemarks,CustomerName=p.tblCustomerMaster.CustomerName,Code=p.tblCustomerMaster.Code  }).ToList();
+            return context.tblPaymentRequest.Where(p => p.Status == status).Select(p=>new mdlPaymentRequestWraper { Id= p.Id, CreatedDt=p.CreatedDt, CustomerId=p.CustomerId, RequestedAmt =p.RequestedAmt , CreatedRemarks=p.CreatedRemarks,CustomerName=p.tblCustomerMaster.CustomerName,Code=p.tblCustomerMaster.Code ,RequestType=p.RequestType }).ToList();
         }
 
         public List<tblCustomerMaster> GetCustomerMaster(DBContext context, bool OnlyActive, int customerid)

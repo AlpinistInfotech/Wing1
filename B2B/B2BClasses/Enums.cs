@@ -61,7 +61,8 @@ namespace B2BClasses.Services.Enums
         UpdateSuccessfully,
         DeleteSuccessfully,
         RecordAlreadyExists,
-        InvalidData
+        InvalidData,
+        InvalidDocument
     }
 
 
@@ -429,17 +430,20 @@ namespace B2BClasses.Services.Enums
         Approval = 4,
         Delete = 8,
         Report = 16,
-        DisplayMenu = 32,        
-
+        DisplayMenu = 32,
     }
 
     public enum enmStatus 
     {
         Active = 1,
         DeActive = 2,
-        
     }
 
+    public enum enmRequestType
+    {
+        WalletRecharge = 0,
+        CreditRequest = 1,
+    }
 
     public enum enmApprovalStatus
     {
