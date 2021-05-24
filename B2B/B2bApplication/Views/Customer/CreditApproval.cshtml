@@ -86,6 +86,7 @@
                                         <th>Requested Amount</th>
                                         <th>Request DateTime</th>
                                         <th>Remarks</th>
+                                        <th>Document</th>
                                     </tr>
                                 </thead>
 
@@ -118,6 +119,10 @@
 
                                         <td>
                                             @Model.PaymentRequestList[i].CreatedRemarks
+                                        </td>
+
+                                        <td>
+                                            @Model.PaymentRequestList[i].UploadImages
                                         </td>
 
                                     </tr>
