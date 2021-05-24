@@ -196,7 +196,7 @@ namespace B2bApplication.Models
 
         [Required]
         [Range(1,1000000) ]
-        [Display(Name = "Credit Amount")]
+        [Display(Name = "Requested Amount")]
         public double CreditAmt { set; get; }
 
         [MaxLength(250)]
