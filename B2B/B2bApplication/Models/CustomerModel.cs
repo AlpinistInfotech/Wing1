@@ -212,6 +212,9 @@ namespace B2bApplication.Models
 
         [Display(Name = "Upload Document")]
         public List<IFormFile> UploadImages { set; get; }
+
+        public List<byte[]> fileData { set; get; }
+
         public List<mdlPaymentRequestWraper> PaymentRequestList { get; set; }
 
 
