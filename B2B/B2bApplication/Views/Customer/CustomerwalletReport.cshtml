@@ -2,6 +2,12 @@
 
 @using B2BClasses.Services.Enums
 
+@{
+    ViewData["Title"] = enmDocumentMaster.Add_Wallet.GetDocumentDetails().Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
 <div class="row">
     <div class="col-md-12">
         <div class="card card-primary">
@@ -64,7 +70,7 @@
                     </div>
 
                     <div class="card-body">
-                        <table id="tblWalletStatementDetails" class="table table-bordered table-hover">
+                        <table id="dynamic-table" class="table table-bordered table-hover">
                             <thead>
                                 <tr>
                                     <th style="display:none">Edit</th>
@@ -102,10 +108,5 @@
 </div>
 
 @section Scripts {
-    <script>
-        $(document).ready(function () {
-            $("#tblWalletStatementDetails").DataTable({ "ajax": null });
-        });
-
-    </script>
+    @(await Html.PartialAsync("_dateTableScriptPartial",6))
 }

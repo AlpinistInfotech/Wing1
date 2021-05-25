@@ -64,6 +64,7 @@ namespace B2BClasses.Database
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+
         [ForeignKey("tblCustomerMaster")] // Foreign Key here
         public int? CustomerId { get; set; }
         public tblCustomerMaster tblCustomerMaster { get; set; }
@@ -73,6 +74,8 @@ namespace B2BClasses.Database
         public bool IsDeleted { get; set; }        
         public int? ModifiedBy { get; set; }
         public DateTime? ModifiedDt { get; set; }
+        [InverseProperty("tblCustomerIPFilter")]
+        public ICollection<tblCustomerIPFilterDetails> tblCustomerIPFilterDetails { get; set; }
     }
 
     public class tblCustomerIPFilterDetails
@@ -80,6 +83,7 @@ namespace B2BClasses.Database
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        
         [ForeignKey("tblCustomerIPFilter")] // Foreign Key here
         public int? FilterId { get; set; }
         public tblCustomerIPFilter tblCustomerIPFilter { get; set; }
@@ -100,6 +104,8 @@ namespace B2BClasses.Database
         public enmTransactionType TransactionType { get; set; }
         public string TransactionDetails { get; set; }
         public string Remarks { get; set; }
+
+        public int RequestedId { get; set; }
     }
 
     public class tblWalletDetailLedgerLog
@@ -150,4 +156,55 @@ namespace B2BClasses.Database
         public int? ModifiedBy { get; set; }
         public DateTime? ModifiedDt { get; set; }
     }
+
+
+    public class tblPaymentRequest
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+   
+        [ForeignKey("tblCustomerMaster")] // Foreign Key here
+        public int? CustomerId { get; set; }
+        public tblCustomerMaster tblCustomerMaster { get; set; }
+        public double RequestedAmt { get; set; }
+        public enmApprovalStatus Status { get; set; }
+        public int CreatedBy { get; set; }
+        public DateTime CreatedDt { get; set; }
+        public string CreatedRemarks { get; set; }
+
+        public bool IsDeleted { get; set; }
+        public int? ModifiedBy { get; set; }
+        public DateTime? ModifiedDt { get; set; }
+        public string ModifiedRemarks { get; set; }
+
+        public enmRequestType RequestType { get; set; }
+
+        public string UploadImages { get; set; }
+    }
+    //public class tblCreditRequest
+    //{
+    //    [Key]
+    //    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    //    public int Id { get; set; }
+
+    //    [ForeignKey("tblCustomerMaster")] // Foreign Key here
+    //    public int? CustomerId { get; set; }
+    //    public tblCustomerMaster tblCustomerMaster { get; set; }
+    //    public double RequestedAmt { get; set; }
+    //    public enmApprovalStatus Status { get; set; }
+    //    public int CreatedBy { get; set; }
+    //    public DateTime CreatedDt { get; set; }
+    //    public string CreatedRemarks { get; set; }
+
+    //    public bool IsDeleted { get; set; }
+    //    public int? ModifiedBy { get; set; }
+    //    public DateTime? ModifiedDt { get; set; }
+    //    public string ModifiedRemarks { get; set; }
+
+    //    public enmRequestType RequestType { get; set; }
+
+    //    public string UploadImages { get; set; }
+    //}
+
 }

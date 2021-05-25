@@ -9,6 +9,7 @@ using B2BClasses.Services.Enums;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Database;
+using Microsoft.AspNetCore.Http;
 
 namespace B2bApplication.Models
 {
@@ -111,7 +112,6 @@ namespace B2bApplication.Models
         [Display(Name = "Customer Type")]
         public string CustomerID { set; get; }
 
-
         [Required]
         [Display(Name = "Transaction Type")]
         public enmCreditDebit creditDebit { set; get; }
@@ -122,7 +122,6 @@ namespace B2bApplication.Models
 
         [Display(Name = "Remarks")]
         public string Remarks { set; get; }
-
 
         [Required]
         [Range(0, 100000)]
@@ -153,7 +152,6 @@ namespace B2bApplication.Models
         public List<ProcWalletSearch> mdlTcWalletWraper { get; set; }
     }
 
-
     public class mdlCustomerIPFilter
     {
         [Required]
@@ -170,6 +168,91 @@ namespace B2bApplication.Models
 
         public List<tblCustomerIPFilter> IPFilterReport { get; set; }
 
+
+    }
+
+    public class mdlCustomerChangePassword
+    { 
+        [Required(ErrorMessage ="Enter Old Password")]
+        public string Passowrd { get; set; }
+
+        [Required(ErrorMessage ="Enter New Password")]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "New password")]
+        public string NewPassword { get; set; }
+
+
+        [Required(ErrorMessage = "Re-Enter New Password")]
+        public string ConfirmNewPassword { get; set; }
+    }
+
+    public class mdlPaymentRequest
+    {
+
+        [Required]
+        [Display(Name = "Customer Code")]
+        public int CustomerID { set; get; }
+
+        [Required]
+        [Range(1,1000000) ]
+        [Display(Name = "Requested Amount")]
+        public double CreditAmt { set; get; }
+
+        [MaxLength(250)]
+        [Display(Name = "Remarks")]
+        public string Remarks { get; set; }
+
+        [Display(Name = "Status")]
+        public enmApprovalStatus Status { set; get; }
+
+        [Display(Name = "Request Type")]
+        public enmRequestType RequestType { set; get; }
+
+        [Required]
+        [Display(Name = "Upload Document")]
+        public List<IFormFile> UploadImages { set; get; }
+        public List<mdlPaymentRequestWraper> PaymentRequestList { get; set; }
+
+
+    }
+
+    public class mdlPaymentRequestWraper : tblPaymentRequest
+    {
+        public bool paymentrequestid { get; set; }
+        public string CustomerName { get; set; }
+        public string Code { get; set; }
+
+    }
+
+    public class mdlFlightBookingReport
+    {
+        [Display(Name = "From Dt")]
+        public DateTime FromDt { get; set; } = DateTime.Now.AddDays(-2);
+        [Display(Name = "To Dt")]
+        public DateTime ToDt { get; set; } = DateTime.Now;
+        [Display(Name = "Status")]
+        public enmBookingStatus bookingStatus { get; set; } = enmBookingStatus.All;
+        [Display(Name = "Filter By")]
+        public int DateFliterType { get; set; } = 1; //1 = on Booking Date, 2 on Travel Date
+        public List<tblFlightBookingMaster> FBMs { get; set; } = new List<tblFlightBookingMaster>();
+        public void loadBookingData(IBooking _booking, int CustomerId)
+        {
+            _booking.CustomerId = CustomerId;
+            FBMs = _booking.FlighBookReport(FromDt, ToDt, (DateFliterType == 2 ? false : true), false,false ,bookingStatus);
+        }
+        public string GetLabelClass(enmBookingStatus bookingStatus)
+        {
+            switch (bookingStatus)
+            {
+                case enmBookingStatus.Pending:return "label-info";
+                case enmBookingStatus.Booked: return "label-success arrowed-in";
+                case enmBookingStatus.Refund: return "label-danger";
+                case enmBookingStatus.PartialBooked: return "label-warning arrowed-in";
+                
+            }
+            return "label-inverse";
+        }
 
     }
 

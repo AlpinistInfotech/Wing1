@@ -36,11 +36,23 @@ namespace B2bApplication.Controllers
             _setting = setting;
             _booking = booking;
             _markup = markup;
+            _customerId = 1;
+            _userId = 1;
         }
 
         [Authorize]
         public IActionResult Index()
         {
+            DateTime TodayFromDt = Convert.ToDateTime(DateTime.Now.ToString("dd-MMM-yyyy"));
+            DateTime TodayToDt = TodayFromDt.AddDays(1);
+            ViewBag.FlightSearch = _context.tblFlightBookingMaster.Where(p => p.CustomerId == _customerId && p.CreatedDt>= TodayFromDt && p.CreatedDt < TodayToDt).Count();
+            ViewBag.FlightBook = _context.tblFlightBookingMaster.Where(p => p.CustomerId == _customerId && p.BookingStatus== enmBookingStatus.Booked && p.CreatedDt >= TodayFromDt && p.CreatedDt < TodayToDt).Count();
+
+            DateTime WeekFromDt = TodayFromDt.AddDays(0- TodayFromDt.DayOfWeek);
+            DateTime WeekToDt = TodayToDt;
+            ViewBag.FlightSearchWeek = _context.tblFlightBookingMaster.Where(p => p.CustomerId == _customerId && p.CreatedDt >= WeekFromDt && p.CreatedDt < WeekToDt).Count();
+            ViewBag.FlightBookWeek = _context.tblFlightBookingMaster.Where(p => p.CustomerId == _customerId && p.BookingStatus == enmBookingStatus.Booked && p.CreatedDt >= WeekFromDt && p.CreatedDt < WeekToDt).Count();
+
             return View();
         }
 
@@ -177,28 +189,18 @@ namespace B2bApplication.Controllers
         [AcceptVerbs("Get")]
         public async Task<IActionResult> FlightReviewAsync()
         {
-
-
             var mdls = TempData["mdl_"] as string;
             mdlFlightReview mdl = JsonConvert.DeserializeObject<mdlFlightReview>(mdls);
             ViewBag.SaveStatus = (int)TempData["MessageType"];
             ViewBag.Message = TempData["Message"];
-            //if (MessageType != null)
-            //{
-            //    ViewBag.SaveStatus = (int)MessageType;
-            //    ViewBag.Message = _setting.GetErrorMessage(enmMessage.NoFlightDataFound);
-
-            //}
-            foreach (var md in mdl.FareQuotResponse)
+            if (mdl == null)
             {
-                _markup.CustomerMarkup(md.Results);
-                _markup.WingMarkupAmount(md.Results, mdl.AdultCount, mdl.ChildCount, mdl.InfantCount);
-                _markup.WingConvenienceAmount(md, mdl.travellerInfo);
-                _markup.CalculateTotalPriceAfterMarkup(md.Results, mdl.AdultCount, mdl.ChildCount, mdl.InfantCount);
+                mdl = new mdlFlightReview();
             }
+            await mdl.LoadFareQuotationAsync(_customerId, _booking, _markup);
+
             //save Data
             await _booking.CustomerFlightDetailSave(mdl.FareQuoteRequest.TraceId, mdl.FareQuotResponse);
-
             mdl.BookingRequestDefaultData();
             return View(mdl);
         }
@@ -210,27 +212,12 @@ namespace B2bApplication.Controllers
         [Authorize]
         public async Task<IActionResult> FlightReview(mdlFlightReview mdl)
         {
-            int CustomerId = 1;
-            _booking.CustomerId = CustomerId;
-            mdl.FareQuotResponse = new List<mdlFareQuotResponse>();
-            mdl.FareRule = new List<mdlFareRuleResponse>();
             
-            if (!(mdl == null || mdl.FareQuoteRequest==null))
+            if (mdl == null)
             {
-                mdl.FareQuotResponse.AddRange( await _booking.FareQuoteAsync(mdl.FareQuoteRequest));
-                //mdl.FareRule.AddRange(await _booking.FareRule(new mdlFareRuleRequest() { TraceId= mdl.FareQuoteRequest.TraceId, ResultIndex= mdl.FareQuoteRequest.ResultIndex }));                
+                mdl = new mdlFlightReview();
             }
-            else
-            {
-                return RedirectToAction("FlightSearch", "Home");
-            }
-            foreach(var md in mdl.FareQuotResponse)
-            {
-                _markup.CustomerMarkup(md.Results);
-                _markup.WingMarkupAmount(md.Results, mdl.AdultCount, mdl.ChildCount, mdl.InfantCount);
-                _markup.WingConvenienceAmount(md , mdl.travellerInfo);
-                _markup.CalculateTotalPriceAfterMarkup(md.Results, mdl.AdultCount, mdl.ChildCount, mdl.InfantCount);
-            }
+            await mdl.LoadFareQuotationAsync(_customerId, _booking, _markup);
             //save Data
             await _booking.CustomerFlightDetailSave(mdl.FareQuoteRequest.TraceId,mdl.FareQuotResponse);
             mdl.BookingRequestDefaultData();
@@ -246,39 +233,44 @@ namespace B2bApplication.Controllers
         {
             mdlFlighBook mdlres = new mdlFlighBook() {FareQuotResponse= new List<mdlFareQuotResponse>(), IsSucess=new List<bool>() , BookingId= new List<string>()};
             
-            int CustomerId = 1;
-            _booking.CustomerId = CustomerId;
-            mdl.FareQuotResponse = new List<mdlFareQuotResponse>();
-            mdl.FareRule = new List<mdlFareRuleResponse>();
+            
+
             bool IsPriceChanged = false;
             if (!(mdl == null || mdl.FareQuoteRequest == null))
             {
-                mdl.FareQuotResponse.AddRange(await _booking.FareQuoteAsync(mdl.FareQuoteRequest));
+                var s = JsonConvert.SerializeObject(mdl);
+                if (mdl.contacts == null)
+                {
+                    TempData["mdl_"] = s;
+                    TempData["MessageType"] = (int)enmMessageType.Warning;
+                    TempData["Message"] = "Required Contact no";
+                    return RedirectToAction("FlightReview");
+                }
+                else if (mdl.emails == null)
+                {
+                    TempData["mdl_"] = s;
+                    TempData["MessageType"] = (int)enmMessageType.Warning;
+                    TempData["Message"] = "Required Email Address";
+                    return RedirectToAction("FlightReview");
+                }
+
+
+
+                await mdl.LoadFareQuotationAsync(_customerId, _booking, _markup);
                 IsPriceChanged = mdl.FareQuotResponse.Any(p => p.IsPriceChanged);
                 if (IsPriceChanged)
                 {
-                    var s = JsonConvert.SerializeObject(mdl);
+                    
                     TempData["mdl_"] = s;
                     TempData["MessageType"] = (int)enmMessageType.Warning;
                     TempData["Message"] = _setting.GetErrorMessage(enmMessage.FlightPriceChanged);
                     return RedirectToAction("FlightReview");                    
                 }
-                double NewFare= mdl.FareQuotResponse.Sum(p => p.TotalPriceInfo?.TotalFare)??0;
-
-                if (NewFare != mdl.TotalFare)
-                {
-
-                    var s = JsonConvert.SerializeObject(mdl);
-                    TempData["mdl_"] = s;
-                    TempData["MessageType"] = (int)enmMessageType.Warning;
-                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.FlightPriceChanged);
-                    return RedirectToAction("FlightReview");
-                }
-                customerWallet.CustomerId = CustomerId;
+                
+                customerWallet.CustomerId = _customerId;
                 double Walletbalence=await customerWallet.GetBalenceAsync();
-                if (Walletbalence < mdl.TotalFare)
-                {
-                    var s = JsonConvert.SerializeObject(mdl);
+                if (Walletbalence < mdl.NetFare)
+                {                    
                     TempData["mdl_"] = s;
                     TempData["MessageType"] = (int)enmMessageType.Warning;
                     TempData["Message"] = _setting.GetErrorMessage(enmMessage.InsufficientWalletBalance);
@@ -302,7 +294,7 @@ namespace B2bApplication.Controllers
 
                     mdlBookingRequest mdlReq = new mdlBookingRequest()
                     {
-                        TraceId = mdl.FareQuotResponse[i].TraceId,
+                        TraceId = mdl.FareQuoteRequest.TraceId,
                         BookingId = mdl.FareQuotResponse[i].BookingId,
                         travellerInfo = mdl.travellerInfo,
                         deliveryInfo = new mdlDeliveryinfo() { contacts = cont, emails = eml },
@@ -318,14 +310,37 @@ namespace B2bApplication.Controllers
                         ViewBag.SaveStatus = (int)enmMessageType.Warning;
                         ViewBag.Message = Result.Error.Message;
                     }
-
-
+                    
                 }
             }
             else
             {
                 return RedirectToAction("FlightSearch", "Home");
             }
+
+            enmBookingStatus bookingStatus = enmBookingStatus.Pending;
+            if (mdlres.IsSucess.Count > 0)
+            {
+                if (mdlres.IsSucess.Any(p => !p))
+                {
+                    if (mdlres.IsSucess.Any(p => p))
+                    {
+                        bookingStatus = enmBookingStatus.PartialBooked;                        
+                    }
+                    else
+                    {
+                        bookingStatus = enmBookingStatus.Failed;
+                    }                      
+                }
+                else
+                {
+                    bookingStatus = enmBookingStatus.Booked;
+                }
+            }
+            _booking.CompleteBooking(mdl.FareQuoteRequest.TraceId ?? "", bookingStatus);
+
+
+
             return View(mdlres);
         }
 

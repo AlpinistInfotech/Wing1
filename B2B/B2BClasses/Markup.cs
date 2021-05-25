@@ -418,6 +418,10 @@ namespace B2BClasses
 
         public void WingMarkupAmount(List<List<mdlSearchResult>> mdl, int AdultCount = 1, int ChildCount = 0, int InfantCount = 0)
         {
+            if (mdl == null)
+            {
+                return;
+            }
             List<mdlWingMarkup> allMarkup = LoadMarkup(0, false, true);
             LoadMarkupAirlineCode(allMarkup);
             for (int i = 0; i < mdl.Count; i++)
@@ -451,17 +455,17 @@ namespace B2BClasses
                                     if (FlightCabinClass(allMarkup[k], mdl[i][j].TotalPriceList[j1]))
                                     {
                                         //Adult Markup
-                                        if (allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Adult))
+                                        if (AdultCount > 0 &&( allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Adult) || allMarkup[k].IsAllPessengerType))
                                         {
                                             mdl[i][j].TotalPriceList[j1].ADULT.FareComponent.WingMarkup =
                                             mdl[i][j].TotalPriceList[j1].ADULT?.FareComponent?.WingMarkup ?? 0 + (allMarkup[k].Amount);
                                         }
-                                        if (ChildCount > 0 && allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Child))
+                                        if (ChildCount > 0 && (allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Child) || allMarkup[k].IsAllPessengerType))
                                         {
                                             mdl[i][j].TotalPriceList[j1].CHILD.FareComponent.WingMarkup =
                                             mdl[i][j].TotalPriceList[j1].CHILD?.FareComponent?.WingMarkup ?? 0 + (allMarkup[k].Amount);
                                         }
-                                        if (InfantCount > 0 && allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Infant))
+                                        if (InfantCount > 0 && (allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Infant) || allMarkup[k].IsAllPessengerType))
                                         {
                                             mdl[i][j].TotalPriceList[j1].INFANT.FareComponent.WingMarkup =
                                             mdl[i][j].TotalPriceList[j1].INFANT?.FareComponent?.WingMarkup ?? 0 + (allMarkup[k].Amount);
@@ -485,7 +489,7 @@ namespace B2BClasses
         {
             double MarkupAmount = 0;
             MarkupAmount = _context.tblCustomerMarkup.Where(p => !p.IsDeleted).Sum(p => p.MarkupAmt);
-            for (int i = 0; i < mdl.Count; i++)
+            for (int i = 0; i < ((mdl?.Count)??0); i++)
             {
                 for (int j = 0; j < mdl[i].Count; j++)
                 {
@@ -500,24 +504,40 @@ namespace B2BClasses
         public bool PassengerTypeConvenience(mdlWingMarkup mdlA, int AdultCount, int ChildCount, int InfantCount)
         {
             bool returndata = false;
+            if (mdlA.IsAllCustomerType)
+            {
+                return true;
+            }
             if (AdultCount > 0)
             {
                 returndata = mdlA.MarkupPassengerType.Any(p => p == enmPassengerType.Adult);
+                if (returndata)
+                {
+                    return true;
+                }
             }
             if (ChildCount > 0)
             {
                 returndata = mdlA.MarkupPassengerType.Any(p => p == enmPassengerType.Child);
+                if (returndata)
+                {
+                    return true;
+                }
             }
             if (InfantCount > 0)
             {
                 returndata = mdlA.MarkupPassengerType.Any(p => p == enmPassengerType.Infant);
+                if (returndata)
+                {
+                    return true;
+                }
             }
+            
             return returndata;
         }
 
         public void WingConvenienceAmount(mdlFareQuotResponse mdl, List<mdlTravellerinfo> travellerInfo)
         {
-
             if (mdl == null)
             {
                 return;
@@ -579,7 +599,7 @@ namespace B2BClasses
                                     if (FlightCabinClass(allMarkup[k], mdl.Results[i][j].TotalPriceList[j1]))
                                     {
                                         //Adult Convenience
-                                        if (allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Adult))
+                                        if (mdl.SearchQuery.AdultCount>0 && (allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Adult) || (allMarkup[k].IsAllPessengerType)))
                                         {
                                             if (allMarkup[k].Gender.HasFlag(enmGender.Male) && allMarkup[k].Gender.HasFlag(enmGender.Female) && allMarkup[k].Gender.HasFlag(enmGender.Other))
                                             {
@@ -599,7 +619,7 @@ namespace B2BClasses
 
 
                                         }
-                                        if (mdl.SearchQuery.ChildCount > 0 && allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Child))
+                                        if (mdl.SearchQuery.ChildCount > 0 && (allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Child) || allMarkup[k].IsAllPessengerType))
                                         {
                                             if (allMarkup[k].Gender.HasFlag(enmGender.Male) && allMarkup[k].Gender.HasFlag(enmGender.Female) && allMarkup[k].Gender.HasFlag(enmGender.Other))
                                             {
@@ -619,7 +639,7 @@ namespace B2BClasses
                                                mdl.Results[i][j].TotalPriceList[j1].Convenience + (allMarkup[k].Amount * ( ChildFemaleCount));
                                             }
                                         }
-                                        if (mdl.SearchQuery.InfantCount > 0 && allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Infant))
+                                        if (mdl.SearchQuery.InfantCount > 0 && (allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Infant) || allMarkup[k].IsAllPessengerType))
                                         {
                                             if (allMarkup[k].Gender.HasFlag(enmGender.Male) && allMarkup[k].Gender.HasFlag(enmGender.Female) && allMarkup[k].Gender.HasFlag(enmGender.Other))
                                             {
@@ -785,8 +805,10 @@ namespace B2BClasses
         
         public bool CalculateTotalPriceAfterMarkup(List<List<mdlSearchResult>> mdls, int AdultCount, int ChildCount, int InfantCount)
         {
-            
-
+            if (mdls == null)
+            {
+                return false;
+            }
 
             double WingbaseFare = 0;
             //update with markup

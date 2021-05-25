@@ -12,16 +12,21 @@ using System.Threading.Tasks;
 namespace B2BClasses
 {
     
+
+
     public interface IBooking
     {
         int CustomerId { get; set; }
         int UserId { get; set; }
+
         Task<mdlBookingResponse> BookingAsync(mdlBookingRequest mdlRq);
-        Task<string> CustomerDataSave(mdlSearchRequest mdlRq, List<tblFlightBookingProviderTraceId> traceIds);
+        bool CompleteBooking(string traceIds, enmBookingStatus bookingStatus);
+        Task<string> CustomerDataSave(mdlSearchRequest mdlRq, List<tblFlightBookingProviderTraceId> traceIds,enmJourneyType journeyType);
         Task<bool> CustomerFlightDetailSave(string traceId, List<mdlFareQuotResponse> mdls);
-        bool CustomerPassengerDetailSave(mdlBookingRequest mdlRq, enmBookingStatus bookingStatus);
+        bool CustomerPassengerDetailSave(mdlBookingRequest mdlRq, enmBookingStatus bookingStatus, enmServiceProvider sp);
         Task<List<mdlFareQuotResponse>> FareQuoteAsync(mdlFareQuotRequest mdlRq);
         Task<List<mdlFareRuleResponse>> FareRule(mdlFareRuleRequest mdlRq);
+        List<tblFlightBookingMaster> FlighBookReport(DateTime FromDt, DateTime ToDate, bool OnBookingDt = true, bool AllCustomer = false, bool IncludePurchaseFare = false, enmBookingStatus bookingStatus= enmBookingStatus.All);
         Task<List<enmServiceProvider>> GetActiveProviderAsync();
         Task<List<tblAirline>> GetAirlinesAsync();
         Task<List<tblAirport>> GetAirportAsync();
@@ -62,7 +67,40 @@ namespace B2BClasses
 
         #region ***********************Flight********************************
 
-        public async Task<string> CustomerDataSave(mdlSearchRequest mdlRq, List<tblFlightBookingProviderTraceId> traceIds)
+
+        public List<tblFlightBookingMaster> FlighBookReport(DateTime FromDt, DateTime ToDate, bool OnBookingDt = true, bool AllCustomer = false, bool IncludePurchaseFare = false, enmBookingStatus bookingStatus= enmBookingStatus.All)
+        {
+            ToDate = Convert.ToDateTime(ToDate.AddDays(1).ToString("yyyy-MM-dd"));
+            FromDt = Convert.ToDateTime(FromDt.ToString("yyyy-MM-dd"));
+
+            IQueryable<tblFlightBookingMaster> Query = null;
+            if (OnBookingDt)
+            {
+                Query = _context.tblFlightBookingMaster.Where(p => p.CreatedDt >= FromDt && p.CreatedDt < ToDate);
+            }
+            else
+            {
+                Query = _context.tblFlightBookingSegment.Where(p => p.TravelDt >= FromDt && p.TravelDt < ToDate).Select(p => p.tblFlightBookingMaster).Distinct();
+            }
+            if (bookingStatus != enmBookingStatus.All)
+            {
+                Query = Query.Where(p => p.BookingStatus == bookingStatus);
+            }
+
+            if (!AllCustomer)
+            {
+                Query = Query.Where(p => p.CustomerId == CustomerId);
+            }
+            if (IncludePurchaseFare)
+            {
+                Query = Query.Include(p => p.tblFlightBookingFarePurchaseDetails);
+            }
+
+            Query = Query.Include(p => p.tblFlightBookingSegments).Include(p => p.tblFlightBookingPassengerDetails).Include(p => p.tblFlightBookingFareDetails).Include(p => p.tblFlightBookingGSTDetails);
+            return Query.OrderByDescending(p=>p.CreatedDt).ToList();
+        }
+
+        public async Task<string> CustomerDataSave(mdlSearchRequest mdlRq, List<tblFlightBookingProviderTraceId> traceIds, enmJourneyType journeyType)
         {
             tblFlightBookingMaster tbl = new tblFlightBookingMaster()
             {
@@ -71,7 +109,7 @@ namespace B2BClasses
                 ChildCount = mdlRq.ChildCount,
                 InfantCount = mdlRq.InfantCount,
                 DirectFlight = mdlRq.DirectFlight,
-                JourneyType = mdlRq.JourneyType,
+                JourneyType = journeyType,
                 CreatedBy = _userId,
                 CreatedDt = DateTime.Now,
                 tblFlightBookingProviderTraceIds = traceIds,
@@ -168,8 +206,8 @@ namespace B2BClasses
                     AdultNetFare = AdultNetFare_,
                     ChildNetFare = ChildNetFare_,
                     InfantNetFare = InfantNetFare_,
-                    NetFare = (mdl?.SearchQuery?.AdultCount ?? 0 * AdultNetFare_) + (mdl?.SearchQuery?.ChildCount ?? 0 * ChildNetFare_) + (mdl?.SearchQuery?.InfantCount ?? 0 * InfantNetFare_),
-                    TotalFare = (mdl?.SearchQuery?.AdultCount ?? 0 * AdultTotalFare_) + (mdl?.SearchQuery?.ChildCount ?? 0 * ChildTotalFare_) + (mdl?.SearchQuery?.InfantCount ?? 0 * InfantTotalFare_),
+                    NetFare = ((mdl?.SearchQuery?.AdultCount ?? 0) * AdultNetFare_) + ((mdl?.SearchQuery?.ChildCount ?? 0) * ChildNetFare_) + ((mdl?.SearchQuery?.InfantCount ?? 0) * InfantNetFare_),
+                    TotalFare = ((mdl?.SearchQuery?.AdultCount ?? 0) * AdultTotalFare_) + ((mdl?.SearchQuery?.ChildCount ?? 0) * ChildTotalFare_) + ((mdl?.SearchQuery?.InfantCount ?? 0) * InfantTotalFare_),
                     SegmentDisplayOrder = index
                 });
                 index = index + 1;
@@ -185,8 +223,7 @@ namespace B2BClasses
         }
 
 
-
-        public bool CustomerPassengerDetailSave(mdlBookingRequest mdlRq, enmBookingStatus bookingStatus)
+        public bool CustomerPassengerDetailSave(mdlBookingRequest mdlRq, enmBookingStatus bookingStatus, enmServiceProvider sp)
         {
 
             var tm = _context.tblFlightBookingMaster.Where(p => p.Id == mdlRq.TraceId).FirstOrDefault();
@@ -195,7 +232,7 @@ namespace B2BClasses
             tm.BookingStatus = bookingStatus;
             _context.tblFlightBookingMaster.Update(tm);
 
-            _context.tblFlightBookingPassengerDetails.RemoveRange(_context.tblFlightBookingPassengerDetails.Where(p => p.TraceId == mdlRq.TraceId));
+            _context.tblFlightBookingPassengerDetails.RemoveRange(_context.tblFlightBookingPassengerDetails.Where(p => p.TraceId == mdlRq.TraceId && p.BookingId == mdlRq.BookingId));
             _context.tblFlightBookingPassengerDetails.AddRange(
             mdlRq.travellerInfo.Select(p => new tblFlightBookingPassengerDetails
             {
@@ -207,7 +244,9 @@ namespace B2BClasses
                 dob = p.dob,
                 PassportExpiryDate = p.PassportExpiryDate,
                 PassportIssueDate = p.PassportIssueDate,
-                pNum = p.pNum
+                pNum = p.pNum,
+                BookingId = mdlRq.BookingId,
+                ServiceProvider = sp
             }));
 
             _context.tblFlightBookingGSTDetails.RemoveRange(_context.tblFlightBookingGSTDetails.Where(p => p.TraceId == mdlRq.TraceId));
@@ -230,6 +269,18 @@ namespace B2BClasses
             return true;
         }
 
+
+        public bool CompleteBooking(string traceIds, enmBookingStatus bookingStatus)
+        {
+            var data = _context.tblFlightBookingMaster.FirstOrDefault(p => p.Id == traceIds);
+            if (data != null)
+            {
+                data.BookingStatus = bookingStatus;
+            }
+            _context.tblFlightBookingMaster.Update(data);
+            _context.SaveChanges();
+            return true;
+        }
 
 
         public async Task<List<enmServiceProvider>> GetActiveProviderAsync()
@@ -258,6 +309,8 @@ namespace B2BClasses
             List<mdlSearchResponse> mdlRs = new List<mdlSearchResponse>();
             List<enmServiceProvider> serviceProviders = await GetActiveProviderAsync();
             List<tblFlightBookingProviderTraceId> traceIds = new List<tblFlightBookingProviderTraceId>();
+
+            enmJourneyType actualJourneyType = mdlRq.JourneyType;
 
             foreach (var sp in serviceProviders)
             {
@@ -306,7 +359,7 @@ namespace B2BClasses
                     mdlRs.Add(mdlR);
                 }
             }
-            string NewTraceID = await CustomerDataSave(mdlRq, traceIds);
+            string NewTraceID = await CustomerDataSave(mdlRq, traceIds, actualJourneyType);
             ChangeNewTraceIds(mdlRs, NewTraceID);
             return mdlRs;
         }
@@ -402,6 +455,10 @@ namespace B2BClasses
             List<mdlFareQuotResponse> mdlRs = new List<mdlFareQuotResponse>();
             for (int i = 0; i < mdlRq.ResultIndex.Count(); i++)
             {
+                if (mdlRq.ResultIndex[i] == null)
+                {
+                    continue;
+                }
                 var sp = (enmServiceProvider)Convert.ToInt32(mdlRq.ResultIndex?[i].Split("_").FirstOrDefault());
 
                 int index = mdlRq.ResultIndex?[i].IndexOf('_') ?? -1;
@@ -449,6 +506,15 @@ namespace B2BClasses
                 mdlRq.BookingId = mdlRq.BookingId.Substring(index + 1);
                 IWingFlight wingflight = GetFlightObject(sp);
                 mdlRs = await wingflight.BookingAsync(mdlRq);
+
+                if (mdlRs.ResponseStatus == 1)
+                {
+                    CustomerPassengerDetailSave(mdlRq, enmBookingStatus.Booked, sp);
+                }
+                else
+                {
+                    CustomerPassengerDetailSave(mdlRq, enmBookingStatus.Failed, sp);
+                }
             }
             return mdlRs;
         }

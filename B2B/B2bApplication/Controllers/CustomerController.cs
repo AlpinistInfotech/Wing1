@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Database;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using Microsoft.EntityFrameworkCore;
+using System.IO;
 
 namespace B2bApplication.Controllers
 {
@@ -29,12 +31,14 @@ namespace B2bApplication.Controllers
         private readonly ISettings _setting;
         private readonly IConfiguration _config;
         int _userid = 0;
+        int _customerId = 0;
         public CustomerController(ILogger<CustomerController> logger, DBContext context, ISettings setting,IConfiguration config)
         {
             _context = context;
             _logger = logger;
             _setting = setting;
             _config = config;
+            _customerId = 1;
         }
 
         [AcceptVerbs("Get", "Post")]
@@ -544,9 +548,18 @@ namespace B2bApplication.Controllers
             return returnData;
 
         }
+        
+        public IActionResult CustomerChangePassword()
+        {
+            if (ModelState.IsValid)
+            { 
+                
+            }
+            return View();
+        }
 
         #region CustomerIPFilter
-        public IActionResult CustomerIPFilter(string ipfilterid)
+        public IActionResult CustomerIPFilter(string Id)
         {
             mdlCustomerIPFilter mdl = new mdlCustomerIPFilter();
             dynamic messagetype = TempData["MessageType"];
@@ -557,16 +570,17 @@ namespace B2bApplication.Controllers
             }
 
             
-            if (ipfilterid  != null)
+            if (Id != null)
             {
-                var ipfilterdata = GetIPFilterData(_context, Convert.ToInt32(ipfilterid));
+                var ipfilterdata = GetIPFilterData(_context, Convert.ToInt32(Id));
 
                 if (ipfilterdata  != null)
                 {
                     mdl.CustomerID = Convert.ToInt32(ipfilterdata.CustomerId);
                     mdl.allipapplicable = ipfilterdata.AllowedAllIp;
                     mdl.IPFilterId = ipfilterdata.Id;
-                    mdl.IPAddess = "";
+                    mdl.IPAddess = string.Join(',',ipfilterdata.tblCustomerIPFilterDetails.Select(p=>p.IPAddress));
+                    
                 }
             }
 
@@ -591,57 +605,209 @@ namespace B2bApplication.Controllers
                 else
                 {
                     {
-                        var ExistingData = _context.tblCustomerIPFilter.FirstOrDefault(p => p.Id == mdl.IPFilterId);
-                        if (ExistingData != null)
+                        var ExistingData_ipfilter = _context.tblCustomerIPFilter.FirstOrDefault(p => p.Id == mdl.IPFilterId);
+                        if (ExistingData_ipfilter != null)
                         {
-                                // run delete command
-                                _context.tblCustomerIPFilter.Remove(ExistingData);
-                                await _context.SaveChangesAsync();
-                                TempData["MessageType"] = (int)enmMessageType.Success;
-                                TempData["Message"] = _setting.GetErrorMessage(enmMessage.DeleteSuccessfully);
-
-                                return RedirectToAction("CustomerIPFilter");
-                        }
-                        else
-                        {
-                            tblCustomerIPFilter ipfilter_ = new tblCustomerIPFilter()
-                            {
-                                CustomerId = Convert.ToInt32(mdl.CustomerID),
-                                AllowedAllIp = mdl.allipapplicable,
-                                CreatedBy = _userid,
-                                CreatedDt = DateTime.Now
-
-                            };
-                            _context.tblCustomerIPFilter.Add(ipfilter_);
-                            _context.SaveChanges();
-
-                            if (mdl.allipapplicable == true)
-                            {
-                                tblCustomerIPFilterDetails ipfilterdetails_ = new tblCustomerIPFilterDetails()
-                                {
-
-                                    FilterId = ipfilter_.Id,
-                                    IPAddress = mdl.IPAddess,
-                                };
-                                _context.tblCustomerIPFilterDetails.Add(ipfilterdetails_);
-                            }
+                            // run delete command
+                            ExistingData_ipfilter.IsDeleted = true;
+                            ExistingData_ipfilter.ModifiedDt = DateTime.Now;
+                            ExistingData_ipfilter.ModifiedBy = _userid;
 
                             await _context.SaveChangesAsync();
-
                             TempData["MessageType"] = (int)enmMessageType.Success;
-                            TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
-
+                            TempData["Message"] = _setting.GetErrorMessage(enmMessage.DeleteSuccessfully);
                             return RedirectToAction("CustomerIPFilter");
                         }
+                        else // save button call
+                        {
+
+                            if (mdl.allipapplicable == false && mdl.IPAddess.Trim().Length == 0)
+                            {
+                                TempData["MessageType"] = (int)enmMessageType.Warning;
+                                TempData["Message"] = "Please enter IP Address";
+                                return RedirectToAction("CustomerIPFilter");
+                            }
+
+
+                            var ExistingData_check = _context.tblCustomerIPFilter.FirstOrDefault(p => p.CustomerId == mdl.CustomerID);
+                            if (ExistingData_check != null)
+                            {
+                                ExistingData_check.IsDeleted = true;
+                                ExistingData_check.ModifiedDt = DateTime.Now;
+                                ExistingData_check.ModifiedBy = _userid;
+                                _context.tblCustomerIPFilter.Update(ExistingData_check);
+                            }
+
+                            tblCustomerIPFilter ipfilter_ = new tblCustomerIPFilter()
+                            {
+                                CustomerId = mdl.CustomerID,
+                                AllowedAllIp = mdl.allipapplicable,
+                                CreatedBy = _userid,
+                                CreatedDt = DateTime.Now,
+                                tblCustomerIPFilterDetails = mdl.IPAddess.Split(",").Select(p => new tblCustomerIPFilterDetails { IPAddress = p }).ToList() };
+                                 _context.tblCustomerIPFilter.Add(ipfilter_);
+                            }
+
+                        await _context.SaveChangesAsync();
+
+                        TempData["MessageType"] = (int)enmMessageType.Success;
+                        TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
+
+                        return RedirectToAction("CustomerIPFilter");
                     }
-                }
-            }
+
+                            
+                        }
+                    }
 
             return View(mdl);
         }
 
 
         #endregion
+
+        #region PaymentRequest
+
+        [Authorize]
+        public IActionResult PaymentRequest()
+        {
+
+            dynamic messagetype = TempData["MessageType"];
+            mdlPaymentRequest mdl = new mdlPaymentRequest();
+            if (messagetype != null)
+            {
+                ViewBag.SaveStatus = (int)messagetype;
+                ViewBag.Message = TempData["Message"];
+
+            }
+
+            ViewBag.CustomerCodeList = new SelectList(GetCustomerMaster(_context, true, 0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
+            return View(mdl);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> PaymentRequestAsync(mdlPaymentRequest mdl)
+        {
+
+            DateTime fromdate= Convert.ToDateTime(DateTime.Now.ToString("dd-MMM-yyyy"));
+            DateTime todate= Convert.ToDateTime(DateTime.Now.AddDays(1).ToString("dd-MMM-yyyy"));
+            var ExistingData = _context.tblPaymentRequest.FirstOrDefault(p => p.CustomerId == mdl.CustomerID && p.RequestedAmt == mdl.CreditAmt && p.CreatedDt >= fromdate && p.CreatedDt < todate);
+            if (ExistingData!=null)
+            {
+                TempData["MessageType"] = (int)enmMessageType.Warning;
+                TempData["Message"] = _setting.GetErrorMessage(enmMessage.RecordAlreadyExists);   
+            }
+            else
+            {
+                string filePath = _config["FileUpload:PaymentRequestFilePath"];
+
+                var path = Path.Combine(
+                         Directory.GetCurrentDirectory(),
+                         "wwwroot/" + filePath);
+                if (mdl.UploadImages == null || mdl.UploadImages.Count == 0 || mdl.UploadImages[0] == null || mdl.UploadImages[0].Length == 0)
+                {
+ 
+                    TempData["MessageType"] = enmSaveStatus.danger;
+                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidDocument);
+                    return RedirectToAction("PaymentRequest");
+                }
+
+                List<string> AllFileName = new List<string>();
+
+                bool exists = System.IO.Directory.Exists(path);
+                if (!exists)
+                    System.IO.Directory.CreateDirectory(path);
+
+                foreach (var file in mdl.UploadImages)
+                {
+                    var filename = Guid.NewGuid().ToString() + ".jpeg";
+                    using (var stream = new FileStream(string.Concat(path, filename), FileMode.Create))
+                    {
+                        AllFileName.Add(filename);
+                        await file.CopyToAsync(stream);
+                    }
+                }
+
+                _context.tblPaymentRequest.Add(new tblPaymentRequest
+                {
+                    CustomerId = Convert.ToInt32(mdl.CustomerID),
+                    RequestedAmt = mdl.CreditAmt,
+                    CreatedRemarks = mdl.Remarks,
+                    RequestType=mdl.RequestType,
+                    CreatedBy = _userid,
+                    CreatedDt = DateTime.Now,
+                    UploadImages = string.Join<string>(",", AllFileName)
+                });
+
+                await _context.SaveChangesAsync();
+
+                TempData["MessageType"] = (int)enmMessageType.Success;
+                TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
+            }
+                return RedirectToAction("PaymentRequest");
+
+        }
+
+        #endregion
+
+
+        #region Credit Approval
+
+        public IActionResult CreditApproval()
+        {
+            dynamic messagetype = TempData["MessageType"];
+            mdlPaymentRequest mdl = new mdlPaymentRequest();
+            if (messagetype != null)
+            {
+                ViewBag.SaveStatus = (int)messagetype;
+                ViewBag.Message = TempData["Message"];
+            }
+            mdl.PaymentRequestList = GetPaymentRequest(_context, 0, 0);
+            return View(mdl);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreditApprovalAsync(mdlPaymentRequest mdl, [FromServices] ICustomerWallet customerWallet)
+        {
+            List<int> creditpending_checkedlist = mdl.PaymentRequestList.Where(p => p.paymentrequestid).Select(p => p.Id).ToList();
+            var TobeUpdated = _context.tblPaymentRequest.Where(p => creditpending_checkedlist.Contains(p.Id) && p.Status == enmApprovalStatus.Pending).ToList();
+
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                 TobeUpdated.ForEach(p =>
+            {
+                p.Status = mdl.Status;
+                p.ModifiedDt = DateTime.Now;
+                p.ModifiedBy = _userid;
+                p.ModifiedRemarks = mdl.Remarks;
+                if (mdl.Status == enmApprovalStatus.Approved)
+                {
+                    customerWallet.AddBalenceAsync(DateTime.Now, p.RequestedAmt, enmTransactionType.OnCreditUpdate, p.CreatedRemarks, mdl.Remarks);
+                }
+            });
+                    await _context.SaveChangesAsync();
+                    transaction.Commit();
+
+                }
+                catch
+                {
+                    transaction.Rollback();
+                }
+            }
+            mdl.PaymentRequestList = GetPaymentRequest(_context, 0, 0);
+            return View(mdl);
+        }
+
+        #endregion
+
+
+        public List<mdlPaymentRequestWraper> GetPaymentRequest(DBContext context, enmApprovalStatus status, int customerid)
+        {
+            return context.tblPaymentRequest.Where(p => p.Status == status).Select(p=>new mdlPaymentRequestWraper { Id= p.Id, CreatedDt=p.CreatedDt, CustomerId=p.CustomerId, RequestedAmt =p.RequestedAmt , CreatedRemarks=p.CreatedRemarks,CustomerName=p.tblCustomerMaster.CustomerName,Code=p.tblCustomerMaster.Code ,RequestType=p.RequestType }).ToList();
+        }
 
         public List<tblCustomerMaster> GetCustomerMaster(DBContext context, bool OnlyActive, int customerid)
         {
@@ -679,13 +845,13 @@ namespace B2bApplication.Controllers
         //
         public List<tblCustomerIPFilter> GetCustomerIPFilterList(DBContext context, bool OnlyActive, int customerid)
         {
-            return context.tblCustomerIPFilter.Where(p => p.CustomerId == customerid).ToList();
+            return context.tblCustomerIPFilter.Where(p => p.CustomerId == customerid && !p.IsDeleted).Include(p => p.tblCustomerIPFilterDetails).ToList();
         }
 
         // need to join with ipfilter detail table
         public tblCustomerIPFilter GetIPFilterData(DBContext context, int ipfilterid)
         {
-            return context.tblCustomerIPFilter.Where(p => p.Id == ipfilterid).FirstOrDefault();
+            return context.tblCustomerIPFilter.Where(p => p.Id == ipfilterid && !p.IsDeleted).Include(p => p.tblCustomerIPFilterDetails).FirstOrDefault();
         }
 
         public List<tblCustomerMarkup> GetCustomerMarkUpList(DBContext context, int customerid)
@@ -711,6 +877,29 @@ namespace B2bApplication.Controllers
         {
             return context.tblCustomerMaster.Where(p => p.Id == customerid).FirstOrDefault();
         }
+
+
+        #region ********************* Customer Flight Booking Report *****************************
+        [Authorize]
+        [HttpGet]
+        public IActionResult FlightBookingReport()
+        {
+            mdlFlightBookingReport mdl = new mdlFlightBookingReport();
+            return View(mdl);
+        }
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult FlightBookingReport(mdlFlightBookingReport mdl,[FromServices]IBooking _booking)
+        {
+            if (ModelState.IsValid)
+            {
+                mdl.loadBookingData(_booking,_customerId);
+            }
+            return View(mdl);
+        }
+
+        #endregion
 
     }
 }

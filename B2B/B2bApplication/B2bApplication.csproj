@@ -15,4 +15,9 @@
     <ProjectReference Include="..\B2BClasses\B2BClasses.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Upload\" />
+    <Folder Include="wwwroot\Upload\PaymentRequestFile\" />
+  </ItemGroup>
+
 </Project>

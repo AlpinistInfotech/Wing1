@@ -64,9 +64,18 @@ namespace B2BClasses.Services.Air
                 mdl.Code = 1;
                 //get the response stream
                 WebResponse response = webEx.Response;
-                Stream stream = response.GetResponseStream();
-                String responseMessage = new StreamReader(stream).ReadToEnd();
-                mdl.Message = responseMessage;
+                if (response == null)
+                {
+                    mdl.Message = "No Response from server";
+                }
+                else
+                {
+                    Stream stream = response.GetResponseStream();
+                    String responseMessage = new StreamReader(stream).ReadToEnd();
+                    mdl.Message = responseMessage;
+                }
+                
+                
             }
             catch (Exception ex)
             {
@@ -111,9 +120,17 @@ namespace B2BClasses.Services.Air
                 mdl.Code = 1;
                 //get the response stream
                 WebResponse response = webEx.Response;
-                Stream stream = response.GetResponseStream();
-                String responseMessage = new StreamReader(stream).ReadToEnd();
-                mdl.Message = responseMessage;
+                if (response != null)
+                {
+                    Stream stream = response.GetResponseStream();
+                    String responseMessage = new StreamReader(stream).ReadToEnd();
+                    mdl.Message = responseMessage;
+                }
+                else
+                {
+                    mdl.Message = "Invalid Connection";
+                }
+                
             }
             catch (Exception ex)
             {

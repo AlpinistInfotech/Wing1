@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace B2bApplication.Models
 {
+
     public class mdlFlightReview
     {
         public mdlFareQuotRequest FareQuoteRequest { get; set; }
@@ -25,7 +26,9 @@ namespace B2bApplication.Models
         public mdlFareQuoteCondition FareQuoteCondition{ get; set; }
 
         
+        [DataType( DataType.EmailAddress) ]
         public string emails { get; set; }
+        [DataType(DataType.PhoneNumber)]
         public string contacts { get; set; }
 
         public int AdultCount { get; set; }
@@ -46,14 +49,15 @@ namespace B2bApplication.Models
         public double OtherCharge { get; set; }        
         public double NetFare { get; set; }
         public double Convenience { get; set; }
+        public double TotalOtherCharge { get; set; }
 
 
 
         public void SetFareAmount()
         {
-            AdultTotalBaseFare = FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.FareComponent?.NewTotalFare ?? 0).Sum();
-            ChildTotalBaseFare = FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.FareComponent?.NewTotalFare ?? 0).Sum();
-            InfantTotalBaseFare = FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.INFANT?.FareComponent?.NewTotalFare ?? 0).Sum();
+            AdultTotalBaseFare = FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.FareComponent?.BaseFare ?? 0).Sum();
+            ChildTotalBaseFare = FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.FareComponent?.BaseFare ?? 0).Sum();
+            InfantTotalBaseFare = FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.INFANT?.FareComponent?.BaseFare ?? 0).Sum();
             if (AdultCount > 0)
             {
                 AdultBaseFare = AdultTotalBaseFare ;
@@ -69,12 +73,13 @@ namespace B2bApplication.Models
                 InfantBaseFare = InfantTotalBaseFare ;
                 InfantTotalBaseFare = InfantBaseFare * InfantBaseFare;
             }
-            TotalBaseFare = FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.BaseFare??0).Sum();            
+            TotalBaseFare = AdultTotalBaseFare+ ChildTotalBaseFare+ InfantTotalBaseFare;
             TotalFare = FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.TotalPrice?? 0).Sum();
             FeeSurcharge = TotalFare - TotalBaseFare;
             OtherCharge = 0;
             Convenience= FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.Convenience ?? 0).Sum();
-            NetFare = OtherCharge + FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.NetPrice ?? 0).Sum();
+            TotalOtherCharge = OtherCharge + Convenience;
+            NetFare = TotalOtherCharge + TotalFare;
         }
 
         public void SetFareQuoteCondtion()
@@ -152,6 +157,59 @@ namespace B2bApplication.Models
             SetFareQuoteCondtion();
             SetFareAmount();
         }
+
+        public async Task LoadFareQuotationAsync(int CustomerId, IBooking _booking, IMarkup _markup)
+        {
+            _booking.CustomerId = CustomerId;
+            this.FareQuotResponse = new List<mdlFareQuotResponse>();
+            this.FareRule = new List<mdlFareRuleResponse>();
+            this.FareQuotResponse.AddRange(await _booking.FareQuoteAsync(FareQuoteRequest));
+            foreach (var md in FareQuotResponse)
+            {
+                _markup.CustomerId = CustomerId;
+                _markup.CustomerMarkup(md.Results);
+                _markup.WingMarkupAmount(md.Results, md.SearchQuery.AdultCount, md.SearchQuery.ChildCount, md.SearchQuery.InfantCount);
+                if (this.travellerInfo == null)
+                {
+                    this.travellerInfo = new List<mdlTravellerinfo>();
+                    for (int i = 0; i < md.SearchQuery.AdultCount; i++)
+                    {
+                        this.travellerInfo.Add(new mdlTravellerinfo()
+                        {
+                            Title = "MR",
+                            passengerType = enmPassengerType.Adult,
+                            FirstName = string.Empty,
+                            LastName = string.Empty,
+                        });
+                    }
+                    for (int i = 0; i < md.SearchQuery.ChildCount; i++)
+                    {
+                        this.travellerInfo.Add(new mdlTravellerinfo()
+                        {
+                            Title = "MASTER",
+                            passengerType = enmPassengerType.Child,
+                            FirstName = string.Empty,
+                            LastName = string.Empty,
+                        });
+                    }
+                    for (int i = 0; i < md.SearchQuery.InfantCount; i++)
+                    {
+                        this.travellerInfo.Add(new mdlTravellerinfo()
+                        {
+                            Title = "MASTER",
+                            passengerType = enmPassengerType.Infant,
+                            FirstName = string.Empty,
+                            LastName = string.Empty,
+                        });
+                    }
+
+                }
+                _markup.WingConvenienceAmount(md, this.travellerInfo);
+                _markup.CalculateTotalPriceAfterMarkup(md.Results, md.SearchQuery.AdultCount, md.SearchQuery.ChildCount, md.SearchQuery.InfantCount);
+            }
+            
+        }
+
     }
 
     public class mdlFlighBook
