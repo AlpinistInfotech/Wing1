@@ -453,26 +453,31 @@ namespace B2bApplication.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> CustomerWalletAsync(mdlCustomerWallet mdl)
+        public async Task<IActionResult> CustomerWalletAsync(mdlCustomerWallet mdl, [FromServices] ICustomerWallet customerWallet)
         {
             {
-                _context.tblWalletDetailLedger.Add(new tblWalletDetailLedger
-                {
-                    CustomerId = Convert.ToInt32(mdl.CustomerID),
-                    Credit = mdl.creditDebit == 0 ? mdl.WalletAmt : 0,
-                    Debit = mdl.creditDebit == 0 ? 0 : mdl.WalletAmt,
-                    Remarks = mdl.Remarks,
-                    TransactionDetails = mdl.TransactionDetails,
-                    TransactionDt = mdl.TransactionDate
-                });
+                //_context.tblWalletDetailLedger.Add(new tblWalletDetailLedger
+                //{
+                //    CustomerId = Convert.ToInt32(mdl.CustomerID),
+                //    Credit = mdl.creditDebit == 0 ? mdl.WalletAmt : 0,
+                //    Debit = mdl.creditDebit == 0 ? 0 : mdl.WalletAmt,
+                //    Remarks = mdl.Remarks,
+                //    TransactionDetails = mdl.TransactionDetails,
+                //    TransactionDt = mdl.TransactionDate,
+                //    RequestedId=0
+                //});
 
-                var ExistingData = _context.tblCustomerMaster.FirstOrDefault(p => p.Id == Convert.ToInt32(mdl.CustomerID));
-                {
-                    ExistingData.WalletBalence = mdl.creditDebit == 0 ? mdl.WalletAmt : 0 - mdl.WalletAmt;
-                    _context.tblCustomerMaster.Update(ExistingData);
-                }
+                //var ExistingData = _context.tblCustomerMaster.FirstOrDefault(p => p.Id == Convert.ToInt32(mdl.CustomerID));
+                //{
+                //    ExistingData.WalletBalence = mdl.creditDebit == 0 ? mdl.WalletAmt : 0 - mdl.WalletAmt;
+                //    _context.tblCustomerMaster.Update(ExistingData);
+                //}
 
-                await _context.SaveChangesAsync();
+                //await _context.SaveChangesAsync();
+                if (mdl.creditDebit == 0)
+                await  customerWallet.AddBalenceAsync(DateTime.Now, mdl.WalletAmt, enmTransactionType.WalletAmountUpdate, mdl.TransactionDetails, mdl.Remarks, 0);
+                else
+                await customerWallet.DeductBalenceAsync(DateTime.Now, mdl.WalletAmt, enmTransactionType.WalletAmountUpdate, mdl.TransactionDetails, mdl.Remarks, 0);
 
                 TempData["MessageType"] = (int)enmMessageType.Success;
                 TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
@@ -785,7 +790,7 @@ namespace B2bApplication.Controllers
                 p.ModifiedRemarks = mdl.Remarks;
                 if (mdl.Status == enmApprovalStatus.Approved)
                 {
-                    customerWallet.AddBalenceAsync(DateTime.Now, p.RequestedAmt, enmTransactionType.OnCreditUpdate, p.CreatedRemarks, mdl.Remarks);
+                    customerWallet.AddBalenceAsync(DateTime.Now, p.RequestedAmt, enmTransactionType.OnCreditUpdate, p.CreatedRemarks, mdl.Remarks,p.Id);
                 }
             });
                     await _context.SaveChangesAsync();
@@ -806,7 +811,9 @@ namespace B2bApplication.Controllers
 
         public List<mdlPaymentRequestWraper> GetPaymentRequest(DBContext context, enmApprovalStatus status, int customerid)
         {
-            return context.tblPaymentRequest.Where(p => p.Status == status).Select(p=>new mdlPaymentRequestWraper { Id= p.Id, CreatedDt=p.CreatedDt, CustomerId=p.CustomerId, RequestedAmt =p.RequestedAmt , CreatedRemarks=p.CreatedRemarks,CustomerName=p.tblCustomerMaster.CustomerName,Code=p.tblCustomerMaster.Code ,RequestType=p.RequestType }).ToList();
+            string filePath ="wwwroot/"+ _config["FileUpload:PaymentRequestFilePath"];
+                        
+            return context.tblPaymentRequest.Where(p => p.Status == status).Select(p=>new mdlPaymentRequestWraper { Id= p.Id, CreatedDt=p.CreatedDt, CustomerId=p.CustomerId, RequestedAmt =p.RequestedAmt , CreatedRemarks=p.CreatedRemarks,CustomerName=p.tblCustomerMaster.CustomerName,Code=p.tblCustomerMaster.Code ,RequestType=p.RequestType,UploadImages= filePath+"/"+ p.UploadImages }).ToList();
         }
 
         public List<tblCustomerMaster> GetCustomerMaster(DBContext context, bool OnlyActive, int customerid)

@@ -15,8 +15,8 @@ namespace B2BClasses
     {
         int CustomerId { get; set; }
 
-        Task AddBalenceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "");
-        Task DeductBalenceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "");
+        Task AddBalenceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "",int requestid=0);
+        Task DeductBalenceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "", int requestid = 0);
         Task<double> GetBalenceAsync();
     }
 
@@ -64,7 +64,7 @@ namespace B2BClasses
             return GetCustomerBalanceAmt(CustomerBalance);
         }
 
-        public async Task DeductBalenceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "")
+        public async Task DeductBalenceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "",int requestid = 0)
         {
             bool CustomerFound = false;
             List<int> UnlimitedWalletBalance = GetFixWalletBalanceCustomer();
@@ -95,6 +95,7 @@ namespace B2BClasses
                     Remarks = Remarks,
                     TransactionDetails = TransactionDetails,
                     TransactionType = TransactionType,
+                    RequestedId=requestid,
                 });
                 if (!CustomerFound)
                 {
@@ -110,7 +111,7 @@ namespace B2BClasses
         }
 
 
-        public async Task AddBalenceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "")
+        public async Task AddBalenceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "", int requestid = 0)
         {
             bool CustomerFound = false;
             List<int> UnlimitedWalletBalance = GetFixWalletBalanceCustomer();
@@ -134,6 +135,7 @@ namespace B2BClasses
                     Remarks = Remarks,
                     TransactionDetails = TransactionDetails,
                     TransactionType = TransactionType,
+                    RequestedId=requestid,
                 });
                 if (!CustomerFound)
                 {
