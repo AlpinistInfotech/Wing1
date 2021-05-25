@@ -209,7 +209,7 @@ namespace B2bApplication.Models
         [Display(Name = "Request Type")]
         public enmRequestType RequestType { set; get; }
 
-        [Required]
+
         [Display(Name = "Upload Document")]
         public List<IFormFile> UploadImages { set; get; }
         public List<mdlPaymentRequestWraper> PaymentRequestList { get; set; }

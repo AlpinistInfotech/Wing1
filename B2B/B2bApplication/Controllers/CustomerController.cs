@@ -713,7 +713,7 @@ namespace B2bApplication.Controllers
                 if (mdl.UploadImages == null || mdl.UploadImages.Count == 0 || mdl.UploadImages[0] == null || mdl.UploadImages[0].Length == 0)
                 {
  
-                    TempData["MessageType"] = enmSaveStatus.danger;
+                    TempData["MessageType"] = (int)enmSaveStatus.danger;
                     TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidDocument);
                     return RedirectToAction("PaymentRequest");
                 }
@@ -726,7 +726,7 @@ namespace B2bApplication.Controllers
 
                 foreach (var file in mdl.UploadImages)
                 {
-                    var filename = Guid.NewGuid().ToString() + ".jpeg";
+                    var filename = Guid.NewGuid().ToString() + System.IO.Path.GetExtension(file.FileName) ;
                     using (var stream = new FileStream(string.Concat(path, filename), FileMode.Create))
                     {
                         AllFileName.Add(filename);

@@ -309,7 +309,7 @@ namespace WingGateway.Controllers
                 ModelState.AddModelError("IDDocumentUpload", "Invalid Files");
                 ViewBag.SaveStatus = enmSaveStatus.danger;
                 ViewBag.Message = enmMessage.InvalidData.GetDescription();
-            }            
+            } 
             if (ModelState.IsValid)
             {
                 List<string> AllFileName = new List<string>();
