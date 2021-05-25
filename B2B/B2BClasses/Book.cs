@@ -11,8 +11,6 @@ using System.Threading.Tasks;
 
 namespace B2BClasses
 {
-   
-    
     
     public interface IBooking
     {
