@@ -594,10 +594,10 @@ namespace B2bApplication.Controllers
             return View(mdl);
         }
 
-     
+
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> CustomerIPFilterAsync(mdlCustomerIPFilter mdl,string submittype)
+        public async Task<IActionResult> CustomerIPFilterAsync(mdlCustomerIPFilter mdl, string submittype)
         {
             if (ModelState.IsValid)
             {
@@ -609,6 +609,7 @@ namespace B2bApplication.Controllers
                 }
                 else
                 {
+                    if (submittype == "deleteData")
                     {
                         var ExistingData_ipfilter = _context.tblCustomerIPFilter.FirstOrDefault(p => p.Id == mdl.IPFilterId);
                         if (ExistingData_ipfilter != null)
@@ -623,47 +624,74 @@ namespace B2bApplication.Controllers
                             TempData["Message"] = _setting.GetErrorMessage(enmMessage.DeleteSuccessfully);
                             return RedirectToAction("CustomerIPFilter");
                         }
-                        else // save button call
-                        {
-
-                            if (mdl.allipapplicable == false && mdl.IPAddess.Trim().Length == 0)
-                            {
-                                TempData["MessageType"] = (int)enmMessageType.Warning;
-                                TempData["Message"] = "Please enter IP Address";
-                                return RedirectToAction("CustomerIPFilter");
-                            }
-
-
-                            var ExistingData_check = _context.tblCustomerIPFilter.FirstOrDefault(p => p.CustomerId == mdl.CustomerID);
-                            if (ExistingData_check != null)
-                            {
-                                ExistingData_check.IsDeleted = true;
-                                ExistingData_check.ModifiedDt = DateTime.Now;
-                                ExistingData_check.ModifiedBy = _userid;
-                                _context.tblCustomerIPFilter.Update(ExistingData_check);
-                            }
-
-                            tblCustomerIPFilter ipfilter_ = new tblCustomerIPFilter()
-                            {
-                                CustomerId = mdl.CustomerID,
-                                AllowedAllIp = mdl.allipapplicable,
-                                CreatedBy = _userid,
-                                CreatedDt = DateTime.Now,
-                                tblCustomerIPFilterDetails = mdl.IPAddess.Split(",").Select(p => new tblCustomerIPFilterDetails { IPAddress = p }).ToList() };
-                                 _context.tblCustomerIPFilter.Add(ipfilter_);
-                            }
-
-                        await _context.SaveChangesAsync();
-
-                        TempData["MessageType"] = (int)enmMessageType.Success;
-                        TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
-
-                        return RedirectToAction("CustomerIPFilter");
                     }
+                    else // save button call
+                    {
+                        if (mdl.allipapplicable == false && mdl.IPAddess.Trim().Length == 0)
+                        {
+                            TempData["MessageType"] = (int)enmMessageType.Warning;
+                            TempData["Message"] = "Please enter IP Address";
+                            return RedirectToAction("CustomerIPFilter");
+                        }
 
-                            
+                        var TobeUpdated = _context.tblCustomerIPFilter.Where(p => p.CustomerId == mdl.CustomerID).ToList();
+
+                        using (var transaction = _context.Database.BeginTransaction())
+                        {
+                            try
+                            {
+                                TobeUpdated.ForEach(p =>
+                                {
+                                    p.IsDeleted = true;
+                                    p.ModifiedDt = DateTime.Now;
+                                    p.ModifiedBy = _userid;
+                                });
+
+                                if (mdl.allipapplicable == false)
+                                {
+                                    tblCustomerIPFilter ipfilter_ = new tblCustomerIPFilter()
+                                    {
+                                        CustomerId = mdl.CustomerID,
+                                        AllowedAllIp = mdl.allipapplicable,
+                                        CreatedBy = _userid,
+                                        CreatedDt = DateTime.Now,
+                                        tblCustomerIPFilterDetails = mdl.IPAddess.Split(",").Select(p => new tblCustomerIPFilterDetails { IPAddress = p }).ToList()
+                                    };
+                                    _context.tblCustomerIPFilter.Add(ipfilter_);
+                                }
+
+                                else
+                                {
+                                    tblCustomerIPFilter ipfilter_ = new tblCustomerIPFilter()
+                                    {
+                                        CustomerId = mdl.CustomerID,
+                                        AllowedAllIp = mdl.allipapplicable,
+                                        CreatedBy = _userid,
+                                        CreatedDt = DateTime.Now
+                                    };
+                                    _context.tblCustomerIPFilter.Add(ipfilter_);
+
+                                }
+
+
+                                await _context.SaveChangesAsync();
+                                transaction.Commit();
+                            }
+                            catch
+                            {
+                                transaction.Rollback();
+                            }
                         }
                     }
+
+
+                    TempData["MessageType"] = (int)enmMessageType.Success;
+                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
+
+                    return RedirectToAction("CustomerIPFilter");
+                }
+            }
+
 
             return View(mdl);
         }
@@ -710,29 +738,29 @@ namespace B2bApplication.Controllers
                 var path = Path.Combine(
                          Directory.GetCurrentDirectory(),
                          "wwwroot/" + filePath);
-                if (mdl.UploadImages == null || mdl.UploadImages.Count == 0 || mdl.UploadImages[0] == null || mdl.UploadImages[0].Length == 0)
-                {
+                //if (mdl.UploadImages == null || mdl.UploadImages.Count == 0 || mdl.UploadImages[0] == null || mdl.UploadImages[0].Length == 0)
+                //{
  
-                    TempData["MessageType"] = (int)enmSaveStatus.danger;
-                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidDocument);
-                    return RedirectToAction("PaymentRequest");
-                }
+                //    TempData["MessageType"] = (int)enmSaveStatus.danger;
+                //    TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidDocument);
+                //    return RedirectToAction("PaymentRequest");
+                //}
 
-                List<string> AllFileName = new List<string>();
+                //List<string> AllFileName = new List<string>();
 
-                bool exists = System.IO.Directory.Exists(path);
-                if (!exists)
-                    System.IO.Directory.CreateDirectory(path);
+                //bool exists = System.IO.Directory.Exists(path);
+                //if (!exists)
+                //    System.IO.Directory.CreateDirectory(path);
 
-                foreach (var file in mdl.UploadImages)
-                {
-                    var filename = Guid.NewGuid().ToString() + System.IO.Path.GetExtension(file.FileName) ;
-                    using (var stream = new FileStream(string.Concat(path, filename), FileMode.Create))
-                    {
-                        AllFileName.Add(filename);
-                        await file.CopyToAsync(stream);
-                    }
-                }
+                //foreach (var file in mdl.UploadImages)
+                //{
+                //    var filename = Guid.NewGuid().ToString() + System.IO.Path.GetExtension(file.FileName) ;
+                //    using (var stream = new FileStream(string.Concat(path, filename), FileMode.Create))
+                //    {
+                //        AllFileName.Add(filename);
+                //        await file.CopyToAsync(stream);
+                //    }
+                //}
 
                 _context.tblPaymentRequest.Add(new tblPaymentRequest
                 {
@@ -742,7 +770,7 @@ namespace B2bApplication.Controllers
                     RequestType=mdl.RequestType,
                     CreatedBy = _userid,
                     CreatedDt = DateTime.Now,
-                    UploadImages = string.Join<string>(",", AllFileName)
+                    UploadImages = ""//string.Join<string>(",", AllFileName)
                 });
 
                 await _context.SaveChangesAsync();
@@ -790,15 +818,22 @@ namespace B2bApplication.Controllers
                 p.ModifiedRemarks = mdl.Remarks;
                 if (mdl.Status == enmApprovalStatus.Approved)
                 {
+                    customerWallet.CustomerId = (int)p.CustomerId;
                     customerWallet.AddBalenceAsync(DateTime.Now, p.RequestedAmt, enmTransactionType.OnCreditUpdate, p.CreatedRemarks, mdl.Remarks,p.Id);
                 }
             });
+                    TempData["MessageType"] = (int)enmMessageType.Success;
+                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
+
                     await _context.SaveChangesAsync();
                     transaction.Commit();
 
                 }
                 catch
                 {
+                    TempData["MessageType"] = (int)enmMessageType.Error;
+                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidData);
+
                     transaction.Rollback();
                 }
             }

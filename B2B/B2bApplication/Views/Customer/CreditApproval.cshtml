@@ -56,9 +56,9 @@
                             </div>
 
                         </div>
-                        </div>
+                    </div>
 
-            </div>
+                </div>
 
                 <div class="row">
                     <div class="col-xs-12">
@@ -94,45 +94,58 @@
                                     @*@foreach (var md in Model.PaymentRequestList)*@
                                     @for (int i = 0; i < @Model.PaymentRequestList.Count; i++)
                                     {
-                                    <tr>
-                                        <td class="center">
-                                            <label class="pos-rel">
-                                                <input type="checkbox" class="ace" asp-for="@Model.PaymentRequestList[i].paymentrequestid" />
-                                                <span class="lbl"></span>
-                                            </label>
-                                        </td>
-                                        <td>
-                                            @Model.PaymentRequestList[i].RequestType
-                                        </td>
-                                        <td>
-                                            @Model.PaymentRequestList[i].CustomerName -  @Model.PaymentRequestList[i].Code
-                                            <input type="hidden" asp-for="@Model.PaymentRequestList[i].Id" />
+                                        <tr>
+                                            <td class="center">
+                                                <label class="pos-rel">
+                                                    <input type="checkbox" class="ace" asp-for="@Model.PaymentRequestList[i].paymentrequestid" />
+                                                    <span class="lbl"></span>
+                                                </label>
+                                            </td>
+                                            <td>
+                                                @Model.PaymentRequestList[i].RequestType
+                                            </td>
+                                            <td>
+                                                @Model.PaymentRequestList[i].CustomerName -  @Model.PaymentRequestList[i].Code
+                                                <input type="hidden" asp-for="@Model.PaymentRequestList[i].Id" />
 
-                                        </td>
-                                        <td>
-                                            @Model.PaymentRequestList[i].RequestedAmt
-                                        </td>
+                                            </td>
+                                            <td>
+                                                @Model.PaymentRequestList[i].RequestedAmt
+                                            </td>
 
-                                        <td>
-                                            @Model.PaymentRequestList[i].CreatedDt.ToString("dd-MMM-yyyy hh:mm tt")
-                                        </td>
+                                            <td>
+                                                @Model.PaymentRequestList[i].CreatedDt.ToString("dd-MMM-yyyy hh:mm tt")
+                                            </td>
 
-                                        <td>
-                                            @Model.PaymentRequestList[i].CreatedRemarks
-                                        </td>
+                                            <td>
+                                                @Model.PaymentRequestList[i].CreatedRemarks
+                                            </td>
 
-                                        <td>
-                                          <a href="@Model.PaymentRequestList[i].UploadImages">View Document</a>  
-                                        </td>
+                                            <td>
+                                                <a href="@Model.PaymentRequestList[i].UploadImages">View Document</a>
+                                            </td>
 
-                                    </tr>
+                                        </tr>
                                     }
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
+                @if (Model.fileData != null)
+                {
 
+                    foreach (var fileD in Model.fileData)
+
+                    {
+                        if (fileD != null)
+                        {
+                            <div class="form-group col-md-4">
+                                <img src="@string.Format("data:image/png;base64,{0}", Convert.ToBase64String(fileD))" height="300px" width="100%" />
+                            </div>
+                        }
+                    }
+                }
         </form>
     </div>
 </div>
@@ -141,7 +154,7 @@
 
 @section Scripts {
 
-    
-    @await Html.PartialAsync("_dateTableScriptPartial",5)
+
+    @await Html.PartialAsync("_dateTableScriptPartial", 5)
 
 }

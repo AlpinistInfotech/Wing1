@@ -4,14 +4,16 @@ using Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Database.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20210526173357_alter_table_tbl_salesumary")]
+    partial class alter_table_tbl_salesumary
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -463,9 +465,6 @@ namespace Database.Migrations
                     b.Property<byte>("is_active")
                         .HasColumnType("tinyint");
 
-                    b.Property<int?>("tblRegistrationSponsorNid")
-                        .HasColumnType("int");
-
                     b.HasKey("Nid");
 
                     b.HasIndex("Id");
@@ -473,8 +472,6 @@ namespace Database.Migrations
                     b.HasIndex("JoiningState");
 
                     b.HasIndex("SpNid");
-
-                    b.HasIndex("tblRegistrationSponsorNid");
 
                     b.ToTable("tblRegistration");
                 });
@@ -1411,7 +1408,7 @@ namespace Database.Migrations
 
                     b.HasOne("Database.tblRegistration", "tblRegistrationSponsor")
                         .WithMany()
-                        .HasForeignKey("tblRegistrationSponsorNid");
+                        .HasForeignKey("SpNid");
 
                     b.Navigation("tblRegistrationSponsor");
 

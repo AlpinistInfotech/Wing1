@@ -162,7 +162,7 @@ namespace B2bApplication.Models
         public bool allipapplicable { set; get; }
 
         [Display(Name = "IP Address")]
-        public string IPAddess { set; get; }
+        public string IPAddess { set; get; } = "";
 
         public int IPFilterId { set; get; }
 
@@ -195,7 +195,7 @@ namespace B2bApplication.Models
         public int CustomerID { set; get; }
 
         [Required]
-        [Range(1,1000000) ]
+        [Range(0,1000000) ]
         [Display(Name = "Requested Amount")]
         public double CreditAmt { set; get; }
 
@@ -208,7 +208,6 @@ namespace B2bApplication.Models
 
         [Display(Name = "Request Type")]
         public enmRequestType RequestType { set; get; }
-
 
         [Display(Name = "Upload Document")]
         public List<IFormFile> UploadImages { set; get; }

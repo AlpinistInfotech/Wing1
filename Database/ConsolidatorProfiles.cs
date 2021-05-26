@@ -28,7 +28,7 @@ namespace Database
         [ForeignKey("tblStateMaster")]
         public int? JoiningState { get; set; }
         public tblStateMaster tblStateMaster { get; set; }
-        [ForeignKey("tblRegistrationSponsor")]
+        //[ForeignKey("tblRegistrationSponsor")]
         public int? SpNid { get; set; }
         public tblRegistration tblRegistrationSponsor { get; set; }
         public string SpId { get; set; }
@@ -468,7 +468,6 @@ namespace Database
         public tblRegistration tblRegistration { get; set; }
         public int monthyear { get; set; }
 
-        [ForeignKey("tblRegistration")]
         public int? TcSpNid { get; set; }
         public tblRegistration tblRegistrationSp { get; set; }
         public enmMemberRank TcNidlevelid { get; set; }
