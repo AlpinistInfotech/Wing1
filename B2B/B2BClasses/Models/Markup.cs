@@ -34,7 +34,10 @@ namespace B2BClasses.Models
         public enmGender Gender { get; set; } = enmGender.Male | enmGender.Female | enmGender.Other;
         [Display(Name = "Amount")]
         public double Amount { get; set; } = 0;
-        
+
+        [Display(Name = "Before Day Count")]
+        public int DayCount { get; set; } = 0;
+
         [Display(Name = "From Date")]
         public DateTime EffectiveFromDt { get; set; } = DateTime.Now;
 
