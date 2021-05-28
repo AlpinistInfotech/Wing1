@@ -17,9 +17,15 @@ namespace B2BClasses.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            DefaultData defaultData = new DefaultData(modelBuilder);
+            modelBuilder.Entity<tblCountryMaster>().HasIndex(c => new { c.CountryName }).IsUnique();
+            modelBuilder.Entity<tblStateMaster>().HasIndex(c => new { c.CountryId, c.StateName }).IsUnique();
+            modelBuilder.Entity<tblStateMaster>().Property(o => o.longitude).HasColumnType("decimal(18,14)");
+            modelBuilder.Entity<tblStateMaster>().Property(o => o.latitude).HasColumnType("decimal(18,14)");
+            modelBuilder.Entity<tblPaymentRequest>().Property(p => p.Status).IsConcurrencyToken();
 
-            modelBuilder.Entity<tblCustomerMaster>(entity =>entity.HasCheckConstraint("CK_tblCustomerMaster_WalletBalence", "WalletBalence >= 0"));
+            DefaultData defaultData = new DefaultData(modelBuilder);
+            modelBuilder.Entity<tblCustomerBalence>(entity =>entity.HasCheckConstraint("CK_tblCustomerMaster_WalletBalence", "WalletBalence >= 0"));
+            modelBuilder.Entity<tblCustomerBalence>(entity => entity.HasCheckConstraint("CK_tblCustomerMaster_CreditBalence", "CreditBalence >= 0"));
 
             defaultData.InsertCustomerMaster();
             defaultData.InsertUser();
@@ -83,17 +89,23 @@ namespace B2BClasses.Database
         #endregion
 
         #region ******************* Customer Master ***************************
+
+        public DbSet<tblCountryMaster> tblCountryMaster { get; set; }
+        public DbSet<tblStateMaster> tblStateMaster { get; set; }
         public DbSet<tblCustomerMaster> tblCustomerMaster { get; set; }
+        public DbSet<tblCustomerBalence> tblCustomerBalence { get; set; }
+        public DbSet<tblCustomerGSTDetails> tblCustomerGSTDetails { get; set; }
         public DbSet<tblUserMaster> tblUserMaster { get; set; }
+        public DbSet<tblRoleMaster> tblRoleMaster { get; set; }
         public DbSet<tblUserRole> tblUserRole { get; set; }
+        public DbSet<tblRoleClaim> tblRoleClaim { get; set; }
         public DbSet<tblCustomerIPFilter> tblCustomerIPFilter { get; set; }
         public DbSet<tblCustomerIPFilterDetails> tblCustomerIPFilterDetails { get; set; }
         public DbSet<tblWalletDetailLedger> tblWalletDetailLedger { get; set; }
-        public DbSet<tblWalletDetailLedgerLog> tblWalletDetailLedgerLog { get; set; }
+        
         public DbSet<tblWalletBalanceAlert> tblWalletBalanceAlert { get; set; }
         public DbSet<tblCustomerMarkup> tblCustomerMarkup { get; set; }
-        //public DbSet<tblCreditRequest> tblCreditRequest { get; set; }
-
+        public DbSet<tblCustomerMarkupLog> tblCustomerMarkupLog { get; set; }
         public DbSet<tblPaymentRequest> tblPaymentRequest { get; set; }
         #endregion
 

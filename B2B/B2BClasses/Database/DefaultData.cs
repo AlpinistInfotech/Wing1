@@ -28,8 +28,8 @@ namespace B2BClasses.Database
                 Address = "New Delhi",
                 ContactNo = "9873404402",
                 AlternateNo = "9873404402",
-                WalletBalence = 0,
-                CreditBalence = 0,
+                //WalletBalence = 0,
+                //CreditBalence = 0,
                 CustomerType = Services.Enums.enmCustomerType.Admin,
                 IsActive = true,
                 CreatedBy = 1,
@@ -66,24 +66,24 @@ namespace B2BClasses.Database
             _modelBuilder.Entity<tblUserMaster>().HasData(UserMaster);
 
             int index = 1;
-            var datas=Enum.GetValues(typeof(B2BClasses.Services.Enums.enmDocumentMaster));
-            List<tblUserRole> UserRoles = new List<tblUserRole>();
-            foreach (var d in datas)
-            {
-                UserRoles.Add(new tblUserRole()
-                {
-                    Id= index,
-                    Role= (B2BClasses.Services.Enums.enmDocumentMaster)d,
-                    UserId=1,
-                    CreatedBy=1,
-                    CreatedDt=_CurrentDt,
-                    IsDeleted=false,
-                    ModifiedBy= 1,
-                    ModifiedDt= _CurrentDt,                    
-                });
-                index++;
-            }
-            _modelBuilder.Entity<tblUserRole>().HasData(UserRoles);
+            //var datas=Enum.GetValues(typeof(B2BClasses.Services.Enums.enmDocumentMaster));
+            //List<tblUserRole> UserRoles = new List<tblUserRole>();
+            //foreach (var d in datas)
+            //{
+            //    UserRoles.Add(new tblUserRole()
+            //    {
+            //        Id= index,
+            //        Role= d,
+            //        UserId=1,
+            //        CreatedBy=1,
+            //        CreatedDt=_CurrentDt,
+            //        IsDeleted=false,
+            //        ModifiedBy= 1,
+            //        ModifiedDt= _CurrentDt,                    
+            //    });
+            //    index++;
+            //}
+            //_modelBuilder.Entity<tblUserRole>().HasData(UserRoles);
         }
 
         public void InsertServiceProvider()

@@ -54,6 +54,8 @@ namespace B2bApplication
                      config.LoginPath = "/Account/Login";
                      config.ExpireTimeSpan = new TimeSpan(24, 0, 0);
                  });
+
+
             
 
             services.AddControllersWithViews();

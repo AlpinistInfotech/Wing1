@@ -150,8 +150,6 @@ namespace B2bApplication.Controllers
                         Email = mdl.Email,
                         CreatedBy = _userid,
                         CreatedDt = DateTime.Now,
-                        CreditBalence = 0,
-                        WalletBalence = 0,
                         IsActive = mdl.Status,
                     });
 
