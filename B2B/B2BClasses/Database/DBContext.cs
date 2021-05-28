@@ -88,6 +88,15 @@ namespace B2BClasses.Database
         public DbSet<tblWingDiscountPassengerType> tblWingDiscountPassengerType { get; set; }
         public DbSet<tblWingDiscountFlightClass> tblWingDiscountFlightClass { get; set; }
         public DbSet<tblWingDiscountAirline> tblWingDiscountAirline { get; set; }
+
+
+        public DbSet<tblWingCustomerFlightAPI> tblWingCustomerFlightAPI { get; set; }
+        public DbSet<tblWingCustomerFlightAPIServiceProvider> tblWingCustomerFlightAPIServiceProvider { get; set; }
+        public DbSet<tblWingCustomerFlightAPICustomerType> tblWingCustomerFlightAPICustomerType { get; set; }
+        public DbSet<tblWingCustomerFlightAPICustomerDetails> tblWingCustomerFlightAPICustomerDetails { get; set; }
+    
+        public DbSet<tblWingCustomerFlightAPIFlightClass> tblWingCustomerFlightAPIFlightClass { get; set; }
+        public DbSet<tblWingCustomerFlightAPIAirline> tblWingCustomerFlightAPIAirline { get; set; }
         #endregion
 
         #region ******************* Customer Master ***************************

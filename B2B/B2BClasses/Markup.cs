@@ -17,11 +17,13 @@ namespace B2BClasses
         DateTime EffectiveFromDt { get; set; }
         DateTime EffectiveToDt { get; set; }
         bool AddConvenience(mdlWingMarkup mdl, int UserId);
+        bool AddCustomerFlightAPI(mdlWingMarkup mdl, int UserId);
         bool AddDiscount(mdlWingMarkup mdl, int UserId);
         bool AddMarkup(mdlWingMarkup mdl, int UserId);
         bool CalculateTotalPriceAfterMarkup(List<List<mdlSearchResult>> mdls, int AdultCount, int ChildCount, int InfantCount);        
         void CustomerMarkup(List<List<mdlSearchResult>> mdl);
         List<mdlWingMarkup> LoadConvenience(int Id = 0, bool FromEffectiveDt = false, bool IsForCustomer = false);
+        List<mdlWingMarkup> LoadCustomerFlightAPI(int Id = 0, bool FromEffectiveDt = false, bool IsForCustomer = false);
         List<mdlWingMarkup> LoadDiscount(int Id = 0, bool FromEffectiveDt = false, bool IsForCustomer = false);
         List<mdlWingMarkup> LoadMarkup(int Id = 0, bool FromEffectiveDt = false, bool IsForCustomer = false);
         void LoadMarkupAirlineCode(List<mdlWingMarkup> _mdl);
@@ -31,6 +33,8 @@ namespace B2BClasses
 
         bool PassengerTypeDiscount(mdlWingMarkup mdlA, int AdultCount, int ChildCount, int InfantCount);
         bool RemoveDiscount(int Id, int UserId);
+
+        bool RemoveCustomerFlightAPI(int Id, int UserId);
         bool RemoveMarkup(int Id, int UserId);
         void WingConvenienceAmount(mdlFareQuotResponse mdl, List<mdlTravellerinfo> travellerInfo);
         void WingDiscountAmount(mdlFareQuotResponse mdl, List<mdlTravellerinfo> travellerInfo);
@@ -464,6 +468,130 @@ namespace B2BClasses
                     MarkupPassengerType = p.tblWingDiscountPassengerType.Select(p => p.PassengerType).ToList(),
                     MarkupCabinClass = p.tblWingDiscountFlightClass.Select(p => p.CabinClass).ToList(),
                     MarkupAirline = p.tblWingDiscountAirline.Select(p => p.AirlineId.Value).ToList()
+                }).ToList();
+            }
+
+            if (_mdl == null)
+            {
+                _mdl = new List<mdlWingMarkup>();
+            }
+            //var MarkupAirlineIds = _mdl.SelectMany(p => p.MarkupAirline).ToList();
+            //var AirlineDetails = _context.tblAirline.Where(p => MarkupAirlineIds.Contains(p.Id)).ToList();
+            //foreach (var md in _mdl)
+            //{
+            //    if (md.MarkupAirline == null)
+            //    {
+            //        md.MarkupAirline = new List<int>();
+            //        md.MarkupAirlineCode = new List<string>();
+            //        continue;
+            //    }
+            //    md.MarkupAirlineCode = (from t1 in md.MarkupAirline
+            //                            join t2 in AirlineDetails on t1 equals t2.Id
+            //                            select t2.Code).ToList();
+            //}
+            return _mdl;
+        }
+
+
+        public List<mdlWingMarkup> LoadCustomerFlightAPI(int Id = 0, bool FromEffectiveDt = false, bool IsForCustomer = false)
+        {
+            List<mdlWingMarkup> _mdl = null;
+            if (Id > 0)
+            {
+                _mdl = _context.tblWingCustomerFlightAPI.Where(p => p.Id == Id && !p.IsDeleted).Select(p => new mdlWingMarkup
+                {
+                    Id = p.Id,
+                    IsAllProvider = p.IsAllProvider,
+                    IsAllCustomerType = p.IsAllCustomerType,
+                    IsAllCustomer = p.IsAllCustomer,
+                    IsAllFlightClass = p.IsAllFlightClass,
+                    IsAllAirline = p.IsAllAirline,
+                    EffectiveFromDt = p.EffectiveFromDt,
+                    EffectiveToDt = p.EffectiveToDt,
+                    ModifiedBy = p.ModifiedBy,
+                    ModifiedDt = p.ModifiedDt,
+                    remarks = p.Remarks,
+                    MarkupServiceProvider = p.tblWingCustomerFlightAPIServiceProvider.Select(p => p.ServiceProvider).ToList(),
+                    MarkupCustomerType = p.tblWingCustomerFlightAPICustomerType.Select(p => p.customerType).ToList(),
+                    MarkupCustomerDetail = p.tblWingCustomerFlightAPICustomerDetails.Select(p => p.CustomerId.Value).ToList(),
+                    MarkupCabinClass = p.tblWingCustomerFlightAPIFlightClass.Select(p => p.CabinClass).ToList(),
+                    MarkupAirline = p.tblWingCustomerFlightAPIAirline.Select(p => p.AirlineId.Value).ToList()
+                }).ToList();
+
+            }
+            else if (FromEffectiveDt)
+            {
+                _mdl = _context.tblWingCustomerFlightAPI.Where(p => p.EffectiveFromDt <= this._EffectiveFromDt && !p.IsDeleted).Select(p => new mdlWingMarkup
+                {
+                    Id = p.Id,
+                    IsAllProvider = p.IsAllProvider,
+                    IsAllCustomerType = p.IsAllCustomerType,
+                    IsAllCustomer = p.IsAllCustomer,
+                    IsAllPessengerType = p.IsAllPessengerType,
+                    IsAllFlightClass = p.IsAllFlightClass,
+                    IsAllAirline = p.IsAllAirline, 
+                    EffectiveFromDt = p.EffectiveFromDt,
+                    EffectiveToDt = p.EffectiveToDt,
+                    ModifiedBy = p.ModifiedBy,
+                    ModifiedDt = p.ModifiedDt,
+                    remarks = p.Remarks,
+                    MarkupServiceProvider = p.tblWingCustomerFlightAPIServiceProvider.Select(p => p.ServiceProvider).ToList(),
+                    MarkupCustomerType = p.tblWingCustomerFlightAPICustomerType.Select(p => p.customerType).ToList(),
+                    MarkupCustomerDetail = p.tblWingCustomerFlightAPICustomerDetails.Select(p => p.CustomerId.Value).ToList(),
+                    MarkupCabinClass = p.tblWingCustomerFlightAPIFlightClass.Select(p => p.CabinClass).ToList(),
+                    MarkupAirline = p.tblWingCustomerFlightAPIAirline.Select(p => p.AirlineId.Value).ToList()
+                }).ToList();
+            }
+            else if (IsForCustomer)
+            {
+                enmCustomerType CustomerType = _context.tblCustomerMaster.Where(p => p.Id == CustomerId).FirstOrDefault()?.CustomerType ?? enmCustomerType.B2C;
+                _mdl = _context.tblWingCustomerFlightAPI.Where(p => p.EffectiveFromDt <= this._EffectiveFromDt &&
+             ((p.IsAllCustomer && p.IsAllCustomerType) ||
+             (p.IsAllCustomer && p.tblWingCustomerFlightAPICustomerType.Where(p => p.customerType == CustomerType).Count() > 0) ||
+             (p.tblWingCustomerFlightAPICustomerDetails.Where(p => p.CustomerId == _CustomerId).Count() > 0)
+             )
+             && !p.IsDeleted).Select(p => new mdlWingMarkup
+             {
+                 Id = p.Id,
+                 IsAllProvider = p.IsAllProvider,
+                 IsAllCustomerType = p.IsAllCustomerType,
+                 IsAllCustomer = p.IsAllCustomer,
+                 IsAllPessengerType = p.IsAllPessengerType,
+                 IsAllFlightClass = p.IsAllFlightClass,
+                 IsAllAirline = p.IsAllAirline,
+                 EffectiveFromDt = p.EffectiveFromDt,
+                 EffectiveToDt = p.EffectiveToDt,
+                 ModifiedBy = p.ModifiedBy,
+                 ModifiedDt = p.ModifiedDt,
+                 remarks = p.Remarks,
+                 MarkupServiceProvider = p.tblWingCustomerFlightAPIServiceProvider.Select(p => p.ServiceProvider).ToList(),
+                 MarkupCustomerType = p.tblWingCustomerFlightAPICustomerType.Select(p => p.customerType).ToList(),
+                 MarkupCustomerDetail = p.tblWingCustomerFlightAPICustomerDetails.Select(p => p.CustomerId.Value).ToList(),
+                 MarkupCabinClass = p.tblWingCustomerFlightAPIFlightClass.Select(p => p.CabinClass).ToList(),
+                 MarkupAirline = p.tblWingCustomerFlightAPIAirline.Select(p => p.AirlineId.Value).ToList()
+             }).ToList();
+            }
+            else
+            {
+                _mdl = _context.tblWingCustomerFlightAPI.Where(p => !p.IsDeleted).Select(p => new mdlWingMarkup
+                {
+                    Id = p.Id,
+                    IsAllProvider = p.IsAllProvider,
+                    IsAllCustomerType = p.IsAllCustomerType,
+                    IsAllCustomer = p.IsAllCustomer,
+                    IsAllPessengerType = p.IsAllPessengerType,
+                    IsAllFlightClass = p.IsAllFlightClass,
+                    IsAllAirline = p.IsAllAirline,
+                    EffectiveFromDt = p.EffectiveFromDt,
+                    EffectiveToDt = p.EffectiveToDt,
+                    ModifiedBy = p.ModifiedBy,
+                    ModifiedDt = p.ModifiedDt,
+                    remarks = p.Remarks,
+                    MarkupServiceProvider = p.tblWingCustomerFlightAPIServiceProvider.Select(p => p.ServiceProvider).ToList(),
+                    MarkupCustomerType = p.tblWingCustomerFlightAPICustomerType.Select(p => p.customerType).ToList(),
+                    MarkupCustomerDetail = p.tblWingCustomerFlightAPICustomerDetails.Select(p => p.CustomerId.Value).ToList(),
+                    MarkupCabinClass = p.tblWingCustomerFlightAPIFlightClass.Select(p => p.CabinClass).ToList(),
+                    MarkupAirline = p.tblWingCustomerFlightAPIAirline.Select(p => p.AirlineId.Value).ToList()
                 }).ToList();
             }
 
@@ -1134,6 +1262,52 @@ namespace B2BClasses
 
         }
 
+        public bool AddCustomerFlightAPI(mdlWingMarkup mdl, int UserId)
+        {
+            tblWingCustomerFlightAPI data = new tblWingCustomerFlightAPI();
+
+             data.IsAllProvider = mdl.IsAllProvider;
+            data.IsAllCustomerType = mdl.IsAllCustomerType;
+            data.IsAllCustomer = mdl.IsAllCustomer;
+            data.IsAllFlightClass = mdl.IsAllFlightClass;
+            data.IsAllAirline = mdl.IsAllAirline;
+            data.EffectiveFromDt = mdl.EffectiveFromDt;
+            data.EffectiveToDt = mdl.EffectiveToDt;
+            data.CreatedBy = UserId;
+            data.CreatedDt = DateTime.Now;
+            data.IsDeleted = false;
+            data.ModifiedBy = UserId;
+            data.ModifiedDt = DateTime.Now;
+            data.Remarks = mdl.remarks;
+            data.tblWingCustomerFlightAPIServiceProvider = mdl.MarkupServiceProvider?.Select(p => new tblWingCustomerFlightAPIServiceProvider
+            {
+                ServiceProvider = p
+            }).ToList();
+            data.tblWingCustomerFlightAPICustomerType = mdl.MarkupCustomerType?.Select(p => new tblWingCustomerFlightAPICustomerType
+            {
+                customerType = p
+            }).ToList();
+            data.tblWingCustomerFlightAPICustomerDetails = mdl.MarkupCustomerDetail?.Select(p => new tblWingCustomerFlightAPICustomerDetails
+            {
+                CustomerId = p
+            }).ToList();
+           
+            data.tblWingCustomerFlightAPIFlightClass = mdl.MarkupCabinClass?.Select(p => new tblWingCustomerFlightAPIFlightClass
+            {
+                CabinClass = p
+            }).ToList();
+            data.tblWingCustomerFlightAPIAirline = mdl.MarkupAirline?.Select(p => new tblWingCustomerFlightAPIAirline
+            {
+                AirlineId = p
+            }).ToList();
+
+            _context.tblWingCustomerFlightAPI.Add(data);
+            _context.SaveChanges();
+
+            return true;
+
+        }
+
         public bool RemoveConvenience(int Id, int UserId)
         {
             var _markupuMaster = _context.tblWingConvenience.Where(p => p.Id == Id).FirstOrDefault();
@@ -1144,6 +1318,16 @@ namespace B2BClasses
             return true;
         }
 
+
+        public bool RemoveCustomerFlightAPI(int Id, int UserId)
+        {
+            var _markupuMaster = _context.tblWingCustomerFlightAPI.Where(p => p.Id == Id).FirstOrDefault();
+            _markupuMaster.IsDeleted = true;
+            _markupuMaster.ModifiedBy = UserId;
+            _markupuMaster.ModifiedDt = DateTime.Now;
+            _context.SaveChanges();
+            return true;
+        }
         public bool AddDiscount(mdlWingMarkup mdl, int UserId)
         {
             tblWingDiscount data = new tblWingDiscount();

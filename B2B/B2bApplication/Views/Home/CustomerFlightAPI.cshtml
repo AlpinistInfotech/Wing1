@@ -1,0 +1,304 @@
+﻿@model B2bApplication.Models.mdlWingMarkupWraper
+@using B2BClasses.Services.Enums
+@{
+    ViewData["Title"] = enmDocumentMaster.custiomer_apis.GetDocumentDetails().Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- PAGE CONTENT BEGINS -->
+        <form action="@Url.Action()" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <input type="hidden" asp-for="WingMarkup.Id" />
+            <div class="widget-box">
+                <div class="widget-header">
+                    <h4 class="widget-title">@ViewData["Title"]</h4>
+                    <div class="widget-toolbar">
+                        <a href="#" data-action="collapse">
+                            <i class="ace-icon fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="widget-body">
+                    <div class="widget-main">
+                       
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="WingMarkup.IsAllCustomerType" class="col-sm-4 control-label"></label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <label class="input-group-addon input-group-addon-custom">
+                                                <input id="cboxIsAllCustomerType" class="ace ace-switch" type="checkbox" asp-for="WingMarkup.IsAllCustomerType">
+                                                <span class="lbl" data-lbl="ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT"></span>
+                                            </label>
+                                            <select id="selectIsAllCustomerType" asp-for="WingMarkup.MarkupCustomerType" class="form-control select2" multiple asp-items="Model._CustomerType">
+                                            </select>
+                                        </div>
+                                        <span asp-validation-for="WingMarkup.IsAllCustomerType" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="WingMarkup.IsAllCustomer" class="col-sm-4 control-label"></label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <label class="input-group-addon input-group-addon-custom">
+                                                <input id="cboxIsAllCustomer" class="ace ace-switch" type="checkbox" asp-for="WingMarkup.IsAllCustomer" />
+                                                <span class="lbl" data-lbl="ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT"></span>
+                                            </label>
+                                            <select id="selectIsAllCustomer" asp-for="WingMarkup.MarkupCustomerDetail" class="form-control select2" multiple="multiple" asp-items="Model._CustomerMaster">
+                                            </select>
+                                        </div>
+                                        <span asp-validation-for="WingMarkup.IsAllCustomer" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="WingMarkup.IsAllProvider" class="col-sm-4 control-label"></label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <label class="input-group-addon input-group-addon-custom">
+                                                <input id="cboxIsAllProvider" class="ace ace-switch" type="checkbox" asp-for="WingMarkup.IsAllProvider">
+                                                <span class="lbl" data-lbl="ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT"></span>
+                                            </label>
+
+                                            <select id="selectIsAllProvider" asp-for="WingMarkup.MarkupServiceProvider" class="form-control select2" multiple asp-items="Model._ServiceProvider">
+                                            </select>
+                                        </div>
+                                        <span asp-validation-for="WingMarkup.Applicability" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="WingMarkup.IsAllFlightClass" class="col-sm-4 control-label"></label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <label class="input-group-addon input-group-addon-custom">
+                                                <input id="cboxIsAllFlightClass" class="ace ace-switch" type="checkbox" asp-for="WingMarkup.IsAllFlightClass" />
+                                                <span class="lbl" data-lbl="ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT"></span>
+                                            </label>
+
+                                            <select id="selectIsAllFlightClass" asp-for="WingMarkup.MarkupCabinClass" class="form-control select2" multiple asp-items="Model._CabinClass">
+                                            </select>
+                                        </div>
+                                        <span asp-validation-for="WingMarkup.IsAllFlightClass" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="WingMarkup.IsAllAirline" class="col-sm-4 control-label"></label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <label class="input-group-addon input-group-addon-custom">
+                                                <input id="cboxIsAllAirline" class="ace ace-switch" type="checkbox" asp-for="WingMarkup.IsAllAirline" />
+                                                <span class="lbl" data-lbl="ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT"></span>
+                                            </label>
+                                            <select id="selectIsAllAirline" asp-for="WingMarkup.MarkupAirline" class="form-control select2" multiple asp-items="Model._Airline">
+                                            </select>
+                                        </div>
+                                        <span asp-validation-for="WingMarkup.IsAllAirline" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="WingMarkup.remarks" class="col-sm-4 control-label"></label>
+                                    <div class="col-sm-8">
+                                        <input type="text" asp-for="WingMarkup.remarks" class="form-control" />
+                                        <span asp-validation-for="WingMarkup.remarks" class="text-danger"></span>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="WingMarkup.EffectiveFromDt" class="col-sm-4 control-label"></label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <input class="form-control date-picker" asp-for="WingMarkup.EffectiveFromDt" asp-format="{0:dd-MMM-yyyy}" type="text" data-date-format="d-M-yyyy" />
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar bigger-110"></i>
+                                            </span>
+                                        </div>
+                                        <span asp-validation-for="WingMarkup.EffectiveFromDt" class="text-danger"></span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="WingMarkup.EffectiveToDt" class="col-sm-4 control-label"></label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <input class="form-control date-picker" asp-for="WingMarkup.EffectiveToDt" asp-format="{0:dd-MMM-yyyy}" type="text" data-date-format="d-M-yyyy" />
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar bigger-110"></i>
+                                            </span>
+                                        </div>
+                                        <span asp-validation-for="WingMarkup.EffectiveToDt" class="text-danger"></span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+             
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="clearfix form-actions">
+                                        <div class="col-md-offset-3 col-md-9">
+                                            <button class="btn btn-info" type="submit">
+                                                <i class="ace-icon fa fa-check bigger-110"></i>
+                                                @(Model.WingMarkup.Id > 0? "update":"Save")
+                                            </button>
+                                            &nbsp;
+                                            <a href="/Home/WingMarkup" class="btn">
+                                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                Reset
+                                            </a>
+                                            &nbsp;
+                                            @if (Model.WingMarkup.Id > 0)
+                                            {
+                                                <button class="btn btn-danger" type="submit" name="submitData" value="deleteData">
+                                                    <i class="ace-icon fa fa-trash-o bigger-110"></i>
+                                                    Delete
+                                                </button>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+            </div>
+
+
+
+        </form>
+    </div>
+</div>
+
+@await Component.InvokeAsync("CustomerFlightAPIReport")
+
+@section Scripts {
+
+    @(await Html.PartialAsync("_dateTableScriptPartial",9))
+    <script type="text/javascript">
+
+        jQuery(function ($) {
+            $('.select2').select2();
+            $('.date-picker').datepicker({
+                autoclose: true,
+                todayHighlight: true
+            })
+        });
+
+
+
+        $(document).ready(function () {
+            $(window).load(function () {
+                //insert all your ajax callback code here.
+                //on Load Check
+                if ($("#cboxIsAllProvider").prop("checked") == true) {
+                    $('#selectIsAllProvider').next(".select2-container").hide();
+                } else {
+                    $('#selectIsAllProvider').next(".select2-container").show();
+                }
+                if ($("#cboxIsAllCustomerType").prop("checked") == true) {
+                    $('#selectIsAllCustomerType').next(".select2-container").hide();
+                } else {
+                    $('#selectIsAllCustomerType').next(".select2-container").show();
+                }
+                if ($("#cboxIsAllCustomer").prop("checked") == true) {
+                    $('#selectIsAllCustomer').next(".select2-container").hide();
+                } else {
+                    $('#selectIsAllCustomer').next(".select2-container").show();
+                }
+                if ($("#cboxIsAllPessengerType").prop("checked") == true) {
+                    $('#selectIsAllPessengerType').next(".select2-container").hide();
+                } else {
+                    $('#selectIsAllPessengerType').next(".select2-container").show();
+                }
+                if ($("#cboxIsAllFlightClass").prop("checked") == true) {
+                    $('#selectIsAllFlightClass').next(".select2-container").hide();
+                } else {
+                    $('#selectIsAllFlightClass').next(".select2-container").show();
+                }
+                if ($("#cboxIsAllAirline").prop("checked") == true) {
+                    $('#selectIsAllAirline').next(".select2-container").hide();
+                } else {
+                    $('#selectIsAllAirline').next(".select2-container").show();
+                }
+            });
+
+            $("#cboxIsAllProvider").change(function () {
+                if (this.checked) {
+                    $('#selectIsAllProvider').next(".select2-container").hide();
+                } else {
+                    $('#selectIsAllProvider').next(".select2-container").show();
+                }
+            });
+            $("#cboxIsAllCustomerType").change(function () {
+                if (this.checked) {
+                    $('#selectIsAllCustomerType').next(".select2-container").hide();
+                } else {
+                    $('#selectIsAllCustomerType').next(".select2-container").show();
+                }
+            });
+            $("#cboxIsAllCustomer").change(function () {
+                if (this.checked) {
+                    $('#selectIsAllCustomer').next(".select2-container").hide();
+                } else {
+                    $('#selectIsAllCustomer').next(".select2-container").show();
+                }
+            });
+            $("#cboxIsAllPessengerType").change(function () {
+                if (this.checked) {
+                    $('#selectIsAllPessengerType').next(".select2-container").hide();
+                } else {
+                    $('#selectIsAllPessengerType').next(".select2-container").show();
+                }
+            });
+            $("#cboxIsAllFlightClass").change(function () {
+                if (this.checked) {
+                    $('#selectIsAllFlightClass').next(".select2-container").hide();
+                } else {
+                    $('#selectIsAllFlightClass').next(".select2-container").show();
+                }
+            });
+            $("#cboxIsAllAirline").change(function () {
+                if (this.checked) {
+                    $('#selectIsAllAirline').next(".select2-container").hide();
+                } else {
+                    $('#selectIsAllAirline').next(".select2-container").show();
+                }
+            });
+
+        });
+
+
+    </script>
+}

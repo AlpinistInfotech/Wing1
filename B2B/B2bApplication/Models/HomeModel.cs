@@ -385,6 +385,26 @@ namespace B2bApplication.Models
         public string remarks { get; set; }
 
     }
+
+    public class mdlCustomerFlightAPIReport
+    {
+        public int Id { get; set; }
+       
+        public string FlightType { get; set; }
+        public string ServiceProvider { get; set; }
+        public string CustomerType { get; set; }
+        public string Customer { get; set; }
+ 
+        public string FlightClass { get; set; }
+        public string Airline { get; set; }
+     
+        public DateTime EffectiveFromDt { get; set; }
+        public DateTime EffectiveToDt { get; set; }
+        public DateTime ModifiedDt { get; set; }
+        public string ModifiedBy { get; set; }
+        public string remarks { get; set; }
+
+    }
 }
 
 

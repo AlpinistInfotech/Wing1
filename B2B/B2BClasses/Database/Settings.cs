@@ -371,7 +371,54 @@ namespace B2BClasses.Database
         public override int? MarkupId { get; set; }
         public tblWingDiscount tblWingDiscount { get; set; }
     }
-    
+
+    public class tblWingCustomerFlightAPI : DbWingMarkupMaster
+    {
+        [InverseProperty("tblWingCustomerFlightAPI")]
+        public ICollection<tblWingCustomerFlightAPIServiceProvider> tblWingCustomerFlightAPIServiceProvider { get; set; }
+        [InverseProperty("tblWingCustomerFlightAPI")]
+        public ICollection<tblWingCustomerFlightAPICustomerType> tblWingCustomerFlightAPICustomerType { get; set; }
+        [InverseProperty("tblWingCustomerFlightAPI")]
+        public ICollection<tblWingCustomerFlightAPICustomerDetails> tblWingCustomerFlightAPICustomerDetails { get; set; }
+         
+        [InverseProperty("tblWingCustomerFlightAPI")]
+        public ICollection<tblWingCustomerFlightAPIFlightClass> tblWingCustomerFlightAPIFlightClass { get; set; }
+        [InverseProperty("tblWingCustomerFlightAPI")]
+        public ICollection<tblWingCustomerFlightAPIAirline> tblWingCustomerFlightAPIAirline { get; set; }
+    }
+    public class tblWingCustomerFlightAPIServiceProvider : DbWingMarkupServiceProvider
+    {
+        [ForeignKey("tblWingCustomerFlightAPI")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingCustomerFlightAPI tblWingCustomerFlightAPI { get; set; }
+    }
+    public class tblWingCustomerFlightAPICustomerType : DbWingMarkupCustomerType
+    {
+        [ForeignKey("tblWingCustomerFlightAPI")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingCustomerFlightAPI tblWingCustomerFlightAPI { get; set; }
+    }
+    public class tblWingCustomerFlightAPICustomerDetails : DbWingMarkupCustomerDetails
+    {
+        [ForeignKey("tblWingCustomerFlightAPI")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingCustomerFlightAPI tblWingCustomerFlightAPI { get; set; }
+
+    }
+ 
+    public class tblWingCustomerFlightAPIFlightClass : DbWingMarkupFlightClass
+    {
+        [ForeignKey("tblWingCustomerFlightAPI")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingCustomerFlightAPI tblWingCustomerFlightAPI { get; set; }
+    }
+    public class tblWingCustomerFlightAPIAirline : DbWingMarkupAirline
+    {
+        [ForeignKey("tblWingCustomerFlightAPI")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingCustomerFlightAPI tblWingCustomerFlightAPI { get; set; }
+    }
+
 
 
 
