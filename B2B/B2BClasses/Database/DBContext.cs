@@ -86,6 +86,23 @@ namespace B2BClasses.Database
         public DbSet<tblWingConveniencePassengerType> tblWingConveniencePassengerType { get; set; }
         public DbSet<tblWingConvenienceFlightClass> tblWingConvenienceFlightClass { get; set; }
         public DbSet<tblWingConvenienceAirline> tblWingConvenienceAirline { get; set; }
+
+        public DbSet<tblWingDiscount> tblWingDiscount { get; set; }
+        public DbSet<tblWingDiscountServiceProvider> tblWingDiscountServiceProvider { get; set; }
+        public DbSet<tblWingDiscountCustomerType> tblWingDiscountCustomerType { get; set; }
+        public DbSet<tblWingDiscountCustomerDetails> tblWingDiscountCustomerDetails { get; set; }
+        public DbSet<tblWingDiscountPassengerType> tblWingDiscountPassengerType { get; set; }
+        public DbSet<tblWingDiscountFlightClass> tblWingDiscountFlightClass { get; set; }
+        public DbSet<tblWingDiscountAirline> tblWingDiscountAirline { get; set; }
+
+
+        public DbSet<tblWingCustomerFlightAPI> tblWingCustomerFlightAPI { get; set; }
+        public DbSet<tblWingCustomerFlightAPIServiceProvider> tblWingCustomerFlightAPIServiceProvider { get; set; }
+        public DbSet<tblWingCustomerFlightAPICustomerType> tblWingCustomerFlightAPICustomerType { get; set; }
+        public DbSet<tblWingCustomerFlightAPICustomerDetails> tblWingCustomerFlightAPICustomerDetails { get; set; }
+    
+        public DbSet<tblWingCustomerFlightAPIFlightClass> tblWingCustomerFlightAPIFlightClass { get; set; }
+        public DbSet<tblWingCustomerFlightAPIAirline> tblWingCustomerFlightAPIAirline { get; set; }
         #endregion
 
         #region ******************* Customer Master ***************************

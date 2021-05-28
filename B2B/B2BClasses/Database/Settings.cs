@@ -26,6 +26,7 @@ namespace B2BClasses.Database
         public bool IsAllAirline { get; set; }
         public enmGender Gender { get; set; }
         public double Amount{ get; set; }
+        public int DayCount { get; set; }
         public DateTime EffectiveFromDt { get; set; }
         public DateTime EffectiveToDt { get; set; }
         public int CreatedBy { get; set; }
@@ -275,12 +276,15 @@ namespace B2BClasses.Database
         [InverseProperty("tblWingConvenience")]
         public ICollection<tblWingConvenienceAirline> tblWingConvenienceAirline { get; set; }
     }
+
+
     public class tblWingConvenienceServiceProvider : DbWingMarkupServiceProvider
     {
         [ForeignKey("tblWingConvenience")] // Foreign Key here
         public override int? MarkupId { get; set; }
         public tblWingConvenience tblWingConvenience { get; set; }
     }
+
     public class tblWingConvenienceCustomerType : DbWingMarkupCustomerType
     {
         [ForeignKey("tblWingConvenience")] // Foreign Key here
@@ -312,6 +316,109 @@ namespace B2BClasses.Database
         public override int? MarkupId { get; set; }
         public tblWingConvenience tblWingConvenience { get; set; }
     }
+
+
+
+    public class tblWingDiscount : DbWingMarkupMaster
+    {
+        [InverseProperty("tblWingDiscount")]
+        public ICollection<tblWingDiscountServiceProvider> tblWingDiscountServiceProvider { get; set; }
+        [InverseProperty("tblWingDiscount")]
+        public ICollection<tblWingDiscountCustomerType> tblWingDiscountCustomerType { get; set; }
+        [InverseProperty("tblWingDiscount")]
+        public ICollection<tblWingDiscountCustomerDetails> tblWingDiscountCustomerDetails { get; set; }
+        [InverseProperty("tblWingDiscount")]
+        public ICollection<tblWingDiscountPassengerType> tblWingDiscountPassengerType { get; set; }
+        [InverseProperty("tblWingDiscount")]
+        public ICollection<tblWingDiscountFlightClass> tblWingDiscountFlightClass { get; set; }
+        [InverseProperty("tblWingDiscount")]
+        public ICollection<tblWingDiscountAirline> tblWingDiscountAirline { get; set; }
+    }
+    public class tblWingDiscountServiceProvider : DbWingMarkupServiceProvider
+    {
+        [ForeignKey("tblWingDiscount")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingDiscount tblWingDiscount { get; set; }
+    }
+    public class tblWingDiscountCustomerType : DbWingMarkupCustomerType
+    {
+        [ForeignKey("tblWingDiscount")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingDiscount tblWingDiscount { get; set; }
+    }
+    public class tblWingDiscountCustomerDetails : DbWingMarkupCustomerDetails
+    {
+        [ForeignKey("tblWingDiscount")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingDiscount tblWingDiscount { get; set; }
+
+    }
+    public class tblWingDiscountPassengerType : DbWingMarkupPassengerType
+    {
+        [ForeignKey("tblWingDiscount")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingDiscount tblWingDiscount { get; set; }
+    }
+    public class tblWingDiscountFlightClass : DbWingMarkupFlightClass
+    {
+        [ForeignKey("tblWingDiscount")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingDiscount tblWingDiscount { get; set; }
+    }
+    public class tblWingDiscountAirline : DbWingMarkupAirline
+    {
+        [ForeignKey("tblWingDiscount")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingDiscount tblWingDiscount { get; set; }
+    }
+
+    public class tblWingCustomerFlightAPI : DbWingMarkupMaster
+    {
+        [InverseProperty("tblWingCustomerFlightAPI")]
+        public ICollection<tblWingCustomerFlightAPIServiceProvider> tblWingCustomerFlightAPIServiceProvider { get; set; }
+        [InverseProperty("tblWingCustomerFlightAPI")]
+        public ICollection<tblWingCustomerFlightAPICustomerType> tblWingCustomerFlightAPICustomerType { get; set; }
+        [InverseProperty("tblWingCustomerFlightAPI")]
+        public ICollection<tblWingCustomerFlightAPICustomerDetails> tblWingCustomerFlightAPICustomerDetails { get; set; }
+         
+        [InverseProperty("tblWingCustomerFlightAPI")]
+        public ICollection<tblWingCustomerFlightAPIFlightClass> tblWingCustomerFlightAPIFlightClass { get; set; }
+        [InverseProperty("tblWingCustomerFlightAPI")]
+        public ICollection<tblWingCustomerFlightAPIAirline> tblWingCustomerFlightAPIAirline { get; set; }
+    }
+    public class tblWingCustomerFlightAPIServiceProvider : DbWingMarkupServiceProvider
+    {
+        [ForeignKey("tblWingCustomerFlightAPI")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingCustomerFlightAPI tblWingCustomerFlightAPI { get; set; }
+    }
+    public class tblWingCustomerFlightAPICustomerType : DbWingMarkupCustomerType
+    {
+        [ForeignKey("tblWingCustomerFlightAPI")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingCustomerFlightAPI tblWingCustomerFlightAPI { get; set; }
+    }
+    public class tblWingCustomerFlightAPICustomerDetails : DbWingMarkupCustomerDetails
+    {
+        [ForeignKey("tblWingCustomerFlightAPI")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingCustomerFlightAPI tblWingCustomerFlightAPI { get; set; }
+
+    }
+ 
+    public class tblWingCustomerFlightAPIFlightClass : DbWingMarkupFlightClass
+    {
+        [ForeignKey("tblWingCustomerFlightAPI")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingCustomerFlightAPI tblWingCustomerFlightAPI { get; set; }
+    }
+    public class tblWingCustomerFlightAPIAirline : DbWingMarkupAirline
+    {
+        [ForeignKey("tblWingCustomerFlightAPI")] // Foreign Key here
+        public override int? MarkupId { get; set; }
+        public tblWingCustomerFlightAPI tblWingCustomerFlightAPI { get; set; }
+    }
+
 
 
 

@@ -206,6 +206,25 @@
 
                             <div class="col-md-4">
                                 <div class="form-group">
+                                    <label asp-for="WingMarkup.EffectiveToDt" class="col-sm-4 control-label"></label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <input class="form-control date-picker" asp-for="WingMarkup.EffectiveToDt" asp-format="{0:dd-MMM-yyyy}" type="text" data-date-format="d-M-yyyy" />
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar bigger-110"></i>
+                                            </span>
+                                        </div>
+                                        <span asp-validation-for="WingMarkup.EffectiveToDt" class="text-danger"></span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
                                     <label asp-for="WingMarkup.Gender" class="col-sm-4 control-label"></label>
                                     <div class="col-sm-8">
                                         <select asp-for="WingMarkup.Gender" class="form-control select2">
@@ -221,34 +240,33 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="clearfix form-actions">
-                                    <div class="col-md-offset-3 col-md-9">
-                                        <button class="btn btn-info" type="submit">
-                                            <i class="ace-icon fa fa-check bigger-110"></i>
-                                            @(Model.WingMarkup.Id > 0? "update":"Save")
-                                        </button>
-                                        &nbsp;
-                                        <a href="/Home/WingMarkup" class="btn">
-                                            <i class="ace-icon fa fa-undo bigger-110"></i>
-                                            Reset
-                                        </a>
-                                        &nbsp;
-                                        @if (Model.WingMarkup.Id > 0)
-                                        {
-                                            <button class="btn btn-danger" type="submit" name="submitData" value="deleteData">
-                                                <i class="ace-icon fa fa-trash-o bigger-110"></i>
-                                                Delete
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="clearfix form-actions">
+                                        <div class="col-md-offset-3 col-md-9">
+                                            <button class="btn btn-info" type="submit">
+                                                <i class="ace-icon fa fa-check bigger-110"></i>
+                                                @(Model.WingMarkup.Id > 0? "update":"Save")
                                             </button>
-                                        }
+                                            &nbsp;
+                                            <a href="/Home/WingMarkup" class="btn">
+                                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                Reset
+                                            </a>
+                                            &nbsp;
+                                            @if (Model.WingMarkup.Id > 0)
+                                            {
+                                                <button class="btn btn-danger" type="submit" name="submitData" value="deleteData">
+                                                    <i class="ace-icon fa fa-trash-o bigger-110"></i>
+                                                    Delete
+                                                </button>
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
             </div>
 
@@ -262,7 +280,7 @@
 
 @section Scripts {
 
-    @(await Html.PartialAsync("_dateTableScriptPartial",12))
+    @(await Html.PartialAsync("_dateTableScriptPartial",13))
     <script type="text/javascript">
 
         jQuery(function ($) {

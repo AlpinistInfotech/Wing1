@@ -201,6 +201,22 @@
 
                                 </div>
                             </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="WingMarkup.EffectiveToDt" class="col-sm-4 control-label"></label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <input class="form-control date-picker" asp-for="WingMarkup.EffectiveToDt" asp-format="{0:dd-MMM-yyyy}" type="text" data-date-format="d-M-yyyy" />
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar bigger-110"></i>
+                                            </span>
+                                        </div>
+                                        <span asp-validation-for="WingMarkup.EffectiveToDt" class="text-danger"></span>
+                                    </div>
+
+                                </div>
+                            </div>
                         </div>
 
                         <div class="row">
@@ -242,7 +258,7 @@
 @await Component.InvokeAsync("WingMarkUpReport")
 
 @section Scripts {
-    @(await Html.PartialAsync("_dateTableScriptPartial",11))
+    @(await Html.PartialAsync("_dateTableScriptPartial",12))
 
     <script type="text/javascript">
         jQuery(function ($) {
