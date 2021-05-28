@@ -15,7 +15,7 @@ namespace B2BClasses
     {
         int CustomerId { get; set; }
         DateTime EffectiveFromDt { get; set; }
-
+        DateTime EffectiveToDt { get; set; }
         bool AddConvenience(mdlWingMarkup mdl, int UserId);
         bool AddMarkup(mdlWingMarkup mdl, int UserId);
         bool CalculateTotalPriceAfterMarkup(List<List<mdlSearchResult>> mdls, int AdultCount, int ChildCount, int InfantCount);        
@@ -39,6 +39,10 @@ namespace B2BClasses
         private int _CustomerId;
         public DateTime EffectiveFromDt { get { return _EffectiveFromDt.Value; } set { _EffectiveFromDt = value; } }
         private DateTime? _EffectiveFromDt;
+
+        public DateTime EffectiveToDt { get { return _EffectiveToDt.Value; } set { _EffectiveToDt = value; } }
+        private DateTime? _EffectiveToDt;
+
         private readonly string _DefaultAirServiceProvider;
         public Markup(DBContext context, IConfiguration config)
         {
@@ -47,6 +51,11 @@ namespace B2BClasses
             if (_EffectiveFromDt == null)
             {
                 _EffectiveFromDt = DateTime.Now;
+            }
+
+            if (_EffectiveToDt == null)
+            {
+                _EffectiveToDt = DateTime.Now;
             }
             _DefaultAirServiceProvider = _config["DefaultAirServiceProvider"];
         }
@@ -70,6 +79,7 @@ namespace B2BClasses
                     Gender = p.Gender,
                     Amount = p.Amount,
                     EffectiveFromDt = p.EffectiveFromDt,
+                    EffectiveToDt= p.EffectiveToDt,
                     ModifiedBy = p.ModifiedBy,
                     ModifiedDt = p.ModifiedDt,
                     remarks = p.Remarks,
@@ -98,6 +108,7 @@ namespace B2BClasses
                     Gender = p.Gender,
                     Amount = p.Amount,
                     EffectiveFromDt = p.EffectiveFromDt,
+                    EffectiveToDt = p.EffectiveToDt,
                     ModifiedBy = p.ModifiedBy,
                     ModifiedDt = p.ModifiedDt,
                     remarks = p.Remarks,
@@ -131,6 +142,7 @@ namespace B2BClasses
                  Gender = p.Gender,
                  Amount = p.Amount,
                  EffectiveFromDt = p.EffectiveFromDt,
+                 EffectiveToDt = p.EffectiveToDt,
                  ModifiedBy = p.ModifiedBy,
                  ModifiedDt = p.ModifiedDt,
                  remarks = p.Remarks,
@@ -158,6 +170,7 @@ namespace B2BClasses
                     Gender = p.Gender,
                     Amount = p.Amount,
                     EffectiveFromDt = p.EffectiveFromDt,
+                    EffectiveToDt = p.EffectiveToDt,
                     ModifiedBy = p.ModifiedBy,
                     ModifiedDt = p.ModifiedDt,
                     remarks = p.Remarks,
@@ -196,6 +209,7 @@ namespace B2BClasses
                     Gender = p.Gender,
                     Amount = p.Amount,
                     EffectiveFromDt = p.EffectiveFromDt,
+                    EffectiveToDt = p.EffectiveToDt,
                     ModifiedBy = p.ModifiedBy,
                     ModifiedDt = p.ModifiedDt,
                     remarks = p.Remarks,
@@ -224,6 +238,7 @@ namespace B2BClasses
                     Gender = p.Gender,
                     Amount = p.Amount,
                     EffectiveFromDt = p.EffectiveFromDt,
+                    EffectiveToDt = p.EffectiveToDt,
                     ModifiedBy = p.ModifiedBy,
                     ModifiedDt = p.ModifiedDt,
                     remarks = p.Remarks,
@@ -257,6 +272,7 @@ namespace B2BClasses
                  Gender = p.Gender,
                  Amount = p.Amount,
                  EffectiveFromDt = p.EffectiveFromDt,
+                 EffectiveToDt = p.EffectiveToDt,
                  ModifiedBy = p.ModifiedBy,
                  ModifiedDt = p.ModifiedDt,
                  remarks = p.Remarks,
@@ -284,6 +300,7 @@ namespace B2BClasses
                     Gender = p.Gender,
                     Amount = p.Amount,
                     EffectiveFromDt = p.EffectiveFromDt,
+                    EffectiveToDt = p.EffectiveToDt,
                     ModifiedBy = p.ModifiedBy,
                     ModifiedDt = p.ModifiedDt,
                     remarks = p.Remarks,
@@ -689,7 +706,7 @@ namespace B2BClasses
             data.Gender = mdl.Gender;
             data.Amount = mdl.Amount;
             data.EffectiveFromDt = mdl.EffectiveFromDt;
-            data.EffectiveToDt = new DateTime(2999, 1, 1);
+            data.EffectiveToDt = mdl.EffectiveToDt;
             data.CreatedBy = UserId;
             data.CreatedDt = DateTime.Now;
             data.IsDeleted = false;
@@ -753,7 +770,7 @@ namespace B2BClasses
             data.Gender = mdl.Gender;
             data.Amount = mdl.Amount;
             data.EffectiveFromDt = mdl.EffectiveFromDt;
-            data.EffectiveToDt = new DateTime(2999, 1, 1);
+            data.EffectiveToDt = mdl.EffectiveToDt;
             data.CreatedBy = UserId;
             data.CreatedDt = DateTime.Now;
             data.IsDeleted = false;

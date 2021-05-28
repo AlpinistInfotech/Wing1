@@ -27,7 +27,8 @@
                         <th>Flight Class</th>
                         <th>Airline</th>
                         <th>Amount</th>
-                        <th>Effective FromDt</th>
+                        <th>From Date</th>
+                        <th>To Date</th>
                     </tr>
                 </thead>
 
@@ -111,6 +112,9 @@
                         </td>
                         <td>
                             @md.EffectiveFromDt.ToString("dd-MMM-yyyy")
+                        </td>
+                        <td>
+                            @md.EffectiveToDt.ToString("dd-MMM-yyyy")
                         </td>
 
                     </tr>

@@ -335,6 +335,7 @@ namespace B2bApplication.Models
         public string Airline { get; set; }
         public double Amount { get; set; }
         public DateTime EffectiveFromDt { get; set; }
+        public DateTime EffectiveToDt { get; set; }
         public DateTime ModifiedDt { get; set; }
         public string ModifiedBy { get; set; }
         public string remarks { get; set; }
@@ -355,6 +356,7 @@ namespace B2bApplication.Models
         public enmGender gender { get; set; }
         public double Amount { get; set; }
         public DateTime EffectiveFromDt { get; set; }
+        public DateTime EffectiveToDt { get; set; }
         public DateTime ModifiedDt { get; set; }
         public string ModifiedBy { get; set; }
         public string remarks { get; set; }

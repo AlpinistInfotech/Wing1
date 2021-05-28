@@ -34,7 +34,8 @@ namespace B2bApplication.ViewComponents
                 Airline=p.IsAllAirline? "ALL" : string.Join(',',p.MarkupAirlineCode ),
                 Amount=p.Amount,
                 EffectiveFromDt=p.EffectiveFromDt,
-                remarks=p.remarks
+                EffectiveToDt = p.EffectiveToDt,
+                remarks =p.remarks
             }).ToList();
             return  View(result);
         }

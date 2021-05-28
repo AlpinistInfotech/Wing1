@@ -34,8 +34,12 @@ namespace B2BClasses.Models
         public enmGender Gender { get; set; } = enmGender.Male | enmGender.Female | enmGender.Other;
         [Display(Name = "Amount")]
         public double Amount { get; set; } = 0;
-        [Display(Name = "Effective FromDt")]
+        
+        [Display(Name = "From Date")]
         public DateTime EffectiveFromDt { get; set; } = DateTime.Now;
+
+        [Display(Name = "To Date")]
+        public DateTime EffectiveToDt { get; set; } = DateTime.Now;
         public bool IsDeleted { get; set; }
         public int? ModifiedBy { get; set; }
         public DateTime? ModifiedDt { get; set; }
