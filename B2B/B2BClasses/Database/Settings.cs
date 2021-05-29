@@ -106,17 +106,25 @@ namespace B2BClasses.Database
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int AirlineFareRuleId { get; set; }
         public enmServiceProvider ServiceProvider { get; set; }
+        [MaxLength(200)]
         public string traceId { get; set; }
+        [MaxLength(200)]
         public string resultIndex { get; set; }
+        [MaxLength(20)]
         public string Origin { get; set; }
+        [MaxLength(20)]
         public string Destination { get; set; }
         public double ReissueCharge { get; set; }
         public double ReissueAdditionalCharge { get; set; }
+        [MaxLength(2000)]
         public string ReissuePolicy { get; set; }
         public double CancellationCharge { get; set; }
         public double CancellationAdditionalCharge { get; set; }
+        [MaxLength(200)]
         public string CancellationPolicy { get; set; }
+        [MaxLength(200)]
         public string CheckingBaggage { get; set; }
+        [MaxLength(200)]
         public string CabinBaggage { get; set; }
     }
     public class tblTravelMaster
@@ -126,9 +134,13 @@ namespace B2BClasses.Database
         public int TravelDetailId { get; set; }
         public DateTime TravelDate { get; set; }
         public enmCabinClass CabinClass { get; set; }
+        [MaxLength(20)]
         public string Origin { get; set; }
+        [MaxLength(20)]
         public string Destination { get; set; }
+        [MaxLength(200)]
         public string TokenId { get; set; }
+        [MaxLength(200)]
         public string TraceId { get; set; }
         public DateTime GenrationDt { get; set; }
         public DateTime ExpireDt { get; set; }
@@ -145,7 +157,9 @@ namespace B2BClasses.Database
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ResultId { get; set; }
         public int segmentId { get; set; }
+        [MaxLength(200)]
         public string ResultIndex { get; set; }
+        [MaxLength(200)]
         public string ResultType { get; set; }
         public double PublishedFare { get; set; }
         public double OfferedFare { get; set; }
@@ -161,6 +175,7 @@ namespace B2BClasses.Database
         public double AmountForSendMail { get; set; }
         public double AmountForDisableProvider { get; set; }// If Amount is Below then This Amount the Service Will be Disabled
         public DateTime EffectiveFromDt { get; set; }
+        [MaxLength(200)]
         public string Remarks { get; set; }
         public int CreatedBy { get; set; }
         public DateTime CreatedDt { get; set; }
@@ -196,6 +211,7 @@ namespace B2BClasses.Database
         public bool IsDisabled { get; set; }
         public bool IsDisabledBySystem { get; set; }
         public DateTime DisabledFromDt { get; set; }
+        [MaxLength(200)]
         public string Remarks { get; set; }
         public int? ModifiedBy { get; set; }
         public DateTime? ModifiedDt { get; set; }
@@ -427,9 +443,12 @@ namespace B2BClasses.Database
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        [MaxLength(20)]
         public string Code { get; set; }
+        [MaxLength(200)]
         public string Name { get; set; }
         public bool isLcc { get; set; }
+        [MaxLength(500)]
         public string ImagePath { get; set; }
         public int CreatedBy { get; set; }
         public DateTime CreatedDt { get; set; }

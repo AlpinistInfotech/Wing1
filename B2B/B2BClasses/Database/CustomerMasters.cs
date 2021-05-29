@@ -374,8 +374,7 @@ namespace B2BClasses.Database
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-   
+        public int Id { get; set; }   
         [ForeignKey("tblCustomerMaster")] // Foreign Key here
         public int? CustomerId { get; set; }
         public tblCustomerMaster tblCustomerMaster { get; set; }

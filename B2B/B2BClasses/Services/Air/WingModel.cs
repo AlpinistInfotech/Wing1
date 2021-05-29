@@ -79,12 +79,19 @@ namespace B2BClasses.Services.Air
 
     public class mdlAirport
     {
+        [MaxLength(200)]
         public string AirportCode { get; set; }
+        [MaxLength(200)]
         public string AirportName { get; set; }
+        [MaxLength(200)]
         public string Terminal { get; set; }
+        [MaxLength(200)]
         public string CityCode { get; set; }
+        [MaxLength(200)]
         public string CityName { get; set; }
+        [MaxLength(200)]
         public string CountryCode { get; set; }
+        [MaxLength(200)]
         public string CountryName { get; set; }
     }
     public class mdlTotalpricelist
