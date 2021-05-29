@@ -34,8 +34,7 @@ namespace B2BClasses.Database
             defaultData.InsertServiceProvider();
         }
 
-        public DbSet<tblAirline> tblAirline { get; set; }
-        public DbSet<tblAirport> tblAirport { get; set; }
+        
 
 
         public DbSet<tblTboTokenDetails> tblTboTokenDetails { get; set; }
@@ -109,6 +108,9 @@ namespace B2BClasses.Database
         public DbSet<tblBankMaster> tblBankMaster { get; set; }
         public DbSet<tblCountryMaster> tblCountryMaster { get; set; }
         public DbSet<tblStateMaster> tblStateMaster { get; set; }
+        public DbSet<tblWingBankAccount> tblWingBankAccount { get; set; }
+        public DbSet<tblAirline> tblAirline { get; set; }
+        public DbSet<tblAirport> tblAirport { get; set; }
 
         #endregion
 
