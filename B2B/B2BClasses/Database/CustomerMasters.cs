@@ -9,71 +9,7 @@ using System.Threading.Tasks;
 namespace B2BClasses.Database
 {
 
-
-    public class tblCountryMaster 
-    {
-        [Key]
-        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int CountryId { get; set; }
-        [MaxLength(3)]
-        public string CountryCode { get; set; }
-        [MaxLength(2)]
-        public string CountryCodeIso2 { get; set; }
-        [MaxLength(200)]
-        public string CountryName { get; set; }
-        [MaxLength(30)]
-        public string PhoneCode { get; set; }
-        [MaxLength(200)]
-        public string Capital { get; set; }
-        [MaxLength(100)]
-        public string currency { get; set; }
-        [MaxLength(100)]
-        public string CurrencySymbol { get; set; }
-        [MaxLength(100)]
-        public string Domain { get; set; }
-        [MaxLength(100)]
-        public string Native { get; set; }
-        [MaxLength(100)]
-        public string Region { get; set; }
-        [MaxLength(100)]
-        public string SubRegion { get; set; }
-        public bool IsActive { get; set; }
-        public DateTime CreatedDt { get; set; }
-        public int CreatedBy { get; set; }
-        public string Remarks { get; set; }
-        public int? ModifiedBy { get; set; }
-        public DateTime? ModifiedDt { get; set; }
-        [NotMapped]
-        public string ModifiedByName { get; set; }
-    }
-
-    public class tblStateMaster 
-    {
-        [Key]
-        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int StateId { get; set; }
-        [MaxLength(10)]
-        public string StateCode { get; set; }
-        [MaxLength(200)]
-        public string StateName { get; set; }
-        [ForeignKey("tblCountryMaster")]
-        public int? CountryId { get; set; }
-        public tblCountryMaster tblCountryMaster { get; set; }
-        public bool IsUT { get; set; }
-        public bool IsActive { get; set; }
-        public DateTime CreatedDt { get; set; }
-        public int CreatedBy { get; set; }
-        public string Remarks { get; set; }
-        public int? ModifiedBy { get; set; }
-        public DateTime? ModifiedDt { get; set; }
-        public decimal latitude { get; set; }
-        public decimal longitude { get; set; }
-        [NotMapped]
-        public string ModifiedByName { get; set; }
-        [NotMapped]
-        public virtual string CountryName { get; set; }
-
-    }
+   
 
     public class tblCustomerMaster
     {
@@ -297,6 +233,66 @@ namespace B2BClasses.Database
         public string IPAddress { get; set; }
     }
 
+    public class tblCustomerBankDetails
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        [ForeignKey("tblCustomerMaster")]
+        public int? CustomerId { get; set; }
+        public tblCustomerMaster tblCustomerMaster { get; set; }
+        [ForeignKey("tblBankMaster")]
+        public int? BankId { get; set; }
+        public tblBankMaster tblBankMaster { get; set; }
+        [MaxLength(20)]
+        public string IFSC { get; set; }
+        [MaxLength(20)]
+        public string AccountNo { get; set; }
+        [MaxLength(200)]
+        public string BranchAddress { get; set; }
+
+        [MaxLength(200)]
+        public string NameasonBank { get; set; }
+
+
+        [MaxLength(200)]
+        public string UploadImages { get; set; }
+        public enmApprovalStatus IsApproved { get; set; }
+        public DateTime CreatedDt { get; set; }
+        public int CreatedBy { get; set; }
+        public string Remarks { get; set; }
+        public int? ApprovedBy { get; set; }
+        public DateTime? ApprovedDt { get; set; }
+        public string ApprovalRemarks { get; set; }
+        public bool Isdeleted { get; set; }
+    }
+
+    public class tblCustomerPanDetails
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        [ForeignKey("tblCustomerMaster")]
+        public int? CustomerId { get; set; }
+        public tblCustomerMaster tblCustomerMaster { get; set; }
+
+        [MaxLength(100)]
+        public string PANName { get; set; }
+        [MaxLength(10)]
+        public string PANNo { get; set; }
+
+        [MaxLength(200)]
+        public string UploadImages { get; set; }
+        public enmApprovalStatus IsApproved { get; set; }
+        public DateTime CreatedDt { get; set; }
+        public int CreatedBy { get; set; }
+        public string Remarks { get; set; }
+        public int? ApprovedBy { get; set; }
+        public DateTime? ApprovedDt { get; set; }
+        public string ApprovalRemarks { get; set; }
+        public bool Isdeleted { get; set; }
+    }
+
 
     public class tblWalletBalanceAlert
     {
@@ -313,6 +309,8 @@ namespace B2BClasses.Database
         public int? ModifiedBy { get; set; }
         public DateTime? ModifiedDt { get; set; }
     }
+
+
 
     public class tblWalletDetailLedger
     {

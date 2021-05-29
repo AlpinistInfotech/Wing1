@@ -64,7 +64,7 @@ namespace B2BClasses.Database
         #endregion
 
 
-        #region*************** Masters ***************************
+        #region*************** Fare management ***************************
         public DbSet<tblMinBalenceAlert> tblMinBalenceAlert { get; set; }
         public DbSet<tblMinBalenceAlertDetails> tblMinBalenceAlertDetails { get; set; }
         public DbSet<tblActiveSerivceProvider> tblActiveSerivceProvider { get; set; }
@@ -105,10 +105,17 @@ namespace B2BClasses.Database
         public DbSet<tblWingCustomerFlightAPIAirline> tblWingCustomerFlightAPIAirline { get; set; }
         #endregion
 
-        #region ******************* Customer Master ***************************
-
+        #region*************** Master ***************************
+        public DbSet<tblBankMaster> tblBankMaster { get; set; }
         public DbSet<tblCountryMaster> tblCountryMaster { get; set; }
         public DbSet<tblStateMaster> tblStateMaster { get; set; }
+
+        #endregion
+
+        #region ******************* Customer Master ***************************
+
+
+
         public DbSet<tblCustomerMaster> tblCustomerMaster { get; set; }
         public DbSet<tblCustomerBalence> tblCustomerBalence { get; set; }
         public DbSet<tblCustomerGSTDetails> tblCustomerGSTDetails { get; set; }
@@ -117,9 +124,10 @@ namespace B2BClasses.Database
         public DbSet<tblUserRole> tblUserRole { get; set; }
         public DbSet<tblRoleClaim> tblRoleClaim { get; set; }
         public DbSet<tblCustomerIPFilter> tblCustomerIPFilter { get; set; }
+        public DbSet<tblCustomerBankDetails> tblCustomerBankDetails { get; set; }
+        public DbSet<tblCustomerPanDetails> tblCustomerPanDetails { get; set; }
         public DbSet<tblCustomerIPFilterDetails> tblCustomerIPFilterDetails { get; set; }
-        public DbSet<tblWalletDetailLedger> tblWalletDetailLedger { get; set; }
-        
+        public DbSet<tblWalletDetailLedger> tblWalletDetailLedger { get; set; }        
         public DbSet<tblWalletBalanceAlert> tblWalletBalanceAlert { get; set; }
         public DbSet<tblCustomerMarkup> tblCustomerMarkup { get; set; }
         public DbSet<tblCustomerMarkupLog> tblCustomerMarkupLog { get; set; }

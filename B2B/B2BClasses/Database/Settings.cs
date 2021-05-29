@@ -438,36 +438,5 @@ namespace B2BClasses.Database
 
 
 
-    public class tblAirline
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        [MaxLength(20)]
-        public string Code { get; set; }
-        [MaxLength(200)]
-        public string Name { get; set; }
-        public bool isLcc { get; set; }
-        [MaxLength(500)]
-        public string ImagePath { get; set; }
-        public int CreatedBy { get; set; }
-        public DateTime CreatedDt { get; set; }
-        public bool IsDeleted { get; set; }
-        public int? ModifiedBy { get; set; }
-        public DateTime? ModifiedDt { get; set; }
-
-    }
-    public class tblAirport: mdlAirport
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        public bool IsDomestic { get; set; }
-        public int CreatedBy { get; set; }
-        public DateTime CreatedDt { get; set; }
-        public bool IsDeleted { get; set; }
-        public int? ModifiedBy { get; set; }
-        public DateTime? ModifiedDt { get; set; }
-    }
-
+    
 }
