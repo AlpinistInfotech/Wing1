@@ -1,4 +1,5 @@
 ﻿using B2BClasses.Services.Enums;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,6 +8,8 @@ using System.Text;
 
 namespace B2BClasses.Database
 {
+    [Index(nameof(ContactNo))]
+    [Index(nameof(CustomerId))]
     public class tblFlightBookingMaster
     {
         [Key]
