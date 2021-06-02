@@ -32,7 +32,7 @@ namespace B2bApplication.Controllers
         private readonly IConfiguration _config;
         int _userid = 0;
         int _customerId = 0;
-        public CustomerController(ILogger<CustomerController> logger, DBContext context, ISettings setting,IConfiguration config)
+        public CustomerController(ILogger<CustomerController> logger, DBContext context, ISettings setting, IConfiguration config)
         {
             _context = context;
             _logger = logger;
@@ -42,9 +42,9 @@ namespace B2bApplication.Controllers
         }
 
         [AcceptVerbs("Get", "Post")]
-        public async  Task<IActionResult> CustomerCodeValidate(string CustomerCode)
+        public async Task<IActionResult> CustomerCodeValidate(string CustomerCode)
         {
-            if (CustomerCode  != null)
+            if (CustomerCode != null)
             {
                 var validSp = false;
                 if (_context.tblCustomerMaster.Any(p => p.Code == CustomerCode))
@@ -57,6 +57,12 @@ namespace B2bApplication.Controllers
 
         }
 
+        #region ******************Customer Master *************************
+        public async Task<IActionResult> CustomerMaster()
+        {
+            return View();
+        }
+        #endregion
 
         #region Add Customer        
         [Authorize]

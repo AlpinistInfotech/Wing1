@@ -107,8 +107,7 @@ namespace B2BClasses.Database
         #region*************** Master ***************************
         public DbSet<tblBankMaster> tblBankMaster { get; set; }
         public DbSet<tblCountryMaster> tblCountryMaster { get; set; }
-        public DbSet<tblStateMaster> tblStateMaster { get; set; }
-        public DbSet<tblWingBankAccount> tblWingBankAccount { get; set; }
+        public DbSet<tblStateMaster> tblStateMaster { get; set; }        
         public DbSet<tblAirline> tblAirline { get; set; }
         public DbSet<tblAirport> tblAirport { get; set; }
 

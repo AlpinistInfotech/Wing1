@@ -114,7 +114,7 @@ namespace B2BClasses.Database
         public bool ForcePasswordChange { get; set; }
         [Required]
         [MaxLength(10)]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
         public bool IsMailVarified { get; set; }
         [MaxLength(1000)]
         public string MailVerficationTokken { get; set; }
@@ -131,7 +131,6 @@ namespace B2BClasses.Database
         public tblCustomerMaster tblCustomerMaster { get; set; }
 
     }
-
 
     public class tblUserLoginLog
     {
@@ -164,7 +163,6 @@ namespace B2BClasses.Database
         [InverseProperty("tblRoleMaster")]
         public ICollection<tblRoleClaim> tblRoleClaim { get; set; }
     }
-
 
     public class tblRoleClaim
     {
@@ -253,8 +251,8 @@ namespace B2BClasses.Database
 
         [MaxLength(200)]
         public string NameasonBank { get; set; }
-
-
+        [MaxLength(200)]
+        public string UpiId { get; set; }
         [MaxLength(200)]
         public string UploadImages { get; set; }
         public enmApprovalStatus IsApproved { get; set; }

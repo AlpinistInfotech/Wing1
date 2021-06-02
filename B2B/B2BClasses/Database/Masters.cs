@@ -84,7 +84,6 @@ namespace B2BClasses.Database
         public string ModifiedByName { get; set; }
         [NotMapped]
         public virtual string CountryName { get; set; }
-
     }
 
     public class tblAirline
@@ -117,28 +116,6 @@ namespace B2BClasses.Database
         public bool IsDeleted { get; set; }
         public int? ModifiedBy { get; set; }
         public DateTime? ModifiedDt { get; set; }
-    }
-
-    public class tblWingBankAccount
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        [ForeignKey("tblBankMaster")]
-        public int? BankId { get; set; }
-        public tblBankMaster tblBankMaster { get; set; }
-        [MaxLength(20)]
-        public string IFSC { get; set; }
-        [MaxLength(20)]
-        public string AccountNo { get; set; }
-        [MaxLength(200)]
-        public string BranchAddress { get; set; }
-        [MaxLength(200)]
-        public string NameasonBank { get; set; }
-        public string UpiId { get; set; }
-        public DateTime CreatedDt { get; set; }
-        public int CreatedBy { get; set; }
-        public bool Isdeleted { get; set; }
     }
 
     

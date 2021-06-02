@@ -12,8 +12,6 @@ using System.Threading.Tasks;
 namespace B2BClasses
 {
     
-
-
     public interface IBooking
     {
         int CustomerId { get; set; }
