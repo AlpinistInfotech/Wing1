@@ -118,7 +118,21 @@ namespace B2BClasses.Database
 
         public void InsertUser()
         {
-            for (int i = i; i <= TotalCustomer; i++)
+            List<tblRoleMaster> roleMaster = new List<tblRoleMaster>();
+            roleMaster.Add(new tblRoleMaster() { Id = 1, RoleName = "WingAdmin", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true });
+            roleMaster.Add(new tblRoleMaster() { Id = 2, RoleName = "CustomerAdmin", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true });
+            roleMaster.Add(new tblRoleMaster() { Id = 3, RoleName = "FareManagement", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true });
+            roleMaster.Add(new tblRoleMaster() { Id = 4, RoleName = "Search", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true });
+            roleMaster.Add(new tblRoleMaster() { Id = 5, RoleName = "Booking", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true });
+            roleMaster.Add(new tblRoleMaster() { Id = 6, RoleName = "Cancelation", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true });
+            roleMaster.Add(new tblRoleMaster() { Id = 6, RoleName = "Balence", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true });
+            roleMaster.Add(new tblRoleMaster() { Id = 7, RoleName = "Profile", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true });
+            roleMaster.Add(new tblRoleMaster() { Id = 8, RoleName = "Setting", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true });
+            roleMaster.Add(new tblRoleMaster() { Id = 9, RoleName = "Setting", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true });
+
+
+
+            for (int i = 1; i <= TotalCustomer; i++)
             {
                 tblUserMaster UserMaster1 = new tblUserMaster()
                 {
@@ -130,7 +144,19 @@ namespace B2BClasses.Database
                     Password = "123456",
                     UserName = "admin",
                 };
-                _modelBuilder.Entity<tblUserMaster>().HasData(UserMaster);
+                _modelBuilder.Entity<tblUserMaster>().HasData(UserMaster1);
+
+                tblUserMaster UserMaster2 = new tblUserMaster()
+                {
+                    Id = (i * 10) + 1,
+                    IsActive = true,
+                    CreatedBy = 1,
+                    CreatedDt = _CurrentDt,
+                    CustomerId = 1,
+                    Password = "123456",
+                    UserName = "BookingApiUser",
+                };
+                _modelBuilder.Entity<tblUserMaster>().HasData(UserMaster1);
 
             }
 
