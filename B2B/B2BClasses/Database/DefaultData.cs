@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using B2BClasses.Services.Enums;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -116,72 +117,99 @@ namespace B2BClasses.Database
             
         }
 
+        public void InsertRoleClaim()
+        {
+            int index = 1;
+            List<tblRoleClaim> roleClaims = new List<tblRoleClaim>();
+            List<tblRoleMaster> roleMaster = new List<tblRoleMaster>();
+            roleMaster.Add(new tblRoleMaster() { Id = roleMaster.Count + 1, RoleName = "WingAdmin", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true, IsAdminRole = false });
+            var datas = Enum.GetValues(typeof(B2BClasses.Services.Enums.enmDocumentMaster));
+            //wing Admin Role
+            foreach (var d in datas)
+            {
+                roleClaims.Add(new tblRoleClaim()
+                {
+                    Id = index,
+                    Role = roleMaster.Count,
+                    ClaimId= (enmDocumentMaster)d,
+                    CreatedBy = 1,
+                    CreatedDt = _CurrentDt,
+                    IsDeleted = false,
+                    ModifiedBy = 1,
+                    ModifiedDt = _CurrentDt,
+                });
+                index++;
+            }
+            roleMaster.Add(new tblRoleMaster() { Id = roleMaster.Count + 1, RoleName = "CustomerAdmin", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true, IsAdminRole = false });
+            index = 100;
+            foreach (var d in datas)
+            {
+                if (((enmDocumentMaster)d).GetDocumentDetails().IsAdminClaim)
+                {
+                    continue;
+                }
+                roleClaims.Add(new tblRoleClaim()
+                {
+                    Id = index,
+                    Role = roleMaster.Count,
+                    ClaimId = (enmDocumentMaster)d,
+                    CreatedBy = 1,
+                    CreatedDt = _CurrentDt,
+                    IsDeleted = false,
+                    ModifiedBy = 1,
+                    ModifiedDt = _CurrentDt,
+                });
+                index++;
+            }
+            roleMaster.Add(new tblRoleMaster() { Id = roleMaster.Count + 1, RoleName = "FareManagement", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true, IsAdminRole = false });
+            roleMaster.Add(new tblRoleMaster() { Id = roleMaster.Count + 1, RoleName = "Search", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true, IsAdminRole = false });
+            roleMaster.Add(new tblRoleMaster() { Id = roleMaster.Count + 1, RoleName = "Booking", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true, IsAdminRole = false });
+            roleMaster.Add(new tblRoleMaster() { Id = roleMaster.Count + 1, RoleName = "Cancelation", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true, IsAdminRole = false });
+            roleMaster.Add(new tblRoleMaster() { Id = roleMaster.Count + 1, RoleName = "Balence", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true, IsAdminRole = false });
+            roleMaster.Add(new tblRoleMaster() { Id = roleMaster.Count + 1, RoleName = "Profile", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true, IsAdminRole = false });
+            roleMaster.Add(new tblRoleMaster() { Id = roleMaster.Count + 1, RoleName = "Setting", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true, IsAdminRole = false });
+            roleMaster.Add(new tblRoleMaster() { Id = roleMaster.Count + 1, RoleName = "BalenceApproval", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true, IsAdminRole = true });
+            _modelBuilder.Entity<tblRoleMaster>().HasData(roleMaster);
+            _modelBuilder.Entity<tblRoleClaim>().HasData(roleClaims);
+        }
+
         public void InsertUser()
         {
-            List<tblRoleMaster> roleMaster = new List<tblRoleMaster>();
-            roleMaster.Add(new tblRoleMaster() { Id = 1, RoleName = "WingAdmin", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true });
-            roleMaster.Add(new tblRoleMaster() { Id = 2, RoleName = "CustomerAdmin", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true });
-            roleMaster.Add(new tblRoleMaster() { Id = 3, RoleName = "FareManagement", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true });
-            roleMaster.Add(new tblRoleMaster() { Id = 4, RoleName = "Search", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true });
-            roleMaster.Add(new tblRoleMaster() { Id = 5, RoleName = "Booking", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true });
-            roleMaster.Add(new tblRoleMaster() { Id = 6, RoleName = "Cancelation", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true });
-            roleMaster.Add(new tblRoleMaster() { Id = 6, RoleName = "Balence", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true });
-            roleMaster.Add(new tblRoleMaster() { Id = 7, RoleName = "Profile", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true });
-            roleMaster.Add(new tblRoleMaster() { Id = 8, RoleName = "Setting", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true });
-            roleMaster.Add(new tblRoleMaster() { Id = 9, RoleName = "Setting", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true });
-
-
-
+            int index = 1;
+            List<tblUserMaster> userMasters = new List<tblUserMaster>();
+            List<tblUserRole> UserRoles = new List<tblUserRole>();
             for (int i = 1; i <= TotalCustomer; i++)
             {
-                tblUserMaster UserMaster1 = new tblUserMaster()
+                
+                tblUserMaster um1 = new tblUserMaster()
                 {
                     Id = (i*10)+1,
                     IsActive = true,
                     CreatedBy = 1,
                     CreatedDt = _CurrentDt,
-                    CustomerId = 1,
+                    CustomerId = i,
                     Password = "123456",
                     UserName = "admin",
                 };
-                _modelBuilder.Entity<tblUserMaster>().HasData(UserMaster1);
 
-                tblUserMaster UserMaster2 = new tblUserMaster()
+                tblUserRole ur = new tblUserRole()
                 {
-                    Id = (i * 10) + 1,
-                    IsActive = true,
+                    Id = UserRoles.Count + 1,
+                    UserId = um1.Id,
+                    IsDeleted = false,
                     CreatedBy = 1,
                     CreatedDt = _CurrentDt,
-                    CustomerId = 1,
-                    Password = "123456",
-                    UserName = "BookingApiUser",
+                    ModifiedBy = 1,
+                    ModifiedDt = _CurrentDt,
+                    Role = i == 1 ? 1 : 2
+
                 };
-                _modelBuilder.Entity<tblUserMaster>().HasData(UserMaster1);
-
+                
+                userMasters.Add(um1);
+                UserRoles.Add(ur);
             }
-
-
-            int index = 1;
-            List<tblUserRole> UserRoles = new List<tblUserRole>();
-
-            //var datas=Enum.GetValues(typeof(B2BClasses.Services.Enums.enmDocumentMaster));
-            //List<tblUserRole> UserRoles = new List<tblUserRole>();
-            //foreach (var d in datas)
-            //{
-            //    UserRoles.Add(new tblUserRole()
-            //    {
-            //        Id= index,
-            //        Role= d,
-            //        UserId=1,
-            //        CreatedBy=1,
-            //        CreatedDt=_CurrentDt,
-            //        IsDeleted=false,
-            //        ModifiedBy= 1,
-            //        ModifiedDt= _CurrentDt,                    
-            //    });
-            //    index++;
-            //}
-            //_modelBuilder.Entity<tblUserRole>().HasData(UserRoles);
+            _modelBuilder.Entity<tblUserMaster>().HasData(userMasters);
+            _modelBuilder.Entity<tblUserRole>().HasData(UserRoles);
         }
 
         public void InsertServiceProvider()
@@ -195,11 +223,8 @@ namespace B2BClasses.Database
                 ModifiedDt= _CurrentDt,
                 Remarks=""
             };
-
-            
             _modelBuilder.Entity<tblActiveSerivceProvider>().HasData(_tblActiveSerivceProvider);
-            //IP Filteration
-            
+            //IP Filteration            
         }
 
         public void InsertAirport()

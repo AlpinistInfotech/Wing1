@@ -189,78 +189,78 @@ namespace B2BClasses.Services.Enums
 
     public enum enmDocumentMaster : int
     {
-        [Document(enmDocumentType.Report | enmDocumentType.DisplayMenu, 1, "Dashboard", "Dashboard", "menu-icon fa fa-tachometer", "/Home/Index")]
+        [Document(enmDocumentType.Report | enmDocumentType.DisplayMenu, 1, "Dashboard", "Dashboard", "menu-icon fa fa-tachometer", "/Home/Index",IsAdminClaim =false)]
         Dashboard = 1,
         [Document(EnmModule: enmModule.Booking, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "Flight", Description: "Flight", Icon: "fa fa-plane", ActionName: "/Home/FlightSearch")]
+            DisplayOrder: 1, Name: "Flight", Description: "Flight", Icon: "fa fa-plane", ActionName: "/Home/FlightSearch", IsAdminClaim = false)]
         Flight = 10,
         [Document(EnmModule: enmModule.Booking, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "Hotel", Description: "Hotel", Icon: "fa fa-building", ActionName: "/Home/Hotel")]
+            DisplayOrder: 1, Name: "Hotel", Description: "Hotel", Icon: "fa fa-building", ActionName: "/Home/Hotel", IsAdminClaim = false)]
         Hotel = 11,
         [Document(EnmModule: enmModule.Booking, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "Buses Train", Description: "Buses", Icon: "fa fa-bus", ActionName: "/Home/TrainBuses")]
+            DisplayOrder: 1, Name: "Buses Train", Description: "Buses", Icon: "fa fa-bus", ActionName: "/Home/TrainBuses", IsAdminClaim = false)]
         BusesTrain = 12,
         [Document(EnmModule: enmModule.Booking, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "HolidayPackage", Description: "Train", Icon: "fa fa-train", ActionName: "/Home/HolidayPackage")]
+            DisplayOrder: 1, Name: "HolidayPackage", Description: "Train", Icon: "fa fa-train", ActionName: "/Home/HolidayPackage", IsAdminClaim = false)]
         HolidayPackage = 13,
 
         [Document(EnmModule: enmModule.Wallet, DocumentType: enmDocumentType.Report | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "Statement", Description: "Statement", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CustomerwalletReport")]
+            DisplayOrder: 1, Name: "Statement", Description: "Statement", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CustomerwalletReport", IsAdminClaim = false)]
         Statement = 21,
         [Document(EnmModule: enmModule.Wallet, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "Add Wallet", Description: "Add Wallet", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CustomerWallet")]
+            DisplayOrder: 1, Name: "Add Wallet", Description: "Add Wallet", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CustomerWallet", IsAdminClaim = true)]
         Add_Wallet = 22,
-        [Document(EnmSubModule: enmSubModule.Credit, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "Credit Request", Description: "Credit Request", Icon: "far fa-circle nav-icon", ActionName: "/Customer/PaymentRequest")]
+        [Document(EnmModule: enmModule.Wallet, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
+            DisplayOrder: 1, Name: "Payment Request", Description: "Credit/Wallet Amount Request", Icon: "far fa-circle nav-icon", ActionName: "/Customer/PaymentRequest", IsAdminClaim = false)]
         CreditRequest = 23,
-        [Document(EnmSubModule: enmSubModule.Credit, DocumentType: enmDocumentType.Approval | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "Credit Approval", Description: "Credit Approval", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CreditApproval")]
+        [Document(EnmModule: enmModule.Wallet, DocumentType: enmDocumentType.Approval | enmDocumentType.DisplayMenu,
+            DisplayOrder: 1, Name: "Payment Approval", Description: "Credit Approval", Icon: "far fa-circle nav-icon", ActionName: "/Customer/PaymentApproval", IsAdminClaim = true)]
         CreditApproval = 24,
-        [Document(EnmSubModule: enmSubModule.Credit, DocumentType: enmDocumentType.Report | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "Credit Report", Description: "Credit Report", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CreditReport")]
+        [Document(EnmModule: enmModule.Wallet, DocumentType: enmDocumentType.Report | enmDocumentType.DisplayMenu,
+            DisplayOrder: 1, Name: "Payment Report", Description: "Credit Report", Icon: "far fa-circle nav-icon", ActionName: "/Customer/PaymentReport")]
         CreditReport = 25,
 
         [Document(EnmModule: enmModule.Incentive, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "Incentive Statement", Description: "Incentive Statement", Icon: "far fa-circle nav-icon", ActionName: "/Wing/AddWallet")]
+            DisplayOrder: 1, Name: "Incentive Statement", Description: "Incentive Statement", Icon: "far fa-circle nav-icon", ActionName: "/Customer/Incentive")]
         Incentive_Statement = 20,
 
 
         [Document(EnmModule: enmModule.Report, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "Flight Booking", Description: "Flight", Icon: "fa fa-plane", ActionName: "/Customer/FlightBookingReport")]
+            DisplayOrder: 1, Name: "Flight Booking", Description: "Flight", Icon: "fa fa-plane", ActionName: "/Customer/FlightBookingReport", IsAdminClaim = false)]
         Flight_Booking_Report = 51,
 
         [Document(EnmModule: enmModule.Setting, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.Report | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "MarkUp", Description: "MarkUp", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CustomerMarkUp")]
+            DisplayOrder: 1, Name: "MarkUp", Description: "MarkUp", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CustomerMarkUp", IsAdminClaim = false)]
         Markup = 101,
         [Document(EnmModule: enmModule.Setting, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
-            DisplayOrder: 2, Name: "Convenience", Description: "Convenience", Icon: "far fa-circle nav-icon", ActionName: "/Home/Convenience")]
-        convenience_fee = 102,
+            DisplayOrder: 2, Name: "Convenience", Description: "Convenience", Icon: "far fa-circle nav-icon", ActionName: "/Home/Convenience", IsAdminClaim = true)]
+        ConvenienceFee = 102,
+        
+        [Document(EnmModule: enmModule.Setting, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
+            DisplayOrder: 3, Name: "IP Filter", Description: "Filter The IP of Customer", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CustomerIPFilter", IsAdminClaim = false)]
+        IP_Filter = 103,
+        
+        [Document(EnmModule: enmModule.Setting, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.Report | enmDocumentType.DisplayMenu,
+            DisplayOrder: 1, Name: "Wing MarkUp", Description: "Wing MarkUp", Icon: "far fa-circle nav-icon", ActionName: "/Home/WingMarkup", IsAdminClaim = true)]
+        WingMarkup = 104,
 
         [Document(EnmModule: enmModule.Setting, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
-           DisplayOrder: 2, Name: "Discount", Description: "Discount", Icon: "far fa-circle nav-icon", ActionName: "/Home/Discount")]
+           DisplayOrder: 2, Name: "Discount", Description: "Discount", Icon: "far fa-circle nav-icon", ActionName: "/Home/Discount", IsAdminClaim = true)]
         Discount = 105,
 
         [Document(EnmModule: enmModule.Setting, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
             DisplayOrder: 2, Name: "Customer - Flight API", Description: "Customer - Flight API", Icon: "far fa-circle nav-icon", ActionName: "/Home/CustomerFlightAPI")]
         custiomer_apis = 106,
 
-        [Document(EnmModule: enmModule.Setting, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
-            DisplayOrder: 3, Name: "IP Filter", Description: "Filter The IP of Customer", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CustomerIPFilter")]
-        IP_Filter = 103,
-        
-        [Document(EnmModule: enmModule.Setting, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.Report | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "Wing MarkUp", Description: "Wing MarkUp", Icon: "far fa-circle nav-icon", ActionName: "/Home/WingMarkup")]
-        WingMarkup = 104,
-        
 
         [Document(EnmModule: enmModule.Master, DocumentType: enmDocumentType.Create | enmDocumentType.DisplayMenu,
-        DisplayOrder: 1, Name: "Customer", Description: "Customer Master", Icon: "far fa-circle nav-icon", ActionName: "/Customer/AddCustomer")]
+        DisplayOrder: 1, Name: "Customer", Description: "Customer Master", Icon: "far fa-circle nav-icon", ActionName: "/Customer/AddCustomer", IsAdminClaim = true)]
         CustomerMaster = 111,
         [Document(EnmModule: enmModule.Master, DocumentType: enmDocumentType.Create | enmDocumentType.DisplayMenu,
-        DisplayOrder: 1, Name: "Customer Report", Description: "Customer Report", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CustomerDetails")]
+        DisplayOrder: 1, Name: "Customer Report", Description: "Customer Report", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CustomerDetails", IsAdminClaim = true)]
         CustomerReport = 112,        
         [Document(EnmModule: enmModule.Master, DocumentType: enmDocumentType.Create | enmDocumentType.DisplayMenu,
-        DisplayOrder: 1, Name: "User", Description: "User Master", Icon: "far fa-circle nav-icon", ActionName: "/Customer/AddUser")]
+        DisplayOrder: 1, Name: "User", Description: "User Master", Icon: "far fa-circle nav-icon", ActionName: "/Customer/AddUser", IsAdminClaim = true)]
         UserMaster = 113,
         
 
@@ -430,6 +430,7 @@ namespace B2BClasses.Services.Enums
         public string Name { get; set; }
         public string ActionName { get; set; }
         public string Icon { get; set; }
+        public bool IsAdminClaim { get; set; }
     }
 
 

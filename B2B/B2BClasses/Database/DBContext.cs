@@ -27,6 +27,7 @@ namespace B2BClasses.Database
             modelBuilder.Entity<tblCustomerBalence>(entity =>entity.HasCheckConstraint("CK_tblCustomerMaster_WalletBalence", "WalletBalence >= 0"));
             modelBuilder.Entity<tblCustomerBalence>(entity => entity.HasCheckConstraint("CK_tblCustomerMaster_CreditBalence", "CreditBalence >= 0"));
 
+            defaultData.InsertRoleClaim();
             defaultData.InsertCustomerMaster();
             defaultData.InsertUser();
             defaultData.InsertAirport();
@@ -141,3 +142,4 @@ namespace B2BClasses.Database
 
 
 }
+

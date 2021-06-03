@@ -157,6 +157,7 @@ namespace B2BClasses.Database
         [Required]
         [MaxLength(100)]
         public string RoleName { get; set; }
+        public bool IsAdminRole { get; set; }
         public bool IsActive { get; set; }
         public int CreatedBy { get; set; }
         public DateTime CreatedDt { get; set; }
@@ -172,7 +173,7 @@ namespace B2BClasses.Database
         [ForeignKey("tblRoleMaster")] // Foreign Key here
         public int? Role { get; set; }
         public tblRoleMaster tblRoleMaster { get; set; }
-        public enmDocumentMaster ClaimId { get; set; }
+        public enmDocumentMaster ClaimId { get; set; }        
         public int CreatedBy { get; set; }
         public DateTime CreatedDt { get; set; }
         public bool IsDeleted { get; set; }
