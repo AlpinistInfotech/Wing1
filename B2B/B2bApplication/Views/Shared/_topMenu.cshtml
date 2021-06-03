@@ -1,4 +1,6 @@
-﻿<div id="navbar" class="navbar navbar-default    navbar-collapse       h-navbar ace-save-state">
+﻿@inject ICurrentUsers _currentuser
+
+<div id="navbar" class="navbar navbar-default    navbar-collapse       h-navbar ace-save-state">
     <div class="navbar-container ace-save-state" id="navbar-container">
         <div class="navbar-header pull-left">
             <a href="index.html" class="navbar-brand">
@@ -227,7 +229,7 @@
                         <img class="nav-user-photo" src="~/assets/images/avatars/user.jpg" alt="Jason's Photo" />
                         <span class="user-info">
                             <small>Welcome,</small>
-                            Jason
+                            @_currentuser.Name
                         </span>
 
                         <i class="ace-icon fa fa-caret-down"></i>
@@ -251,7 +253,8 @@
                         <li class="divider"></li>
 
                         <li>
-                            <a href="#">
+                            <form action="~/Account/Logout" method="post" id="frmLogout"></form>
+                            <a href="#" onclick="document.getElementById('frmLogout').submit();">
                                 <i class="ace-icon fa fa-power-off"></i>
                                 Logout
                             </a>

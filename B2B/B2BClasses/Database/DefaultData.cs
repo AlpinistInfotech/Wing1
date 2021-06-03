@@ -33,7 +33,7 @@ namespace B2BClasses.Database
                 AlternateNo = "9873404402",                
                 //WalletBalence = 0,
                 //CreditBalence = 0,
-                CustomerType = Services.Enums.enmCustomerType.Admin,
+                CustomerType = enmCustomerType.Admin,
                 IsActive = true,
                 CreatedBy = 1,
                 CreatedDt = _CurrentDt
@@ -75,7 +75,7 @@ namespace B2BClasses.Database
                 Address = "New Delhi",
                 ContactNo = "9873404402",
                 AlternateNo = "9873404402",
-                CustomerType = Services.Enums.enmCustomerType.InHouse,
+                CustomerType = Services.Enums.enmCustomerType.B2C,
                 IsActive = true,
                 CreatedBy = 1,
                 CreatedDt = _CurrentDt
@@ -91,7 +91,7 @@ namespace B2BClasses.Database
                 {
                     Id = i ,
                     CreditBalence = 1000000,
-                    CustomerId = 1,
+                    CustomerId = i,
                     MPin = "123456",
                     WalletBalence = 1000000,
                     ModifiedDt = _CurrentDt
@@ -104,7 +104,7 @@ namespace B2BClasses.Database
                     CreatedBy = 1,
                     CreatedDt = _CurrentDt,
                     AllowedAllIp = true,
-                    CustomerId = 1,
+                    CustomerId = i,
                     IsDeleted = false,
                     ModifiedBy = 1,
                     ModifiedDt = _CurrentDt,

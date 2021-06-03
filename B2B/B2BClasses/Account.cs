@@ -13,6 +13,7 @@ namespace B2BClasses
 {
     public interface IAccount
     {
+        public enmCustomerType customerType { get; set; }
         Task<bool> IsValidIPAsync(int CustomerId, string UserIp);
         Task<tblUserMaster> LoginAsync(mdlLogin mdl, string UserIp);
         Task<IEnumerable<enmDocumentMaster>> GetEnmDocumentsAsync(int UserId);
@@ -22,11 +23,15 @@ namespace B2BClasses
     {
         private readonly DBContext _context;
         private readonly IConfiguration _config;
+        private enmCustomerType? _customerType;
+
+
         public Account(DBContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
         }
+        public enmCustomerType customerType { get { return _customerType.Value; } set { _customerType = value; } }
 
         public async Task<bool> IsValidIPAsync(int CustomerId, string UserIp)
         {
@@ -53,7 +58,7 @@ namespace B2BClasses
             {
                 throw new Exception("Invalid Customer ID");
             }
-
+            _customerType = customerMaster.CustomerType;
             if (!(await IsValidIPAsync(customerMaster.Id, UserIp)))
             {
                 throw new Exception("Invalid User IP");

@@ -41,6 +41,8 @@ namespace B2bApplication.Controllers
                     userClaims.Add(new Claim("_UserId", userMaster.Id.ToString()));
                     userClaims.Add(new Claim("_CustomerId", userMaster.CustomerId.ToString()));
                     userClaims.Add(new Claim("_Name", userMaster.UserName.ToString()));
+                    userClaims.Add(new Claim("_CustomerType", account.customerType.ToString()));
+                    
                     foreach (var usr in userRoles)
                     {
                         userClaims.Add(new Claim(nameof(usr), usr.ToString()));
@@ -63,6 +65,14 @@ namespace B2bApplication.Controllers
                 }
             }
             return View(mdl);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Login");
         }
     }
 
