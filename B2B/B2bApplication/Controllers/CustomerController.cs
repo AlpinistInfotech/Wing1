@@ -30,15 +30,19 @@ namespace B2bApplication.Controllers
         private readonly DBContext _context;
         private readonly ISettings _setting;
         private readonly IConfiguration _config;
-        int _userid = 0;
-        int _customerId = 0;
-        public CustomerController(ILogger<CustomerController> logger, DBContext context, ISettings setting, IConfiguration config)
+        private readonly int _userid ;
+        private readonly int _customerId ;
+        private readonly ICurrentUsers _currentUsers;
+        public CustomerController(ILogger<CustomerController> logger, DBContext context, ISettings setting, IConfiguration config,
+            ICurrentUsers currentUsers)
         {
             _context = context;
             _logger = logger;
             _setting = setting;
             _config = config;
-            _customerId = 1;
+            _currentUsers = currentUsers;
+            _customerId = _currentUsers.CustomerId;
+            _userid = _currentUsers.UserId;
         }
 
         [AcceptVerbs("Get", "Post")]
@@ -52,7 +56,6 @@ namespace B2bApplication.Controllers
 
                 return Json(validSp);
             }
-
             return Json(true);
 
         }

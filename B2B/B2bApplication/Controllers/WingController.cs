@@ -21,5 +21,10 @@ namespace B2bApplication.Controllers
             _context = context;
             _config = config;
         }
+
+        public string GetUserDetail([FromServices] ICurrentUsers currentUsers )
+        {
+            return currentUsers.Name;
+        }
     }
 }

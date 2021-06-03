@@ -69,7 +69,7 @@ namespace B2bApplication.Controllers
 
 
         [Authorize]
-        public async Task<dynamic> GetMenuAsync([FromServices] ICurrentUsers currentUsers,[FromServices] IAccount account)
+        public async Task<dynamic> GetMenuAsync([FromServices]ICurrentUsers currentUsers,[FromServices] IAccount account)
         {   
             List<Document> alldocument = new List<Document>();
             List<Module> allModule = new List<Module>();
@@ -81,8 +81,7 @@ namespace B2bApplication.Controllers
                 if (DD.DocumentType.HasFlag(enmDocumentType.DisplayMenu))
                 {
                     alldocument.Add(DD);
-                }
-                
+                }                
             }
             var eMods = Enum.GetValues(typeof(enmModule)).Cast<enmModule>().ToList();
             foreach (var doc in eMods)

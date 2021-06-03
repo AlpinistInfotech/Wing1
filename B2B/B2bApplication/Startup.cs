@@ -55,9 +55,15 @@ namespace B2bApplication
                      config.ExpireTimeSpan = new TimeSpan(24, 0, 0);
                  });
 
+            services.AddAuthorization(options =>
+            {
+                foreach (var name in Enum.GetNames(typeof(B2BClasses.Services.Enums.enmDocumentMaster)))
+                {
+                    options.AddPolicy(name, p => p.RequireClaim(name));
+                }
+            });
 
             
-
             services.AddControllersWithViews();
         }
 

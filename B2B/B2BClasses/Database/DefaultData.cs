@@ -7,6 +7,8 @@ namespace B2BClasses.Database
 {
     class DefaultData
     {
+        private int TotalCustomer = 4;
+
         private readonly ModelBuilder _modelBuilder;
         private readonly DateTime _CurrentDt;
         public DefaultData(ModelBuilder modelBuilder)
@@ -19,7 +21,7 @@ namespace B2BClasses.Database
         {
             
 
-            tblCustomerMaster CustomerMaster = new tblCustomerMaster()
+            tblCustomerMaster CustomerMaster1 = new tblCustomerMaster()
             {
                 Id = 1,
                 Code = "ADM",
@@ -27,7 +29,7 @@ namespace B2BClasses.Database
                 Email = "Prabhakarks90@gmail.com",
                 Address = "New Delhi",
                 ContactNo = "9873404402",
-                AlternateNo = "9873404402",
+                AlternateNo = "9873404402",                
                 //WalletBalence = 0,
                 //CreditBalence = 0,
                 CustomerType = Services.Enums.enmCustomerType.Admin,
@@ -35,37 +37,107 @@ namespace B2BClasses.Database
                 CreatedBy = 1,
                 CreatedDt = _CurrentDt
             };
-            _modelBuilder.Entity<tblCustomerMaster>().HasData(CustomerMaster);
-            //IP Filteration
-            tblCustomerIPFilter CustomerIPFilter = new tblCustomerIPFilter()
+            tblCustomerMaster CustomerMaster2 = new tblCustomerMaster()
             {
-                Id = 1,
+                Id = 2,
+                Code = "MLM",
+                CustomerName = "Admin",
+                Email = "Prabhakarks90@gmail.com",
+                Address = "New Delhi",
+                ContactNo = "9873404402",
+                AlternateNo = "9873404402",                
+                CustomerType = Services.Enums.enmCustomerType.MLM,
+                IsActive = true,
                 CreatedBy = 1,
-                CreatedDt = _CurrentDt,
-                AllowedAllIp = true,
-                CustomerId = 1,
-                IsDeleted = false,
-                ModifiedBy = 1,
-                ModifiedDt = _CurrentDt,
+                CreatedDt = _CurrentDt
             };
-            _modelBuilder.Entity<tblCustomerIPFilter>().HasData(CustomerIPFilter);
+            tblCustomerMaster CustomerMaster3 = new tblCustomerMaster()
+            {
+                Id = 3,
+                Code = "TravelLook",
+                CustomerName = "Admin",
+                Email = "Prabhakarks90@gmail.com",
+                Address = "New Delhi",
+                ContactNo = "9873404402",
+                AlternateNo = "9873404402",
+                CustomerType = Services.Enums.enmCustomerType.InHouse,
+                IsActive = true,
+                CreatedBy = 1,
+                CreatedDt = _CurrentDt
+            };
+            tblCustomerMaster CustomerMaster4 = new tblCustomerMaster()
+            {
+                Id = 4,
+                Code = "TestB2B",
+                CustomerName = "Admin",
+                Email = "Prabhakarks90@gmail.com",
+                Address = "New Delhi",
+                ContactNo = "9873404402",
+                AlternateNo = "9873404402",
+                CustomerType = Services.Enums.enmCustomerType.InHouse,
+                IsActive = true,
+                CreatedBy = 1,
+                CreatedDt = _CurrentDt
+            };
+            
+            _modelBuilder.Entity<tblCustomerMaster>().HasData(CustomerMaster1);
+            _modelBuilder.Entity<tblCustomerMaster>().HasData(CustomerMaster2);
+            _modelBuilder.Entity<tblCustomerMaster>().HasData(CustomerMaster3);
+            _modelBuilder.Entity<tblCustomerMaster>().HasData(CustomerMaster4);
+            for (int i = 1; i <= TotalCustomer; i++)
+            {
+                tblCustomerBalence customerBalence = new tblCustomerBalence()
+                {
+                    Id = i ,
+                    CreditBalence = 1000000,
+                    CustomerId = 1,
+                    MPin = "123456",
+                    WalletBalence = 1000000,
+                    ModifiedDt = _CurrentDt
+                };
+                _modelBuilder.Entity<tblCustomerBalence>().HasData(customerBalence);
+                //IP Filteration
+                tblCustomerIPFilter CustomerIPFilter = new tblCustomerIPFilter()
+                {
+                    Id = i,
+                    CreatedBy = 1,
+                    CreatedDt = _CurrentDt,
+                    AllowedAllIp = true,
+                    CustomerId = 1,
+                    IsDeleted = false,
+                    ModifiedBy = 1,
+                    ModifiedDt = _CurrentDt,
+                };
+                _modelBuilder.Entity<tblCustomerIPFilter>().HasData(CustomerIPFilter);
+            }
+            
+
+            
+            
         }
 
         public void InsertUser()
         {
-            tblUserMaster UserMaster = new tblUserMaster()
+            for (int i = i; i <= TotalCustomer; i++)
             {
-                Id = 1,
-                IsActive = true,
-                CreatedBy = 1,
-                CreatedDt = _CurrentDt,
-                CustomerId = 1,
-                Password = "123456",
-                UserName = "admin",
-            };
-            _modelBuilder.Entity<tblUserMaster>().HasData(UserMaster);
+                tblUserMaster UserMaster1 = new tblUserMaster()
+                {
+                    Id = (i*10)+1,
+                    IsActive = true,
+                    CreatedBy = 1,
+                    CreatedDt = _CurrentDt,
+                    CustomerId = 1,
+                    Password = "123456",
+                    UserName = "admin",
+                };
+                _modelBuilder.Entity<tblUserMaster>().HasData(UserMaster);
+
+            }
+
 
             int index = 1;
+            List<tblUserRole> UserRoles = new List<tblUserRole>();
+
             //var datas=Enum.GetValues(typeof(B2BClasses.Services.Enums.enmDocumentMaster));
             //List<tblUserRole> UserRoles = new List<tblUserRole>();
             //foreach (var d in datas)

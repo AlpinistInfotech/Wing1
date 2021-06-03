@@ -68,8 +68,8 @@ namespace B2BClasses
 
         public async Task<IEnumerable<enmDocumentMaster>> GetEnmDocumentsAsync(int UserId)
         {
-             var AllRoles=await _context.tblUserRole.Where(p => p.UserId == UserId).Select(p=>p.Role).ToListAsync();
-            return _context.tblRoleClaim.Where(p => AllRoles.Contains(p.Role)).Select(p => p.ClaimId);           
+             var AllRoles=await _context.tblUserRole.Where(p => p.UserId == UserId  && !p.IsDeleted).Select(p=>p.Role).ToListAsync();
+            return _context.tblRoleClaim.Where(p => AllRoles.Contains(p.Role)).Select(p => p.ClaimId).Distinct();           
         }
     }
 }
