@@ -22,6 +22,8 @@ namespace B2BClasses.Database
         [Required]
         [MaxLength(500)]
         public string CustomerName{ get; set; }
+        public string Logo { get; set; }
+
         [Required]
         [MaxLength(500)]
         public string Email { get; set; }        
