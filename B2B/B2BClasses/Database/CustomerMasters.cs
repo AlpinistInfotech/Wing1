@@ -123,9 +123,11 @@ namespace B2BClasses.Database
         public DateTime TokkenExpiryTime { get; set; }
         public string Phone { get; set; }
         public bool IsBlocked { get; set; }
+        public bool IsPrimary { get; set; }
         public DateTime BlockStartTime { get; set; }
         public DateTime BlockEndTime { get; set; }
         public int LoginFailCount { get; set; }
+        public DateTime LastLogin { get; set; }
         public int CreatedBy { get; set; }
         public DateTime CreatedDt { get; set; }
         [ForeignKey("tblCustomerMaster")] // Foreign Key here
@@ -210,8 +212,8 @@ namespace B2BClasses.Database
         public int? CustomerId { get; set; }
         public tblCustomerMaster tblCustomerMaster { get; set; }
         public bool AllowedAllIp { get; set; }
-        public bool AllowedAPI { get; set; }
-        public bool AllowedGUI { get; set; }
+        //public bool AllowedAPI { get; set; }
+        //public bool AllowedGUI { get; set; }
         public int CreatedBy { get; set; }
         public DateTime CreatedDt { get; set; }
         public bool IsDeleted { get; set; }        
