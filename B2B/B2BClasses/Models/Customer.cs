@@ -132,7 +132,8 @@ namespace B2BClasses.Models
         [Display(Name = "Modified Date")]
         public DateTime ModifyDt { get; set; }
 
-        
+        public string Logo { get; set; }
+
 
     }
 
