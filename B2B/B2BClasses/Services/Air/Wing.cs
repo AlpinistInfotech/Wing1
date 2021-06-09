@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace B2BClasses.Services.Air
 {
-   
     public interface IWingFlight
     {
         Task<mdlSearchResponse> SearchAsync(mdlSearchRequest request, int CustomerId);
@@ -29,12 +28,5 @@ namespace B2BClasses.Services.Air
     //        _config = config;
     //        _tripJack = tripJack;
     //    }
-
-        
-
-
     //}
-
-
-
 }
