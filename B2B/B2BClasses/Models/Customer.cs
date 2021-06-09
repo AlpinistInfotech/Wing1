@@ -23,6 +23,9 @@ namespace B2BClasses.Models
         public int CreatedBy {get; set;}
         public string CreatedByName {get; set;}
         public DateTime CreatedDt {get; set;}
+        public int ModifyBy { get; set; }
+        public string ModifyByName { get; set; }
+        public DateTime ModifyDt { get; set; }
         public int CustomerId {get; set;}
         public string CustomerName {get; set;}
         public enmCustomerType CustomerType {get; set;}
@@ -54,6 +57,7 @@ namespace B2BClasses.Models
        
     }
 
+    
     public interface ImdlCustomerMaster
     {
         string Address { get; set; }
@@ -61,14 +65,15 @@ namespace B2BClasses.Models
         string Code { get; set; }
         string ContactNo { get; set; }
         int? CountryId { get; set; }
-        int CreatedBy { get; set; }
-        string CreatedByName { get; set; }
-        DateTime CreatedDt { get; set; }        
+        int CustomerId { get; set; }
         string CustomerName { get; set; }
         enmCustomerType CustomerType { get; set; }
         string Email { get; set; }
         bool HaveGST { get; set; }
         bool IsActive { get; set; }
+        int ModifyBy { get; set; }
+        string ModifyByName { get; set; }
+        DateTime ModifyDt { get; set; }
         string PinCode { get; set; }
         int? StateId { get; set; }
     }
@@ -122,11 +127,12 @@ namespace B2BClasses.Models
         [Display(Name = "Is Active")]
         public bool IsActive { get; set; }
         [Display(Name = "Modified By")]
-        public int CreatedBy { get; set; }
-        public string CreatedByName { get; set; }
+        public int ModifyBy { get; set; }
+        public string ModifyByName { get; set; }
         [Display(Name = "Modified Date")]
-        public DateTime CreatedDt { get; set; }
+        public DateTime ModifyDt { get; set; }
 
+        
 
     }
 
@@ -240,6 +246,7 @@ namespace B2BClasses.Models
         [Display(Name = "Last Login")]
         public DateTime lastLogin { get; set; }
         public List<int> Roles { get; set; }
+        
 
     }
 

@@ -45,7 +45,9 @@ namespace B2BClasses.Database
         public enmCustomerType CustomerType { get; set; }
         public bool IsActive { get; set; }
         public int CreatedBy { get; set; }
-        public DateTime CreatedDt { get; set; }
+        public DateTime CreatedDt { get; set; } = DateTime.Now;
+        public int ModifyBy { get; set; } = 1;
+        public DateTime ModifyDt { get; set; } = DateTime.Now;
     }
 
     public class tblCustomerBalence
@@ -133,6 +135,9 @@ namespace B2BClasses.Database
         [ForeignKey("tblCustomerMaster")] // Foreign Key here
         public int? CustomerId { get; set; }
         public tblCustomerMaster tblCustomerMaster { get; set; }
+        [InverseProperty("tblUserMaster")]
+        public ICollection<tblUserRole> tblUserRole { get; set; }
+
 
     }
 
@@ -267,7 +272,7 @@ namespace B2BClasses.Database
         public int? ApprovedBy { get; set; }
         public DateTime? ApprovedDt { get; set; }
         public string ApprovalRemarks { get; set; }
-        public bool Isdeleted { get; set; }
+        public bool IsDeleted { get; set; }
     }
 
     public class tblCustomerPanDetails
@@ -293,7 +298,7 @@ namespace B2BClasses.Database
         public int? ApprovedBy { get; set; }
         public DateTime? ApprovedDt { get; set; }
         public string ApprovalRemarks { get; set; }
-        public bool Isdeleted { get; set; }
+        public bool IsDeleted { get; set; }
     }
 
 

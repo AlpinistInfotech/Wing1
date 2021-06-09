@@ -181,9 +181,8 @@ namespace B2BClasses.Services.Enums
     {
         [SubModule(EnmModule: enmModule.Wallet, DisplayOrder: 1, Name: "Credit", Description: "Add Credit", Icon: "nav-icon fas fa-file", CntrlName: "Profile")]
         Credit = 1,
-
-        //[SubModule(EnmModule: enmModule.Gateway_Incentive, DisplayOrder: 2, Name: "Wallet", Description: "Add Wallet Money,See Ledger", Icon: "nav-icon fas fa-file", CntrlName: "Wallet")]
-        //Gateway_Incentive_wallet = 2,
+        [SubModule(EnmModule: enmModule.Master, DisplayOrder: 2, Name: "Customer Details Permission", Description: "Detailed Permission for Customer", Icon: "nav-icon fas fa-file", CntrlName: "")]
+        CustomerDetailsPermission = 2,
     }
 
 
@@ -262,7 +261,56 @@ namespace B2BClasses.Services.Enums
         [Document(EnmModule: enmModule.Master, DocumentType: enmDocumentType.Create | enmDocumentType.DisplayMenu,
         DisplayOrder: 1, Name: "User", Description: "User Master", Icon: "far fa-circle nav-icon", ActionName: "/Customer/AddUser", IsAdminClaim = true)]
         UserMaster = 113,
-        
+
+        #region ************************* Detailed Permission for Customer Masters (From 10001 to 10100 )***************************
+        [Document( EnmSubModule: enmSubModule.CustomerDetailsPermission, DocumentType: enmDocumentType.Report,
+        DisplayOrder: 1, Name: "BasicDetail Read", Description: "Read Basic Detail ", Icon: "", ActionName: "")]
+        CustomerDetailsPermission_BasicDetail_Read = 10001,
+        [Document(EnmSubModule: enmSubModule.CustomerDetailsPermission, DocumentType: enmDocumentType.Report,
+        DisplayOrder: 2, Name: "BasicDetail Write", Description: "Write Basic Details", Icon: "", ActionName: "")]
+        CustomerDetailsPermission_BasicDetail_Write = 10002,
+        [Document(EnmSubModule: enmSubModule.CustomerDetailsPermission, DocumentType: enmDocumentType.Report,
+        DisplayOrder: 3, Name: "GSTDetail Read", Description: "Read GST Detail ", Icon: "", ActionName: "")]
+        CustomerDetailsPermission_GSTDetail_Read = 10003,
+        [Document(EnmSubModule: enmSubModule.CustomerDetailsPermission, DocumentType: enmDocumentType.Report,
+        DisplayOrder: 4, Name: "GSTDetail Write", Description: "Write GST Details", Icon: "", ActionName: "")]
+        CustomerDetailsPermission_GSTDetail_Write = 10004,
+
+        [Document(EnmSubModule: enmSubModule.CustomerDetailsPermission, DocumentType: enmDocumentType.Report,
+        DisplayOrder: 5, Name: "User Read", Description: "User Detail Read ", Icon: "", ActionName: "")]
+        CustomerDetailsPermission_UserDetail_Read = 10005,
+        [Document(EnmSubModule: enmSubModule.CustomerDetailsPermission, DocumentType: enmDocumentType.Report,
+        DisplayOrder: 6, Name: "User Write", Description: "User Detail Write ", Icon: "", ActionName: "")]
+        CustomerDetailsPermission_UserDetail_Write = 10006,
+
+        [Document(EnmSubModule: enmSubModule.CustomerDetailsPermission, DocumentType: enmDocumentType.Report,
+        DisplayOrder: 7, Name: "Bank Read", Description: "Bank Read ", Icon: "", ActionName: "")]
+        CustomerDetailsPermission_Bank_Read = 10007,
+        [Document(EnmSubModule: enmSubModule.CustomerDetailsPermission, DocumentType: enmDocumentType.Report,
+        DisplayOrder: 8, Name: "Bank Write", Description: "Bank Write ", Icon: "", ActionName: "")]
+        CustomerDetailsPermission_Bank_Write = 10008,
+
+        [Document(EnmSubModule: enmSubModule.CustomerDetailsPermission, DocumentType: enmDocumentType.Report,
+        DisplayOrder: 9, Name: "Bank Approval", Description: "Bank Write ", Icon: "", ActionName: "")]
+        CustomerDetailsPermission_Bank_Approval = 10009,
+
+        [Document(EnmSubModule: enmSubModule.CustomerDetailsPermission, DocumentType: enmDocumentType.Report,
+        DisplayOrder: 10, Name: "Pan Read", Description: "Pan Read ", Icon: "", ActionName: "")]
+        CustomerDetailsPermission_Pan_Read = 10010,
+        [Document(EnmSubModule: enmSubModule.CustomerDetailsPermission, DocumentType: enmDocumentType.Report,
+        DisplayOrder: 11, Name: "Pan Write", Description: "Pan Write ", Icon: "", ActionName: "")]
+        CustomerDetailsPermission_Pan_Write = 10011,
+
+        [Document(EnmSubModule: enmSubModule.CustomerDetailsPermission, DocumentType: enmDocumentType.Report,
+        DisplayOrder: 12, Name: "Setting Read", Description: "Setting Read ", Icon: "", ActionName: "")]
+        CustomerDetailsPermission_Setting_Read = 10012,
+        [Document(EnmSubModule: enmSubModule.CustomerDetailsPermission, DocumentType: enmDocumentType.Report,
+        DisplayOrder: 13, Name: "Setting Write", Description: "Setting Write ", Icon: "", ActionName: "")]
+        CustomerDetailsPermission_Setting_Write = 10013,
+
+
+        #endregion
+
 
     }
 

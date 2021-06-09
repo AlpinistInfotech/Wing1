@@ -37,6 +37,7 @@ namespace B2BClasses
         private readonly DBContext _context;
         private readonly IConfiguration _config;
         private readonly IWingFlight _tripJack;
+        private readonly IWingFlight _tbo;
 
         private int _CustomerId;
         private int _userId;
@@ -45,11 +46,12 @@ namespace B2BClasses
         public int UserId { get { return _userId; } set { _userId = value; } }
 
 
-        public Booking(DBContext context, IConfiguration config, ITripJack tripJack)
+        public Booking(DBContext context, IConfiguration config, ITripJack tripJack,ITBO tBO)
         {
             _context = context;
             _config = config;
             _tripJack = tripJack;
+            _tbo = tBO;
         }
 
         public async Task<List<tblAirline>> GetAirlinesAsync()
@@ -293,7 +295,7 @@ namespace B2BClasses
             switch (serviceProvider)
             {
                 case enmServiceProvider.TBO:
-                    return null;
+                    return _tbo ;
                 case enmServiceProvider.TripJack:
                     return _tripJack;
             }
