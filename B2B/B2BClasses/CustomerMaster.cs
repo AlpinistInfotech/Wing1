@@ -216,6 +216,24 @@ namespace B2BClasses
             return mdl;
         }
 
+        public bool SaveCustomerMaster(mdlCustomerMaster mdl)
+        {
+            if (!_IsCurrentCustomerPermission)
+            {
+                return mdl;
+            }
+            if (_DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_BasicDetail_Write))
+            {
+                if (!TryValidateModel(Movie, nameof(Movie)))
+                {
+                    return Page();
+                }
+                //_context.tbl
+
+            }   
+
+        }
+
 
 
     }
