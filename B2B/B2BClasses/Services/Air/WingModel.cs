@@ -38,6 +38,12 @@ namespace B2BClasses.Services.Air
         public int Code { get; set; }
         public string Message { get; set; }
     }
+    public class Error
+    {
+        public string errCode { get; set; }
+        public string message { get; set; }
+        public string details { get; set; }
+    }
 
     public class mdlSearchResponse
     {

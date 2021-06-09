@@ -244,13 +244,16 @@ namespace WingGateway.Models
                 CountryId = this.country_id,
                 TcNid = TcNId,
                 IsDeleted = false,
-                CityId=0,
+                CityId=null,
                 CreatedBy = 0,
                 CreatedDt = CurrentDatetime,
                 ModifiedBy = 0,
                 ModifiedDt = CurrentDatetime
             };
+            
             context.tblTcAddressDetail.Add(tblTcAddressDetail);
+            context.SaveChanges();
+
             tblTcRanksDetails tblTcRanksDetails = new tblTcRanksDetails()
             {
                 TCRanks = enmTCRanks.Level1,
@@ -262,6 +265,7 @@ namespace WingGateway.Models
             };
             context.tblTcRanksDetails.Add(tblTcRanksDetails);
 
+            context.SaveChanges();
             tblTcEmail tblTCEmail = new tblTcEmail()
             {
                 EmailID = this.EmailAddress,
@@ -273,6 +277,7 @@ namespace WingGateway.Models
                 LastModifieddate = CurrentDatetime
             };
             context.TblTcEmail.Add(tblTCEmail);
+            context.SaveChanges();
 
             tblTcContact tblTCContact = new tblTcContact()
             {
@@ -285,7 +290,6 @@ namespace WingGateway.Models
                 LastModifieddate = CurrentDatetime
             };
             context.TblTcContact.Add(tblTCContact);
-
             context.SaveChanges();
             return true;
 
