@@ -217,7 +217,16 @@ namespace B2BClasses.Database
                 ModifiedDt= _CurrentDt,
                 Remarks=""
             };
-            _modelBuilder.Entity<tblActiveSerivceProvider>().HasData(_tblActiveSerivceProvider);
+
+            tblActiveSerivceProvider _tblActiveSerivceProvider1 = new tblActiveSerivceProvider()
+            {
+                IsEnabled = true,
+                ServiceProvider = Services.Enums.enmServiceProvider.TBO,
+                ModifiedBy = 1,
+                ModifiedDt = _CurrentDt,
+                Remarks = ""
+            };
+            _modelBuilder.Entity<tblActiveSerivceProvider>().HasData(_tblActiveSerivceProvider1);
             //IP Filteration            
         }
 
