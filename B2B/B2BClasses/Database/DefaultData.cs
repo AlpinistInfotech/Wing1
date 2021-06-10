@@ -89,7 +89,6 @@ namespace B2BClasses.Database
             {
                 tblCustomerBalence customerBalence = new tblCustomerBalence()
                 {
-                    Id = i ,
                     CreditBalence = 1000000,
                     CustomerId = i,
                     MPin = "123456",
@@ -100,12 +99,10 @@ namespace B2BClasses.Database
                 //IP Filteration
                 tblCustomerIPFilter CustomerIPFilter = new tblCustomerIPFilter()
                 {
-                    Id = i,
                     CreatedBy = 1,
                     CreatedDt = _CurrentDt,
                     AllowedAllIp = true,
                     CustomerId = i,
-                    IsDeleted = false,
                     ModifiedBy = 1,
                     ModifiedDt = _CurrentDt,
                 };
@@ -196,11 +193,8 @@ namespace B2BClasses.Database
                 {
                     Id = UserRoles.Count + 1,
                     UserId = um1.Id,
-                    IsDeleted = false,
                     CreatedBy = 1,
-                    CreatedDt = _CurrentDt,
-                    ModifiedBy = 1,
-                    ModifiedDt = _CurrentDt,
+                    CreatedDt = _CurrentDt,                    
                     Role = i == 1 ? 1 : 2
 
                 };

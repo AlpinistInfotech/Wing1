@@ -60,7 +60,7 @@ namespace B2BClasses
         public async Task<double> GetBalenceAsync()
         {
             double CustomerBalance = 0;
-            CustomerBalance = (await _context.tblCustomerBalence.Where(p => p.Id == _CustomerId).FirstOrDefaultAsync())?.WalletBalence ?? 0.0;
+            CustomerBalance = (await _context.tblCustomerBalence.Where(p => p.CustomerId == _CustomerId).FirstOrDefaultAsync())?.WalletBalence ?? 0.0;
             return GetCustomerBalanceAmt(CustomerBalance);
         }
 
@@ -74,7 +74,7 @@ namespace B2BClasses
             }
             try
             {
-                var customer = _context.tblCustomerBalence.FirstOrDefault(p => p.Id == _CustomerId);
+                var customer = _context.tblCustomerBalence.FirstOrDefault(p => p.CustomerId == _CustomerId);
                 if (customer == null)
                 {
                     throw new Exception("Invalid Customer");
@@ -121,7 +121,7 @@ namespace B2BClasses
             }
             try
             {
-                var customer = _context.tblCustomerBalence.FirstOrDefault(p => p.Id == _CustomerId);
+                var customer = _context.tblCustomerBalence.FirstOrDefault(p => p.CustomerId == _CustomerId);
                 if (customer == null)
                 {
                     throw new Exception("Invalid Customer");

@@ -35,14 +35,14 @@ namespace B2BClasses
 
         public async Task<bool> IsValidIPAsync(int CustomerId, string UserIp)
         {
-            var IPFilterMaster = await _context.tblCustomerIPFilter.Where(p => p.CustomerId == CustomerId && !p.IsDeleted).FirstOrDefaultAsync();
+            var IPFilterMaster = await _context.tblCustomerIPFilter.Where(p => p.CustomerId == CustomerId ).FirstOrDefaultAsync();
             if (IPFilterMaster == null)
             {
                 return false;
             }
             if (!IPFilterMaster.AllowedAllIp)
             {
-                if ((await _context.tblCustomerIPFilterDetails.Where(p => p.FilterId == IPFilterMaster.Id && p.IPAddress == UserIp).CountAsync()) == 0)
+                if ((await _context.tblCustomerIPFilterDetails.Where(p => p.CustomerId == CustomerId && p.IPAddress == UserIp).CountAsync()) == 0)
                 {
                     return false;
                 }
@@ -73,7 +73,7 @@ namespace B2BClasses
 
         public async Task<IEnumerable<enmDocumentMaster>> GetEnmDocumentsAsync(int UserId)
         {
-             var AllRoles=await _context.tblUserRole.Where(p => p.UserId == UserId  && !p.IsDeleted).Select(p=>p.Role).ToListAsync();
+            var AllRoles = await _context.tblUserRole.Where(p => p.UserId == UserId).Select(p => p.Role).ToListAsync();
             return _context.tblRoleClaim.Where(p => AllRoles.Contains(p.Role)).Select(p => p.ClaimId).Distinct();           
         }
     }

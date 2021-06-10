@@ -10,7 +10,7 @@ namespace B2BClasses.Database.LogDatabase
 {
    public class LogDBContext : DbContext
     {
-        public LogDBContext(DbContextOptions<DBContext> options) : base(options)
+        public LogDBContext(DbContextOptions<LogDBContext> options) : base(options)
         {
             
         }

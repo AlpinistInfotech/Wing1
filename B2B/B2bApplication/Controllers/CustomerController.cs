@@ -339,7 +339,7 @@ namespace B2bApplication.Controllers
                 {
                     mdl.CustomerID = Convert.ToString(markupdata.CustomerId);
                     mdl.MarkupValue = markupdata.MarkupAmt;
-                    mdl.markupid = markupdata.Id;
+                    //mdl.markupid = markupdata.Id;
                 }
             }
             if (_userid == 1) // if admin the show all customer id
@@ -590,7 +590,7 @@ namespace B2bApplication.Controllers
                 {
                     mdl.CustomerID = Convert.ToInt32(ipfilterdata.CustomerId);
                     mdl.allipapplicable = ipfilterdata.AllowedAllIp;
-                    mdl.IPFilterId = ipfilterdata.Id;
+                    //mdl.IPFilterId = ipfilterdata.Id;
                     mdl.IPAddess = string.Join(',',ipfilterdata.tblCustomerIPFilterDetails.Select(p=>p.IPAddress));
                     
                 }
@@ -618,11 +618,11 @@ namespace B2bApplication.Controllers
                 {
                     if (submittype == "deleteData")
                     {
-                        var ExistingData_ipfilter = _context.tblCustomerIPFilter.FirstOrDefault(p => p.Id == mdl.IPFilterId);
+                        var ExistingData_ipfilter = _context.tblCustomerIPFilter.FirstOrDefault(p => p.CustomerId== mdl.CustomerID);
                         if (ExistingData_ipfilter != null)
                         {
                             // run delete command
-                            ExistingData_ipfilter.IsDeleted = true;
+                            //ExistingData_ipfilter.IsDeleted = true;
                             ExistingData_ipfilter.ModifiedDt = DateTime.Now;
                             ExistingData_ipfilter.ModifiedBy = _userid;
 
@@ -649,7 +649,7 @@ namespace B2bApplication.Controllers
                             {
                                 TobeUpdated.ForEach(p =>
                                 {
-                                    p.IsDeleted = true;
+                                    //p.IsDeleted = true;
                                     p.ModifiedDt = DateTime.Now;
                                     p.ModifiedBy = _userid;
                                 });
@@ -894,13 +894,13 @@ namespace B2bApplication.Controllers
         //
         public List<tblCustomerIPFilter> GetCustomerIPFilterList(DBContext context, bool OnlyActive, int customerid)
         {
-            return context.tblCustomerIPFilter.Where(p => p.CustomerId == customerid && !p.IsDeleted).Include(p => p.tblCustomerIPFilterDetails).ToList();
+            return context.tblCustomerIPFilter.Where(p => p.CustomerId == customerid ).Include(p => p.tblCustomerIPFilterDetails).ToList();
         }
 
         // need to join with ipfilter detail table
         public tblCustomerIPFilter GetIPFilterData(DBContext context, int ipfilterid)
         {
-            return context.tblCustomerIPFilter.Where(p => p.Id == ipfilterid && !p.IsDeleted).Include(p => p.tblCustomerIPFilterDetails).FirstOrDefault();
+            return null;//context.tblCustomerIPFilter.Where(p => p.CustomerId == customerid).Include(p => p.tblCustomerIPFilterDetails).FirstOrDefault();
         }
 
         public List<tblCustomerMarkup> GetCustomerMarkUpList(DBContext context, int customerid)
@@ -920,7 +920,7 @@ namespace B2bApplication.Controllers
 
         public tblCustomerMarkup GetCustomerMarkUpData(DBContext context, int markupid)
         {
-            return context.tblCustomerMarkup.Where(p => p.Id == markupid).FirstOrDefault();
+            return null;// context.tblCustomerMarkup.Where(p => p.Id == markupid).FirstOrDefault();
         }
         public tblCustomerMaster GetCustomerData(DBContext context, int customerid)
         {
