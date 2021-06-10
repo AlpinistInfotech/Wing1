@@ -36,7 +36,8 @@ namespace B2BClasses.Database
                 CustomerType = enmCustomerType.Admin,
                 IsActive = true,
                 CreatedBy = 1,
-                CreatedDt = _CurrentDt
+                CreatedDt = _CurrentDt,
+                ModifyDt = _CurrentDt,
             };
             tblCustomerMaster CustomerMaster2 = new tblCustomerMaster()
             {
@@ -50,7 +51,8 @@ namespace B2BClasses.Database
                 CustomerType = Services.Enums.enmCustomerType.MLM,
                 IsActive = true,
                 CreatedBy = 1,
-                CreatedDt = _CurrentDt
+                CreatedDt = _CurrentDt,
+                ModifyDt = _CurrentDt,
             };
             tblCustomerMaster CustomerMaster3 = new tblCustomerMaster()
             {
@@ -64,7 +66,8 @@ namespace B2BClasses.Database
                 CustomerType = Services.Enums.enmCustomerType.InHouse,
                 IsActive = true,
                 CreatedBy = 1,
-                CreatedDt = _CurrentDt
+                CreatedDt = _CurrentDt,
+                ModifyDt = _CurrentDt
             };
             tblCustomerMaster CustomerMaster4 = new tblCustomerMaster()
             {
@@ -78,7 +81,8 @@ namespace B2BClasses.Database
                 CustomerType = Services.Enums.enmCustomerType.B2C,
                 IsActive = true,
                 CreatedBy = 1,
-                CreatedDt = _CurrentDt
+                CreatedDt = _CurrentDt,
+                ModifyDt = _CurrentDt
             };
             
             _modelBuilder.Entity<tblCustomerMaster>().HasData(CustomerMaster1);

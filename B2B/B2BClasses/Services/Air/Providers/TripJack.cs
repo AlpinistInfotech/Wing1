@@ -463,7 +463,6 @@ namespace B2BClasses.Services.Air
             return mdlW;
         }
 
-
         private List<mdlSearchResult> SearchResultMap(ONWARD_RETURN_COMBO[] sr)
         {
             List<mdlSearchResult> mdls = new List<mdlSearchResult>();
