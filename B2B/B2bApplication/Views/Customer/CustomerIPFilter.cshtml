@@ -135,7 +135,7 @@
                             <td class="center">
                                 <div class="hidden-sm hidden-xs action-buttons">
 
-                                    <a class="red" href="/Customer/CustomerIpFilter/@md.Id">
+                                    <a class="red" href="/Customer/CustomerIpFilter/1">
                                         <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                     </a>
                                 </div>
@@ -156,7 +156,7 @@
                                             </li>
 
                                             <li>
-                                                <a href="/Customer/CustomerIpFilter/@md.Id" class="tooltip-success" data-rel="tooltip" title="Edit">
+                                                <a href="/Customer/CustomerIpFilter/1" class="tooltip-success" data-rel="tooltip" title="Edit">
                                                     <span class="green">
                                                         <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
                                                     </span>
@@ -164,7 +164,7 @@
                                             </li>
 
                                             <li>
-                                                <a href="/Customer/CustomerIpFilter/@md.Id" class="tooltip-error" data-rel="tooltip" title="Delete">
+                                                <a href="/Customer/CustomerIpFilter/1" class="tooltip-error" data-rel="tooltip" title="Delete">
                                                     <span class="red">
                                                         <i class="ace-icon fa fa-trash-o bigger-120"></i>
                                                     </span>
@@ -175,7 +175,7 @@
                                 </div>
                             </td>
                             <td>
-                                @md.tblCustomerMaster.CustomerName - @md.tblCustomerMaster.Code
+                                @*@md.tblCustomerMaster.CustomerName - @md.tblCustomerMaster.Code*@
                             </td>
                             <td>
                                 @(md.AllowedAllIp?"All":  string.Join(", ", md.tblCustomerIPFilterDetails.Select(p=>p.IPAddress) ))
