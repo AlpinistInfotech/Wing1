@@ -52,25 +52,21 @@ namespace B2BClasses.Database
 
     public class tblCustomerBalence
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        [Key]        
+        public int CustomerId { get; set; }
         [Required]
         [MaxLength(10)]
         public string  MPin { get; set; }
         public double WalletBalence { get; set; }
         public double CreditBalence { get; set; }
         public DateTime? ModifiedDt { get; set; }
-        [ForeignKey("tblCustomerMaster")] // Foreign Key here
-        public int? CustomerId { get; set; }
-        public tblCustomerMaster tblCustomerMaster { get; set; }
+        
     }
 
     public class tblCustomerGSTDetails
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        [Key]        
+        public int CustomerId { get; set; }
         [Required]
         [MaxLength(50)]
         public string GstNumber { get; set; }
@@ -94,13 +90,9 @@ namespace B2BClasses.Database
         [MaxLength(20)]
         public string PinCode { get; set; }
         public int CreatedBy { get; set; }
-        public DateTime CreatedDt { get; set; }
-        public bool IsDeleted { get; set; }
+        public DateTime CreatedDt { get; set; }        
         public int? ModifiedBy { get; set; }
-        public DateTime? ModifiedDt { get; set; }
-        [ForeignKey("tblCustomerMaster")] // Foreign Key here
-        public int? CustomerId { get; set; }
-        public tblCustomerMaster tblCustomerMaster { get; set; }
+        public DateTime? ModifiedDt { get; set; }        
     }
 
     public class tblUserMaster
@@ -137,6 +129,8 @@ namespace B2BClasses.Database
         public tblCustomerMaster tblCustomerMaster { get; set; }
         [InverseProperty("tblUserMaster")]
         public ICollection<tblUserRole> tblUserRole { get; set; }
+        public int? ModifiedBy { get; set; }
+        public DateTime? ModifiedDt { get; set; }
 
 
     }
@@ -202,26 +196,16 @@ namespace B2BClasses.Database
         public int? Role { get; set; }
         public tblRoleMaster tblRoleMaster { get; set; }
         public int CreatedBy { get; set; }
-        public DateTime CreatedDt { get; set; }
-        public bool IsDeleted { get; set; }
-        public int? ModifiedBy { get; set; }
-        public DateTime? ModifiedDt { get; set; }
+        public DateTime CreatedDt { get; set; }                
     }
 
     public class tblCustomerIPFilter
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        [ForeignKey("tblCustomerMaster")] // Foreign Key here
-        public int? CustomerId { get; set; }
-        public tblCustomerMaster tblCustomerMaster { get; set; }
+        [Key]        
+        public int CustomerId { get; set; }        
         public bool AllowedAllIp { get; set; }
-        //public bool AllowedAPI { get; set; }
-        //public bool AllowedGUI { get; set; }
         public int CreatedBy { get; set; }
-        public DateTime CreatedDt { get; set; }
-        public bool IsDeleted { get; set; }        
+        public DateTime CreatedDt { get; set; }        
         public int? ModifiedBy { get; set; }
         public DateTime? ModifiedDt { get; set; }
         [InverseProperty("tblCustomerIPFilter")]
@@ -234,7 +218,7 @@ namespace B2BClasses.Database
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }        
         [ForeignKey("tblCustomerIPFilter")] // Foreign Key here
-        public int? FilterId { get; set; }
+        public int? CustomerId { get; set; }
         public tblCustomerIPFilter tblCustomerIPFilter { get; set; }
         [Required]
         [MaxLength(100)]
@@ -243,12 +227,8 @@ namespace B2BClasses.Database
 
     public class tblCustomerBankDetails
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        [ForeignKey("tblCustomerMaster")]
-        public int? CustomerId { get; set; }
-        public tblCustomerMaster tblCustomerMaster { get; set; }
+        [Key]        
+        public int CustomerId { get; set; }        
         [ForeignKey("tblBankMaster")]
         public int? BankId { get; set; }
         public tblBankMaster tblBankMaster { get; set; }
@@ -271,19 +251,13 @@ namespace B2BClasses.Database
         public string Remarks { get; set; }
         public int? ApprovedBy { get; set; }
         public DateTime? ApprovedDt { get; set; }
-        public string ApprovalRemarks { get; set; }
-        public bool IsDeleted { get; set; }
+        public string ApprovalRemarks { get; set; }        
     }
 
     public class tblCustomerPanDetails
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        [ForeignKey("tblCustomerMaster")]
-        public int? CustomerId { get; set; }
-        public tblCustomerMaster tblCustomerMaster { get; set; }
-
+        [Key]        
+        public int CustomerId { get; set; }
         [MaxLength(100)]
         public string PANName { get; set; }
         [MaxLength(10)]
@@ -297,23 +271,17 @@ namespace B2BClasses.Database
         public string Remarks { get; set; }
         public int? ApprovedBy { get; set; }
         public DateTime? ApprovedDt { get; set; }
-        public string ApprovalRemarks { get; set; }
-        public bool IsDeleted { get; set; }
+        public string ApprovalRemarks { get; set; }        
     }
 
 
     public class tblWalletBalanceAlert
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        [ForeignKey("tblCustomerMaster")] // Foreign Key here
-        public int? CustomerId { get; set; }
-        public tblCustomerMaster tblCustomerMaster { get; set; }
+        public int CustomerId { get; set; }        
         public double MinBalance { get; set; }
         public int CreatedBy { get; set; }
-        public DateTime CreatedDt { get; set; }
-        public bool IsDeleted { get; set; }
+        public DateTime CreatedDt { get; set; }        
         public int? ModifiedBy { get; set; }
         public DateTime? ModifiedDt { get; set; }
     }
@@ -347,12 +315,8 @@ namespace B2BClasses.Database
 
     public class tblCustomerMarkup
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        [ForeignKey("tblCustomerMaster")] // Foreign Key here
-        public int? CustomerId { get; set; }
-        public tblCustomerMaster tblCustomerMaster { get; set; }
+        [Key]        
+        public int CustomerId { get; set; }        
         public double MarkupAmt { get; set; }
         public int CreatedBy { get; set; }
         public DateTime CreatedDt { get; set; }
@@ -361,19 +325,7 @@ namespace B2BClasses.Database
         public DateTime? ModifiedDt { get; set; }
     }
 
-    public class tblCustomerMarkupLog
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        [ForeignKey("tblCustomerMaster")] // Foreign Key here
-        public int? CustomerId { get; set; }
-        public tblCustomerMaster tblCustomerMaster { get; set; }
-        public double MarkupAmt { get; set; }
-        public int CreatedBy { get; set; }
-        public DateTime? EffectiveFromDt { get; set; }
-
-    }
+    
 
 
     public class tblPaymentRequest

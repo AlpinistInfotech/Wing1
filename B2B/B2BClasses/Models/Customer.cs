@@ -33,8 +33,7 @@ namespace B2BClasses.Models
         public bool HaveGST {get; set;}
         public bool IsActive {get; set;}
         public string PinCode {get; set;}
-        public int? StateId {get; set;}
-        public int GSTDetailId {get; set;}
+        public int? StateId {get; set;}        
         public string GstNumber {get; set;}
         public string Mobile {get; set;}
         public string RegisteredName {get; set;}
@@ -144,7 +143,7 @@ namespace B2BClasses.Models
         
         string CustomerName { get; set; }
         string Email { get; set; }
-        int GSTDetailId { get; set; }
+        
         string GstNumber { get; set; }
         string Mobile { get; set; }
         string PinCode { get; set; }
@@ -154,7 +153,7 @@ namespace B2BClasses.Models
 
     public class mdlCustomerGSTDetails : ImdlCustomerGSTDetails
     {
-        public int GSTDetailId { get; set; }
+        
         [Required]
         [Display(Name = "GST")]
         [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 10)]

@@ -131,8 +131,7 @@ namespace B2BClasses.Database
         public DbSet<tblCustomerIPFilterDetails> tblCustomerIPFilterDetails { get; set; }
         public DbSet<tblWalletDetailLedger> tblWalletDetailLedger { get; set; }        
         public DbSet<tblWalletBalanceAlert> tblWalletBalanceAlert { get; set; }
-        public DbSet<tblCustomerMarkup> tblCustomerMarkup { get; set; }
-        public DbSet<tblCustomerMarkupLog> tblCustomerMarkupLog { get; set; }
+        public DbSet<tblCustomerMarkup> tblCustomerMarkup { get; set; }        
         public DbSet<tblPaymentRequest> tblPaymentRequest { get; set; }
         #endregion
 
