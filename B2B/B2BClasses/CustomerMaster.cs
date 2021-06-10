@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel.DataAnnotations;
 using B2BClasses.Database.LogDatabase;
-
+using System.Threading.Tasks;
 namespace B2BClasses
 {
     public class CustomerMaster
@@ -68,8 +68,7 @@ namespace B2BClasses
                 {
                     CustomerId= p.Id,
                     Code=p.Code,
-                    CustomerName=p.CustomerName,
-                    
+                    CustomerName=p.CustomerName,                    
                     Email=p.Email,
                     HaveGST=p.HaveGST,
                     Address = p.Address,
@@ -81,7 +80,9 @@ namespace B2BClasses
                     CustomerType=p.CustomerType,
                     IsActive=p.IsActive,
                     ModifyBy=p.ModifyBy,
-                    ModifyDt=p.ModifyDt
+                    ModifyDt=p.ModifyDt,
+                    Logo=p.Logo
+
                 }
                 ).FirstOrDefault();
             }
@@ -220,7 +221,7 @@ namespace B2BClasses
             return mdl;
         }
 
-        public bool SaveBasicDetails(mdlCustomerMaster mdl)
+        public async Task<bool> SaveBasicDetailsAsync(mdlCustomerMaster mdl)
         {
             bool IsUpdate = false,IsFoundUpdate=false;
             if (!_IsCurrentCustomerPermission)
@@ -278,7 +279,8 @@ namespace B2BClasses
                         CreatedBy= CustomerMaster.ModifyBy,
                         CreatedDt = CustomerMaster.ModifyDt,
                         ModifyBy=_UserId,
-                        ModifyDt=DateTime.Now});                    
+                        ModifyDt=DateTime.Now});
+                   await _logDbContext.SaveChangesAsync();
 
                 }
                 if ((!IsUpdate) || (IsUpdate && IsFoundUpdate))
@@ -287,18 +289,33 @@ namespace B2BClasses
                     CustomerMaster.CustomerName = mdl.CustomerName;
                     CustomerMaster.Logo = mdl.Logo;
                     CustomerMaster.Email = mdl.Email;
-                    CustomerMaster.Code = mdl.Code;
-                    CustomerMaster.Code = mdl.Code;
-                    CustomerMaster.Code = mdl.Code;
-                    CustomerMaster.Code = mdl.Code;
-                    CustomerMaster.Code = mdl.Code;
-                    CustomerMaster.Code = mdl.Code;
-                    CustomerMaster.Code = mdl.Code;
-                    CustomerMaster.Code = mdl.Code;
-                    CustomerMaster.Code = mdl.Code;
-                    CustomerMaster.Code = mdl.Code;
+                    CustomerMaster.HaveGST = mdl.HaveGST;
+                    CustomerMaster.Address = mdl.Address;
+                    CustomerMaster.CountryId = mdl.CountryId;
+                    CustomerMaster.StateId = mdl.StateId;
+                    CustomerMaster.PinCode  = mdl.PinCode;
+                    CustomerMaster.ContactNo = mdl.ContactNo;
+                    CustomerMaster.AlternateNo = mdl.AlternateNo;
+                    CustomerMaster.CustomerType = mdl.CustomerType;
+                    CustomerMaster.IsActive = mdl.IsActive;
+                    CustomerMaster.ModifyBy = _UserId;
+                    CustomerMaster.ModifyDt = DateTime.Now;
 
                 }
+
+                if (!IsUpdate)
+                {
+                    CustomerMaster.CreatedBy = _UserId;
+                    CustomerMaster.CreatedDt = DateTime.Now;
+                    _context.tblCustomerMaster.Add(CustomerMaster);
+                    
+                }
+                else
+                {
+                    _context.tblCustomerMaster.UpdateRange(CustomerMaster);
+                }
+               await _context.SaveChangesAsync();
+
             }
             return false;
 
