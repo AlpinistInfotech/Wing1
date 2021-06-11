@@ -13,23 +13,48 @@ using Microsoft.Extensions.Configuration;
 
 namespace B2BClasses
 {
-    public class CustomerMaster
+    public interface ICustomerMaster
     {
+        int CustomerId { get; set; }
+        List<enmDocumentMaster> DocumentPermission { get; }
+        bool IsCurrentCustomerPermission { get; }
+        List<ValidationResult> validationResultList { get; }
+
+        mdlBanks FetchBanks();
+        mdlCustomerMaster FetchBasicDetail();
+        mdlCustomerGSTDetails FetchGSTDetail();
+        mdlPan FetchPan();
+        mdlCustomerSetting FetchSetting();
+        List<mdlUserMaster> FetchUserMasters();
+        Task<bool> SaveBankDetailsAsync(mdlBanks mdl);
+        Task<bool> SaveBasicDetailsAsync(mdlCustomerMaster mdl);
+        Task<bool> SaveGSTDetailsAsync(mdlCustomerGSTDetails mdl);
+        Task<bool> SavePanDetailsAsync(mdlPan mdl);
+        Task<bool> SaveSettingDetailsAsync(mdlCustomerSetting mdl);
+        Task<bool> SaveUserDetailsAsync(mdlUserMaster mdl);
+    }
+
+    public class CustomerMaster : ICustomerMaster
+    {
+
+        private int _CustomerId, _UserId;
+        private bool _IsCurrentCustomerPermission;
         private readonly DBContext _context;
         private readonly LogDBContext _logDbContext;
         private readonly IConfiguration _config;
-        public int CustomerId { get {  return _CustomerId; } set { FetchCustomerPermission(); _CustomerId = value; } }
-        private int _CustomerId { get; set; }
-        
-        private int _UserId { get; set; }
-        List<enmDocumentMaster> _DocumentPermission { get; set; }
-        public List<ValidationResult> _validationResultList = new List<ValidationResult>();
-        private bool _IsCurrentCustomerPermission;
-        
+        private List<ValidationResult> _validationResultList = new List<ValidationResult>();
+        private List<enmDocumentMaster> _DocumentPermission { get; set; }
 
-        public CustomerMaster(DBContext context, LogDBContext logDbContext,ISettings settings, IConfiguration config, int UserId )
+
+
+
+        public int CustomerId { get { return _CustomerId; } set { FetchCustomerPermission(); _CustomerId = value; } }
+        public List<ValidationResult> validationResultList { get { return _validationResultList; } }
+        public List<enmDocumentMaster> DocumentPermission { get { return _DocumentPermission; } }
+        public bool IsCurrentCustomerPermission { get { return _IsCurrentCustomerPermission; } }
+
+        public CustomerMaster(DBContext context, LogDBContext logDbContext, ISettings settings, IConfiguration config, int UserId)
         {
-
             _config = config;
             _context = context;
             _UserId = UserId;
@@ -39,8 +64,8 @@ namespace B2BClasses
 
         private void FetchCustomerPermission()
         {
-            var Customers=_context.tblUserMaster.Where(p => p.Id == _UserId )
-                .Select(p =>new { p.CustomerId,p.tblCustomerMaster.CustomerType}).FirstOrDefault();
+            var Customers = _context.tblUserMaster.Where(p => p.Id == _UserId)
+                .Select(p => new { p.CustomerId, p.tblCustomerMaster.CustomerType }).FirstOrDefault();
             if (Customers == null)
             {
                 _IsCurrentCustomerPermission = false;
@@ -52,15 +77,15 @@ namespace B2BClasses
             _DocumentPermission.Clear();
             if (_IsCurrentCustomerPermission)
             {
-                List<int?> Role=_context.tblUserRole.Where(p => p.UserId == _UserId ).Select(p => p.Role).ToList();
-                _DocumentPermission.AddRange( _context.tblRoleClaim.Where(p => (int)p.ClaimId >= 10001 && (int)p.ClaimId < 10100 && Role.Contains(p.Role) && !p.IsDeleted).Select(p => p.ClaimId).Distinct());
+                List<int?> Role = _context.tblUserRole.Where(p => p.UserId == _UserId).Select(p => p.Role).ToList();
+                _DocumentPermission.AddRange(_context.tblRoleClaim.Where(p => (int)p.ClaimId >= 10001 && (int)p.ClaimId < 10100 && Role.Contains(p.Role) && !p.IsDeleted).Select(p => p.ClaimId).Distinct());
 
             }
         }
 
         public mdlCustomerMaster FetchBasicDetail()
         {
-            mdlCustomerMaster mdl=null;
+            mdlCustomerMaster mdl = null;
             if (!_IsCurrentCustomerPermission)
             {
                 return mdl;
@@ -71,22 +96,22 @@ namespace B2BClasses
                 mdl = _context.tblCustomerMaster.Where(P => P.Id == _CustomerId).Select(p => new
                 mdlCustomerMaster
                 {
-                    CustomerId= p.Id,
-                    Code=p.Code,
-                    CustomerName=p.CustomerName,                    
-                    Email=p.Email,
-                    HaveGST=p.HaveGST,
+                    CustomerId = p.Id,
+                    Code = p.Code,
+                    CustomerName = p.CustomerName,
+                    Email = p.Email,
+                    HaveGST = p.HaveGST,
                     Address = p.Address,
-                    CountryId=p.CountryId,
-                    StateId=p.StateId,
-                    PinCode=p.PinCode,
-                    ContactNo=p.ContactNo,
-                    AlternateNo=p.AlternateNo,
-                    CustomerType=p.CustomerType,
-                    IsActive=p.IsActive,
-                    ModifyBy=p.ModifyBy,
-                    ModifyDt=p.ModifyDt,
-                    Logo=p.Logo
+                    CountryId = p.CountryId,
+                    StateId = p.StateId,
+                    PinCode = p.PinCode,
+                    ContactNo = p.ContactNo,
+                    AlternateNo = p.AlternateNo,
+                    CustomerType = p.CustomerType,
+                    IsActive = p.IsActive,
+                    ModifyBy = p.ModifyBy,
+                    ModifyDt = p.ModifyDt,
+                    Logo = p.Logo
 
                 }
                 ).FirstOrDefault();
@@ -103,17 +128,18 @@ namespace B2BClasses
             }
             if (_DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_GSTDetail_Read))
             {
-                mdl=_context.tblCustomerGSTDetails.Where(p => p.CustomerId == _CustomerId )
-                    .Select(p=> new mdlCustomerGSTDetails {                        
-                        GstNumber=p.GstNumber,
-                        Email=p.Email,
-                        Address=p.Address,
-                        CountryId=p.CountryId,
-                        StateId=p.StateId,
-                        CustomerId=p.CustomerId,
-                        Mobile=p.Mobile,
-                        PinCode=p.PinCode,
-                        RegisteredName=p.RegisteredName
+                mdl = _context.tblCustomerGSTDetails.Where(p => p.CustomerId == _CustomerId)
+                    .Select(p => new mdlCustomerGSTDetails
+                    {
+                        GstNumber = p.GstNumber,
+                        Email = p.Email,
+                        Address = p.Address,
+                        CountryId = p.CountryId,
+                        StateId = p.StateId,
+                        CustomerId = p.CustomerId,
+                        Mobile = p.Mobile,
+                        PinCode = p.PinCode,
+                        RegisteredName = p.RegisteredName
                     }).FirstOrDefault();
             }
             return mdl;
@@ -128,23 +154,24 @@ namespace B2BClasses
             }
             if (_DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_UserDetail_Read))
             {
-                mdl.AddRange(_context.tblUserMaster.Where(p => p.CustomerId == _CustomerId)
-                    .Select(p=>new mdlUserMaster {
-                        UserId=p.Id,
-                        UserName=p.UserName,
-                        Password=p.Password,
-                        ConfirmPassword=p.Password,
+                mdl.AddRange(_context.tblUserMaster.Where(p => p.CustomerId == _CustomerId )
+                    .Select(p => new mdlUserMaster
+                    {
+                        UserId = p.Id,
+                        UserName = p.UserName,
+                        Password = p.Password,
+                        ConfirmPassword = p.Password,
                         IsActive = p.IsActive,
-                        ForcePasswordChange=p.ForcePasswordChange,
-                        Email=p.Email,
-                        Phone=p.Phone,
-                        IsBlocked=p.IsBlocked,
-                        IsPrimary=p.IsPrimary,
-                        BlockStartTime=p.BlockStartTime,
-                        BlockEndTime=p.BlockEndTime,
-                        CustomerId=p.CustomerId,
-                        lastLogin=p.LastLogin,
-                        Roles=p.tblUserRole.Select(p=>p.Role.Value).ToList()
+                        ForcePasswordChange = p.ForcePasswordChange,
+                        Email = p.Email,
+                        Phone = p.Phone,
+                        IsBlocked = p.IsBlocked,
+                        IsPrimary = p.IsPrimary,
+                        BlockStartTime = p.BlockStartTime,
+                        BlockEndTime = p.BlockEndTime,
+                        CustomerId = p.CustomerId,
+                        lastLogin = p.LastLogin,
+                        Roles = p.tblUserRole.Select(p => p.Role.Value).ToList()
                     }));
             }
             return mdl;
@@ -159,19 +186,19 @@ namespace B2BClasses
             }
             if (_DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Bank_Read))
             {
-                mdl=_context.tblCustomerBankDetails.Where(p => p.CustomerId == _CustomerId )
+                mdl = _context.tblCustomerBankDetails.Where(p => p.CustomerId == _CustomerId)
                     .Select(p => new mdlBanks
                     {
-                        CustomerId=p.CustomerId,
-                        BankId=p.BankId??0,
-                        IFSC=p.IFSC,
-                        AccountNo =p.AccountNo,
-                        BranchAddress=p.BranchAddress,
-                        ApprovalRemarks=p.ApprovalRemarks,
-                        IsApproved=p.IsApproved,
-                        NameasonBank=p.NameasonBank,
-                        Remarks=p.Remarks,
-                        UpiId=p.UpiId
+                        CustomerId = p.CustomerId,
+                        BankId = p.BankId ?? 0,
+                        IFSC = p.IFSC,
+                        AccountNo = p.AccountNo,
+                        BranchAddress = p.BranchAddress,
+                        ApprovalRemarks = p.ApprovalRemarks,
+                        IsApproved = p.IsApproved,
+                        NameasonBank = p.NameasonBank,
+                        Remarks = p.Remarks,
+                        UpiId = p.UpiId
                     }).FirstOrDefault();
             }
             return mdl;
@@ -186,15 +213,15 @@ namespace B2BClasses
             }
             if (_DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Pan_Read))
             {
-                mdl=_context.tblCustomerPanDetails.Where(p => p.CustomerId == _CustomerId)
+                mdl = _context.tblCustomerPanDetails.Where(p => p.CustomerId == _CustomerId)
                     .Select(p => new mdlPan
                     {
                         CustomerId = p.CustomerId,
-                        PANNo=p.PANNo,
-                        PANName = p.PANName,                        
+                        PANNo = p.PANNo,
+                        PANName = p.PANName,
                         ApprovalRemarks = p.ApprovalRemarks,
-                        IsApproved = p.IsApproved,                        
-                        Remarks = p.Remarks,                        
+                        IsApproved = p.IsApproved,
+                        Remarks = p.Remarks,
                     }).FirstOrDefault();
             }
             return mdl;
@@ -210,9 +237,9 @@ namespace B2BClasses
             if (_DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Setting_Read))
             {
 
-                mdl.MinBalance = _context.tblWalletBalanceAlert.Where(p => p.CustomerId == _CustomerId ).FirstOrDefault()?.MinBalance??0;
-                mdl.MarkupAmount = _context.tblCustomerMarkup.Where(p => p.CustomerId == _CustomerId ).FirstOrDefault()?.MarkupAmt ?? 0;
-                var IPFilter=_context.tblCustomerIPFilter.Where(p => p.CustomerId == _CustomerId ).Include(p=>p.tblCustomerIPFilterDetails).FirstOrDefault();
+                mdl.MinBalance = _context.tblWalletBalanceAlert.Where(p => p.CustomerId == _CustomerId).FirstOrDefault()?.MinBalance ?? 0;
+                mdl.MarkupAmount = _context.tblCustomerMarkup.Where(p => p.CustomerId == _CustomerId).FirstOrDefault()?.MarkupAmt ?? 0;
+                var IPFilter = _context.tblCustomerIPFilter.Where(p => p.CustomerId == _CustomerId).Include(p => p.tblCustomerIPFilterDetails).FirstOrDefault();
                 if (IPFilter != null)
                 {
                     mdl.AllowedAllIp = IPFilter.AllowedAllIp;
@@ -227,14 +254,14 @@ namespace B2BClasses
 
         public async Task<bool> SaveBasicDetailsAsync(mdlCustomerMaster mdl)
         {
-            bool IsUpdate = false,IsFoundUpdate=false;
+            bool IsUpdate = false, IsFoundUpdate = false;
             if (!_IsCurrentCustomerPermission)
             {
                 _validationResultList.Add(new ValidationResult("Access Denied"));
-                return false;                
+                return false;
             }
-            
-            
+
+
             if (_DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_BasicDetail_Write))
             {
                 tblCustomerMaster CustomerMaster = null;
@@ -247,14 +274,14 @@ namespace B2BClasses
                         return false;
                     }
                     IsUpdate = true;
-                        
-                }                
+
+                }
                 else
                 {
                     CustomerMaster = new tblCustomerMaster();
                 }
 
-                if ( IsUpdate && ((!CustomerMaster.CustomerName.Trim().Equals(mdl.CustomerName?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
+                if (IsUpdate && ((!CustomerMaster.CustomerName.Trim().Equals(mdl.CustomerName?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
                     (!CustomerMaster.Email.Trim().Equals(mdl.Email?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
                     CustomerMaster.HaveGST != mdl.HaveGST || CustomerMaster.CountryId != mdl.CountryId || CustomerMaster.StateId != mdl.StateId ||
                     (!CustomerMaster.Address.Trim().Equals(mdl.Address?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
@@ -265,26 +292,28 @@ namespace B2BClasses
                     )
                 {
                     IsFoundUpdate = true;
-                    _logDbContext.tblCustomerMasterLog.Add(new tblCustomerMasterLog() {
-                        CustomerId =CustomerMaster.Id,
-                        Code= CustomerMaster.Code,
-                        CustomerName= CustomerMaster.CustomerName,
-                        Logo= CustomerMaster.Logo,
-                        Email= CustomerMaster.Email,
-                        HaveGST= CustomerMaster.HaveGST,
-                        Address= CustomerMaster.Address,
-                        CountryId= CustomerMaster.CountryId,
+                    _logDbContext.tblCustomerMasterLog.Add(new tblCustomerMasterLog()
+                    {
+                        CustomerId = CustomerMaster.Id,
+                        Code = CustomerMaster.Code,
+                        CustomerName = CustomerMaster.CustomerName,
+                        Logo = CustomerMaster.Logo,
+                        Email = CustomerMaster.Email,
+                        HaveGST = CustomerMaster.HaveGST,
+                        Address = CustomerMaster.Address,
+                        CountryId = CustomerMaster.CountryId,
                         StateId = CustomerMaster.StateId,
-                        PinCode= CustomerMaster.PinCode,
-                        ContactNo= CustomerMaster.ContactNo,
-                        AlternateNo= CustomerMaster.AlternateNo,
-                        CustomerType= CustomerMaster.CustomerType,
-                        IsActive= CustomerMaster.IsActive,
-                        CreatedBy= CustomerMaster.ModifyBy,
+                        PinCode = CustomerMaster.PinCode,
+                        ContactNo = CustomerMaster.ContactNo,
+                        AlternateNo = CustomerMaster.AlternateNo,
+                        CustomerType = CustomerMaster.CustomerType,
+                        IsActive = CustomerMaster.IsActive,
+                        CreatedBy = CustomerMaster.ModifyBy,
                         CreatedDt = CustomerMaster.ModifyDt,
-                        ModifyBy=_UserId,
-                        ModifyDt=DateTime.Now});
-                   await _logDbContext.SaveChangesAsync();
+                        ModifyBy = _UserId,
+                        ModifyDt = DateTime.Now
+                    });
+                    await _logDbContext.SaveChangesAsync();
 
                 }
                 if ((!IsUpdate) || (IsUpdate && IsFoundUpdate))
@@ -297,7 +326,7 @@ namespace B2BClasses
                     CustomerMaster.Address = mdl.Address;
                     CustomerMaster.CountryId = mdl.CountryId;
                     CustomerMaster.StateId = mdl.StateId;
-                    CustomerMaster.PinCode  = mdl.PinCode;
+                    CustomerMaster.PinCode = mdl.PinCode;
                     CustomerMaster.ContactNo = mdl.ContactNo;
                     CustomerMaster.AlternateNo = mdl.AlternateNo;
                     CustomerMaster.CustomerType = mdl.CustomerType;
@@ -318,7 +347,7 @@ namespace B2BClasses
                 {
                     _context.tblCustomerMaster.UpdateRange(CustomerMaster);
                 }
-               await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
                 return true;
 
             }
@@ -345,7 +374,7 @@ namespace B2BClasses
                 tblCustomerGSTDetails saveData = null;
                 if (_CustomerId > 0)
                 {
-                    saveData = _context.tblCustomerGSTDetails.Where(p => p.CustomerId == _CustomerId ).FirstOrDefault();
+                    saveData = _context.tblCustomerGSTDetails.Where(p => p.CustomerId == _CustomerId).FirstOrDefault();
                     if (saveData == null)
                     {
                         saveData = new tblCustomerGSTDetails();
@@ -362,7 +391,7 @@ namespace B2BClasses
                     (!saveData.Address.Trim().Equals(mdl.Address?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
                     (!saveData.PinCode.Trim().Equals(mdl.PinCode?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
                     (!saveData.Mobile.Trim().Equals(mdl.Mobile?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
-                    (!saveData.GstNumber.Trim().Equals(mdl.GstNumber?.Trim(), StringComparison.CurrentCultureIgnoreCase)))                    
+                    (!saveData.GstNumber.Trim().Equals(mdl.GstNumber?.Trim(), StringComparison.CurrentCultureIgnoreCase)))
                     )
                     {
                         IsFoundUpdate = true;
@@ -371,15 +400,15 @@ namespace B2BClasses
 
                             CustomerId = saveData.CustomerId,
                             RegisteredName = saveData.RegisteredName,
-                            GstNumber= saveData.GstNumber,                            
-                            Email = saveData.Email,                            
+                            GstNumber = saveData.GstNumber,
+                            Email = saveData.Email,
                             Address = saveData.Address,
                             CountryId = saveData.CountryId,
                             StateId = saveData.StateId,
                             PinCode = saveData.PinCode,
                             Mobile = saveData.Mobile,
-                            CreatedBy = saveData.ModifiedBy??0,
-                            CreatedDt = saveData.ModifiedDt??DateTime.Now,
+                            CreatedBy = saveData.ModifiedBy ?? 0,
+                            CreatedDt = saveData.ModifiedDt ?? DateTime.Now,
                             ModifiedBy = _UserId,
                             ModifiedDt = DateTime.Now
                         });
@@ -390,8 +419,8 @@ namespace B2BClasses
                     if ((!IsUpdate) || (IsUpdate && IsFoundUpdate))
                     {
                         saveData.GstNumber = mdl.GstNumber;
-                        saveData.RegisteredName= mdl.RegisteredName;                        
-                        saveData.Email = mdl.Email;                        
+                        saveData.RegisteredName = mdl.RegisteredName;
+                        saveData.Email = mdl.Email;
                         saveData.Address = mdl.Address;
                         saveData.CountryId = mdl.CountryId;
                         saveData.StateId = mdl.StateId;
@@ -438,7 +467,7 @@ namespace B2BClasses
                 tblCustomerBankDetails saveData = null;
                 if (_CustomerId > 0)
                 {
-                    saveData = _context.tblCustomerBankDetails.Where(p => p.CustomerId== _CustomerId).FirstOrDefault();
+                    saveData = _context.tblCustomerBankDetails.Where(p => p.CustomerId == _CustomerId).FirstOrDefault();
                     if (saveData == null)
                     {
                         saveData = new tblCustomerBankDetails();
@@ -453,8 +482,8 @@ namespace B2BClasses
                     (!saveData.AccountNo.Trim().Equals(mdl.AccountNo?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
                     (!saveData.IFSC.Trim().Equals(mdl.IFSC?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
                     saveData.BankId != mdl.BankId ||
-                    (!saveData.BranchAddress .Trim().Equals(mdl.BranchAddress?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
-                    (!saveData.Remarks .Trim().Equals(mdl.Remarks?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
+                    (!saveData.BranchAddress.Trim().Equals(mdl.BranchAddress?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
+                    (!saveData.Remarks.Trim().Equals(mdl.Remarks?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
                     (!saveData.ApprovalRemarks.Trim().Equals(mdl.ApprovalRemarks?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
                     saveData.IsApproved != mdl.IsApproved)
                     )
@@ -465,20 +494,20 @@ namespace B2BClasses
 
                             NameasonBank = saveData.NameasonBank,
                             BankId = saveData.BankId,
-                            IFSC= saveData.IFSC,
+                            IFSC = saveData.IFSC,
                             AccountNo = saveData.AccountNo,
                             BranchAddress = saveData.BranchAddress,
-                            ApprovalRemarks= saveData.ApprovalRemarks,
+                            ApprovalRemarks = saveData.ApprovalRemarks,
                             Remarks = saveData.Remarks,
                             ApprovedBy = saveData.ApprovedBy,
-                            ApprovedDt= saveData.ApprovedDt,
-                            CustomerId= saveData.CustomerId,
+                            ApprovedDt = saveData.ApprovedDt,
+                            CustomerId = saveData.CustomerId,
                             IsApproved = saveData.IsApproved,
-                            UpiId= saveData.UpiId,
-                            CreatedBy = _UserId ,
+                            UpiId = saveData.UpiId,
+                            CreatedBy = _UserId,
                             CreatedDt = DateTime.Now,
-                            UploadImages=saveData.UploadImages
-                            
+                            UploadImages = saveData.UploadImages
+
                         });
                         await _logDbContext.SaveChangesAsync();
 
@@ -493,12 +522,12 @@ namespace B2BClasses
                         saveData.BranchAddress = mdl.BranchAddress;
                         saveData.ApprovalRemarks = mdl.ApprovalRemarks;
                         saveData.Remarks = mdl.Remarks;
-                        saveData.ApprovedBy = _UserId ;
+                        saveData.ApprovedBy = _UserId;
                         saveData.ApprovedDt = DateTime.Now;
                         saveData.CustomerId = _CustomerId;
                         saveData.IsApproved = mdl.IsApproved;
                         saveData.UpiId = mdl.UpiId;
-                        saveData.CreatedBy = _UserId ;
+                        saveData.CreatedBy = _UserId;
                         saveData.CreatedDt = DateTime.Now;
                         saveData.UploadImages = string.Empty;
 
@@ -552,7 +581,7 @@ namespace B2BClasses
 
 
                     if (IsUpdate && ((!saveData.PANName.Trim().Equals(mdl.PANName?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
-                    (!saveData.PANNo.Trim().Equals(mdl.PANNo?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||                    
+                    (!saveData.PANNo.Trim().Equals(mdl.PANNo?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
                     (!saveData.Remarks.Trim().Equals(mdl.Remarks?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
                     (!saveData.ApprovalRemarks.Trim().Equals(mdl.ApprovalRemarks?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
                     saveData.IsApproved != mdl.IsApproved)
@@ -569,7 +598,7 @@ namespace B2BClasses
                             ApprovedBy = saveData.ApprovedBy,
                             ApprovedDt = saveData.ApprovedDt,
                             CustomerId = saveData.CustomerId,
-                            IsApproved = saveData.IsApproved,                            
+                            IsApproved = saveData.IsApproved,
                             CreatedBy = _UserId,
                             CreatedDt = DateTime.Now,
                             UploadImages = saveData.UploadImages
@@ -588,7 +617,7 @@ namespace B2BClasses
                         saveData.ApprovedBy = _UserId;
                         saveData.ApprovedDt = DateTime.Now;
                         saveData.CustomerId = _CustomerId;
-                        saveData.IsApproved = mdl.IsApproved;                        
+                        saveData.IsApproved = mdl.IsApproved;
                         saveData.CreatedBy = _UserId;
                         saveData.CreatedDt = DateTime.Now;
                         saveData.UploadImages = string.Empty;
@@ -615,8 +644,8 @@ namespace B2BClasses
         private bool IsAllIPEqual(List<string> IPLIst, string IPS)
         {
             bool AllIPEqual = true;
-             var NewIPList=IPS?.Split(",").ToList();
-            if (NewIPList == null )
+            var NewIPList = IPS?.Split(",").ToList();
+            if (NewIPList == null)
             {
                 NewIPList = new List<string>();
             }
@@ -765,7 +794,7 @@ namespace B2BClasses
                     {
                         IsUpdate = false; IsFoundUpdate = false;
                         saveDataIPFilter = _context.tblCustomerIPFilter.Where(p => p.CustomerId == _CustomerId)
-                            .Include(p=>p.tblCustomerIPFilterDetails).FirstOrDefault();
+                            .Include(p => p.tblCustomerIPFilterDetails).FirstOrDefault();
                         if (saveDataIPFilter == null)
                         {
                             saveDataIPFilter = new tblCustomerIPFilter();
@@ -778,7 +807,7 @@ namespace B2BClasses
                         }
 
                         if (IsUpdate && ((saveDataIPFilter.AllowedAllIp != mdl.AllowedAllIp) ||
-                            !IsAllIPEqual(saveDataIPFilter.tblCustomerIPFilterDetails.Select(p=>p.IPAddress).ToList(), mdl.IPAddess)
+                            !IsAllIPEqual(saveDataIPFilter.tblCustomerIPFilterDetails.Select(p => p.IPAddress).ToList(), mdl.IPAddess)
                             ))
                         {
                             IsFoundUpdate = true;
@@ -790,8 +819,8 @@ namespace B2BClasses
                                 AllowedAllIp = mdl.AllowedAllIp,
                                 ModifiedBy = _UserId,
                                 ModifiedDt = DateTime.Now,
-                                IPDetails= string.Join(",", saveDataIPFilter.tblCustomerIPFilterDetails.Select(p=>p.IPAddress))
-                                
+                                IPDetails = string.Join(",", saveDataIPFilter.tblCustomerIPFilterDetails.Select(p => p.IPAddress))
+
                             });
                             await _logDbContext.SaveChangesAsync();
 
@@ -800,11 +829,11 @@ namespace B2BClasses
                         if ((!IsUpdate) || (IsUpdate && IsFoundUpdate))
                         {
 
-                            saveDataIPFilter.AllowedAllIp= mdl.AllowedAllIp;
+                            saveDataIPFilter.AllowedAllIp = mdl.AllowedAllIp;
                             saveDataIPFilter.CustomerId = _CustomerId;
                             saveDataIPFilter.ModifiedBy = _UserId;
                             saveDataIPFilter.ModifiedDt = DateTime.Now;
-                            var IPAddressDatas = mdl.IPAddess?.Split(",").Select(p=>new tblCustomerIPFilterDetails { CustomerId=_CustomerId,IPAddress=p.Trim()  }).ToList();
+                            var IPAddressDatas = mdl.IPAddess?.Split(",").Select(p => new tblCustomerIPFilterDetails { CustomerId = _CustomerId, IPAddress = p.Trim() }).ToList();
                             foreach (var ipAdd in IPAddressDatas)
                             {
                                 saveDataIPFilter.tblCustomerIPFilterDetails.Add(ipAdd);
@@ -834,13 +863,13 @@ namespace B2BClasses
         }
 
 
-        private bool IsAllRoleEqual(List<int> roleList, List<int> mdlRoleList )
+        private bool IsAllRoleEqual(List<int> roleList, List<int> mdlRoleList)
         {
             bool AllIPEqual = true;
-            
+
             foreach (var rl in roleList)
             {
-                AllIPEqual = mdlRoleList.Any(p =>p==rl);
+                AllIPEqual = mdlRoleList.Any(p => p == rl);
                 if (!AllIPEqual)
                 {
                     return false;
@@ -870,7 +899,7 @@ namespace B2BClasses
                 {
                     if (mdl.UserId > 0)
                     {
-                        saveData = _context.tblUserMaster.Where(p => p.CustomerId == _CustomerId && p.Id== mdl.UserId ).Include(q=>q.tblUserRole)
+                        saveData = _context.tblUserMaster.Where(p => p.CustomerId == _CustomerId && p.Id == mdl.UserId).Include(q => q.tblUserRole)
                             .FirstOrDefault();
                         if (saveData == null)
                         {
@@ -883,19 +912,19 @@ namespace B2BClasses
 
 
                         if (IsUpdate && ((!saveData.UserName.Trim().Equals(mdl.UserName?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
-                        (! saveData.Password.Trim().Equals(mdl.Password?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
+                        (!saveData.Password.Trim().Equals(mdl.Password?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
                         (!saveData.Email.Trim().Equals(mdl.Email?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
-                        DateTime.Compare(saveData.BlockEndTime,mdl.BlockEndTime)==0 ||
+                        DateTime.Compare(saveData.BlockEndTime, mdl.BlockEndTime) == 0 ||
                         (!saveData.Phone.Trim().Equals(mdl.Phone?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
                         saveData.IsActive != mdl.IsActive || saveData.IsBlocked != mdl.IsBlocked ||
                         saveData.ForcePasswordChange != mdl.ForcePasswordChange ||
-                        !IsAllRoleEqual(saveData.tblUserRole.Select(r=>r.Role.Value).ToList(), mdl.Roles))
+                        !IsAllRoleEqual(saveData.tblUserRole.Select(r => r.Role.Value).ToList(), mdl.Roles))
                         )
                         {
                             IsFoundUpdate = true;
                             _logDbContext.tblUserMasterLog.Add(new tblUserMasterLog()
                             {
-                                UserId= saveData.Id,
+                                UserId = saveData.Id,
                                 UserName = saveData.UserName,
                                 Password = saveData.Password,
                                 IsActive = saveData.IsActive,
@@ -905,16 +934,16 @@ namespace B2BClasses
                                 CustomerId = saveData.CustomerId,
                                 Phone = saveData.Phone,
                                 IsBlocked = saveData.IsBlocked,
-                                CreatedBy = saveData.ModifiedBy??0,
-                                CreatedDt = saveData.ModifiedDt?? DateTime.Now,
+                                CreatedBy = saveData.ModifiedBy ?? 0,
+                                CreatedDt = saveData.ModifiedDt ?? DateTime.Now,
                                 IsPrimary = saveData.IsPrimary,
-                                BlockStartTime=saveData.BlockStartTime,
-                                BlockEndTime= saveData.BlockEndTime,
-                                LoginFailCount= saveData.LoginFailCount,
-                                LastLogin= saveData.LastLogin,
-                                ModifiedBy=_UserId,
-                                ModifiedDt= saveData.ModifiedDt,
-                                Roles= string.Join(",", saveData.tblUserRole.Select(p=>p.Role))
+                                BlockStartTime = saveData.BlockStartTime,
+                                BlockEndTime = saveData.BlockEndTime,
+                                LoginFailCount = saveData.LoginFailCount,
+                                LastLogin = saveData.LastLogin,
+                                ModifiedBy = _UserId,
+                                ModifiedDt = saveData.ModifiedDt,
+                                Roles = string.Join(",", saveData.tblUserRole.Select(p => p.Role))
 
                             });
                             await _logDbContext.SaveChangesAsync();
@@ -923,33 +952,33 @@ namespace B2BClasses
 
                         if ((!IsUpdate) || (IsUpdate && IsFoundUpdate))
                         {
-                            
+
                             saveData.UserName = mdl.UserName;
                             saveData.Password = mdl.Password;
                             saveData.IsActive = mdl.IsActive;
                             saveData.ForcePasswordChange = mdl.ForcePasswordChange;
-                            saveData.Email = mdl.Email;                            
+                            saveData.Email = mdl.Email;
                             saveData.CustomerId = mdl.CustomerId;
                             saveData.Phone = mdl.Phone;
-                            saveData.IsBlocked = mdl.IsBlocked;                            
+                            saveData.IsBlocked = mdl.IsBlocked;
                             saveData.IsPrimary = mdl.IsPrimary;
                             saveData.BlockStartTime = mdl.BlockStartTime;
-                            saveData.BlockEndTime = mdl.BlockEndTime;                            
+                            saveData.BlockEndTime = mdl.BlockEndTime;
                             saveData.ModifiedBy = _UserId;
                             saveData.ModifiedDt = DateTime.Now;
                             foreach (var rl in mdl.Roles)
                             {
-                                saveData.tblUserRole.Add(new tblUserRole() { Role=rl, CreatedBy= _UserId, CreatedDt=DateTime.Now });
+                                saveData.tblUserRole.Add(new tblUserRole() { Role = rl, CreatedBy = _UserId, CreatedDt = DateTime.Now });
                             }
                         }
                         if (!IsUpdate)
                         {
                             int ExpiryTime = 0;
                             int.TryParse(_config["UserSetting:MailTokenExpiryTime"], out ExpiryTime);
-                            saveData.MailVerficationTokken= Settings.Encrypt( Settings.TokenGenrate());
+                            saveData.MailVerficationTokken = Settings.Encrypt(Settings.TokenGenrate());
                             saveData.TokkenExpiryTime = DateTime.Now.AddMinutes(ExpiryTime);
                             saveData.IsMailVarified = false;
-                            saveData.LoginFailCount = 0;                            
+                            saveData.LoginFailCount = 0;
                             saveData.CreatedBy = _UserId;
                             saveData.CreatedDt = DateTime.Now;
                             _context.tblUserMaster.Add(saveData);

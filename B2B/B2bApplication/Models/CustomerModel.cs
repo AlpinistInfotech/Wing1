@@ -10,9 +10,42 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Database;
 using Microsoft.AspNetCore.Http;
+using B2BClasses.Models;
 
 namespace B2bApplication.Models
 {
+
+    public class mdlCustomerMasterWraper: mdlCustomer
+    {
+
+
+        public void LoadData(int CustomerID, ICustomerMaster cm)
+        {
+            cm.CustomerId = CustomerID;
+            if (CustomerID > 0)
+            {
+                this.customerMaster = cm.FetchBasicDetail();
+                this.GSTDetails = cm.FetchGSTDetail();
+                this.banks = cm.FetchBanks();
+                this.pan = cm.FetchPan();
+                this.AllUserList = cm.FetchUserMasters();
+                //this.userMaster = this.AllUserList.Where(p => p.IsPrimary).FirstOrDefault();
+                this.customerSetting = cm.FetchSetting();
+            }
+            else
+            {
+                this.customerMaster = cm.DocumentPermission.Any(p=>p== enmDocumentMaster.CustomerDetailsPermission_BasicDetail_Read)? new mdlCustomerMaster():null;
+                this.GSTDetails = cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_GSTDetail_Read) ? new mdlCustomerGSTDetails() : null;
+                this.banks =cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Bank_Read) ? new mdlBanks() : null;
+                this.pan =cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Pan_Read) ? new  mdlPan() : null;
+                this.AllUserList = cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_UserDetail_Read) ? new List<mdlUserMaster>() : null;
+                //this.userMaster = cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_UserDetail_Read) ? new mdlUserMaster() : null;
+                this.customerSetting = cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Setting_Read) ? new mdlCustomerSetting() : null;
+
+            }
+        }
+    }
+
 
     public class mdlAddCustomer
     {

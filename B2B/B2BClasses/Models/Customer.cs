@@ -7,77 +7,20 @@ using System.Text;
 namespace B2BClasses.Models
 {
 
-    public interface ImdlCustomer : ImdlCustomerMaster, ImdlCustomerGSTDetails, ImdlBanks, ImdlPan, ImdlCustomerSetting
+    public class mdlCustomer 
     {
-        public List<ImdlUserMaster> UserMaster { get; set; }
-    }
-
-    public class mdlCustomer : ImdlCustomer
-    {
-        public List<ImdlUserMaster> UserMaster {get; set;}
-        public string Address {get; set;}
-        public string AlternateNo {get; set;}
-        public string Code {get; set;}
-        public string ContactNo {get; set;}
-        public int? CountryId {get; set;}
-        public int CreatedBy {get; set;}
-        public string CreatedByName {get; set;}
-        public DateTime CreatedDt {get; set;}
-        public int ModifyBy { get; set; }
-        public string ModifyByName { get; set; }
-        public DateTime ModifyDt { get; set; }
-        public int CustomerId {get; set;}
-        public string CustomerName {get; set;}
-        public enmCustomerType CustomerType {get; set;}
-        public string Email {get; set;}
-        public bool HaveGST {get; set;}
-        public bool IsActive {get; set;}
-        public string PinCode {get; set;}
-        public int? StateId {get; set;}        
-        public string GstNumber {get; set;}
-        public string Mobile {get; set;}
-        public string RegisteredName {get; set;}
-        public string AccountNo {get; set;}
-        public string ApprovalRemarks {get; set;}
-        public int BankId {get; set;}
-        public string BranchAddress {get; set;}
-        public string IFSC {get; set;}
-        public enmApprovalStatus IsApproved {get; set;}
-        public string NameasonBank {get; set;}
-        public string Remarks {get; set;}
-        public string UpiId {get; set;}
-        public string PANName {get; set;}
-        public string PANNo {get; set;}
-        public bool AllowedAllIp {get; set;}
-        public string IPAddess {get; set;}
-        public double MarkupAmount {get; set;}
-        public double MinBalance {get; set;}
-        
-       
+        public mdlCustomerMaster customerMaster { get;set;}
+        public mdlCustomerGSTDetails GSTDetails { get; set; }
+        public mdlUserMaster userMaster { get; set; }
+        public List<mdlUserMaster> AllUserList { get; set; }
+        public mdlBanks banks { get; set; }
+        public mdlPan pan{ get; set; }
+        public mdlCustomerSetting customerSetting { get; set; }
     }
 
     
-    public interface ImdlCustomerMaster
-    {
-        string Address { get; set; }
-        string AlternateNo { get; set; }
-        string Code { get; set; }
-        string ContactNo { get; set; }
-        int? CountryId { get; set; }
-        int CustomerId { get; set; }
-        string CustomerName { get; set; }
-        enmCustomerType CustomerType { get; set; }
-        string Email { get; set; }
-        bool HaveGST { get; set; }
-        bool IsActive { get; set; }
-        int ModifyBy { get; set; }
-        string ModifyByName { get; set; }
-        DateTime ModifyDt { get; set; }
-        string PinCode { get; set; }
-        int? StateId { get; set; }
-    }
-
-    public class mdlCustomerMaster : ImdlCustomerMaster
+    
+    public class mdlCustomerMaster 
     {
         public int CustomerId { get; set; }
         [Required]
@@ -136,22 +79,8 @@ namespace B2BClasses.Models
 
     }
 
-    public interface ImdlCustomerGSTDetails
-    {
-        string Address { get; set; }
-        int? CountryId { get; set; }
-        
-        string CustomerName { get; set; }
-        string Email { get; set; }
-        
-        string GstNumber { get; set; }
-        string Mobile { get; set; }
-        string PinCode { get; set; }
-        string RegisteredName { get; set; }
-        int? StateId { get; set; }
-    }
-
-    public class mdlCustomerGSTDetails : ImdlCustomerGSTDetails
+    
+    public class mdlCustomerGSTDetails 
     {
         
         [Required]
@@ -189,26 +118,8 @@ namespace B2BClasses.Models
         public string CustomerName { get; set; }
     }
 
-    public interface ImdlUserMaster
-    {
-        DateTime BlockEndTime { get; set; }
-        DateTime BlockStartTime { get; set; }
-        string ConfirmPassword { get; set; }
-        int? CustomerId { get; set; }
-        string Email { get; set; }
-        bool ForcePasswordChange { get; set; }
-        bool IsActive { get; set; }
-        bool IsBlocked { get; set; }
-        bool IsPrimary { get; set; }
-        DateTime lastLogin { get; set; }
-        string Password { get; set; }
-        string Phone { get; set; }
-        List<int> Roles { get; set; }
-        int UserId { get; set; }
-        string UserName { get; set; }
-    }
-
-    public class mdlUserMaster : ImdlUserMaster
+    
+    public class mdlUserMaster 
     {
         public int UserId { get; set; }
         [Required]
@@ -250,20 +161,9 @@ namespace B2BClasses.Models
 
     }
 
-    public interface ImdlBanks
-    {
-        string AccountNo { get; set; }
-        string ApprovalRemarks { get; set; }
-        int BankId { get; set; }
-        string BranchAddress { get; set; }        
-        string IFSC { get; set; }
-        enmApprovalStatus IsApproved { get; set; }
-        string NameasonBank { get; set; }
-        string Remarks { get; set; }
-        string UpiId { get; set; }
-    }
+    
 
-    public class mdlBanks : ImdlBanks
+    public class mdlBanks 
     {
         public int? CustomerId { get; set; }
         [Required]
@@ -304,16 +204,9 @@ namespace B2BClasses.Models
 
     }
 
-    public interface ImdlPan
-    {
-        string ApprovalRemarks { get; set; }        
-        enmApprovalStatus IsApproved { get; set; }
-        string PANName { get; set; }
-        string PANNo { get; set; }
-        string Remarks { get; set; }
-    }
+    
 
-    public class mdlPan : ImdlPan
+    public class mdlPan 
     {
         public int? CustomerId { get; set; }
         [Required]
@@ -340,16 +233,7 @@ namespace B2BClasses.Models
         [StringLength(200, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.")]
         public string ApprovalRemarks { get; set; }
     }
-
-    public interface ImdlCustomerSetting
-    {
-        bool AllowedAllIp { get; set; }        
-        string IPAddess { get; set; }
-        double MarkupAmount { get; set; }
-        double MinBalance { get; set; }
-    }
-
-    public class mdlCustomerSetting : ImdlCustomerSetting
+    public class mdlCustomerSetting 
     {
         public int? CustomerId { get; set; }
         [Display(Name = "Min Balance Alert")]

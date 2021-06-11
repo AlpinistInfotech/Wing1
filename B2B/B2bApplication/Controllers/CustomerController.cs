@@ -61,10 +61,26 @@ namespace B2bApplication.Controllers
         }
 
         #region ******************Customer Master *************************
-        public async Task<IActionResult> CustomerMaster()
+
+
+        public async Task<IActionResult> CustomerDetail(string Id,[FromServices]CustomerMaster customerMaster )
         {
+            int CustomerId = 0;
+            int.TryParse(Id, out CustomerId);
+            mdlCustomerMasterWraper mdl = new mdlCustomerMasterWraper();
+            mdl.LoadData(CustomerId, customerMaster);
             return View();
         }
+
+
+        public async Task<IActionResult> CustomerMaster(string Id)
+        {
+            int CustomerId=0;
+            int.TryParse(Id, out CustomerId);
+            return View();
+        }
+
+
         #endregion
 
         #region Add Customer        
