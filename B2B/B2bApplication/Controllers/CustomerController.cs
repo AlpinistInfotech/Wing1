@@ -63,12 +63,35 @@ namespace B2bApplication.Controllers
         #region ******************Customer Master *************************
 
 
-        public async Task<IActionResult> CustomerDetail(string Id,[FromServices]CustomerMaster customerMaster )
+        [HttpGet]
+        [Authorize]
+        public IActionResult CustomerDetail(string Id,[FromServices]CustomerMaster customerMaster )
+        {
+            mdlCustomerMasterWraper mdl = new mdlCustomerMasterWraper();
+                        if (_currentUsers.CustomerType == enmCustomerType.Admin)
+            {
+                mdl.LoadCustomer(customerMaster);
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public IActionResult CustomerDetail(mdlCustomerMasterWraper mdl, [FromServices] CustomerMaster customerMaster)
         {
             int CustomerId = 0;
-            int.TryParse(Id, out CustomerId);
-            mdlCustomerMasterWraper mdl = new mdlCustomerMasterWraper();
+            if (mdl == null)
+            {
+                mdl = new mdlCustomerMasterWraper();
+                CustomerId = mdl.CustomerId;
+            }
             mdl.LoadData(CustomerId, customerMaster);
+            if (_currentUsers.CustomerType == enmCustomerType.Admin)
+            {
+                mdl.LoadCustomer(customerMaster);
+            }
             return View();
         }
 

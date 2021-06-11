@@ -256,12 +256,15 @@ namespace B2BClasses.Services.Enums
         DisplayOrder: 1, Name: "Customer", Description: "Customer Master", Icon: "far fa-circle nav-icon", ActionName: "/Customer/AddCustomer", IsAdminClaim = true)]
         CustomerMaster = 111,
         [Document(EnmModule: enmModule.Master, DocumentType: enmDocumentType.Create | enmDocumentType.DisplayMenu,
+        DisplayOrder: 1, Name: "Customer Detail", Description: "Customer Details", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CustomerDetail", IsAdminClaim = true)]
+        CustomerDetail = 112,
+        [Document(EnmModule: enmModule.Master, DocumentType: enmDocumentType.Create | enmDocumentType.DisplayMenu,
         DisplayOrder: 1, Name: "Customer Report", Description: "Customer Report", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CustomerDetails", IsAdminClaim = true)]
-        CustomerReport = 112,        
+        CustomerReport = 113,        
         [Document(EnmModule: enmModule.Master, DocumentType: enmDocumentType.Create | enmDocumentType.DisplayMenu,
         DisplayOrder: 1, Name: "User", Description: "User Master", Icon: "far fa-circle nav-icon", ActionName: "/Customer/AddUser", IsAdminClaim = true)]
-        UserMaster = 113,
-
+        UserMaster = 114,
+        
         #region ************************* Detailed Permission for Customer Masters (From 10001 to 10100 )***************************
         [Document( EnmSubModule: enmSubModule.CustomerDetailsPermission, DocumentType: enmDocumentType.Report,
         DisplayOrder: 1, Name: "BasicDetail Read", Description: "Read Basic Detail ", Icon: "", ActionName: "")]

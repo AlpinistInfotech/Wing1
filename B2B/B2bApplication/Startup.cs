@@ -40,6 +40,7 @@ namespace B2bApplication
                 ctx.GetRequiredService<B2BClasses.Database.LogDatabase.LogDBContext>(), ctx.GetRequiredService<ISettings>(), ctx.GetRequiredService<IConfiguration>(), ctx.GetRequiredService<ICurrentUsers>().UserId));
             services.AddScoped<ICustomerWallet>(ctx => new CustomerWallet(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
             services.AddScoped<ISettings>(ctx => new B2BClasses.Settings(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
+            services.AddScoped<IMasters>(ctx => new B2BClasses.Masters(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
             services.AddScoped<IMarkup>(ctx => new B2BClasses.Markup(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
             
             #region **************** Flight *********************************

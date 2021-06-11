@@ -17,6 +17,19 @@ namespace B2bApplication.Models
 
     public class mdlCustomerMasterWraper: mdlCustomer
     {
+        public int CustomerId { get; set; }
+        [Required]
+        [Display(Name = "Logo")]
+        public IFormFile Logo { set; get; }
+        public byte[] LogoData { set; get; }
+        
+
+        public Dictionary<int, string> CustomerMasterList { get; set; }
+
+        public void LoadCustomer(ICustomerMaster cm)
+        {
+            CustomerMasterList = cm.FetchAllCustomer();
+        }
 
 
         public void LoadData(int CustomerID, ICustomerMaster cm)

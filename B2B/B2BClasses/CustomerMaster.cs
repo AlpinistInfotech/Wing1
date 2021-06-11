@@ -20,6 +20,7 @@ namespace B2BClasses
         bool IsCurrentCustomerPermission { get; }
         List<ValidationResult> validationResultList { get; }
 
+        Dictionary<int, string> FetchAllCustomer(bool IncludeAdmin = false, bool OnlyActive = false);
         mdlBanks FetchBanks();
         mdlCustomerMaster FetchBasicDetail();
         mdlCustomerGSTDetails FetchGSTDetail();
@@ -82,6 +83,23 @@ namespace B2BClasses
 
             }
         }
+
+        public Dictionary<int, string> FetchAllCustomer(bool IncludeAdmin=false, bool OnlyActive=false)
+        {
+           var CustomerMaster = _context.tblCustomerMaster.AsQueryable();
+            if (!IncludeAdmin)
+            {
+                CustomerMaster = CustomerMaster.Where(p => p.CustomerType != enmCustomerType.Admin);
+            }
+            if (OnlyActive)
+            {
+                CustomerMaster = CustomerMaster.Where(p => p.IsActive);
+            }
+
+            return CustomerMaster.OrderBy(P=>P.Code).ThenBy(P=>P.CustomerName).ToDictionary(x=>x.Id, x=>string.Concat(x.Code," - ",  x.CustomerName));
+
+        }
+
 
         public mdlCustomerMaster FetchBasicDetail()
         {
