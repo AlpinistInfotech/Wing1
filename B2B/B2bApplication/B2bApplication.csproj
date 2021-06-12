@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <Folder Include="Views\Customer\Components\CustomerMaster\" />
+    <Folder Include="wwwroot\Organisation\Icons\" />
     <Folder Include="wwwroot\Upload\" />
     <Folder Include="wwwroot\Upload\PaymentRequestFile\" />
   </ItemGroup>

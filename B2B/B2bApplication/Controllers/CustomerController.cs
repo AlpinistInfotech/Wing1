@@ -33,8 +33,10 @@ namespace B2bApplication.Controllers
         private readonly int _userid ;
         private readonly int _customerId ;
         private readonly ICurrentUsers _currentUsers;
+        private readonly ICustomerMaster _customerMaster;
         public CustomerController(ILogger<CustomerController> logger, DBContext context, ISettings setting, IConfiguration config,
-            ICurrentUsers currentUsers)
+            ICurrentUsers currentUsers,
+            ICustomerMaster customerMaster)
         {
             _context = context;
             _logger = logger;
@@ -43,6 +45,7 @@ namespace B2bApplication.Controllers
             _currentUsers = currentUsers;
             _customerId = _currentUsers.CustomerId;
             _userid = _currentUsers.UserId;
+            _customerMaster = customerMaster;
         }
 
         [AcceptVerbs("Get", "Post")]
@@ -65,21 +68,21 @@ namespace B2bApplication.Controllers
 
         [HttpGet]
         [Authorize]
-        public IActionResult CustomerDetail(string Id,[FromServices]CustomerMaster customerMaster )
+        public IActionResult CustomerDetail(string Id)
         {
             mdlCustomerMasterWraper mdl = new mdlCustomerMasterWraper();
-                        if (_currentUsers.CustomerType == enmCustomerType.Admin)
+            if (_currentUsers.CustomerType == enmCustomerType.Admin)
             {
-                mdl.LoadCustomer(customerMaster);
+                mdl.LoadCustomer(_customerMaster);
             }
 
-            return View();
+            return View(mdl);
         }
 
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public IActionResult CustomerDetail(mdlCustomerMasterWraper mdl, [FromServices] CustomerMaster customerMaster)
+        public IActionResult CustomerDetail(mdlCustomerMasterWraper mdl)
         {
             int CustomerId = 0;
             if (mdl == null)
@@ -87,12 +90,12 @@ namespace B2bApplication.Controllers
                 mdl = new mdlCustomerMasterWraper();
                 CustomerId = mdl.CustomerId;
             }
-            mdl.LoadData(CustomerId, customerMaster);
+            mdl.LoadData(CustomerId, _customerMaster,_config);
             if (_currentUsers.CustomerType == enmCustomerType.Admin)
             {
-                mdl.LoadCustomer(customerMaster);
+                mdl.LoadCustomer(_customerMaster);
             }
-            return View();
+            return View(mdl);
         }
 
 
