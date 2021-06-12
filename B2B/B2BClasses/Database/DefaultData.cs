@@ -35,6 +35,7 @@ namespace B2BClasses.Database
                 //CreditBalence = 0,
                 CustomerType = enmCustomerType.Admin,
                 IsActive = true,
+               
                 CreatedBy = 1,
                 CreatedDt = _CurrentDt,
                 ModifyDt = _CurrentDt,
@@ -191,6 +192,7 @@ namespace B2BClasses.Database
                     CustomerId = i,
                     Password = "123456",
                     UserName = "admin",
+                    IsPrimary=true
                 };
 
                 tblUserRole ur = new tblUserRole()
