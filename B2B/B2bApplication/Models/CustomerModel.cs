@@ -25,6 +25,7 @@ namespace B2bApplication.Models
         public byte[] LogoData { set; get; }
         
 
+
         public Dictionary<int, string> CustomerMasterList { get; set; }
 
         public void LoadCustomer(ICustomerMaster cm)
