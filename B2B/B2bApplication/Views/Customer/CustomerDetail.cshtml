@@ -61,7 +61,7 @@
     }
 
 
-
+    <div class="space-20"></div>
     <div class="tabbable">
         <ul class="nav nav-tabs padding-18">
             @if (Model.customerMaster != null)
@@ -121,6 +121,7 @@
                 <div id="customerDetails_customerMaster" class="tab-pane in active">
                     <div class="row">
                         <div class="col-xs-12 col-sm-3 center">
+                            <div class="space-20"></div>
                             <span class="profile-picture">
                                 <img class="editable img-responsive" alt="log" id="avatar2" src="@string.Format("data:image/ico;base64,{0}", Convert.ToBase64String(Model.LogoData))" />
                             </span>
@@ -204,8 +205,8 @@
                                 </div>
 
 
-                                <div class="row">
-                                    <div class="md=6">
+                                <div class="profile-info-row">
+                                    <div class="col-md-6">
                                         <div class="profile-info-row">
                                             <div class="profile-info-name"> Have GST</div>
 
@@ -214,7 +215,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="md-6">
+                                    <div class="col-md-6">
                                         <div class="profile-info-row">
                                             <div class="profile-info-name"> GST Number</div>
 
@@ -324,10 +325,11 @@
 
 
 
-                                <div class="hr hr-8 dotted"></div>
+
 
 
                             </div>
+                            <div class="hr hr-8 dotted"></div>
                         </div>
                     </div>
                 </div>
@@ -385,13 +387,14 @@
                                         <span>@Model.banks.UpiId</span>
                                     </div>
                                 </div>
-                                <div class="hr hr-8 dotted"></div>
+
                             </div>
+                            <div class="hr hr-8 dotted"></div>
                         </div>
                     </div>
                 </div>
             }
-            @if (Model.userMaster != null )
+            @if (Model.userMaster != null)
             {
                 <div id="customerDetails_userMaster" class="tab-pane">
                     <div class="profile-feed row">
@@ -416,8 +419,8 @@
                                         </a>
 
                                         @*<a href="#" class="red">
-                                        <i class="ace-icon fa fa-times bigger-125"></i>
-                                    </a>*@
+                                                <i class="ace-icon fa fa-times bigger-125"></i>
+                                            </a>*@
                                     </div>
                                 </div>
                             </div><!-- /.col -->
@@ -449,12 +452,12 @@
                             <div class="profile-user-info">
                                 <div class="profile-info-row">
                                     <div class="profile-info-name">Allowed IP</div>
-                                    <div class="profile-info-value">                                        
+                                    <div class="profile-info-value">
                                         <span>@( Model.customerSetting.AllowedAllIp?"All IP": Model.customerSetting.IPAddess)</span>
                                     </div>
                                 </div>
                                 <div class="profile-info-row">
-                                    <div class="profile-info-name">MarkupAmount</div>
+                                    <div class="profile-info-name">Markup Amount</div>
 
                                     <div class="profile-info-value">
                                         <span>@Model.customerSetting.MarkupAmount </span>
@@ -468,9 +471,10 @@
                                         <span>@Model.customerSetting.MinBalance</span>
                                     </div>
                                 </div>
-                                
-                                <div class="hr hr-8 dotted"></div>
+
+
                             </div>
+                            <div class="hr hr-8 dotted"></div>
                         </div>
                     </div>
                 </div>

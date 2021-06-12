@@ -88,8 +88,9 @@ namespace B2bApplication.Controllers
             if (mdl == null)
             {
                 mdl = new mdlCustomerMasterWraper();
-                CustomerId = mdl.CustomerId;
+               
             }
+            CustomerId = mdl.CustomerId;
             mdl.LoadData(CustomerId, _customerMaster,_config);
             if (_currentUsers.CustomerType == enmCustomerType.Admin)
             {

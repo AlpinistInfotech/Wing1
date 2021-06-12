@@ -19,8 +19,7 @@ namespace B2bApplication.Models
 
     public class mdlCustomerMasterWraper: mdlCustomer
     {
-        public int CustomerId { get; set; }
-        [Required]
+        public int CustomerId { get; set; }        
         [Display(Name = "Logo")]
         public IFormFile Logo { set; get; }
         public byte[] LogoData { set; get; }
