@@ -9,8 +9,11 @@ using System.Text;
 
 namespace B2BClasses
 {
+   
+
     public interface IMasters
     {
+        string FetchBankName(int BankId);
         string FetchCountryCode(int CountryId);
         string FetchCountryName(int CountryId);
         string FetchStateName(int StateId);
@@ -38,6 +41,10 @@ namespace B2BClasses
         public String FetchStateName(int StateId)
         {
             return _context.tblStateMaster.FirstOrDefault(p => p.StateId == StateId)?.StateName ?? "";
+        }
+        public String FetchBankName(int BankId)
+        {
+            return _context.tblBankMaster.FirstOrDefault(p => p.BankId == BankId)?.BankName ?? "";
         }
 
 
