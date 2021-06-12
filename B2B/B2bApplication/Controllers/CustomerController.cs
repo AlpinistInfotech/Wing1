@@ -100,6 +100,7 @@ namespace B2bApplication.Controllers
         }
 
 
+        [HttpGet]
         public async Task<IActionResult> CustomerMaster(string Id)
         {
             int CustomerId=0;
