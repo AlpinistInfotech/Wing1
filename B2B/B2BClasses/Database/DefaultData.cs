@@ -35,8 +35,10 @@ namespace B2BClasses.Database
                 //CreditBalence = 0,
                 CustomerType = enmCustomerType.Admin,
                 IsActive = true,
+               
                 CreatedBy = 1,
-                CreatedDt = _CurrentDt
+                CreatedDt = _CurrentDt,
+                ModifyDt = _CurrentDt,
             };
             tblCustomerMaster CustomerMaster2 = new tblCustomerMaster()
             {
@@ -50,7 +52,8 @@ namespace B2BClasses.Database
                 CustomerType = Services.Enums.enmCustomerType.MLM,
                 IsActive = true,
                 CreatedBy = 1,
-                CreatedDt = _CurrentDt
+                CreatedDt = _CurrentDt,
+                ModifyDt = _CurrentDt,
             };
             tblCustomerMaster CustomerMaster3 = new tblCustomerMaster()
             {
@@ -64,7 +67,8 @@ namespace B2BClasses.Database
                 CustomerType = Services.Enums.enmCustomerType.InHouse,
                 IsActive = true,
                 CreatedBy = 1,
-                CreatedDt = _CurrentDt
+                CreatedDt = _CurrentDt,
+                ModifyDt = _CurrentDt
             };
             tblCustomerMaster CustomerMaster4 = new tblCustomerMaster()
             {
@@ -78,7 +82,8 @@ namespace B2BClasses.Database
                 CustomerType = Services.Enums.enmCustomerType.B2C,
                 IsActive = true,
                 CreatedBy = 1,
-                CreatedDt = _CurrentDt
+                CreatedDt = _CurrentDt,
+                ModifyDt = _CurrentDt
             };
             
             _modelBuilder.Entity<tblCustomerMaster>().HasData(CustomerMaster1);
@@ -89,7 +94,6 @@ namespace B2BClasses.Database
             {
                 tblCustomerBalence customerBalence = new tblCustomerBalence()
                 {
-                    Id = i ,
                     CreditBalence = 1000000,
                     CustomerId = i,
                     MPin = "123456",
@@ -100,12 +104,10 @@ namespace B2BClasses.Database
                 //IP Filteration
                 tblCustomerIPFilter CustomerIPFilter = new tblCustomerIPFilter()
                 {
-                    Id = i,
                     CreatedBy = 1,
                     CreatedDt = _CurrentDt,
                     AllowedAllIp = true,
                     CustomerId = i,
-                    IsDeleted = false,
                     ModifiedBy = 1,
                     ModifiedDt = _CurrentDt,
                 };
@@ -190,17 +192,15 @@ namespace B2BClasses.Database
                     CustomerId = i,
                     Password = "123456",
                     UserName = "admin",
+                    IsPrimary=true
                 };
 
                 tblUserRole ur = new tblUserRole()
                 {
                     Id = UserRoles.Count + 1,
                     UserId = um1.Id,
-                    IsDeleted = false,
                     CreatedBy = 1,
-                    CreatedDt = _CurrentDt,
-                    ModifiedBy = 1,
-                    ModifiedDt = _CurrentDt,
+                    CreatedDt = _CurrentDt,                    
                     Role = i == 1 ? 1 : 2
 
                 };
@@ -223,7 +223,16 @@ namespace B2BClasses.Database
                 ModifiedDt= _CurrentDt,
                 Remarks=""
             };
-            _modelBuilder.Entity<tblActiveSerivceProvider>().HasData(_tblActiveSerivceProvider);
+
+            tblActiveSerivceProvider _tblActiveSerivceProvider1 = new tblActiveSerivceProvider()
+            {
+                IsEnabled = true,
+                ServiceProvider = Services.Enums.enmServiceProvider.TBO,
+                ModifiedBy = 1,
+                ModifiedDt = _CurrentDt,
+                Remarks = ""
+            };
+            _modelBuilder.Entity<tblActiveSerivceProvider>().HasData(_tblActiveSerivceProvider1);
             //IP Filteration            
         }
 

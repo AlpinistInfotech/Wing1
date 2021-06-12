@@ -280,7 +280,6 @@ namespace WingGateway.Controllers
                     ModelState.AddModelError("", ex.Message);
                 }
 
-
             }
             mdl.CaptchaData.GenrateCaptcha(captchaGenratorBase);
             return View(mdl);

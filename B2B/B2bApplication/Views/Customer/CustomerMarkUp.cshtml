@@ -90,12 +90,12 @@
                             {
                                 <tr>
                                     <td>
-                                        <a href="/Customer/CustomerMarkUp/@Model.MarkupData[i].Id" class="btn btn-info" data-toggle="tooltip" title="Edit Record !">
+                                        <a href="/Customer/CustomerMarkUp/1" class="btn btn-info" data-toggle="tooltip" title="Edit Record !">
                                             Edit
                                         </a>
                                     </td>
 
-                                    <td>@Model.MarkupData[i].tblCustomerMaster.CustomerName (@Model.MarkupData[i].tblCustomerMaster.Code)</td>
+                                    @*<td>@Model.MarkupData[i].tblCustomerMaster.CustomerName (@Model.MarkupData[i].tblCustomerMaster.Code)</td>*@
                                     <td>@Model.MarkupData[i].MarkupAmt</td>
                                     <td>@Model.MarkupData[i].CreatedBy</td>
                                     <td>@(Model.MarkupData[i].CreatedDt.ToString("dd-MMM-yyyy hh:mm tt"))</td>

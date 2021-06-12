@@ -31,15 +31,21 @@ namespace B2bApplication
         {
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddDbContext<DBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")),ServiceLifetime.Transient);
+            services.AddDbContext<B2BClasses.Database.LogDatabase.LogDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("LogConnection")), ServiceLifetime.Transient);
             services.AddScoped<IAccount>(ctx => new Account(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
             
             services.AddScoped<ICurrentUsers>(ctx => new CurrentUsers(ctx.GetRequiredService<IHttpContextAccessor>(), ctx.GetRequiredService<DBContext>()));
+            
+            services.AddScoped<ICustomerMaster>(ctx => new CustomerMaster(ctx.GetRequiredService<DBContext>(),
+                ctx.GetRequiredService<B2BClasses.Database.LogDatabase.LogDBContext>(), ctx.GetRequiredService<ISettings>(), ctx.GetRequiredService<IConfiguration>(), ctx.GetRequiredService<ICurrentUsers>().UserId));
             services.AddScoped<ICustomerWallet>(ctx => new CustomerWallet(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
             services.AddScoped<ISettings>(ctx => new B2BClasses.Settings(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
+            services.AddScoped<IMasters>(ctx => new B2BClasses.Masters(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
             services.AddScoped<IMarkup>(ctx => new B2BClasses.Markup(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
             
             #region **************** Flight *********************************
             services.AddScoped<ITripJack> (ctx => new TripJack(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
+            services.AddScoped<ITBO>(ctx => new TBO(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
             services.AddScoped<IBooking>(ctx => new Booking(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>(), ctx.GetRequiredService<ITripJack>(), ctx.GetRequiredService<ITBO>()));
             
 

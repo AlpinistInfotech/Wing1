@@ -62,7 +62,7 @@ namespace B2bApplication
             {
                 if (_RoleId == null)
                 {
-                    _RoleId = _context.tblUserRole.Where(p => p.UserId == _UserId && !p.IsDeleted).Select(p => p.Role.Value).ToList();
+                    _RoleId = _context.tblUserRole.Where(p => p.UserId == _UserId ).Select(p => p.Role.Value).ToList();
                 }
                 return _RoleId;
             }
