@@ -26,7 +26,7 @@ namespace B2BClasses
         private readonly DBContext _context;
         private int _CustomerId;
         private IConfiguration _config;
-        public CustomerWallet(DBContext context, IConfiguration config)
+        public CustomerWallet(DBContext context, IConfiguration config )
         {
             _config = config;
             _context = context;

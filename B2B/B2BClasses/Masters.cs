@@ -17,6 +17,8 @@ namespace B2BClasses
         string FetchCountryCode(int CountryId);
         string FetchCountryName(int CountryId);
         string FetchStateName(int StateId);
+        Dictionary<int, string> FetchCountryNames();
+        Dictionary<int, string> FetchStateNames(int CountryId);
     }
 
     public class Masters : IMasters
@@ -47,6 +49,22 @@ namespace B2BClasses
             return _context.tblBankMaster.FirstOrDefault(p => p.BankId == BankId)?.BankName ?? "";
         }
 
+        public Dictionary<int, string> FetchCountryNames()
+        {
+            return _context.tblCountryMaster.Where(p => p.IsActive).OrderBy(p=>p.CountryName).ThenBy(p=>p.CountryCode).ToDictionary(p => p.CountryId, p => string.Concat(p.CountryName, " - ", p.CountryCode));
+        }
+        public Dictionary<int, string> FetchStateNames(int CountryId)
+        {
+            if (CountryId > 0)
+            {
+                return _context.tblStateMaster.Where(p => p.IsActive && p.CountryId == CountryId).OrderBy(p => p.StateName).ToDictionary(p => p.StateId, p => p.StateName);
+            }
+            else
+            {
+                return new Dictionary<int, string>();
+            }
+            
+        }
 
     }
 }

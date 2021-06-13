@@ -133,7 +133,7 @@
                                 <span class="bigger-110">Change Logo</span>
                             </a>
 
-                            <a href="#" class="btn btn-sm btn-block btn-primary">
+                            <a href="~/Customer/CustomerMaster/@Model.CustomerId" class="btn btn-sm btn-block btn-primary">
                                 <i class="ace-icon fa fa-envelope-o bigger-110"></i>
                                 <span class="bigger-110">Edit Details</span>
                             </a>
@@ -464,6 +464,20 @@
 
                                     <div class="profile-info-value">
                                         <span>@Model.customerSetting.MinBalance</span>
+                                    </div>
+                                </div>
+
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name">Wallet Balence</div>
+
+                                    <div class="profile-info-value">
+                                        <span>@Model.WalletBalance</span>
+                                    </div>
+                                </div>
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name">Credit Balence</div>
+                                    <div class="profile-info-value">
+                                        <span>@Model.CreditBalace</span>
                                     </div>
                                 </div>
 
