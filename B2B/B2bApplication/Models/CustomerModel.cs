@@ -20,6 +20,8 @@ namespace B2bApplication.Models
 
     public class mdlCustomerMasterWraper: mdlCustomer
     {
+
+
         public int CustomerId { get; set; }        
         [Display(Name = "Logo")]
         public IFormFile Logo { set; get; }
@@ -66,6 +68,7 @@ namespace B2bApplication.Models
 
         public void LoadData(int CustomerID, ICustomerMaster cm, IConfiguration config)
         {
+            this.CustomerId= CustomerID;
             cm.CustomerId = CustomerID;
 
             this.DocumentPermission = cm.DocumentPermission;

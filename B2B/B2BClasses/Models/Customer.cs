@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace B2BClasses.Models
 {
@@ -24,8 +24,8 @@ namespace B2BClasses.Models
     public class mdlCustomerMaster 
     {
         public int CustomerId { get; set; }
-        
-       // [Remote("CustomerCodeValidate", "CustomerId",ErrorMessage ="CustomerCode already Exists")]
+
+        [Remote(action: "CustomerCodeValidate", controller: "Customer",AdditionalFields = "CustomerId", ErrorMessage ="Code already exists")]        
         [Required]
         [Display(Name = "Code")]
         [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 3)]
@@ -88,6 +88,7 @@ namespace B2BClasses.Models
         
         [Required]
         [Display(Name = "GST")]
+        [Remote(action: "CustomerGSTNumberValidate", controller: "Customer", AdditionalFields = "CustomerId", ErrorMessage = "Code already exists")]
         [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 10)]
         [RegularExpression("[a-zA-Z0-9]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         public string GstNumber { get; set; }
@@ -136,7 +137,7 @@ namespace B2BClasses.Models
         [DataType(DataType.Password)]
         public string Password { get; set; }
         
-        [System.ComponentModel.DataAnnotations.Compare(nameof(Password))]
+        [Compare(nameof(Password))]
         [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; }
         [Display(Name = "Is Active")]

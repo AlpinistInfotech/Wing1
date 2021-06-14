@@ -16,7 +16,7 @@ namespace B2BClasses
 
     public class Settings : ISettings
     {
-        private  const string EncryptKey = "Jai Shri Ram";
+        private  const string EncryptKey = "HareRamaKrishana";
         private readonly DBContext _context;
         private IConfiguration _config;
         public Settings(DBContext context, IConfiguration config)
@@ -34,6 +34,7 @@ namespace B2BClasses
         {
             string key = Settings.EncryptKey;
             byte[] inputArray = UTF8Encoding.UTF8.GetBytes(input);
+            byte[] inputArray1 = UTF8Encoding.UTF8.GetBytes(key);
             TripleDESCryptoServiceProvider tripleDES = new TripleDESCryptoServiceProvider();
             tripleDES.Key = UTF8Encoding.UTF8.GetBytes(key);
             tripleDES.Mode = CipherMode.ECB;
