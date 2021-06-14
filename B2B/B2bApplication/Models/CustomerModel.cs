@@ -29,6 +29,8 @@ namespace B2bApplication.Models
         public double WalletBalance { get; set; }
         public double CreditBalace { get; set; }
 
+
+
         
 
         public void LoadCustomer(ICustomerMaster cm)
