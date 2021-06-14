@@ -263,11 +263,9 @@ namespace B2BClasses
                     mdl.AllowedAllIp = IPFilter.AllowedAllIp;
                     mdl.IPAddess = string.Join(", ", IPFilter.tblCustomerIPFilterDetails.Select(p => p.IPAddress).ToList());
 
-
                 }
-
-
-                //md
+                 mdl.MPin =_context.tblCustomerBalence.Where(p => p.CustomerId == _CustomerId).FirstOrDefault()?.MPin ?? Settings.Decrypt("0000");
+                
             }
             return mdl;
         }
@@ -808,6 +806,29 @@ namespace B2BClasses
                         {
                             _context.tblWalletBalanceAlert.UpdateRange(saveDataWalletAlert);
                         }
+
+                        IsUpdate = false;
+                        var ExistingMpin=_context.tblCustomerBalence.Where(p => p.CustomerId == _CustomerId).FirstOrDefault();
+                        if (ExistingMpin == null)
+                        {
+                            ExistingMpin = new tblCustomerBalence() { CustomerId = _CustomerId, CreditBalence = 0, WalletBalence = 0, MPin = Settings.Encrypt(mdl.MPin), ModifiedDt = DateTime.Now };
+                            _context.tblCustomerBalence.Add(ExistingMpin);
+                            _context.SaveChanges();
+                        }
+                        else {
+                            if (ExistingMpin.MPin != Settings.Encrypt(mdl.MPin))
+                            {
+                                ExistingMpin.MPin = Settings.Encrypt(mdl.MPin);
+                                ExistingMpin.ModifiedDt = DateTime.Now;
+                                _context.tblCustomerBalence.Update(ExistingMpin);
+                                _context.SaveChanges();
+                            }
+                            
+                        }
+                        
+
+
+
                     }
 
                     //IP Filter Setting
@@ -881,7 +902,6 @@ namespace B2BClasses
             return false;
 
         }
-
 
         private bool IsAllRoleEqual(List<int> roleList, List<int> mdlRoleList)
         {

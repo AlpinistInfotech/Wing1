@@ -117,27 +117,7 @@ namespace B2bApplication.Controllers
             {
                 mdl.LoadCustomer(_customerMaster);
             }
-            ViewBag.CountryList = masters.FetchCountryNames();
-
-
-            var CountryListDict= new Dictionary<int, string>();
-            CountryListDict.Add(0, "Please Select");
-            CountryListDict.Concat(masters.FetchCountryNames());
-
-            var StateListDict = new Dictionary<int, string>();
-            StateListDict.Add(0, "Please Select");
-            StateListDict.Concat(masters.FetchStateNames(mdl.customerMaster.CountryId ?? 0));
-
-            var GStStateListDict = new Dictionary<int, string>();
-            GStStateListDict.Add(0, "Please Select");
-            GStStateListDict.Concat(masters.FetchStateNames(mdl.GSTDetails.CountryId ?? 0));
-
-            SelectList CountryList = new SelectList(CountryListDict.Select(p=>new { p.Key,p.Value }),"Key", "Value",mdl.customerMaster?.CountryId??0);
-            SelectList StateList = new SelectList(StateListDict.Select(p => new { p.Key, p.Value }), "Key", "Value", mdl.customerMaster?.StateId ?? 0);
-            SelectList GStStateList = new SelectList(masters.FetchStateNames(mdl.GSTDetails.CountryId ?? 0).Select(p => new { p.Key, p.Value }), "Key", "Value", mdl.GSTDetails?.CustomerId ?? 0);
-            ViewBag.CountryList = CountryList;
-            ViewBag.StateList = StateList;
-            ViewBag.GSTStateList = GStStateList;
+            mdl.SetCountryState(ViewBag, masters);
             return View(mdl);
         }
 

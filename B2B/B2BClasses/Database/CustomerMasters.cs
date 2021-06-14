@@ -57,7 +57,8 @@ namespace B2BClasses.Database
         [Required]
         [MaxLength(10)]
         public string  MPin { get; set; }
-        public double WalletBalence { get; set; }
+        [ConcurrencyCheck]
+        public double WalletBalence { get; set; }        
         public double CreditBalence { get; set; }
         public DateTime? ModifiedDt { get; set; }
         

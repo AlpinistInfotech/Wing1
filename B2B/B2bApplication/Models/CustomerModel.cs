@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using B2BClasses.Models;
 using Microsoft.Extensions.Configuration;
 using System.IO;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace B2bApplication.Models
 {
@@ -28,10 +29,17 @@ namespace B2bApplication.Models
         public List<enmDocumentMaster> DocumentPermission { get; set; }
         public double WalletBalance { get; set; }
         public double CreditBalace { get; set; }
+        [StringLength(4, ErrorMessage = "The {0} must be {1} characters long.", MinimumLength = 4)]
+        [RegularExpression("[a-zA-Z0-9]*$", ErrorMessage = "Invalid {0}, no special charcter")]
+        [Display(Name = "MPin")]
+        [DataType(DataType.Password)]
+        public string NewMpin { get; set; }
+        [DataType(DataType.Password)]
+        [Compare(nameof(NewMpin))]
+        public string ConfirmNewMpin { get; set; }
 
 
 
-        
 
         public void LoadCustomer(ICustomerMaster cm)
         {
@@ -42,7 +50,7 @@ namespace B2bApplication.Models
             var defaultBalance = _context.tblCustomerBalence.Where(p => p.CustomerId == CustomerId).FirstOrDefault();
             if (defaultBalance == null)
             {
-                _context.tblCustomerBalence.Add(new tblCustomerBalence() { CustomerId = CustomerId, CreditBalence = 0, ModifiedDt = DateTime.Now, MPin = "0000", WalletBalence = 0 });
+                _context.tblCustomerBalence.Add(new tblCustomerBalence() { CustomerId = CustomerId, CreditBalence = 0, ModifiedDt = DateTime.Now, MPin = Settings.Encrypt( "0000"), WalletBalence = 0 });
                 _context.SaveChanges();
                 this.WalletBalance = 0;
                 this.CreditBalace = 0;
@@ -70,6 +78,7 @@ namespace B2bApplication.Models
                 this.AllUserList = cm.FetchUserMasters();
                 this.userMaster = this.AllUserList.Where(p => p.IsPrimary).FirstOrDefault();
                 this.customerSetting = cm.FetchSetting();
+                
             }
 
             if (cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_BasicDetail_Read) && this.customerMaster == null)
@@ -100,7 +109,7 @@ namespace B2bApplication.Models
             {
                 this.customerSetting = new mdlCustomerSetting();
             }
-
+            this.ConfirmNewMpin=this.NewMpin = this.customerSetting.MPin;
 
             if (string.IsNullOrWhiteSpace(this.customerMaster.Logo))
             {
@@ -121,7 +130,33 @@ namespace B2bApplication.Models
 
         }
 
-        
+
+        public void SetCountryState(dynamic ViewBag, IMasters masters)
+        {
+            
+            ViewBag.CountryList = masters.FetchCountryNames();
+
+
+            var CountryListDict = new Dictionary<int, string>();
+            CountryListDict.Add(0, "Please Select");
+            CountryListDict.Concat(masters.FetchCountryNames());
+
+            var StateListDict = new Dictionary<int, string>();
+            StateListDict.Add(0, "Please Select");
+            StateListDict.Concat(masters.FetchStateNames(customerMaster.CountryId ?? 0));
+
+            var GStStateListDict = new Dictionary<int, string>();
+            GStStateListDict.Add(0, "Please Select");
+            GStStateListDict.Concat(masters.FetchStateNames(GSTDetails.CountryId ?? 0));
+
+            SelectList CountryList = new SelectList(CountryListDict.Select(p => new { p.Key, p.Value }), "Key", "Value", customerMaster?.CountryId ?? 0);
+            SelectList StateList = new SelectList(StateListDict.Select(p => new { p.Key, p.Value }), "Key", "Value", customerMaster?.StateId ?? 0);
+            SelectList GStStateList = new SelectList(masters.FetchStateNames(GSTDetails.CountryId ?? 0).Select(p => new { p.Key, p.Value }), "Key", "Value", GSTDetails?.StateId ?? 0);
+            ViewBag.CountryList = CountryList;
+            ViewBag.StateList = StateList;
+            ViewBag.GSTStateList = GStStateList;
+        }
+
     }
 
 
