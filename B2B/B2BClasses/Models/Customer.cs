@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using System.Web.Mvc;
 
 namespace B2BClasses.Models
 {
@@ -23,6 +24,8 @@ namespace B2BClasses.Models
     public class mdlCustomerMaster 
     {
         public int CustomerId { get; set; }
+        
+       // [Remote("CustomerCodeValidate", "CustomerId",ErrorMessage ="CustomerCode already Exists")]
         [Required]
         [Display(Name = "Code")]
         [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 3)]
@@ -132,7 +135,8 @@ namespace B2BClasses.Models
         [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         public string Password { get; set; }
-        [Compare(nameof(Password))]
+        
+        [System.ComponentModel.DataAnnotations.Compare(nameof(Password))]
         [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; }
         [Display(Name = "Is Active")]
@@ -244,9 +248,9 @@ namespace B2BClasses.Models
         public bool AllowedAllIp { get; set; }
         [RegularExpression("[a-zA-Z0-9/.,\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         public string IPAddess { get; set; }
+
         [Display(Name = "MPin")]
-        [StringLength(4, ErrorMessage = "The {0} must be {1} characters long.",MinimumLength = 4)]
-        public string MPin { get; set; }
+        public string MPin { get; set; } = "0000";
     }
 
 }

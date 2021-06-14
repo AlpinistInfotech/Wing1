@@ -33,8 +33,10 @@ namespace B2bApplication.Controllers
         private readonly int _userid ;
         private readonly int _customerId ;
         private readonly ICurrentUsers _currentUsers;
+        private readonly ICustomerMaster _customerMaster;        
         public CustomerController(ILogger<CustomerController> logger, DBContext context, ISettings setting, IConfiguration config,
-            ICurrentUsers currentUsers)
+            ICurrentUsers currentUsers,
+            ICustomerMaster customerMaster)
         {
             _context = context;
             _logger = logger;
@@ -43,15 +45,19 @@ namespace B2bApplication.Controllers
             _currentUsers = currentUsers;
             _customerId = _currentUsers.CustomerId;
             _userid = _currentUsers.UserId;
+            _customerMaster = customerMaster;
         }
 
         [AcceptVerbs("Get", "Post")]
-        public async Task<IActionResult> CustomerCodeValidate(string CustomerCode)
+        public async Task<IActionResult> CustomerCodeValidate(string CustomerCode,string Id="0")
         {
             if (CustomerCode != null)
             {
                 var validSp = false;
-                if (_context.tblCustomerMaster.Any(p => p.Code == CustomerCode))
+                int CustomerId = 0;
+                int.TryParse(Id, out CustomerId);
+
+                if (_context.tblCustomerMaster.Any(p => p.Code == CustomerCode && p.Id != CustomerId))
                     validSp = true;
 
                 return Json(validSp);
@@ -65,42 +71,74 @@ namespace B2bApplication.Controllers
 
         [HttpGet]
         [Authorize]
-        public IActionResult CustomerDetail(string Id,[FromServices]CustomerMaster customerMaster )
+        public IActionResult CustomerDetail(string Id)
         {
             mdlCustomerMasterWraper mdl = new mdlCustomerMasterWraper();
-                        if (_currentUsers.CustomerType == enmCustomerType.Admin)
+            if (_currentUsers.CustomerType == enmCustomerType.Admin)
             {
-                mdl.LoadCustomer(customerMaster);
+                mdl.LoadCustomer(_customerMaster);
             }
 
-            return View();
+            return View(mdl);
         }
 
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public IActionResult CustomerDetail(mdlCustomerMasterWraper mdl, [FromServices] CustomerMaster customerMaster)
+        public IActionResult CustomerDetail(mdlCustomerMasterWraper mdl)
         {
             int CustomerId = 0;
             if (mdl == null)
             {
                 mdl = new mdlCustomerMasterWraper();
-                CustomerId = mdl.CustomerId;
+               
             }
-            mdl.LoadData(CustomerId, customerMaster);
+            CustomerId = mdl.CustomerId;
+            mdl.LoadData(CustomerId, _customerMaster,_config);
+            mdl.SetWalletBalence(_context);
             if (_currentUsers.CustomerType == enmCustomerType.Admin)
             {
-                mdl.LoadCustomer(customerMaster);
+                mdl.LoadCustomer(_customerMaster);
             }
-            return View();
+            return View(mdl);
         }
 
 
-        public async Task<IActionResult> CustomerMaster(string Id)
+        [HttpGet]
+        public async Task<IActionResult> CustomerMaster(string Id,[FromServices]IMasters masters )
         {
             int CustomerId=0;
             int.TryParse(Id, out CustomerId);
-            return View();
+
+            mdlCustomerMasterWraper mdl = new mdlCustomerMasterWraper();
+            mdl.LoadData(CustomerId, _customerMaster, _config);
+            mdl.SetWalletBalence(_context);
+            if (_currentUsers.CustomerType == enmCustomerType.Admin)
+            {
+                mdl.LoadCustomer(_customerMaster);
+            }
+            ViewBag.CountryList = masters.FetchCountryNames();
+
+
+            var CountryListDict= new Dictionary<int, string>();
+            CountryListDict.Add(0, "Please Select");
+            CountryListDict.Concat(masters.FetchCountryNames());
+
+            var StateListDict = new Dictionary<int, string>();
+            StateListDict.Add(0, "Please Select");
+            StateListDict.Concat(masters.FetchStateNames(mdl.customerMaster.CountryId ?? 0));
+
+            var GStStateListDict = new Dictionary<int, string>();
+            GStStateListDict.Add(0, "Please Select");
+            GStStateListDict.Concat(masters.FetchStateNames(mdl.GSTDetails.CountryId ?? 0));
+
+            SelectList CountryList = new SelectList(CountryListDict.Select(p=>new { p.Key,p.Value }),"Key", "Value",mdl.customerMaster?.CountryId??0);
+            SelectList StateList = new SelectList(StateListDict.Select(p => new { p.Key, p.Value }), "Key", "Value", mdl.customerMaster?.StateId ?? 0);
+            SelectList GStStateList = new SelectList(masters.FetchStateNames(mdl.GSTDetails.CountryId ?? 0).Select(p => new { p.Key, p.Value }), "Key", "Value", mdl.GSTDetails?.CustomerId ?? 0);
+            ViewBag.CountryList = CountryList;
+            ViewBag.StateList = StateList;
+            ViewBag.GSTStateList = GStStateList;
+            return View(mdl);
         }
 
 

@@ -11,30 +11,54 @@ using Microsoft.AspNetCore.Mvc;
 using Database;
 using Microsoft.AspNetCore.Http;
 using B2BClasses.Models;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace B2bApplication.Models
 {
 
     public class mdlCustomerMasterWraper: mdlCustomer
     {
-        public int CustomerId { get; set; }
-        [Required]
+        public int CustomerId { get; set; }        
         [Display(Name = "Logo")]
         public IFormFile Logo { set; get; }
         public byte[] LogoData { set; get; }
         
-
         public Dictionary<int, string> CustomerMasterList { get; set; }
+        public List<enmDocumentMaster> DocumentPermission { get; set; }
+        public double WalletBalance { get; set; }
+        public double CreditBalace { get; set; }
+
+        
 
         public void LoadCustomer(ICustomerMaster cm)
         {
-            CustomerMasterList = cm.FetchAllCustomer();
+            CustomerMasterList = cm.FetchAllCustomer(IncludeAdmin:true,OnlyActive:false);
         }
 
+        public void SetWalletBalence(DBContext _context) {
+            var defaultBalance = _context.tblCustomerBalence.Where(p => p.CustomerId == CustomerId).FirstOrDefault();
+            if (defaultBalance == null)
+            {
+                _context.tblCustomerBalence.Add(new tblCustomerBalence() { CustomerId = CustomerId, CreditBalence = 0, ModifiedDt = DateTime.Now, MPin = "0000", WalletBalence = 0 });
+                _context.SaveChanges();
+                this.WalletBalance = 0;
+                this.CreditBalace = 0;
+            }
+            else
+            {
+                this.WalletBalance = defaultBalance.WalletBalence;
+                this.CreditBalace = defaultBalance.CreditBalence;
+            }
+        }
 
-        public void LoadData(int CustomerID, ICustomerMaster cm)
+        
+
+        public void LoadData(int CustomerID, ICustomerMaster cm, IConfiguration config)
         {
             cm.CustomerId = CustomerID;
+
+            this.DocumentPermission = cm.DocumentPermission;
             if (CustomerID > 0)
             {
                 this.customerMaster = cm.FetchBasicDetail();
@@ -42,21 +66,60 @@ namespace B2bApplication.Models
                 this.banks = cm.FetchBanks();
                 this.pan = cm.FetchPan();
                 this.AllUserList = cm.FetchUserMasters();
-                //this.userMaster = this.AllUserList.Where(p => p.IsPrimary).FirstOrDefault();
+                this.userMaster = this.AllUserList.Where(p => p.IsPrimary).FirstOrDefault();
                 this.customerSetting = cm.FetchSetting();
+            }
+
+            if (cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_BasicDetail_Read) && this.customerMaster == null)
+            {
+                this.customerMaster = new mdlCustomerMaster();
+            }
+            if (cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_BasicDetail_Read) && this.GSTDetails == null)
+            {
+                this.GSTDetails = new mdlCustomerGSTDetails();
+            }
+            if (cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_BasicDetail_Read) && this.banks == null)
+            {
+                this.banks = new mdlBanks();
+            }
+            if (cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_BasicDetail_Read) && this.pan == null)
+            {
+                this.pan = new mdlPan();
+            }
+            if (cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_BasicDetail_Read) && this.AllUserList == null)
+            {
+                this.AllUserList = new List<mdlUserMaster>();
+            }
+            if (cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_BasicDetail_Read) && this.userMaster == null)
+            {
+                this.userMaster = new mdlUserMaster();
+            }
+            if (cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_BasicDetail_Read) && this.customerSetting == null)
+            {
+                this.customerSetting = new mdlCustomerSetting();
+            }
+
+
+            if (string.IsNullOrWhiteSpace(this.customerMaster.Logo))
+            {
+                string DefaultImage = config["Organisation:DefaultIcon"];
+                var path = Path.Combine(
+                     Directory.GetCurrentDirectory(),
+                     "wwwroot/" + DefaultImage);
+                LogoData = System.IO.File.ReadAllBytes(path);
             }
             else
             {
-                this.customerMaster = cm.DocumentPermission.Any(p=>p== enmDocumentMaster.CustomerDetailsPermission_BasicDetail_Read)? new mdlCustomerMaster():null;
-                this.GSTDetails = cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_GSTDetail_Read) ? new mdlCustomerGSTDetails() : null;
-                this.banks =cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Bank_Read) ? new mdlBanks() : null;
-                this.pan =cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Pan_Read) ? new  mdlPan() : null;
-                this.AllUserList = cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_UserDetail_Read) ? new List<mdlUserMaster>() : null;
-                //this.userMaster = cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_UserDetail_Read) ? new mdlUserMaster() : null;
-                this.customerSetting = cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Setting_Read) ? new mdlCustomerSetting() : null;
-
+                string DefaultPath = config["Organisation:IconPath"];
+                var path = Path.Combine(
+                     Directory.GetCurrentDirectory(),
+                     "wwwroot/" + DefaultPath);
+                LogoData = System.IO.File.ReadAllBytes(string.Concat(path, customerMaster.Logo) );
             }
+
         }
+
+        
     }
 
 
