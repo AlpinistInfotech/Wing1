@@ -49,7 +49,7 @@ namespace B2BClasses.Models
         [StringLength(200, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 3)]
         public string Address { get; set; }
         [Display(Name = "Country")]
-        public int? CountryId { get; set; }
+        public int? CountryId { get; set; } = 101;
         [Display(Name = "State")]
         public int? StateId { get; set; }
         [DataType(DataType.PostalCode)]
@@ -57,20 +57,24 @@ namespace B2BClasses.Models
         [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 3)]
         public string PinCode { get; set; }
 
+        [RegularExpression("[0-9]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         [DataType(DataType.PhoneNumber)]
         [Display(Name = "Contact No")]
         [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 10)]
         [Required]
         public string ContactNo { get; set; }
+
+
+        [RegularExpression("[0-9]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         [DataType(DataType.PhoneNumber)]
         [Display(Name = "Alternate No")]
         [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 10)]
         public string AlternateNo { get; set; }
 
         [Display(Name = "Customer Type")]
-        public enmCustomerType CustomerType { get; set; }
+        public enmCustomerType CustomerType { get; set; } = enmCustomerType.B2C;
         [Display(Name = "Is Active")]
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
         [Display(Name = "Modified By")]
         public int ModifyBy { get; set; }
         public string ModifyByName { get; set; }
@@ -113,7 +117,7 @@ namespace B2BClasses.Models
         [StringLength(200, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 3)]
         public string Address { get; set; }
         [Display(Name = "Country")]
-        public int? CountryId { get; set; }
+        public int? CountryId { get; set; }= 101;
         [Display(Name = "State")]
         public int? StateId { get; set; }
         [Display(Name = "Pincode")]
@@ -167,7 +171,6 @@ namespace B2BClasses.Models
     }
 
     
-
     public class mdlBanks 
     {
         public int? CustomerId { get; set; }
@@ -221,7 +224,7 @@ namespace B2BClasses.Models
         public string PANName { get; set; }
         [Required]
         [Display(Name = "Pan No")]
-        [RegularExpression("[A-Z]{5}[0-9]{4}[A-Z]{1}", ErrorMessage = "Invalid {0}, no special charcter")]
+        [RegularExpression("[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}", ErrorMessage = "Invalid {0}, no special charcter")]
 
         [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 10)]
         public string PANNo { get; set; }
@@ -242,11 +245,12 @@ namespace B2BClasses.Models
     {
         public int? CustomerId { get; set; }
         [Display(Name = "Min Balance Alert")]
+        [Range(0,1000000)]
         public double MinBalance { get; set; }
         [Display(Name = "Markup Amount")]
         public double MarkupAmount { get; set; }
         [Display(Name = "Allowed All IP")]
-        public bool AllowedAllIp { get; set; }
+        public bool AllowedAllIp { get; set; } = true;
         [RegularExpression("[a-zA-Z0-9/.,\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         public string IPAddess { get; set; }
         [StringLength(4, ErrorMessage = "The {0} must be {1} characters long.",MinimumLength = 4)]

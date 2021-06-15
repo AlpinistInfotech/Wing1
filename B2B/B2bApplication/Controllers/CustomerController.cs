@@ -48,6 +48,20 @@ namespace B2bApplication.Controllers
             _customerMaster = customerMaster;
         }
 
+        [AcceptVerbs("Get")]
+        public dynamic GetState(String Id)
+        {
+
+            if (Id!= null )
+            {
+                int CountryId=0;
+                int.TryParse(Id, out CountryId);
+               return _context.tblStateMaster.Where(p => p.CountryId == CountryId && p.IsActive).Select(p=>new { p.StateId,p.StateName } ).OrderBy(p=>p.StateName);
+            }
+            return BadRequest("Invalid Data");
+        }
+
+
         [AcceptVerbs("Get", "Post")]
         public IActionResult CustomerCodeValidate(mdlCustomerMasterWraper mdl)
         {
@@ -81,9 +95,6 @@ namespace B2bApplication.Controllers
 
 
         #region ******************Customer Master *************************
-
-
-
 
         [HttpGet]
         [Authorize]
@@ -138,7 +149,7 @@ namespace B2bApplication.Controllers
             mdlCustomerMasterWraper mdl = new mdlCustomerMasterWraper();
             mdl.LoadData(CustomerId, _customerMaster, _config);
             mdl.SetWalletBalence(_context);            
-            mdl.SetCountryState(ViewBag, masters);
+            mdl.SetCountryState(ViewBag, _context);
             return View(mdl);
         }
 
@@ -148,74 +159,113 @@ namespace B2bApplication.Controllers
             _customerMaster.CustomerId = mdl.CustomerId;
             mdl.DocumentPermission=_customerMaster.DocumentPermission;
             bool HaveWriteData = false;
+            if (!(mdl.customerMaster?.HaveGST ?? false))
+            {
+                foreach (var prop in mdl.GSTDetails.GetType().GetProperties())
+                {
+                    if (ModelState.Keys.Contains("GSTDetails." + prop.Name))
+                    {
+                        ModelState["GSTDetails." + prop.Name].Errors.Clear();
+                    }                    
+                }
+                
+            }
+
             if (ModelState.IsValid)
             {
-                if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_BasicDetail_Write))
+                if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_BasicDetail_Write) && mdl.customerMaster !=null )
                 {
+                    if (mdl.Logo != null)
+                    {
+                        string iconPath = _config["Organisation:IconPath"];
+                        var path = Path.Combine(
+                             Directory.GetCurrentDirectory(),
+                             "wwwroot/" + iconPath);
+                        bool exists = System.IO.Directory.Exists(path);
+                        if (!exists)
+                            System.IO.Directory.CreateDirectory(path);
+
+                        var filename = Guid.NewGuid().ToString() + ".ico";
+                        using (var stream = new FileStream(string.Concat(path, filename), FileMode.Create))
+                        {
+                            mdl.customerMaster.Logo = filename;
+                            await mdl.Logo.CopyToAsync(stream);
+                        }
+                    }
+
+
                     mdl.customerMaster.CustomerId = mdl.CustomerId;
                     if (await _customerMaster.SaveBasicDetailsAsync(mdl.customerMaster))
                     {
                         HaveWriteData = true;
                     }
-                    
+
                 }
-                if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Pan_Write))
+                if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Pan_Write) && mdl.pan != null )
                 {
                     if (await _customerMaster.SavePanDetailsAsync(mdl.pan))
                     {
                         HaveWriteData = true;
                     }
-                    
+
                 }
-                if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Bank_Write))
+                if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Bank_Write) && mdl.banks != null)
                 {
                     if (await _customerMaster.SaveBankDetailsAsync(mdl.banks))
                     {
                         HaveWriteData = true;
                     }
-                    
+
                 }
-                if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_GSTDetail_Write))
+                if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_GSTDetail_Write) && mdl.GSTDetails != null && mdl.customerMaster.HaveGST)
                 {
                     if (await _customerMaster.SaveGSTDetailsAsync(mdl.GSTDetails))
                     {
                         HaveWriteData = true;
                     }
-                    
+
                 }
-                if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Setting_Write))
+                if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Setting_Write) && mdl.customerSetting !=null)
                 {
                     if (await _customerMaster.SaveSettingDetailsAsync(mdl.customerSetting))
                     {
                         HaveWriteData = true;
-                    }                    
+                    }
                 }
-            }
-            if ((_customerMaster.validationResultList?.Count ?? 0) > 0)
-            {
-                foreach (var err in _customerMaster.validationResultList)
+                if ((_customerMaster.validationResultList?.Count ?? 0) > 0)
                 {
-                    ModelState.AddModelError(err.MemberNames.FirstOrDefault() ?? "", err.ErrorMessage);
-                }
-                TempData["MessageType"] = (int)enmMessageType.Error;
-                TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidData);
-            }
-            else
-            {
-                if (HaveWriteData)
-                {
-                    TempData["MessageType"] = (int)enmMessageType.Success;
-                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
-                    return RedirectToAction("CustomerMaster", mdl.CustomerId.ToString());
+                    foreach (var err in _customerMaster.validationResultList)
+                    {
+                        ModelState.AddModelError(err.MemberNames.FirstOrDefault() ?? "", err.ErrorMessage);
+                    }
+                    ViewBag.SaveStatus = (int)enmMessageType.Error;
+                    ViewBag.Message = _setting.GetErrorMessage(enmMessage.InvalidData);
                 }
                 else
                 {
-                    TempData["MessageType"] = (int)enmMessageType.Warning;
-                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.AccessDenied);
+                    if (HaveWriteData)
+                    {
+                        TempData["MessageType"] = (int)enmMessageType.Success;
+                        TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
+                        return RedirectToAction("CustomerMaster", mdl.CustomerId.ToString());
+                    }
+                    else
+                    {
+                        ViewBag.SaveStatus = (int)enmMessageType.Warning;
+                        ViewBag.Message = _setting.GetErrorMessage(enmMessage.AccessDenied);
+                    }
                 }
+
+            }
+            else
+            {
+                ViewBag.SaveStatus = (int)enmMessageType.Error;
+                ViewBag.Message = "Invalid Data";
             }
 
-            mdl.SetCountryState(ViewBag, masters);
+
+
+            mdl.SetCountryState(ViewBag, _context);
             mdl.SetWalletBalence(_context);
             return View(mdl);
         }

@@ -33,6 +33,7 @@ namespace B2BClasses.Database
             defaultData.InsertAirport();
             defaultData.InsertAirline();
             defaultData.InsertServiceProvider();
+            defaultData.InsertBank();
         }
 
         

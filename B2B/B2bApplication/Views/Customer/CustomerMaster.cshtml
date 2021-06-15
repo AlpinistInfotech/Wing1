@@ -24,6 +24,7 @@
         <div class="space"></div>
 
         <form class="form-horizontal" action="@Url.Action()" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="All" class="text-danger"></div>
             <div class="tabbable">
                 <ul class="nav nav-tabs padding-16">
                     <li class="active">
@@ -33,7 +34,7 @@
                         </a>
                     </li>
                     @if (Model.customerSetting != null)
-                    { 
+                    {
                         <li>
                             <a data-toggle="tab" href="#edit-settings">
                                 <i class="purple ace-icon fa fa-cog bigger-125"></i>
@@ -41,12 +42,12 @@
                             </a>
                         </li>
 
-                    <li>
-                        <a data-toggle="tab" href="#edit-password">
-                            <i class="blue ace-icon fa fa-key bigger-125"></i>
-                            MPin
-                        </a>
-                    </li>
+                        <li>
+                            <a data-toggle="tab" href="#edit-password">
+                                <i class="blue ace-icon fa fa-key bigger-125"></i>
+                                MPin
+                            </a>
+                        </li>
                     }
                 </ul>
 
@@ -72,7 +73,7 @@
                                     <div class="form-group">
                                         <label asp-for="customerMaster.CustomerName" class="col-sm-4 control-label"></label>
                                         <div class="col-sm-8">
-                                            <input type="text" asp-for="customerMaster.CustomerName" class="form-control" />
+                                            <input id="txtCustomerName" type="text" asp-for="customerMaster.CustomerName" class="form-control" />
                                             <span asp-validation-for="customerMaster.CustomerName" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -83,7 +84,7 @@
                                     <div class="form-group">
                                         <label asp-for="customerMaster.Email" class="col-sm-4 control-label"></label>
                                         <div class="col-sm-8">
-                                            <input type="email" asp-for="customerMaster.Email" class="form-control" />
+                                            <input id="txtCustomermail" type="email" asp-for="customerMaster.Email" class="form-control" />
                                             <span asp-validation-for="customerMaster.Email" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -92,7 +93,7 @@
                                     <div class="form-group">
                                         <label asp-for="customerMaster.ContactNo" class="col-sm-4 control-label"></label>
                                         <div class="col-sm-8">
-                                            <input type="text" asp-for="customerMaster.ContactNo" class="form-control" />
+                                            <input id="txtCustomerContact" type="tel" asp-for="customerMaster.ContactNo" class="form-control" />
                                             <span asp-validation-for="customerMaster.ContactNo" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -103,7 +104,7 @@
                                     <div class="form-group">
                                         <label asp-for="customerMaster.AlternateNo" class="col-sm-4 control-label"></label>
                                         <div class="col-sm-8">
-                                            <input type="email" asp-for="customerMaster.AlternateNo" class="form-control" />
+                                            <input type="tel" asp-for="customerMaster.AlternateNo" class="form-control" />
                                             <span asp-validation-for="customerMaster.AlternateNo" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -123,7 +124,7 @@
                                     <div class="form-group">
                                         <label asp-for="customerMaster.CountryId" class="col-sm-4 control-label"></label>
                                         <div class="col-sm-8">
-                                            <select id="selectAddressCountry" asp-for="customerMaster.CountryId" class="form-control select2" asp-items="@ViewBag.CountryList">
+                                            <select id="ddl_country_id" asp-for="customerMaster.CountryId" class="form-control select2" asp-items="@ViewBag.CountryList">
                                             </select>
                                             <span asp-validation-for="customerMaster.CountryId" class="text-danger"></span>
                                         </div>
@@ -133,7 +134,7 @@
                                     <div class="form-group">
                                         <label asp-for="customerMaster.StateId" class="col-sm-4 control-label"></label>
                                         <div class="col-sm-8">
-                                            <select id="selectAddressState" asp-for="customerMaster.StateId" class="form-control select2" asp-items="@ViewBag.StateList">
+                                            <select id="ddl_state_id" asp-for="customerMaster.StateId" class="form-control select2" asp-items="@ViewBag.StateList">
                                             </select>
                                             <span asp-validation-for="customerMaster.StateId" class="text-danger"></span>
                                         </div>
@@ -146,47 +147,78 @@
                                     <div class="form-group">
                                         <label asp-for="customerMaster.PinCode" class="col-sm-4 control-label"></label>
                                         <div class="col-sm-8">
-                                            <input type="text" asp-for="customerMaster.PinCode" class="form-control" />
+                                            <input id="txtPinCode" type="text" asp-for="customerMaster.PinCode" class="form-control" />
                                             <span asp-validation-for="customerMaster.PinCode" class="text-danger"></span>
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label asp-for="customerMaster.IsActive" class="col-sm-4 control-label"></label>
+                                        <label asp-for="customerMaster.CustomerType" class="col-sm-4 control-label"></label>
                                         <div class="col-sm-8">
-                                            <label class="input-group-addon input-group-addon-custom">
-                                                <input id="cboxIsAllFlightClass" class="ace ace-switch" type="checkbox" asp-for="customerMaster.IsActive" />
-                                                <span class="lbl" data-lbl="Yes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;no"></span>
-                                            </label>
-                                            <span asp-validation-for="customerMaster.IsActive" class="text-danger"></span>
+                                            <select asp-for="customerMaster.CustomerType" class="form-control select2">
+
+                                                @if (Model.customerMaster.CustomerType == enmCustomerType.Admin)
+                                                {
+                                                    <option value="@((int)enmCustomerType.Admin)">@enmCustomerType.Admin</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@((int)enmCustomerType.B2B)">@enmCustomerType.B2B</option>
+                                                    <option value="@((int)enmCustomerType.B2C)">@enmCustomerType.B2C</option>
+                                                    <option value="@((int)enmCustomerType.MLM)">@enmCustomerType.MLM</option>
+                                                    <option value="@((int)enmCustomerType.InHouse)">@enmCustomerType.InHouse</option>
+                                                }
+
+                                            </select>
+                                            <span asp-validation-for="customerMaster.CustomerType" class="text-danger"></span>
                                         </div>
                                     </div>
                                 </div>
+
+
                             </div>
 
 
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
+                                        <input type="hidden" asp-for="customerMaster.Logo" />
+
                                         <label asp-for="Logo" class="col-sm-4 control-label"></label>
                                         <div class="col-sm-8">
                                             <div class="custom-file">
-                                                <input asp-for="Logo" class="custom-file-input" accept="image/ico" />
+                                                <input rel="icon" asp-for="Logo" class="custom-file-input" accept="image/x-icon" />
                                                 <label class="custom-file-label" asp-for="Logo">Choose file</label>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="form-group">
-                                        @if (Model.LogoData != null)
-                                        {
-                                            <div class="form-group col-md-4">
-                                                <img src="@string.Format("data:image/ico;base64,{0}", Convert.ToBase64String(Model.LogoData))" />
-                                            </div>
-                                        }
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            @if (Model.LogoData != null)
+                                            {
+                                                <div class="form-group col-md-4">
+                                                    <img src="@string.Format("data:image/ico;base64,{0}", Convert.ToBase64String(Model.LogoData))" />
+                                                </div>
+                                            }
+                                        </div>
                                     </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="customerMaster.IsActive" class="col-sm-8 control-label"></label>
+                                            <div class="col-sm-4">
+                                                <label class="input-group-addon input-group-addon-custom">
+                                                    <input id="chkIsActive" class="ace ace-switch" type="checkbox" asp-for="customerMaster.IsActive" />
+                                                    <span class="lbl" data-lbl="Yes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;no"></span>
+                                                </label>
+                                                <span asp-validation-for="customerMaster.IsActive" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
 
@@ -194,12 +226,14 @@
 
                         @if (Model.pan != null)
                         {
+                            <div class="space"></div>
+                            <h4 class="header blue bolder smaller">Pan Details</h4>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label asp-for="pan.PANNo" class="col-sm-4 control-label"></label>
                                         <div class="col-sm-8">
-                                            <input type="email" asp-for="pan.PANNo" class="form-control" />
+                                            <input type="text" asp-for="pan.PANNo" class="form-control" />
                                             <span asp-validation-for="pan.PANNo" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -228,7 +262,7 @@
                                         <label asp-for="customerMaster.HaveGST" class="col-sm-4 control-label"></label>
                                         <div class="col-sm-8">
                                             <label class="input-group-addon input-group-addon-custom">
-                                                <input id="cboxIsAllFlightClass" class="ace ace-switch" type="checkbox" asp-for="customerMaster.HaveGST" />
+                                                <input id="cboxHaveGST" class="ace ace-switch" type="checkbox" asp-for="customerMaster.HaveGST" />
                                                 <span class="lbl" data-lbl="Yes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;no"></span>
                                             </label>
                                             <span asp-validation-for="customerMaster.HaveGST" class="text-danger"></span>
@@ -238,84 +272,93 @@
 
                             </div>
 
+                            <div class="row" id="divGstDetails">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="GSTDetails.GstNumber" class="col-sm-4 control-label"></label>
+                                            <div class="col-sm-8">
+                                                <input type="text" asp-for="GSTDetails.GstNumber" class="form-control" />
+                                                <span asp-validation-for="GSTDetails.GstNumber" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="GSTDetails.RegisteredName" class="col-sm-4 control-label"></label>
+                                            <div class="col-sm-8">
+                                                <input id="txtRegisteredName" type="text" asp-for="GSTDetails.RegisteredName" class="form-control" />
+                                                <span asp-validation-for="GSTDetails.RegisteredName" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="GSTDetails.Email" class="col-sm-4 control-label"></label>
+                                            <div class="col-sm-8">
+                                                <input id="txtGSTEmail" type="email" asp-for="GSTDetails.Email" class="form-control" />
+                                                <span asp-validation-for="GSTDetails.Email" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="GSTDetails.Mobile" class="col-sm-4 control-label"></label>
+                                            <div class="col-sm-8">
+                                                <input id="txtGSTMobile" type="tel" asp-for="GSTDetails.Mobile" class="form-control" />
+                                                <span asp-validation-for="GSTDetails.Mobile" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="GSTDetails.Address" class="col-sm-4 control-label"></label>
+                                            <div class="col-sm-8">
+                                                <input id="txtGstAddress" type="text" asp-for="GSTDetails.Address" class="form-control" />
+                                                <span asp-validation-for="GSTDetails.Address" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="GSTDetails.CountryId" class="col-sm-4 control-label"></label>
+                                            <div class="col-sm-8">
+                                                <select id="ddl_gst_country_id" asp-for="GSTDetails.CountryId" class="form-control select2" asp-items="@ViewBag.CountryList">
+                                                </select>
+                                                <span asp-validation-for="GSTDetails.CountryId" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label asp-for="GSTDetails.GstNumber" class="col-sm-4 control-label"></label>
-                                        <div class="col-sm-8">
-                                            <input type="text" asp-for="GSTDetails.GstNumber" class="form-control" />
-                                            <span asp-validation-for="GSTDetails.GstNumber" class="text-danger"></span>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="GSTDetails.StateId" class="col-sm-4 control-label"></label>
+                                            <div class="col-sm-8">
+                                                <select id="ddl_gst_state_id" asp-for="GSTDetails.StateId" class="form-control select2" asp-items="@ViewBag.GStStateList">
+                                                </select>
+                                                <span asp-validation-for="GSTDetails.StateId" class="text-danger"></span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label asp-for="GSTDetails.RegisteredName" class="col-sm-4 control-label"></label>
-                                        <div class="col-sm-8">
-                                            <input type="text" asp-for="GSTDetails.RegisteredName" class="form-control" />
-                                            <span asp-validation-for="GSTDetails.RegisteredName" class="text-danger"></span>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="GSTDetails.PinCode" class="col-sm-4 control-label"></label>
+                                            <div class="col-sm-8">
+                                                <input id="txtGstPincode" type="text" asp-for="GSTDetails.PinCode" class="form-control" />
+                                                <span asp-validation-for="GSTDetails.PinCode" class="text-danger"></span>
+                                            </div>
                                         </div>
                                     </div>
+
                                 </div>
+
                             </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label asp-for="GSTDetails.Email" class="col-sm-4 control-label"></label>
-                                        <div class="col-sm-8">
-                                            <input type="email" asp-for="GSTDetails.Email" class="form-control" />
-                                            <span asp-validation-for="GSTDetails.Email" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label asp-for="GSTDetails.Mobile" class="col-sm-4 control-label"></label>
-                                        <div class="col-sm-8">
-                                            <input type="text" asp-for="GSTDetails.Mobile" class="form-control" />
-                                            <span asp-validation-for="GSTDetails.Mobile" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label asp-for="GSTDetails.CountryId" class="col-sm-4 control-label"></label>
-                                        <div class="col-sm-8">
-                                            <select id="selectAddressCountry" asp-for="GSTDetails.CountryId" class="form-control select2" asp-items="@ViewBag.CountryList">
-                                            </select>
-                                            <span asp-validation-for="GSTDetails.CountryId" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label asp-for="GSTDetails.StateId" class="col-sm-4 control-label"></label>
-                                        <div class="col-sm-8">
-                                            <select id="selectGSTState" asp-for="GSTDetails.StateId" class="form-control select2" asp-items="@ViewBag.GStStateList">
-                                            </select>
-                                            <span asp-validation-for="GSTDetails.StateId" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label asp-for="GSTDetails.PinCode" class="col-sm-4 control-label"></label>
-                                        <div class="col-sm-8">
-                                            <input type="text" asp-for="GSTDetails.PinCode" class="form-control" />
-                                            <span asp-validation-for="GSTDetails.CountryId" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-
-
                         }
 
 
@@ -396,96 +439,213 @@
 
                     @if (Model.customerSetting != null)
                     {
-                <div id="edit-settings" class="tab-pane">
-                    <div class="space-10"></div>
+                        <div id="edit-settings" class="tab-pane">
+                            <div class="space-10"></div>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="customerSetting.AllowedAllIp" class="col-sm-4 control-label"></label>
-                                <div class="col-sm-8">
-                                    <div class="input-group">
-                                        <label class="input-group-addon input-group-addon-custom">
-                                            <input id="cboxIsAllProvider" class="ace ace-switch" type="checkbox" asp-for="customerSetting.AllowedAllIp">
-                                            <span class="lbl" data-lbl="ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT"></span>
-                                        </label>
-                                        <input type="text" asp-for="customerSetting.IPAddess" class="form-control" />
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="customerSetting.AllowedAllIp" class="col-sm-4 control-label"></label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <label class="input-group-addon input-group-addon-custom">
+                                                    <input id="cboxIsAllProvider" class="ace ace-switch" type="checkbox" asp-for="customerSetting.AllowedAllIp">
+                                                    <span class="lbl" data-lbl="ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT"></span>
+                                                </label>
+                                                <input type="text" asp-for="customerSetting.IPAddess" class="form-control" />
+                                            </div>
+                                            <span asp-validation-for="customerSetting.AllowedAllIp" class="text-danger"></span>
+                                        </div>
                                     </div>
-                                    <span asp-validation-for="customerSetting.AllowedAllIp" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="customerSetting.MarkupAmount" class="col-sm-4 control-label"></label>
+                                        <div class="col-sm-8">
+                                            <input type="text" asp-for="customerSetting.MarkupAmount" class="form-control" />
+                                            <span asp-validation-for="customerSetting.MarkupAmount" class="text-danger"></span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="customerSetting.MinBalance" class="col-sm-4 control-label"></label>
+                                        <div class="col-sm-8">
+                                            <input type="text" asp-for="customerSetting.MinBalance" class="form-control" />
+                                            <span asp-validation-for="customerSetting.MinBalance" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
                         </div>
-                        <div class="col-md-6">
+
+
+
+
+
+                        <div id="edit-password" class="tab-pane">
+                            <div class="space-10"></div>
+
+                            <input type="hidden" asp-for="customerSetting.MPin" class="form-control" />
                             <div class="form-group">
-                                <label asp-for="customerSetting.MarkupAmount" class="col-sm-4 control-label"></label>
-                                <div class="col-sm-8">
-                                    <input type="text" asp-for="customerSetting.MarkupAmount" class="form-control" />
-                                    <span asp-validation-for="customerSetting.MarkupAmount" class="text-danger"></span>
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-pass1">Mpin</label>
+                                <div class="col-sm-9">
+                                    <input type="password" asp-for="NewMpin" class="form-control" />
+                                    <span asp-validation-for="NewMpin" class="text-danger"></span>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-md-6">
+                            <div class="space-4"></div>
+
                             <div class="form-group">
-                                <label asp-for="customerSetting.MinBalance" class="col-sm-4 control-label"></label>
-                                <div class="col-sm-8">
-                                    <input type="text" asp-for="customerSetting.MinBalance" class="form-control" />
-                                    <span asp-validation-for="customerSetting.MinBalance" class="text-danger"></span>
+                                <label class="col-sm-3 control-label no-padding-right" for="form-field-pass2">Confirm MPin</label>
+
+                                <div class="col-sm-9">
+                                    <input type="password" asp-for="ConfirmNewMpin" class="form-control" />
+                                    <span asp-validation-for="ConfirmNewMpin" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
-
-
-                    </div>
-                </div>
-
-
-
-
-
-                <div id="edit-password" class="tab-pane">
-                    <div class="space-10"></div>
-
-                    <input type="hidden" asp-for="customerSetting.MPin" class="form-control" />
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label no-padding-right" for="form-field-pass1">Mpin</label>
-                        <div class="col-sm-9">
-                            <input type="password" asp-for="NewMpin" class="form-control" />
-                            <span asp-validation-for="NewMpin" class="text-danger"></span>
-                        </div>
-                    </div>
-
-                    <div class="space-4"></div>
-
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label no-padding-right" for="form-field-pass2">Confirm MPin</label>
-
-                        <div class="col-sm-9">
-                            <input type="password" asp-for="ConfirmNewMpin" class="form-control" />
-                            <span asp-validation-for="ConfirmNewMpin" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
                     }
-                    </div>
+                </div>
             </div>
 
             <div class="clearfix form-actions">
                 <div class="col-md-offset-3 col-md-9">
-                    <button class="btn btn-info" type="button">
+                    <button class="btn btn-info" type="submit">
                         <i class="ace-icon fa fa-check bigger-110"></i>
                         Save
                     </button>
 
                     &nbsp; &nbsp;
-                    <button class="btn" type="reset">
+                    <a class="btn" href="/Customer/CustomerMaster">
                         <i class="ace-icon fa fa-undo bigger-110"></i>
                         Reset
-                    </button>
+                    </a>
+
                 </div>
             </div>
         </form>
     </div><!-- /.span -->
 </div><!-- /.user-profile -->
+
+@section Scripts {
+    <script type="text/javascript">
+        jQuery(function ($) {
+            $('.select2').select2();            
+        });
+        $(document).ready(function () {
+            $(window).load(function () {
+                if ($("#cboxHaveGST").prop("checked") == true) {
+                    $('#divGstDetails').show();
+                    $('#divGstDetails').prop("disabled", false);
+                } else {
+                    $('#divGstDetails').hide();                    
+                    $('#divGstDetails').prop("disabled", true);
+                }
+            });
+            $("#ddl_country_id").change(function () {
+                LoadState($("#ddl_country_id").val(),"ddl_state_id")
+            });
+            $("#ddl_gst_country_id").change(function () {
+                LoadState($("#ddl_gst_country_id").val(), "ddl_gst_state_id")
+            });
+
+            $("#cboxHaveGST").change(function () {
+                if (this.checked) {
+                    $('#divGstDetails').show();
+                    $('#divGstDetails').prop("disabled", false);
+                } else {
+                    $('#divGstDetails').hide();
+                    $('#divGstDetails').prop("disabled", true);
+                }
+            });
+
+            $("#txtCustomerName").blur(function () {
+                if ($("#txtRegisteredName").val() == "" || $("#txtRegisteredName").val() == null) {
+                    $("#txtRegisteredName").val($("#txtCustomerName").val());
+                }
+            });
+            $("#txtCustomermail").blur(function () {
+                if ($("#txtGSTEmail").val() == "" || $("#txtGSTEmail").val() == null) {
+                    $("#txtGSTEmail").val($("#txtCustomermail").val());
+                }
+            });
+            $("#txtCustomerContact").blur(function () {
+                if ($("#txtGSTMobile").val() == "" || $("#txtGSTMobile").val() == null) {
+                    $("#txtGSTMobile").val($("#txtCustomerContact").val());
+                }
+            });
+            $("#txtPinCode").blur(function () {
+                if ($("#txtGstPincode").val() == "" || $("#txtGstPincode").val() == null) {
+                    $("#txtGstPincode").val($("#txtPinCode").val());
+                }
+            });
+
+            
+
+            
+            function removeOptions(selectElement) {
+                var i, L = selectElement.options.length - 1;
+                for (i = L; i >= 0; i--) {
+                    selectElement.remove(i);
+                }
+            }
+
+            function LoadState(countryId, controlName ) {
+
+                //let countryId = parseInt(document.getElementById(controlName).value);
+
+                let requestUrl = "/Customer/GetState/" + countryId ;
+                $.ajax({ url: requestUrl }).done(function (data) {
+
+                     var statedropdown = document.getElementById(controlName)
+                    if (statedropdown != null) {
+                        
+                        removeOptions(statedropdown);
+                        var defaultstoption = document.createElement("option");
+                        defaultstoption.text = "Select State";
+                        statedropdown.add(defaultstoption);
+
+                        
+                        $.each(data, function (index, item) {
+                            var option = document.createElement("option");
+                            option.text = item.stateName;
+                            option.value = item.stateId;
+                            statedropdown.add(option);                            
+                        });
+                    }
+                }).fail(function (jqXHR, exception) {
+                    // Our error logic here
+                    var msg = '';
+                    if (jqXHR.status === 0) {
+                        msg = 'Not connect.\n Verify Network.';
+                    } else if (jqXHR.status == 400) {
+                        msg = 'Invalid Country';
+                    } 
+                    else if (jqXHR.status == 404) {
+                        msg = 'Requested page not found. [404]';
+                    } else if (jqXHR.status == 500) {
+                        msg = 'Internal Server Error [500].';
+                    } else if (exception === 'parsererror') {
+                        msg = 'Requested JSON parse failed.';
+                    } else if (exception === 'timeout') {
+                        msg = 'Time out error.';
+                    } else if (exception === 'abort') {
+                        msg = 'Ajax request aborted.';
+                    } else {
+                        msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                    }
+                    alert(msg);
+                })
+
+                
+            }
+        });
+     </script>
+}

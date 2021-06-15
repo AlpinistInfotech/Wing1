@@ -37,6 +37,7 @@ namespace B2bApplication.Models
         [DataType(DataType.Password)]
         public string NewMpin { get; set; }
         [DataType(DataType.Password)]
+        [Display(Name = "Confirm MPin")]
         [Compare(nameof(NewMpin))]
         public string ConfirmNewMpin { get; set; }
 
@@ -134,30 +135,22 @@ namespace B2bApplication.Models
         }
 
 
-        public void SetCountryState(dynamic ViewBag, IMasters masters)
-        {
-            
-            ViewBag.CountryList = masters.FetchCountryNames();
-
-
-            var CountryListDict = new Dictionary<int, string>();
-            CountryListDict.Add(0, "Please Select");
-            CountryListDict.Concat(masters.FetchCountryNames());
-
-            var StateListDict = new Dictionary<int, string>();
-            StateListDict.Add(0, "Please Select");
-            StateListDict.Concat(masters.FetchStateNames(customerMaster.CountryId ?? 0));
-
-            var GStStateListDict = new Dictionary<int, string>();
-            GStStateListDict.Add(0, "Please Select");
-            GStStateListDict.Concat(masters.FetchStateNames(GSTDetails.CountryId ?? 0));
-
-            SelectList CountryList = new SelectList(CountryListDict.Select(p => new { p.Key, p.Value }), "Key", "Value", customerMaster?.CountryId ?? 0);
-            SelectList StateList = new SelectList(StateListDict.Select(p => new { p.Key, p.Value }), "Key", "Value", customerMaster?.StateId ?? 0);
-            SelectList GStStateList = new SelectList(masters.FetchStateNames(GSTDetails.CountryId ?? 0).Select(p => new { p.Key, p.Value }), "Key", "Value", GSTDetails?.StateId ?? 0);
+        public void SetCountryState(dynamic ViewBag, DBContext context)
+        {   
+            int CountryId = customerMaster?.CountryId ?? 0;
+            var AllStateLIst = context.tblStateMaster.Where(p => p.CountryId == CountryId && p.IsActive).Select(p => new { p.StateId, p.StateName }).OrderBy(p => p.StateName);
+            SelectList CountryList = new SelectList(context.tblCountryMaster.Where(p=>p.IsActive).Select(p=>new {p.CountryId,p.CountryName}).OrderBy(p=>p.CountryName) , "CountryId", "CountryName", CountryId);            
+            if (CountryId > 0)
+            {  
+                SelectList StateList = new SelectList(AllStateLIst, "StateId", "StateName", customerMaster?.StateId ?? 0);
+                SelectList GStStateList = new SelectList(AllStateLIst, "StateId", "StateName", GSTDetails?.StateId ?? 0);                
+                ViewBag.StateList = StateList;
+                ViewBag.GSTStateList = GStStateList;
+            }
             ViewBag.CountryList = CountryList;
-            ViewBag.StateList = StateList;
-            ViewBag.GSTStateList = GStStateList;
+            var BankData = context.tblBankMaster.Where(p => p.IsActive).Select(p => new { p.BankId, p.BankName });
+            SelectList BankList = new SelectList(BankData, "BankId", "BankName", banks?.BankId ?? 0);
+            ViewBag.BankList = BankList;
         }
 
     }
