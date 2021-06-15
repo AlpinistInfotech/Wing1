@@ -212,6 +212,49 @@ namespace B2BClasses.Database
             _modelBuilder.Entity<tblUserRole>().HasData(UserRoles);
         }
 
+        public void InsertBank()
+        {
+            List<tblBankMaster> tbl = new List<tblBankMaster>();
+            tbl.Add( new tblBankMaster() { BankId = 1, BankName = "American Express", IsActive = true });
+            tbl.Add( new tblBankMaster() { BankId = 2, BankName = "ANZ Grindlays", IsActive = true });
+            tbl.Add( new tblBankMaster() { BankId = 3, BankName = "Bank of America", IsActive = true });
+            tbl.Add( new tblBankMaster() { BankId = 4, BankName = "Bank of Nova Scotia", IsActive = true });
+            tbl.Add( new tblBankMaster() { BankId = 5, BankName = "Bank of Tokyo", IsActive = true });
+            tbl.Add( new tblBankMaster() { BankId = 6, BankName = "Banque Nationale de Paris", IsActive = true });
+            tbl.Add( new tblBankMaster() { BankId = 7, BankName = "Citibank", IsActive = true });
+            tbl.Add( new tblBankMaster() { BankId = 8, BankName = "Credit Lyonnais", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 9, BankName = "Deutsche bank", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 10, BankName = "Hong Kong & Shanghai", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 11, BankName = "Standard Chartered", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 12, BankName = "Societe Generale", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 13, BankName = "Sanwa Bank", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 14, BankName = "Allahabad Bank", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 15, BankName = "Andhra Bank", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 16, BankName = "Bank of Baroda", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 17, BankName = "Bank of Maharashtra", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 18, BankName = "Canara Bank", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 19, BankName = "Central Bank of India", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 20, BankName = "Dena Bank", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 21, BankName = "Indian Overseas Bank", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 22, BankName = "Punjab National Bank", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 23, BankName = "State Bank of India", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 24, BankName = "State Bank of Bikaner & Jaipur", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 25, BankName = "State Bank of Mysore", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 26, BankName = "State Bank of Hyderabad", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 27, BankName = "UCO Bank", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 28, BankName = "United Bank of India", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 29, BankName = "Vijaya Bank", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 30, BankName = "Private Banks in Delhi NCR:-", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 31, BankName = "HDFC Bank", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 32, BankName = "ICICI Bank", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 33, BankName = "IDBI Bank", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 34, BankName = "Axis Bank", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 35, BankName = "Syndicate Bank", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 36, BankName = "Lord Krishna Bank", IsActive = true });
+            tbl.Add(new tblBankMaster() { BankId = 37, BankName = "IndusInd Bank", IsActive = true });
+            _modelBuilder.Entity<tblBankMaster>().HasData(tbl);
+        }
+
         public void InsertServiceProvider()
         {
 

@@ -62,7 +62,8 @@ namespace B2BClasses.Services.Enums
         DeleteSuccessfully,
         RecordAlreadyExists,
         InvalidData,
-        InvalidDocument
+        InvalidDocument,
+        AccessDenied,
     }
 
 
@@ -253,7 +254,7 @@ namespace B2BClasses.Services.Enums
 
 
         [Document(EnmModule: enmModule.Master, DocumentType: enmDocumentType.Create | enmDocumentType.DisplayMenu,
-        DisplayOrder: 1, Name: "Customer", Description: "Customer Master", Icon: "far fa-circle nav-icon", ActionName: "/Customer/AddCustomer", IsAdminClaim = true)]
+        DisplayOrder: 1, Name: "Customer", Description: "Customer Master", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CustomerMaster", IsAdminClaim = true)]
         CustomerMaster = 111,
         [Document(EnmModule: enmModule.Master, DocumentType: enmDocumentType.Create | enmDocumentType.DisplayMenu,
         DisplayOrder: 1, Name: "Customer Detail", Description: "Customer Details", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CustomerDetail", IsAdminClaim = true)]

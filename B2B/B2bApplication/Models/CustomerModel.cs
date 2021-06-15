@@ -13,30 +13,66 @@ using Microsoft.AspNetCore.Http;
 using B2BClasses.Models;
 using Microsoft.Extensions.Configuration;
 using System.IO;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace B2bApplication.Models
 {
 
     public class mdlCustomerMasterWraper: mdlCustomer
     {
+
+
         public int CustomerId { get; set; }        
         [Display(Name = "Logo")]
         public IFormFile Logo { set; get; }
         public byte[] LogoData { set; get; }
         
-
-
         public Dictionary<int, string> CustomerMasterList { get; set; }
+        public List<enmDocumentMaster> DocumentPermission { get; set; }
+        public double WalletBalance { get; set; }
+        public double CreditBalace { get; set; }
+        [StringLength(4, ErrorMessage = "The {0} must be {1} characters long.", MinimumLength = 4)]
+        [RegularExpression("[a-zA-Z0-9]*$", ErrorMessage = "Invalid {0}, no special charcter")]
+        [Display(Name = "MPin")]
+        [DataType(DataType.Password)]
+        public string NewMpin { get; set; }
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm MPin")]
+        [Compare(nameof(NewMpin))]
+        public string ConfirmNewMpin { get; set; }
+
+
+
 
         public void LoadCustomer(ICustomerMaster cm)
         {
             CustomerMasterList = cm.FetchAllCustomer(IncludeAdmin:true,OnlyActive:false);
         }
 
+        public void SetWalletBalence(DBContext _context) {
+            var defaultBalance = _context.tblCustomerBalence.Where(p => p.CustomerId == CustomerId).FirstOrDefault();
+            if (defaultBalance == null)
+            {
+                _context.tblCustomerBalence.Add(new tblCustomerBalence() { CustomerId = CustomerId, CreditBalence = 0, ModifiedDt = DateTime.Now, MPin = Settings.Encrypt( "0000"), WalletBalence = 0 });
+                _context.SaveChanges();
+                this.WalletBalance = 0;
+                this.CreditBalace = 0;
+            }
+            else
+            {
+                this.WalletBalance = defaultBalance.WalletBalence;
+                this.CreditBalace = defaultBalance.CreditBalence;
+            }
+        }
+
+        
 
         public void LoadData(int CustomerID, ICustomerMaster cm, IConfiguration config)
         {
+            this.CustomerId= CustomerID;
             cm.CustomerId = CustomerID;
+
+            this.DocumentPermission = cm.DocumentPermission;
             if (CustomerID > 0)
             {
                 this.customerMaster = cm.FetchBasicDetail();
@@ -46,18 +82,39 @@ namespace B2bApplication.Models
                 this.AllUserList = cm.FetchUserMasters();
                 this.userMaster = this.AllUserList.Where(p => p.IsPrimary).FirstOrDefault();
                 this.customerSetting = cm.FetchSetting();
+                
             }
-            else
-            {
-                this.customerMaster = cm.DocumentPermission.Any(p=>p== enmDocumentMaster.CustomerDetailsPermission_BasicDetail_Read)? new mdlCustomerMaster():null;
-                this.GSTDetails = cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_GSTDetail_Read) ? new mdlCustomerGSTDetails() : null;
-                this.banks =cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Bank_Read) ? new mdlBanks() : null;
-                this.pan =cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Pan_Read) ? new  mdlPan() : null;
-                this.AllUserList = cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_UserDetail_Read) ? new List<mdlUserMaster>() : null;
-                this.userMaster = cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_UserDetail_Read) ? new mdlUserMaster() : null;
-                this.customerSetting = cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Setting_Read) ? new mdlCustomerSetting() : null;
 
+            if (cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_BasicDetail_Read) && this.customerMaster == null)
+            {
+                this.customerMaster = new mdlCustomerMaster();
             }
+            if (cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_BasicDetail_Read) && this.GSTDetails == null)
+            {
+                this.GSTDetails = new mdlCustomerGSTDetails();
+            }
+            if (cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_BasicDetail_Read) && this.banks == null)
+            {
+                this.banks = new mdlBanks();
+            }
+            if (cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_BasicDetail_Read) && this.pan == null)
+            {
+                this.pan = new mdlPan();
+            }
+            if (cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_BasicDetail_Read) && this.AllUserList == null)
+            {
+                this.AllUserList = new List<mdlUserMaster>();
+            }
+            if (cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_BasicDetail_Read) && this.userMaster == null)
+            {
+                this.userMaster = new mdlUserMaster();
+            }
+            if (cm.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_BasicDetail_Read) && this.customerSetting == null)
+            {
+                this.customerSetting = new mdlCustomerSetting();
+            }
+            this.ConfirmNewMpin=this.NewMpin = this.customerSetting.MPin;
+
             if (string.IsNullOrWhiteSpace(this.customerMaster.Logo))
             {
                 string DefaultImage = config["Organisation:DefaultIcon"];
@@ -76,6 +133,26 @@ namespace B2bApplication.Models
             }
 
         }
+
+
+        public void SetCountryState(dynamic ViewBag, DBContext context)
+        {   
+            int CountryId = customerMaster?.CountryId ?? 0;
+            var AllStateLIst = context.tblStateMaster.Where(p => p.CountryId == CountryId && p.IsActive).Select(p => new { p.StateId, p.StateName }).OrderBy(p => p.StateName);
+            SelectList CountryList = new SelectList(context.tblCountryMaster.Where(p=>p.IsActive).Select(p=>new {p.CountryId,p.CountryName}).OrderBy(p=>p.CountryName) , "CountryId", "CountryName", CountryId);            
+            if (CountryId > 0)
+            {  
+                SelectList StateList = new SelectList(AllStateLIst, "StateId", "StateName", customerMaster?.StateId ?? 0);
+                SelectList GStStateList = new SelectList(AllStateLIst, "StateId", "StateName", GSTDetails?.StateId ?? 0);                
+                ViewBag.StateList = StateList;
+                ViewBag.GSTStateList = GStStateList;
+            }
+            ViewBag.CountryList = CountryList;
+            var BankData = context.tblBankMaster.Where(p => p.IsActive).Select(p => new { p.BankId, p.BankName });
+            SelectList BankList = new SelectList(BankData, "BankId", "BankName", banks?.BankId ?? 0);
+            ViewBag.BankList = BankList;
+        }
+
     }
 
 

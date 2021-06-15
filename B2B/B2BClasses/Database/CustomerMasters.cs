@@ -55,9 +55,10 @@ namespace B2BClasses.Database
         [Key]        
         public int CustomerId { get; set; }
         [Required]
-        [MaxLength(10)]
+        [MaxLength(100)]
         public string  MPin { get; set; }
-        public double WalletBalence { get; set; }
+        [ConcurrencyCheck]
+        public double WalletBalence { get; set; }        
         public double CreditBalence { get; set; }
         public DateTime? ModifiedDt { get; set; }
         
