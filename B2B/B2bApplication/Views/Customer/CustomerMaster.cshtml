@@ -189,8 +189,8 @@
                                         <label asp-for="Logo" class="col-sm-4 control-label"></label>
                                         <div class="col-sm-8">
                                             <div class="custom-file">
-                                                <input rel="icon" asp-for="Logo" class="custom-file-input" accept="image/x-icon" />
-                                                <label class="custom-file-label" asp-for="Logo">Choose file</label>
+                                                <input id="logofile" rel="icon" type="file" asp-for="Logo" class="custom-file-input" accept="image/x-icon" />
+                                                
                                             </div>
                                         </div>
                                     </div>
@@ -537,7 +537,26 @@
 @section Scripts {
     <script type="text/javascript">
         jQuery(function ($) {
-            $('.select2').select2();            
+            $('.select2').select2();   
+            var file = $('#logofile')//form.find('#logofile').eq(0);
+            file.ace_file_input();
+            //file.ace_file_input({
+            //    style: 'well',
+            //    btn_choose: 'Click to choose Logo',
+            //    btn_change: null,
+            //    no_icon: 'ace-icon fa fa-picture-o',
+            //    thumbnail: 'small',
+            //    before_remove: function () {
+            //        //don't remove/reset files while being uploaded
+            //        return !working;
+            //    },
+            //    //allowExt: ['jpg', 'jpeg', 'png', 'gif'],
+            //    //allowMime: ['image/jpg', 'image/jpeg', 'image/png', 'image/gif']
+            //    allowExt: ['ico'],
+            //    allowMime: ['image/x-ico']
+            //});
+
+
         });
         $(document).ready(function () {
             $(window).load(function () {

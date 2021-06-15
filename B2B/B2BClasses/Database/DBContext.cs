@@ -34,9 +34,19 @@ namespace B2BClasses.Database
             defaultData.InsertAirline();
             defaultData.InsertServiceProvider();
             defaultData.InsertBank();
+            #region ************** Remove Default Identity Columns *******************
+            modelBuilder.Entity<tblCustomerBalence>().Property(et => et.CustomerId).ValueGeneratedNever();
+            modelBuilder.Entity<tblCustomerGSTDetails>().Property(et => et.CustomerId).ValueGeneratedNever();
+            modelBuilder.Entity<tblCustomerIPFilter>().Property(et => et.CustomerId).ValueGeneratedNever();
+            modelBuilder.Entity<tblCustomerBankDetails>().Property(et => et.CustomerId).ValueGeneratedNever();
+            modelBuilder.Entity<tblCustomerPanDetails>().Property(et => et.CustomerId).ValueGeneratedNever();
+            modelBuilder.Entity<tblCustomerMarkup>().Property(et => et.CustomerId).ValueGeneratedNever();
+            modelBuilder.Entity<tblWalletBalanceAlert>().Property(et => et.CustomerId).ValueGeneratedNever();
+            #endregion
+
         }
 
-        
+
 
 
         public DbSet<tblTboTokenDetails> tblTboTokenDetails { get; set; }
@@ -56,12 +66,9 @@ namespace B2BClasses.Database
         public DbSet<tblFlightBookingSegment> tblFlightBookingSegment { get; set; }
         public DbSet<tblFlightBookingPassengerDetails> tblFlightBookingPassengerDetails { get; set; }
         public DbSet<tblFlightBookingGSTDetails> tblFlightBookingGSTDetails { get; set; }
-        
         public DbSet<tblFlightBookingServices> tblFlightBookingServices { get; set; }
         public DbSet<tblFlightBookingFareDetails> tblFlightBookingFareDetails { get; set; }
         public DbSet<tblFlightBookingFarePurchaseDetails> tblFlightBookingFarePurchaseDetails { get; set; }       
-        
-
         #endregion
 
 

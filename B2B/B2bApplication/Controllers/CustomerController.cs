@@ -158,6 +158,7 @@ namespace B2bApplication.Controllers
         {
             _customerMaster.CustomerId = mdl.CustomerId;
             mdl.DocumentPermission=_customerMaster.DocumentPermission;
+            bool IsUpdate = mdl.CustomerId==0?false:true;
             bool HaveWriteData = false;
             if (!(mdl.customerMaster?.HaveGST ?? false))
             {
@@ -165,7 +166,7 @@ namespace B2bApplication.Controllers
                 {
                     if (ModelState.Keys.Contains("GSTDetails." + prop.Name))
                     {
-                        ModelState["GSTDetails." + prop.Name].Errors.Clear();
+                        ModelState.Remove("GSTDetails." + prop.Name);
                     }                    
                 }
                 
@@ -173,87 +174,110 @@ namespace B2bApplication.Controllers
 
             if (ModelState.IsValid)
             {
-                if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_BasicDetail_Write) && mdl.customerMaster !=null )
+                try
                 {
-                    if (mdl.Logo != null)
+                    _customerMaster.BeginTransaction();
+                    if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_BasicDetail_Write) && mdl.customerMaster != null)
                     {
-                        string iconPath = _config["Organisation:IconPath"];
-                        var path = Path.Combine(
-                             Directory.GetCurrentDirectory(),
-                             "wwwroot/" + iconPath);
-                        bool exists = System.IO.Directory.Exists(path);
-                        if (!exists)
-                            System.IO.Directory.CreateDirectory(path);
-
-                        var filename = Guid.NewGuid().ToString() + ".ico";
-                        using (var stream = new FileStream(string.Concat(path, filename), FileMode.Create))
+                        if (mdl.Logo != null)
                         {
-                            mdl.customerMaster.Logo = filename;
-                            await mdl.Logo.CopyToAsync(stream);
+                            string iconPath = _config["Organisation:IconPath"];
+                            var path = Path.Combine(
+                                 Directory.GetCurrentDirectory(),
+                                 "wwwroot/" + iconPath);
+                            bool exists = System.IO.Directory.Exists(path);
+                            if (!exists)
+                                System.IO.Directory.CreateDirectory(path);
+
+                            var filename = Guid.NewGuid().ToString() + ".ico";
+                            using (var stream = new FileStream(string.Concat(path, filename), FileMode.Create))
+                            {
+                                mdl.customerMaster.Logo = filename;
+                                await mdl.Logo.CopyToAsync(stream);
+                            }
+                        }
+
+
+                        
+
+                        mdl.customerMaster.CustomerId = mdl.CustomerId;
+                        if (await _customerMaster.SaveBasicDetailsAsync(mdl.customerMaster))
+                        {   
+                            HaveWriteData = true;
+                            if (IsUpdate)
+                            {
+                                mdl.customerMaster.CustomerId = _customerMaster.CustomerId;
+                                mdl.CustomerId = _customerMaster.CustomerId;
+                            }
+                        }
+
+                    }
+                    if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Pan_Write) && mdl.pan != null)
+                    {
+                        mdl.pan.CustomerId = mdl.CustomerId;
+                        if (await _customerMaster.SavePanDetailsAsync(mdl.pan))
+                        {
+                            HaveWriteData = true;                            
+                        }
+                    }
+                    if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Bank_Write) && mdl.banks != null)
+                    {
+                        mdl.banks.CustomerId = mdl.CustomerId;
+                        if (await _customerMaster.SaveBankDetailsAsync(mdl.banks))
+                        {
+                            HaveWriteData = true;
+                        }
+
+                    }
+                    if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_GSTDetail_Write) && mdl.GSTDetails != null && mdl.customerMaster.HaveGST)
+                    {
+                        mdl.GSTDetails.CustomerId = mdl.CustomerId;
+                        if (await _customerMaster.SaveGSTDetailsAsync(mdl.GSTDetails))
+                        {
+                            HaveWriteData = true;
+                        }
+
+                    }
+                    if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Setting_Write) && mdl.customerSetting != null)
+                    {
+                        mdl.customerSetting.CustomerId = mdl.CustomerId;
+                        if (await _customerMaster.SaveSettingDetailsAsync(mdl.customerSetting))
+                        {
+                            HaveWriteData = true;
                         }
                     }
 
-
-                    mdl.customerMaster.CustomerId = mdl.CustomerId;
-                    if (await _customerMaster.SaveBasicDetailsAsync(mdl.customerMaster))
+                    if ((_customerMaster.validationResultList?.Count ?? 0) > 0)
                     {
-                        HaveWriteData = true;
-                    }
-
-                }
-                if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Pan_Write) && mdl.pan != null )
-                {
-                    if (await _customerMaster.SavePanDetailsAsync(mdl.pan))
-                    {
-                        HaveWriteData = true;
-                    }
-
-                }
-                if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Bank_Write) && mdl.banks != null)
-                {
-                    if (await _customerMaster.SaveBankDetailsAsync(mdl.banks))
-                    {
-                        HaveWriteData = true;
-                    }
-
-                }
-                if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_GSTDetail_Write) && mdl.GSTDetails != null && mdl.customerMaster.HaveGST)
-                {
-                    if (await _customerMaster.SaveGSTDetailsAsync(mdl.GSTDetails))
-                    {
-                        HaveWriteData = true;
-                    }
-
-                }
-                if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Setting_Write) && mdl.customerSetting !=null)
-                {
-                    if (await _customerMaster.SaveSettingDetailsAsync(mdl.customerSetting))
-                    {
-                        HaveWriteData = true;
-                    }
-                }
-                if ((_customerMaster.validationResultList?.Count ?? 0) > 0)
-                {
-                    foreach (var err in _customerMaster.validationResultList)
-                    {
-                        ModelState.AddModelError(err.MemberNames.FirstOrDefault() ?? "", err.ErrorMessage);
-                    }
-                    ViewBag.SaveStatus = (int)enmMessageType.Error;
-                    ViewBag.Message = _setting.GetErrorMessage(enmMessage.InvalidData);
-                }
-                else
-                {
-                    if (HaveWriteData)
-                    {
-                        TempData["MessageType"] = (int)enmMessageType.Success;
-                        TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
-                        return RedirectToAction("CustomerMaster", mdl.CustomerId.ToString());
+                        foreach (var err in _customerMaster.validationResultList)
+                        {
+                            ModelState.AddModelError(err.MemberNames.FirstOrDefault() ?? "", err.ErrorMessage);
+                        }
+                        ViewBag.SaveStatus = (int)enmMessageType.Error;
+                        ViewBag.Message = _setting.GetErrorMessage(enmMessage.InvalidData);
                     }
                     else
                     {
-                        ViewBag.SaveStatus = (int)enmMessageType.Warning;
-                        ViewBag.Message = _setting.GetErrorMessage(enmMessage.AccessDenied);
+                        if (HaveWriteData)
+                        {
+                            _customerMaster.ComitTransaction();
+                            TempData["MessageType"] = (int)enmMessageType.Success;
+                            TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
+                            return RedirectToAction("CustomerMaster","Customer" ,new {Id= mdl.CustomerId.ToString()} );
+                        }
+                        else
+                        {
+                            ViewBag.SaveStatus = (int)enmMessageType.Warning;
+                            ViewBag.Message = _setting.GetErrorMessage(enmMessage.AccessDenied);
+                        }
                     }
+                    _customerMaster.RollbackTransaction();
+                }
+                catch (Exception ex)
+                {
+                    _customerMaster.RollbackTransaction();
+                    ViewBag.SaveStatus = (int)enmMessageType.Error;
+                    ViewBag.Message = ex.Message;
                 }
 
             }
