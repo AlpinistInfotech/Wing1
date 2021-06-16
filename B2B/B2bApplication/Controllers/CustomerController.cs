@@ -570,7 +570,7 @@ namespace B2bApplication.Controllers
                 {
                     mdl.CustomerID = Convert.ToString(markupdata.CustomerId);
                     mdl.MarkupValue = markupdata.MarkupAmt;
-                    //mdl.markupid = markupdata.Id;
+                    //mdl.markupid = markupdata.;
                 }
             }
             if (_currentUsers.CustomerType == enmCustomerType.Admin) // if admin the show all customer id
@@ -1151,7 +1151,7 @@ namespace B2bApplication.Controllers
 
         public tblCustomerMarkup GetCustomerMarkUpData(DBContext context, int markupid)
         {
-            return null;// context.tblCustomerMarkup.Where(p => p.Id == markupid).FirstOrDefault();
+          return  context.tblCustomerMarkup.Where(p => p.CustomerId == markupid).FirstOrDefault();
         }
         public tblCustomerMaster GetCustomerData(DBContext context, int customerid)
         {
