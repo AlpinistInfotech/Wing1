@@ -549,7 +549,7 @@ namespace B2bApplication.Controllers
                     //mdl.markupid = markupdata.Id;
                 }
             }
-            if (_userid == 1) // if admin the show all customer id
+            if (_currentUsers.CustomerType == enmCustomerType.Admin) // if admin the show all customer id
             {
                 mdl.MarkupData = GetCustomerMarkUpList(_context, 0);
                 ViewBag.CustomerCodeList = new SelectList(GetCustomerMaster(_context, true, 0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
