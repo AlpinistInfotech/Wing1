@@ -224,8 +224,7 @@ namespace B2BClasses.Models
         public string PANName { get; set; }
         [Required]
         [Display(Name = "Pan No")]
-        [RegularExpression("[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}", ErrorMessage = "Invalid {0}, no special charcter")]
-
+        [RegularExpression("[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}", ErrorMessage = "Invalid {0}")]
         [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 10)]
         public string PANNo { get; set; }
         [Display(Name = "Is Approved")]
@@ -250,7 +249,7 @@ namespace B2BClasses.Models
         [Display(Name = "Markup Amount")]
         public double MarkupAmount { get; set; }
         [Display(Name = "Allowed All IP")]
-        public bool AllowedAllIp { get; set; } = true;
+        public bool AllowedAllIp { get; set; } = true;        
         [RegularExpression("[a-zA-Z0-9/.,\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         public string IPAddess { get; set; }
         [StringLength(4, ErrorMessage = "The {0} must be {1} characters long.",MinimumLength = 4)]

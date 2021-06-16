@@ -10,9 +10,11 @@ using System.ComponentModel.DataAnnotations;
 using B2BClasses.Database.LogDatabase;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace B2BClasses
 {
+    
     public interface ICustomerMaster
     {
         int CustomerId { get; set; }
@@ -20,6 +22,8 @@ namespace B2BClasses
         bool IsCurrentCustomerPermission { get; }
         List<ValidationResult> validationResultList { get; }
 
+        void BeginTransaction();
+        void ComitTransaction();
         Dictionary<int, string> FetchAllCustomer(bool IncludeAdmin = false, bool OnlyActive = false);
         mdlBanks FetchBanks();
         mdlCustomerMaster FetchBasicDetail();
@@ -27,6 +31,7 @@ namespace B2BClasses
         mdlPan FetchPan();
         mdlCustomerSetting FetchSetting();
         List<mdlUserMaster> FetchUserMasters();
+        void RollbackTransaction();
         Task<bool> SaveBankDetailsAsync(mdlBanks mdl);
         Task<bool> SaveBasicDetailsAsync(mdlCustomerMaster mdl);
         Task<bool> SaveGSTDetailsAsync(mdlCustomerGSTDetails mdl);
@@ -45,9 +50,7 @@ namespace B2BClasses
         private readonly IConfiguration _config;
         private List<ValidationResult> _validationResultList = new List<ValidationResult>();
         private List<enmDocumentMaster> _DocumentPermission { get; set; }
-
-
-
+        private IDbContextTransaction _transaction;
 
         public int CustomerId { get { return _CustomerId; } set { FetchCustomerPermission(); _CustomerId = value; } }
         public List<ValidationResult> validationResultList { get { return _validationResultList; } }
@@ -84,9 +87,9 @@ namespace B2BClasses
             }
         }
 
-        public Dictionary<int, string> FetchAllCustomer(bool IncludeAdmin=false, bool OnlyActive=false)
+        public Dictionary<int, string> FetchAllCustomer(bool IncludeAdmin = false, bool OnlyActive = false)
         {
-           var CustomerMaster = _context.tblCustomerMaster.AsQueryable();
+            var CustomerMaster = _context.tblCustomerMaster.AsQueryable();
             if (!IncludeAdmin)
             {
                 CustomerMaster = CustomerMaster.Where(p => p.CustomerType != enmCustomerType.Admin);
@@ -96,8 +99,22 @@ namespace B2BClasses
                 CustomerMaster = CustomerMaster.Where(p => p.IsActive);
             }
 
-            return CustomerMaster.OrderBy(P=>P.Code).ThenBy(P=>P.CustomerName).ToDictionary(x=>x.Id, x=>string.Concat(x.Code," - ",  x.CustomerName));
+            return CustomerMaster.OrderBy(P => P.Code).ThenBy(P => P.CustomerName).ToDictionary(x => x.Id, x => string.Concat(x.Code, " - ", x.CustomerName));
 
+        }
+
+        public void BeginTransaction()
+        {
+            _transaction = _context.Database.BeginTransaction();
+        }
+
+        public void ComitTransaction()
+        {
+            _transaction.Commit();
+        }
+        public void RollbackTransaction()
+        {
+            _transaction.Rollback();
         }
 
 
@@ -172,7 +189,7 @@ namespace B2BClasses
             }
             if (_DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_UserDetail_Read))
             {
-                mdl.AddRange(_context.tblUserMaster.Where(p => p.CustomerId == _CustomerId )
+                mdl.AddRange(_context.tblUserMaster.Where(p => p.CustomerId == _CustomerId)
                     .Select(p => new mdlUserMaster
                     {
                         UserId = p.Id,
@@ -264,8 +281,8 @@ namespace B2BClasses
                     mdl.IPAddess = string.Join(", ", IPFilter.tblCustomerIPFilterDetails.Select(p => p.IPAddress).ToList());
 
                 }
-                 mdl.MPin =_context.tblCustomerBalence.Where(p => p.CustomerId == _CustomerId).FirstOrDefault()?.MPin ?? Settings.Decrypt("0000");
-                
+                mdl.MPin = _context.tblCustomerBalence.Where(p => p.CustomerId == _CustomerId).FirstOrDefault()?.MPin ?? Settings.Decrypt("0000");
+
             }
             return mdl;
         }
@@ -359,13 +376,16 @@ namespace B2BClasses
                     CustomerMaster.CreatedBy = _UserId;
                     CustomerMaster.CreatedDt = DateTime.Now;
                     _context.tblCustomerMaster.Add(CustomerMaster);
+                    await _context.SaveChangesAsync();
                     _CustomerId = CustomerMaster.Id;
                 }
                 else
                 {
                     _context.tblCustomerMaster.UpdateRange(CustomerMaster);
+                    await _context.SaveChangesAsync();
                 }
-                await _context.SaveChangesAsync();
+
+
                 return true;
 
             }
@@ -808,14 +828,15 @@ namespace B2BClasses
                         }
 
                         IsUpdate = false;
-                        var ExistingMpin=_context.tblCustomerBalence.Where(p => p.CustomerId == _CustomerId).FirstOrDefault();
+                        var ExistingMpin = _context.tblCustomerBalence.Where(p => p.CustomerId == _CustomerId).FirstOrDefault();
                         if (ExistingMpin == null)
                         {
                             ExistingMpin = new tblCustomerBalence() { CustomerId = _CustomerId, CreditBalence = 0, WalletBalence = 0, MPin = Settings.Encrypt(mdl.MPin), ModifiedDt = DateTime.Now };
                             _context.tblCustomerBalence.Add(ExistingMpin);
                             _context.SaveChanges();
                         }
-                        else {
+                        else
+                        {
                             if (ExistingMpin.MPin != Settings.Encrypt(mdl.MPin))
                             {
                                 ExistingMpin.MPin = Settings.Encrypt(mdl.MPin);
@@ -823,9 +844,9 @@ namespace B2BClasses
                                 _context.tblCustomerBalence.Update(ExistingMpin);
                                 _context.SaveChanges();
                             }
-                            
+
                         }
-                        
+
 
 
 
@@ -874,11 +895,16 @@ namespace B2BClasses
                             saveDataIPFilter.CustomerId = _CustomerId;
                             saveDataIPFilter.ModifiedBy = _UserId;
                             saveDataIPFilter.ModifiedDt = DateTime.Now;
-                            var IPAddressDatas = mdl.IPAddess?.Split(",").Select(p => new tblCustomerIPFilterDetails { CustomerId = _CustomerId, IPAddress = p.Trim() }).ToList();
-                            foreach (var ipAdd in IPAddressDatas)
+
+                            if (!mdl.AllowedAllIp)
                             {
-                                saveDataIPFilter.tblCustomerIPFilterDetails.Add(ipAdd);
+                                var IPAddressDatas = mdl.IPAddess?.Split(",").Select(p => new tblCustomerIPFilterDetails { CustomerId = _CustomerId, IPAddress = p.Trim() }).ToList();
+                                foreach (var ipAdd in IPAddressDatas)
+                                {
+                                    saveDataIPFilter.tblCustomerIPFilterDetails.Add(ipAdd);
+                                }
                             }
+                            
                         }
                         if (!IsUpdate)
                         {
