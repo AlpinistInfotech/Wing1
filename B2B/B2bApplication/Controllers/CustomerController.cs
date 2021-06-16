@@ -435,6 +435,9 @@ namespace B2bApplication.Controllers
                     mdl.UserName = userdata.UserName;
                     mdl.Password = userdata.Password;
                     mdl.Status = userdata.IsActive;
+                    mdl.Email = userdata.Email;
+                    mdl.MobileNo = userdata.Phone;
+                    mdl.ForcePasswordChange = userdata.ForcePasswordChange;
                     mdl.userid = userdata.Id;
                 }
             }
@@ -467,6 +470,11 @@ namespace B2bApplication.Controllers
                     {
                          CallCustomerUserDefaultSetting(1, mdl);
                     }
+
+                    else if (mdl.Email == null || mdl.Email == "")
+                    {
+                        CallCustomerUserDefaultSetting(3, mdl);
+                    }
                     else
                     {
                         var ExistingData = _context.tblUserMaster.FirstOrDefault(p => p.UserName == mdl.UserName);
@@ -481,6 +489,9 @@ namespace B2bApplication.Controllers
                                 ExistingData.UserName = mdl.UserName;
                                 ExistingData.Password = mdl.Password;
                                 ExistingData.IsActive = mdl.Status;
+                                ExistingData.Email = mdl.Email;
+                                ExistingData.Phone = mdl.MobileNo;
+                                ExistingData.ForcePasswordChange = mdl.ForcePasswordChange;
                                 _context.tblUserMaster.Update(ExistingData);
                                 await _context.SaveChangesAsync();
                                 TempData["MessageType"] = (int)enmMessageType.Success;
@@ -501,6 +512,9 @@ namespace B2bApplication.Controllers
                                 CustomerId = Convert.ToInt32(mdl.CustomerID),
                                 UserName = mdl.UserName,
                                 Password = mdl.Password,
+                                Email=mdl.Email,
+                                Phone=mdl.MobileNo,
+                                ForcePasswordChange=mdl.ForcePasswordChange,
                                 IsActive = mdl.Status,
                                 CreatedBy = _userid,
                                 CreatedDt = DateTime.Now
@@ -539,7 +553,13 @@ namespace B2bApplication.Controllers
                 TempData["MessageType"] = (int)enmMessageType.Warning;
                 TempData["Message"] = _setting.GetErrorMessage(enmMessage.RecordAlreadyExists);
             }
-           
+
+            else if (value == 3)
+            {
+                TempData["MessageType"] = (int)enmMessageType.Error;
+                TempData["Message"] = "Please enter Email ID";
+            }
+
             ViewBag.CustomerCodeList = new SelectList(GetCustomerMaster(_context, true, 0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
             mdl.UserMasters = GetCustomerUserList(_context, false, Convert.ToInt32(mdl.CustomerID));
             ViewBag.SaveStatus = (int)TempData["MessageType"];
