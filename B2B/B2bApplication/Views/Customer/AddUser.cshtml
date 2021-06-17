@@ -1,4 +1,6 @@
 ﻿@model mdlAddCustomerUser
+@inject ICurrentUsers _currentUser
+@inject B2BClasses.IMasters _master
 
 @using B2BClasses.Services.Enums
 
@@ -7,185 +9,274 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div>
-    <div class="row">
-        <div class="col-md-12">
-            <!-- PAGE CONTENT BEGINS -->
+
+    <div id="user-profile-2" class="user-profile">
+        @if (_currentUser.CustomerType == enmCustomerType.Admin)
+        {
+            <div class="row">
+                <div class="col-xs-12 col-md-10 col-md-offset-1">
+                    <div class="widget-box">
+                        <div class="widget-header">
+                            <h4 class="widget-title">Search Customer</h4>
+                        </div>
+                        <div class="widget-body">
+                            <div class="widget-main">
+                                <form action="@Url.Action()" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <div asp-validation-summary="All" class="text-danger"></div>
+                                    <div class="row">
+                                        <div class="form-group col-md-6">
+
+                                            <div class="row">
+                                                <label for="Adult" class="col-sm-3" asp-for="CustomerID"></label>
+                                                <div class="col-sm-9">
+                                                    <div class="form-group">
+                                                        <select asp-for="CustomerID" class="form-control select2" asp-items="ViewBag.CustomerCodeList">
+                                                        </select>
+                                                        <span asp-validation-for="CustomerID" class="text-danger"></span>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <button class="btn btn-app btn-success ace-icon fa fa-refresh bigger-180" type="submit" name="submittype" value="LoadData">
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
             <form action="@Url.Action()" method="post">
-
-                <div class="row">
-
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="CustomerID"></label>
-                            <select asp-for="CustomerID" class="form-control select2" asp-items="ViewBag.CustomerCodeList">
-                            </select>
-                            <span asp-validation-for="CustomerID" class="text-danger"></span>
-
-
-                        </div>
-                    </div>
-
-                    <div class="col-md-2">
-                        <div class="form-group">
-
-                            <button class="btn btn-app btn-success ace-icon fa fa-refresh bigger-180" type="submit" name="submittype" value="LoadData">
-                            </button>
-                        </div>
-                    </div>
-
-
-                </div>
-
-
-
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="UserName"></label>
-                            <input asp-for="UserName" class="form-control" />
-                            <span asp-validation-for="UserName" class="text-danger"></span>
-
-
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-group">
-
-                            <label asp-for="Password"></label>
-                            <input asp-for="Password" class="form-control" />
-                            <span asp-validation-for="Password" class="text-danger"></span>
-                        </div>
-                    </div>
-
-                </div>
-
-
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="Email"></label>
-                            <input asp-for="Email" class="form-control" />
-                            <span asp-validation-for="Email" class="text-danger"></span>
-
-
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-group">
-
-                            <label asp-for="MobileNo"></label>
-                            <input asp-for="MobileNo" class="form-control" />
-                            <span asp-validation-for="MobileNo" class="text-danger"></span>
-                        </div>
-                    </div>
-
-                </div>
-
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="Status" class="col-sm-8 control-label"></label>
-                            <div class="col-sm-4">
-                                <label class="input-group-addon input-group-addon-custom">
-                                    <input id="chkIsActive" class="ace ace-switch" type="checkbox" asp-for="Status" />
-                                    <span class="lbl" data-lbl="Yes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;no"></span>
-                                </label>
-                                <span asp-validation-for="Status" class="text-danger"></span>
-                            </div>
-
-
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="ForcePasswordChange" class="col-sm-8 control-label"></label>
-                            <div class="col-sm-4">
-                                <label class="input-group-addon input-group-addon-custom">
-                                    <input id="chkIsActive" class="ace ace-switch" type="checkbox" asp-for="ForcePasswordChange" />
-                                    <span class="lbl" data-lbl="Yes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;no"></span>
-                                </label>
-                                <span asp-validation-for="ForcePasswordChange" class="text-danger"></span>
-                            </div>
-
-
-                        </div>
-                    </div>
-
-                </div>
-
-
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="clearfix form-actions">
-                            <div class="col-md-offset-3 col-md-9">
-                                <button class="btn btn-info" type="submit">
-                                    <i class="ace-icon fa fa-check bigger-110"></i>
-                                    Submit
-                                </button>
-
-                                &nbsp; &nbsp; &nbsp;
-                                <button class="btn" type="reset">
-                                    <i class="ace-icon fa fa-undo bigger-110"></i>
-                                    Reset
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <input type="hidden" asp-for="userid" />
+                <input asp-for="CustomerID" type="hidden" />
             </form>
-        </div>
-    </div>
-
-    <div class="card-body">
-        <table id="dynamic-table" class="table table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th>Edit</th>
-                    <th>Customer Name (Code)</th>
-                    <th>User Name</th>
-                    <th>Password</th>
-
-                    <th>Email ID</th>
-                    <th>Mobile No.</th>
-                    <th>Status</th>
-                    <th>Is Force Password Change</th>
-                </tr>
-            </thead>
-            <tbody>
+        }
 
 
-                @for (int i = 0; i < (Model.UserMasters?.Count ?? 0); i++)
+        <div class="space-20"></div>
+        <div class="tabbable">
+
+            <ul class="nav nav-tabs padding-18">
+                @if (Model.UserMasters != null)
                 {
-                    <tr>
-                        <td>
-                            <a href="/Customer/AddUser/@Model.UserMasters[i].Id" class="btn btn-info" data-toggle="tooltip" title="Edit Record !">
-                                Edit
-                            </a>
-                        </td>
-                        <td>@Model.UserMasters[i].tblCustomerMaster.CustomerName (@Model.UserMasters[i].tblCustomerMaster.Code)</td>
-                        <td>@Model.UserMasters[i].UserName</td>
-                        <td>@Model.UserMasters[i].Password</td>
-                        <td>@Model.UserMasters[i].Email</td>
-                        <td>@Model.UserMasters[i].Phone</td>
-
-                        <td>@(Model.UserMasters[i].IsActive==true?"Active":"DeActive")</td>
-                        <td>@(Model.UserMasters[i].ForcePasswordChange==true?"Yes":"No")</td>
-
-                    </tr>
+                    <li class="active">
+                        <a data-toggle="tab" href="#addUser_user">
+                            <i class="green ace-icon fa fa-university bigger-120"></i>
+                            User Master
+                        </a>
+                    </li>
                 }
-            </tbody>
-        </table>
-    </div>
-</div>
+                @if (Model.UserMasters != null)
+                {
+                    <li>
+                        <a data-toggle="tab" href="#addUser_role">
+                            <i class="orange ace-icon fa fa-rss bigger-120"></i>
+                            View User Role
+                        </a>
+                    </li>
+                }
 
-@section Scripts {
-    @(await Html.PartialAsync("_dateTableScriptPartial",8))
-}
+            </ul>
+
+            <div class="tab-content profile-edit-tab-content">
+                <div id="addUser_user" class="tab-pane in active">
+
+
+                    @if (Model.UserMasters != null)
+                    {
+
+                        <h4 class="header blue bolder smaller">User Creation</h4>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <!-- PAGE CONTENT BEGINS -->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="UserName"></label>
+                                            <input asp-for="UserName" class="form-control" />
+                                            <span asp-validation-for="UserName" class="text-danger"></span>
+
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label asp-for="Status" class="col-sm-8 control-label"></label>
+                                            <div class="col-sm-4">
+                                                <label class="input-group-addon input-group-addon-custom">
+                                                    <input id="chkIsActive" class="ace ace-switch" type="checkbox" asp-for="Status" />
+                                                    <span class="lbl" data-lbl="Yes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;no"></span>
+                                                </label>
+                                                <span asp-validation-for="Status" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label asp-for="ForcePasswordChange" class="col-sm-8 control-label"></label>
+                                            <div class="col-sm-4">
+                                                <label class="input-group-addon input-group-addon-custom">
+                                                    <input id="chkIsActive" class="ace ace-switch" type="checkbox" asp-for="ForcePasswordChange" />
+                                                    <span class="lbl" data-lbl="Yes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;no"></span>
+                                                </label>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+
+                                            <label asp-for="Password"></label>
+                                            <input asp-for="Password" class="form-control" />
+                                            <span asp-validation-for="Password" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+
+                                            <label asp-for="ConfirmPassword"></label>
+                                            <input asp-for="ConfirmPassword" class="form-control" />
+                                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="Email"></label>
+                                            <input asp-for="Email" class="form-control" />
+                                            <span asp-validation-for="Email" class="text-danger"></span>
+
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+
+                                            <label asp-for="MobileNo"></label>
+                                            <input asp-for="MobileNo" class="form-control" />
+                                            <span asp-validation-for="MobileNo" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="IsAllRole" class="col-sm-4 control-label"></label>
+                                            <div class="col-sm-8">
+                                                <div class="input-group">
+                                                    <label class="input-group-addon input-group-addon-custom">
+                                                        <input id="cboxIsAllCustomerType" class="ace ace-switch" type="checkbox" asp-for="IsAllRole">
+                                                        <span class="lbl" data-lbl="ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT"></span>
+                                                    </label>
+                                                    <select id="selectIsAllCustomerType" asp-for="IsAllRole" class="form-control select2" multiple asp-items="Model._RoleMaster">
+                                                    </select>
+                                                </div>
+                                                <span asp-validation-for="IsAllRole" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="clearfix form-actions">
+                                            <div class="col-md-offset-3 col-md-9">
+                                                <button class="btn btn-info" type="submit">
+                                                    <i class="ace-icon fa fa-check bigger-110"></i>
+                                                    Submit
+                                                </button>
+
+                                                &nbsp; &nbsp; &nbsp;
+                                                <button class="btn" type="reset">
+                                                    <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                    Reset
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" asp-for="userid" />
+
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <table id="dynamic-table" class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Edit</th>
+                                        <th>Customer Name (Code)</th>
+                                        <th>User Name</th>
+                                        <th>Password</th>
+
+                                        <th>Email ID</th>
+                                        <th>Mobile No.</th>
+                                        <th>Status</th>
+                                        <th>Is Force Password Change</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+
+                                    @for (int i = 0; i < (Model.UserMasters?.Count ?? 0); i++)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <a href="/Customer/AddUser/@Model.UserMasters[i].Id" class="btn btn-info" data-toggle="tooltip" title="Edit Record !">
+                                                    Edit
+                                                </a>
+                                            </td>
+                                            <td>@Model.UserMasters[i].tblCustomerMaster.CustomerName (@Model.UserMasters[i].tblCustomerMaster.Code)</td>
+                                            <td>@Model.UserMasters[i].UserName</td>
+                                            <td>@Model.UserMasters[i].Password</td>
+                                            <td>@Model.UserMasters[i].Email</td>
+                                            <td>@Model.UserMasters[i].Phone</td>
+
+                                            <td>@(Model.UserMasters[i].IsActive==true?"Active":"DeActive")</td>
+                                            <td>@(Model.UserMasters[i].ForcePasswordChange==true?"Yes":"No")</td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                    }
+                </div>
+
+
+                <div id="addUser_role" class="tab-pane in active">
+                    @if (Model.UserMasters != null)
+                        {
+                        <div>HELLO ROLE</div>
+                    }
+                    </div>
+                </div>
+            </div>
+        </div>
+                @section Scripts {
+                    @(await Html.PartialAsync("_dateTableScriptPartial",8))
+                }

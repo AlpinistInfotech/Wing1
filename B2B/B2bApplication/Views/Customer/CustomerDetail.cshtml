@@ -14,7 +14,7 @@
             <div class="col-xs-12 col-md-10 col-md-offset-1">
                 <div class="widget-box">
                     <div class="widget-header">
-                        <h4 class="widget-title">Search Flight</h4>
+                        <h4 class="widget-title">Search Customer</h4>
                     </div>
                     <div class="widget-body">
                         <div class="widget-main">
@@ -25,7 +25,7 @@
                                     <div class="form-group col-md-6">
 
                                         <div class="row">
-                                            <label for="Adult" class="col-sm-3">Adult</label>
+                                            <label for="Adult" class="col-sm-3" asp-for="CustomerId"></label>
                                             <div class="col-sm-9">
                                                 <div class="form-group">
                                                     <select id="Adult" asp-for="CustomerId" class="select2 form-control" data-placeholder="Customer">
@@ -114,11 +114,12 @@
             }
         </ul>
 
-        <div class="tab-content no-border padding-24">
-            @if (Model.customerMaster != null)
-            {
+        <div class="tab-content profile-edit-tab-content">
+            <div id="customerDetails_customerMaster" class="tab-pane in active">
 
-                <div id="customerDetails_customerMaster" class="tab-pane in active">
+                @if (Model.customerMaster != null)
+                {
+
                     <div class="row">
                         <div class="col-xs-12 col-sm-3 center">
                             <div class="space-20"></div>
@@ -219,7 +220,7 @@
                                         <span>@Model.GSTDetails?.GstNumber</span>
                                     </div>
                                 </div>
-                             
+
 
                                 <div class="profile-info-row">
                                     <div class="profile-info-name"> Pan</div>
@@ -261,11 +262,14 @@
 
                     <div class="space-20"></div>
 
-                </div><!-- /#home -->
-            }
-            @if (Model.GSTDetails != null)
-            {
-                <div id="customerDetails_GSTDetails" class="tab-pane">
+
+                }
+            </div><!-- /#home -->
+
+            <div id="customerDetails_GSTDetails" class="tab-pane">
+
+                @if (Model.GSTDetails != null)
+                {
                     <div class="row">
                         <div class="col-xs-12 col-sm-8  col-sm-offset-2">
 
@@ -327,11 +331,13 @@
                             <div class="hr hr-8 dotted"></div>
                         </div>
                     </div>
-                </div>
-            }
-            @if (Model.banks != null)
-            {
-                <div id="customerDetails_banks" class="tab-pane">
+                }
+            </div>
+
+            <div id="customerDetails_banks" class="tab-pane">
+
+                @if (Model.banks != null)
+                {
                     <div class="row">
                         <div class="col-xs-12 col-sm-8  col-sm-offset-2">
 
@@ -387,11 +393,13 @@
                             <div class="hr hr-8 dotted"></div>
                         </div>
                     </div>
-                </div>
-            }
-            @if (Model.userMaster != null)
-            {
-                <div id="customerDetails_userMaster" class="tab-pane">
+                }
+            </div>
+
+            <div id="customerDetails_userMaster" class="tab-pane">
+
+                @if (Model.userMaster != null)
+                {
                     <div class="profile-feed row">
 
                         @foreach (var usr in Model.AllUserList)
@@ -414,8 +422,8 @@
                                         </a>
 
                                         @*<a href="#" class="red">
-                                                <i class="ace-icon fa fa-times bigger-125"></i>
-                                            </a>*@
+                                            <i class="ace-icon fa fa-times bigger-125"></i>
+                                        </a>*@
                                     </div>
                                 </div>
                             </div><!-- /.col -->
@@ -436,11 +444,13 @@
                             <i class="icon-on-right ace-icon fa fa-arrow-right"></i>
                         </button>
                     </div>
-                </div><!-- /#feed -->
-            }
-            @if (Model.customerSetting != null)
-            {
-                <div id="customerDetails_customerSetting" class="tab-pane">
+
+                }
+            </div><!-- /#feed -->
+            <div id="customerDetails_customerSetting" class="tab-pane">
+
+                @if (Model.customerSetting != null)
+                {
                     <div class="row">
                         <div class="col-xs-12 col-sm-8  col-sm-offset-2">
 
@@ -486,9 +496,9 @@
                             <div class="hr hr-8 dotted"></div>
                         </div>
                     </div>
-                </div>
-            }
 
+                }
+            </div>
 
         </div>
     </div>

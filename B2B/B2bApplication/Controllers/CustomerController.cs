@@ -442,6 +442,8 @@ namespace B2bApplication.Controllers
                 }
             }
             mdl.UserMasters = GetCustomerUserList(_context, true, Convert.ToInt32(mdl.CustomerID));
+            mdl._RoleMaster = new MultiSelectList(_context.tblRoleMaster.Where(p => p.IsActive==true).Select(p => new { RoleId = p.Id, RoleName = p.RoleName }), "RoleId", "RoleName");
+
             ViewBag.CustomerCodeList = new SelectList( GetCustomerMaster(_context, true,0).Select(p=> new {Code=p.Id,CustomerName=p.CustomerName+"("+p.Code+")"}), "Code", "CustomerName", mdl.CustomerID);
             return View(mdl);
         }
@@ -507,22 +509,36 @@ namespace B2bApplication.Controllers
 
                         else
                         {
-                            _context.tblUserMaster.Add(new tblUserMaster
+                            tblUserMaster tblUser = new tblUserMaster()
                             {
                                 CustomerId = Convert.ToInt32(mdl.CustomerID),
                                 UserName = mdl.UserName,
                                 Password = mdl.Password,
-                                Email=mdl.Email,
-                                Phone=mdl.MobileNo,
-                                ForcePasswordChange=mdl.ForcePasswordChange,
+                                Email = mdl.Email,
+                                Phone = mdl.MobileNo,
+                                ForcePasswordChange = mdl.ForcePasswordChange,
                                 IsActive = mdl.Status,
                                 CreatedBy = _userid,
                                 CreatedDt = DateTime.Now
 
-                            });
+                            };
+                            _context.tblUserMaster.Add(tblUser);
+                            _context.SaveChanges();
+                            mdl.userid= tblUser.Id;
 
 
-                            await _context.SaveChangesAsync();
+                            tblUserRole tblUserrole = new tblUserRole()
+                            {
+
+                                UserId = mdl.userid,
+                                CreatedBy = _userid,
+                                CreatedDt = DateTime.Now,
+                                Role= 1//mdl._RoleMaster.Select(mdl._RoleMaster )
+                            };
+
+                            _context.tblUserRole.Add(tblUserrole);
+                            _context.SaveChanges();
+                            //await _context.SaveChangesAsync();
 
                             TempData["MessageType"] = (int)enmMessageType.Success;
                             TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
