@@ -22,6 +22,7 @@ namespace B2bApplication.Models
     public class mdlCustomerMasterWraper: mdlCustomer
     {
 
+        [Display(Name = "Customer Name")]
 
         public int CustomerId { get; set; }        
         [Display(Name = "Logo")]
@@ -222,14 +223,20 @@ namespace B2bApplication.Models
        
        // [Required]
         [MaxLength(50)]
+        [DataType(DataType.Text)]
         [Display(Name = "Password")]
         public string Password { get; set; }
+
+        [DataType(DataType.Password)]
+        [Compare(nameof(Password), ErrorMessage = "Password & confirm Password do not match")]
+        public string ConfirmPassword { get; set; }
+
 
         [MaxLength(80)]
         [DefaultValue("")]
         [Display(Name = "Email ID")]
         [DataType(DataType.EmailAddress)]
-        public string Email { set; get; } = "";
+        public string Email { set; get; }
 
 
         [MaxLength(10)]
@@ -237,13 +244,20 @@ namespace B2bApplication.Models
         [Display(Name = "Mobile No.")]
         [DataType(DataType.PhoneNumber)]
         [RegularExpression("^[0-9]{10}$", ErrorMessage = "Invalid {0}")]
-        public string MobileNo { get; set; } = "";
+        public string MobileNo { get; set; }
 
         public bool Status { get; set; } = true;
 
         public bool ForcePasswordChange { get; set; } = true;
 
         public int userid { get; set; }
+
+        [Display(Name = "Role")]
+        public bool IsAllRole { get; set; } = true;
+
+        public MultiSelectList _RoleMaster { get; set; }
+
+
         public List<tblUserMaster> UserMasters { get; set; }
       
     }
