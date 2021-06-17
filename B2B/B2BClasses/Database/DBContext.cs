@@ -24,8 +24,8 @@ namespace B2BClasses.Database
             modelBuilder.Entity<tblPaymentRequest>().Property(p => p.Status).IsConcurrencyToken();
 
             DefaultData defaultData = new DefaultData(modelBuilder);
-            modelBuilder.Entity<tblCustomerBalence>(entity =>entity.HasCheckConstraint("CK_tblCustomerMaster_WalletBalence", "WalletBalence >= 0"));
-            modelBuilder.Entity<tblCustomerBalence>(entity => entity.HasCheckConstraint("CK_tblCustomerMaster_CreditBalence", "CreditBalence >= 0"));
+            modelBuilder.Entity<tblCustomerBalance>(entity =>entity.HasCheckConstraint("CK_tblCustomerMaster_WalletBalance", "WalletBalance >= 0"));
+            modelBuilder.Entity<tblCustomerBalance>(entity => entity.HasCheckConstraint("CK_tblCustomerMaster_CreditBalance", "CreditBalance >= 0"));
 
             defaultData.InsertRoleClaim();
             defaultData.InsertCustomerMaster();
@@ -35,7 +35,7 @@ namespace B2BClasses.Database
             defaultData.InsertServiceProvider();
             defaultData.InsertBank();
             #region ************** Remove Default Identity Columns *******************
-            modelBuilder.Entity<tblCustomerBalence>().Property(et => et.CustomerId).ValueGeneratedNever();
+            modelBuilder.Entity<tblCustomerBalance>().Property(et => et.CustomerId).ValueGeneratedNever();
             modelBuilder.Entity<tblCustomerGSTDetails>().Property(et => et.CustomerId).ValueGeneratedNever();
             modelBuilder.Entity<tblCustomerIPFilter>().Property(et => et.CustomerId).ValueGeneratedNever();
             modelBuilder.Entity<tblCustomerBankDetails>().Property(et => et.CustomerId).ValueGeneratedNever();
@@ -73,8 +73,8 @@ namespace B2BClasses.Database
 
 
         #region*************** Fare management ***************************
-        public DbSet<tblMinBalenceAlert> tblMinBalenceAlert { get; set; }
-        public DbSet<tblMinBalenceAlertDetails> tblMinBalenceAlertDetails { get; set; }
+        public DbSet<tblMinBalanceAlert> tblMinBalanceAlert { get; set; }
+        public DbSet<tblMinBalanceAlertDetails> tblMinBalanceAlertDetails { get; set; }
         public DbSet<tblActiveSerivceProvider> tblActiveSerivceProvider { get; set; }
         public DbSet<tblActiveSerivceProviderLog> tblActiveSerivceProviderLog { get; set; }
 
@@ -127,7 +127,7 @@ namespace B2BClasses.Database
 
 
         public DbSet<tblCustomerMaster> tblCustomerMaster { get; set; }
-        public DbSet<tblCustomerBalence> tblCustomerBalence { get; set; }
+        public DbSet<tblCustomerBalance> tblCustomerBalance { get; set; }
         public DbSet<tblCustomerGSTDetails> tblCustomerGSTDetails { get; set; }
         public DbSet<tblUserMaster> tblUserMaster { get; set; }
         public DbSet<tblRoleMaster> tblRoleMaster { get; set; }
@@ -141,6 +141,12 @@ namespace B2BClasses.Database
         public DbSet<tblWalletBalanceAlert> tblWalletBalanceAlert { get; set; }
         public DbSet<tblCustomerMarkup> tblCustomerMarkup { get; set; }        
         public DbSet<tblPaymentRequest> tblPaymentRequest { get; set; }
+        #endregion
+
+
+        #region *********************  Ticketing ****************************
+        public DbSet<tblTicket> tblTicket { get; set; }
+        public DbSet<tblTicketDetails> tblTicketDetails { get; set; }
         #endregion
 
     }

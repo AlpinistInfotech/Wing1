@@ -8,6 +8,22 @@ using System.Text;
 namespace B2BClasses.Services.Enums
 {
 
+    public enum enmTicketStatus
+    { 
+        Open  = 1,        
+        Close = 2
+    }
+    public enum enmTicketSubStatus
+    {
+        Pending = 1,
+        Processing=2,
+        Asigned=3,
+        Resolve= 4,
+        PendingUserInfo =5,
+        PendingApproval = 6,
+        NotRelevent =7
+    }
+
     public enum enmBookingStatus
     {
         Pending=0,

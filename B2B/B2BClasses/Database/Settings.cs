@@ -9,7 +9,7 @@ using System.Text;
 namespace B2BClasses.Database
 {
 
-    public class tblMinBalenceAlert
+    public class tblMinBalanceAlert
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -26,14 +26,14 @@ namespace B2BClasses.Database
         public int? ModifiedBy { get; set; }
         public DateTime? ModifiedDt { get; set; }
     }
-    public class tblMinBalenceAlertDetails
+    public class tblMinBalanceAlertDetails
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        [ForeignKey("tblMinBalenceAlert")] // Foreign Key here
+        [ForeignKey("tblMinBalanceAlert")] // Foreign Key here
         public int? AlertId { get; set; }
-        public tblMinBalenceAlert tblMinBalenceAlert { get; set; }
+        public tblMinBalanceAlert tblMinBalanceAlert { get; set; }
         public enmServiceProvider ServiceProvider { get; set; }
     }
     public class tblActiveSerivceProvider

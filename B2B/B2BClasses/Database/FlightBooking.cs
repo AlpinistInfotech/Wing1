@@ -36,11 +36,12 @@ namespace B2BClasses.Database
         public ICollection<tblFlightBookingPassengerDetails> tblFlightBookingPassengerDetails { get; set; }
         [InverseProperty("tblFlightBookingMaster")]
         public ICollection<tblFlightBookingGSTDetails> tblFlightBookingGSTDetails { get; set; }
-
         [InverseProperty("tblFlightBookingMaster")]
         public ICollection<tblFlightBookingFareDetails> tblFlightBookingFareDetails { get; set; }
         public ICollection<tblFlightBookingFarePurchaseDetails> tblFlightBookingFarePurchaseDetails { get; set; }
     }
+
+    
 
     public class tblFlightBookingProviderTraceId
     {

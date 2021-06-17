@@ -50,7 +50,7 @@ namespace B2BClasses.Database
         public DateTime ModifyDt { get; set; } = DateTime.Now;
     }
 
-    public class tblCustomerBalence
+    public class tblCustomerBalance
     {
         [Key]        
         public int CustomerId { get; set; }
@@ -58,8 +58,8 @@ namespace B2BClasses.Database
         [MaxLength(100)]
         public string  MPin { get; set; }
         [ConcurrencyCheck]
-        public double WalletBalence { get; set; }        
-        public double CreditBalence { get; set; }
+        public double WalletBalance { get; set; }        
+        public double CreditBalance { get; set; }
         public DateTime? ModifiedDt { get; set; }
         
     }
@@ -110,12 +110,13 @@ namespace B2BClasses.Database
         public bool IsActive { get; set; }        
         public bool ForcePasswordChange { get; set; }
         [Required]
-        [MaxLength(10)]
+        [MaxLength(200)]
         public string Email { get; set; } = string.Empty;
         public bool IsMailVarified { get; set; }
         [MaxLength(1000)]
         public string MailVerficationTokken { get; set; }
         public DateTime TokkenExpiryTime { get; set; }
+        [MaxLength(20)]
         public string Phone { get; set; }
         public bool IsBlocked { get; set; }
         public bool IsPrimary { get; set; }

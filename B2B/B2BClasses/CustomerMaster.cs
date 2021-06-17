@@ -281,7 +281,7 @@ namespace B2BClasses
                     mdl.IPAddess = string.Join(", ", IPFilter.tblCustomerIPFilterDetails.Select(p => p.IPAddress).ToList());
 
                 }
-                mdl.MPin = _context.tblCustomerBalence.Where(p => p.CustomerId == _CustomerId).FirstOrDefault()?.MPin ?? Settings.Decrypt("0000");
+                mdl.MPin = _context.tblCustomerBalance.Where(p => p.CustomerId == _CustomerId).FirstOrDefault()?.MPin ?? Settings.Decrypt("0000");
 
             }
             return mdl;
@@ -828,11 +828,11 @@ namespace B2BClasses
                         }
 
                         IsUpdate = false;
-                        var ExistingMpin = _context.tblCustomerBalence.Where(p => p.CustomerId == _CustomerId).FirstOrDefault();
+                        var ExistingMpin = _context.tblCustomerBalance.Where(p => p.CustomerId == _CustomerId).FirstOrDefault();
                         if (ExistingMpin == null)
                         {
-                            ExistingMpin = new tblCustomerBalence() { CustomerId = _CustomerId, CreditBalence = 0, WalletBalence = 0, MPin = Settings.Encrypt(mdl.MPin), ModifiedDt = DateTime.Now };
-                            _context.tblCustomerBalence.Add(ExistingMpin);
+                            ExistingMpin = new tblCustomerBalance() { CustomerId = _CustomerId, CreditBalance = 0, WalletBalance = 0, MPin = Settings.Encrypt(mdl.MPin), ModifiedDt = DateTime.Now };
+                            _context.tblCustomerBalance.Add(ExistingMpin);
                             _context.SaveChanges();
                         }
                         else
@@ -841,7 +841,7 @@ namespace B2BClasses
                             {
                                 ExistingMpin.MPin = Settings.Encrypt(mdl.MPin);
                                 ExistingMpin.ModifiedDt = DateTime.Now;
-                                _context.tblCustomerBalence.Update(ExistingMpin);
+                                _context.tblCustomerBalance.Update(ExistingMpin);
                                 _context.SaveChanges();
                             }
 

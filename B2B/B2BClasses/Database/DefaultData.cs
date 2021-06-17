@@ -31,8 +31,8 @@ namespace B2BClasses.Database
                 Address = "New Delhi",
                 ContactNo = "9873404402",
                 AlternateNo = "9873404402",                
-                //WalletBalence = 0,
-                //CreditBalence = 0,
+                //WalletBalance = 0,
+                //CreditBalance = 0,
                 CustomerType = enmCustomerType.Admin,
                 IsActive = true,
                
@@ -92,15 +92,15 @@ namespace B2BClasses.Database
             _modelBuilder.Entity<tblCustomerMaster>().HasData(CustomerMaster4);
             for (int i = 1; i <= TotalCustomer; i++)
             {
-                tblCustomerBalence customerBalence = new tblCustomerBalence()
+                tblCustomerBalance customerBalance = new tblCustomerBalance()
                 {
-                    CreditBalence = 1000000,
+                    CreditBalance = 1000000,
                     CustomerId = i,
                     MPin = "123456",
-                    WalletBalence = 1000000,
+                    WalletBalance = 1000000,
                     ModifiedDt = _CurrentDt
                 };
-                _modelBuilder.Entity<tblCustomerBalence>().HasData(customerBalence);
+                _modelBuilder.Entity<tblCustomerBalance>().HasData(customerBalance);
                 //IP Filteration
                 tblCustomerIPFilter CustomerIPFilter = new tblCustomerIPFilter()
                 {
@@ -167,10 +167,10 @@ namespace B2BClasses.Database
             roleMaster.Add(new tblRoleMaster() { Id = roleMaster.Count + 1, RoleName = "Search", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true, IsAdminRole = false });
             roleMaster.Add(new tblRoleMaster() { Id = roleMaster.Count + 1, RoleName = "Booking", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true, IsAdminRole = false });
             roleMaster.Add(new tblRoleMaster() { Id = roleMaster.Count + 1, RoleName = "Cancelation", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true, IsAdminRole = false });
-            roleMaster.Add(new tblRoleMaster() { Id = roleMaster.Count + 1, RoleName = "Balence", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true, IsAdminRole = false });
+            roleMaster.Add(new tblRoleMaster() { Id = roleMaster.Count + 1, RoleName = "Balance", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true, IsAdminRole = false });
             roleMaster.Add(new tblRoleMaster() { Id = roleMaster.Count + 1, RoleName = "Profile", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true, IsAdminRole = false });
             roleMaster.Add(new tblRoleMaster() { Id = roleMaster.Count + 1, RoleName = "Setting", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true, IsAdminRole = false });
-            roleMaster.Add(new tblRoleMaster() { Id = roleMaster.Count + 1, RoleName = "BalenceApproval", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true, IsAdminRole = true });
+            roleMaster.Add(new tblRoleMaster() { Id = roleMaster.Count + 1, RoleName = "BalanceApproval", CreatedBy = 1, CreatedDt = _CurrentDt, IsActive = true, IsAdminRole = true });
             _modelBuilder.Entity<tblRoleMaster>().HasData(roleMaster);
             _modelBuilder.Entity<tblRoleClaim>().HasData(roleClaims);
         }

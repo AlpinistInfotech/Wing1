@@ -50,19 +50,19 @@ namespace B2bApplication.Models
             CustomerMasterList = cm.FetchAllCustomer(IncludeAdmin:true,OnlyActive:false);
         }
 
-        public void SetWalletBalence(DBContext _context) {
-            var defaultBalance = _context.tblCustomerBalence.Where(p => p.CustomerId == CustomerId).FirstOrDefault();
+        public void SetWalletBalance(DBContext _context) {
+            var defaultBalance = _context.tblCustomerBalance.Where(p => p.CustomerId == CustomerId).FirstOrDefault();
             if (defaultBalance == null)
             {
-                _context.tblCustomerBalence.Add(new tblCustomerBalence() { CustomerId = CustomerId, CreditBalence = 0, ModifiedDt = DateTime.Now, MPin = Settings.Encrypt( "0000"), WalletBalence = 0 });
+                _context.tblCustomerBalance.Add(new tblCustomerBalance() { CustomerId = CustomerId, CreditBalance = 0, ModifiedDt = DateTime.Now, MPin = Settings.Encrypt( "0000"), WalletBalance = 0 });
                 _context.SaveChanges();
                 this.WalletBalance = 0;
                 this.CreditBalace = 0;
             }
             else
             {
-                this.WalletBalance = defaultBalance.WalletBalence;
-                this.CreditBalace = defaultBalance.CreditBalence;
+                this.WalletBalance = defaultBalance.WalletBalance;
+                this.CreditBalace = defaultBalance.CreditBalance;
             }
         }
 

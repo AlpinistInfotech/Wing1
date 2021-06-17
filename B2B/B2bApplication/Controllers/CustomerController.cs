@@ -103,7 +103,7 @@ namespace B2bApplication.Controllers
             int CustomerId = _currentUsers.CustomerId;
             mdlCustomerMasterWraper mdl = new mdlCustomerMasterWraper();
             mdl.LoadData(CustomerId, _customerMaster, _config);
-            mdl.SetWalletBalence(_context);
+            mdl.SetWalletBalance(_context);
             if (_currentUsers.CustomerType == enmCustomerType.Admin)
             {
                 mdl.LoadCustomer(_customerMaster);
@@ -124,7 +124,7 @@ namespace B2bApplication.Controllers
             }
             CustomerId = mdl.CustomerId;
             mdl.LoadData(CustomerId, _customerMaster,_config);
-            mdl.SetWalletBalence(_context);
+            mdl.SetWalletBalance(_context);
             if (_currentUsers.CustomerType == enmCustomerType.Admin)
             {
                 mdl.LoadCustomer(_customerMaster);
@@ -148,7 +148,7 @@ namespace B2bApplication.Controllers
             int.TryParse(Id, out CustomerId);
             mdlCustomerMasterWraper mdl = new mdlCustomerMasterWraper();
             mdl.LoadData(CustomerId, _customerMaster, _config);
-            mdl.SetWalletBalence(_context);            
+            mdl.SetWalletBalance(_context);            
             mdl.SetCountryState(ViewBag, _context);
             return View(mdl);
         }
@@ -290,7 +290,7 @@ namespace B2bApplication.Controllers
 
 
             mdl.SetCountryState(ViewBag, _context);
-            mdl.SetWalletBalence(_context);
+            mdl.SetWalletBalance(_context);
             return View(mdl);
         }
 
@@ -727,15 +727,15 @@ namespace B2bApplication.Controllers
 
                 //var ExistingData = _context.tblCustomerMaster.FirstOrDefault(p => p.Id == Convert.ToInt32(mdl.CustomerID));
                 //{
-                //    ExistingData.WalletBalence = mdl.creditDebit == 0 ? mdl.WalletAmt : 0 - mdl.WalletAmt;
+                //    ExistingData.WalletBalance = mdl.creditDebit == 0 ? mdl.WalletAmt : 0 - mdl.WalletAmt;
                 //    _context.tblCustomerMaster.Update(ExistingData);
                 //}
 
                 //await _context.SaveChangesAsync();
                 if (mdl.creditDebit == 0)
-                await  customerWallet.AddBalenceAsync(DateTime.Now, mdl.WalletAmt, enmTransactionType.WalletAmountUpdate, mdl.TransactionDetails, mdl.Remarks, 0);
+                await  customerWallet.AddBalanceAsync(DateTime.Now, mdl.WalletAmt, enmTransactionType.WalletAmountUpdate, mdl.TransactionDetails, mdl.Remarks, 0);
                 else
-                await customerWallet.DeductBalenceAsync(DateTime.Now, mdl.WalletAmt, enmTransactionType.WalletAmountUpdate, mdl.TransactionDetails, mdl.Remarks, 0);
+                await customerWallet.DeductBalanceAsync(DateTime.Now, mdl.WalletAmt, enmTransactionType.WalletAmountUpdate, mdl.TransactionDetails, mdl.Remarks, 0);
 
                 TempData["MessageType"] = (int)enmMessageType.Success;
                 TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
@@ -1077,7 +1077,7 @@ namespace B2bApplication.Controllers
                 if (mdl.Status == enmApprovalStatus.Approved)
                 {
                     customerWallet.CustomerId = (int)p.CustomerId;
-                    customerWallet.AddBalenceAsync(DateTime.Now, p.RequestedAmt, enmTransactionType.OnCreditUpdate, p.CreatedRemarks, mdl.Remarks,p.Id);
+                    customerWallet.AddBalanceAsync(DateTime.Now, p.RequestedAmt, enmTransactionType.OnCreditUpdate, p.CreatedRemarks, mdl.Remarks,p.Id);
                 }
             });
                     TempData["MessageType"] = (int)enmMessageType.Success;

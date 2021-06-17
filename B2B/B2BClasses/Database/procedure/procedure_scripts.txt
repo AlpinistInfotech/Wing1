@@ -19,7 +19,7 @@ if @spmode=0 -- search as per date
 begin
 set @dateto = DATEADD(D,1,@dateto)
 declare @current_ewallet_amt decimal(10,2)=0
-select  @current_ewallet_amt=WalletBalence from tblCustomerMaster with(nolock) where Id=@id
+select  @current_ewallet_amt=WalletBalance from tblCustomerMaster with(nolock) where Id=@id
 
 set @current_ewallet_amt=isnull(@current_ewallet_amt,0)
 

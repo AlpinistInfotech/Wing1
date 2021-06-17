@@ -18,8 +18,8 @@ namespace B2bApplication
         public  List<int>RoleId { get; }
         public enmCustomerType CustomerType { get; }
         public bool HaveClaim(enmDocumentMaster claimId);
-        public double WalletBalence { get; set; }
-        public double CreditBalence { get; set; }
+        public double WalletBalance { get; set; }
+        public double CreditBalance { get; set; }
     }
     public class CurrentUsers : ICurrentUsers
     {
@@ -31,8 +31,8 @@ namespace B2bApplication
         private readonly DBContext _context;
         private  enmCustomerType _CustomerType;
 
-        private double? _WalletBalence;
-        private double? _CreditBalence;
+        private double? _WalletBalance;
+        private double? _CreditBalance;
 
         public CurrentUsers(IHttpContextAccessor httpContext, DBContext context)
         {
@@ -54,20 +54,20 @@ namespace B2bApplication
         }
 
 
-        private void SetWalletBalence()
+        private void SetWalletBalance()
         {
-            var defaultBalance=_context.tblCustomerBalence.Where(p => p.CustomerId == _CustomerId).FirstOrDefault();
+            var defaultBalance=_context.tblCustomerBalance.Where(p => p.CustomerId == _CustomerId).FirstOrDefault();
             if (defaultBalance == null)
             {
-                _context.tblCustomerBalence.Add(new tblCustomerBalence() { CustomerId = _CustomerId, CreditBalence = 0, ModifiedDt = DateTime.Now, MPin = "0000", WalletBalence = 0 });
+                _context.tblCustomerBalance.Add(new tblCustomerBalance() { CustomerId = _CustomerId, CreditBalance = 0, ModifiedDt = DateTime.Now, MPin = "0000", WalletBalance = 0 });
                 _context.SaveChanges();
-                this._WalletBalence = 0;
-                this._CreditBalence = 0;
+                this._WalletBalance = 0;
+                this._CreditBalance = 0;
             }
             else
             {
-                this._WalletBalence = defaultBalance.WalletBalence;
-                this._CreditBalence = defaultBalance.CreditBalence;
+                this._WalletBalance = defaultBalance.WalletBalance;
+                this._CreditBalance = defaultBalance.CreditBalance;
             }
 
         }
@@ -75,8 +75,8 @@ namespace B2bApplication
         public string Name { get { return _Name; } }
         public int CustomerId { get { return _CustomerId; } }
         public int UserId { get { return _UserId; } }
-        public double WalletBalence { get { if (_WalletBalence == null) { SetWalletBalence(); } return _WalletBalence.Value; } set { _WalletBalence = value; } }
-        public double CreditBalence { get { if (_CreditBalence == null) { SetWalletBalence(); } return _CreditBalence.Value; } set { _CreditBalence = value; } }
+        public double WalletBalance { get { if (_WalletBalance == null) { SetWalletBalance(); } return _WalletBalance.Value; } set { _WalletBalance = value; } }
+        public double CreditBalance { get { if (_CreditBalance == null) { SetWalletBalance(); } return _CreditBalance.Value; } set { _CreditBalance = value; } }
         public enmCustomerType CustomerType { get { return _CustomerType; } }
 
         public List<int> RoleId

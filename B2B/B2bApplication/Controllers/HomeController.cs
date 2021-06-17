@@ -267,8 +267,8 @@ namespace B2bApplication.Controllers
                 }
                 
                 customerWallet.CustomerId = _customerId;
-                double Walletbalence=await customerWallet.GetBalenceAsync();
-                if (Walletbalence < mdl.NetFare)
+                double WalletBalance=await customerWallet.GetBalanceAsync();
+                if (WalletBalance < mdl.NetFare)
                 {                    
                     TempData["mdl_"] = s;
                     TempData["MessageType"] = (int)enmMessageType.Warning;
@@ -278,7 +278,7 @@ namespace B2bApplication.Controllers
                 }
                 else
                 {
-                    await customerWallet.DeductBalenceAsync(DateTime.Now ,mdl.TotalFare,enmTransactionType.TicketBook, string.Concat("Booking Ids", string.Join( ',',mdl.FareQuotResponse.Select(p=>p.BookingId))) );
+                    await customerWallet.DeductBalanceAsync(DateTime.Now ,mdl.TotalFare,enmTransactionType.TicketBook, string.Concat("Booking Ids", string.Join( ',',mdl.FareQuotResponse.Select(p=>p.BookingId))) );
                 }
 
                 //if Price not chnage then Book the Flight

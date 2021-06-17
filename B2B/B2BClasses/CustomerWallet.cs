@@ -15,9 +15,9 @@ namespace B2BClasses
     {
         int CustomerId { get; set; }
 
-        Task AddBalenceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "",int requestid=0);
-        Task DeductBalenceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "", int requestid = 0);
-        Task<double> GetBalenceAsync();
+        Task AddBalanceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "",int requestid=0);
+        Task DeductBalanceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "", int requestid = 0);
+        Task<double> GetBalanceAsync();
     }
 
     public class CustomerWallet : ICustomerWallet
@@ -57,14 +57,14 @@ namespace B2BClasses
             return Exitingbalance;
         }
 
-        public async Task<double> GetBalenceAsync()
+        public async Task<double> GetBalanceAsync()
         {
             double CustomerBalance = 0;
-            CustomerBalance = (await _context.tblCustomerBalence.Where(p => p.CustomerId == _CustomerId).FirstOrDefaultAsync())?.WalletBalence ?? 0.0;
+            CustomerBalance = (await _context.tblCustomerBalance.Where(p => p.CustomerId == _CustomerId).FirstOrDefaultAsync())?.WalletBalance ?? 0.0;
             return GetCustomerBalanceAmt(CustomerBalance);
         }
 
-        public async Task DeductBalenceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "",int requestid = 0)
+        public async Task DeductBalanceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "",int requestid = 0)
         {
             bool CustomerFound = false;
             List<int> UnlimitedWalletBalance = GetFixWalletBalanceCustomer();
@@ -74,14 +74,14 @@ namespace B2BClasses
             }
             try
             {
-                var customer = _context.tblCustomerBalence.FirstOrDefault(p => p.CustomerId == _CustomerId);
+                var customer = _context.tblCustomerBalance.FirstOrDefault(p => p.CustomerId == _CustomerId);
                 if (customer == null)
                 {
                     throw new Exception("Invalid Customer");
                 }
                 if (!CustomerFound)
                 {
-                    if (Amount > customer.WalletBalence)
+                    if (Amount > customer.WalletBalance)
                     {
                         throw new Exception("Insufficient fund");
                     }
@@ -99,9 +99,9 @@ namespace B2BClasses
                 });
                 if (!CustomerFound)
                 {
-                    customer.WalletBalence = customer.WalletBalence - Amount;
+                    customer.WalletBalance = customer.WalletBalance - Amount;
                 }
-                _context.tblCustomerBalence.Update(customer);
+                _context.tblCustomerBalance.Update(customer);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -111,7 +111,7 @@ namespace B2BClasses
         }
 
 
-        public async Task AddBalenceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "", int requestid = 0)
+        public async Task AddBalanceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "", int requestid = 0)
         {
             bool CustomerFound = false;
             List<int> UnlimitedWalletBalance = GetFixWalletBalanceCustomer();
@@ -121,7 +121,7 @@ namespace B2BClasses
             }
             try
             {
-                var customer = _context.tblCustomerBalence.FirstOrDefault(p => p.CustomerId == _CustomerId);
+                var customer = _context.tblCustomerBalance.FirstOrDefault(p => p.CustomerId == _CustomerId);
                 if (customer == null)
                 {
                     throw new Exception("Invalid Customer");
@@ -139,9 +139,9 @@ namespace B2BClasses
                 });
                 if (!CustomerFound)
                 {
-                    customer.WalletBalence = customer.WalletBalence + Amount;
+                    customer.WalletBalance = customer.WalletBalance + Amount;
                 }
-                _context.tblCustomerBalence.Update(customer);
+                _context.tblCustomerBalance.Update(customer);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
