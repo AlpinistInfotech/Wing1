@@ -2,6 +2,11 @@
 
 @using B2BClasses.Services.Enums
 
+@{
+    ViewData["Title"] = enmDocumentMaster.Add_Wallet.GetDocumentDetails().Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
 <div>
     <div class="row">
         <div class="col-md-12">
@@ -23,123 +28,164 @@
 
                     <div class="col-md-2">
                         <div class="form-group">
-                            <button class="btn btn-info" type="submit" name="submittype" value="LoadData">Load Data</button>
-                           </div>
+
+                            <button class="btn btn-app btn-success ace-icon fa fa-refresh bigger-180" type="submit" name="submittype" value="LoadData">
+                            </button>
                         </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label asp-for="Status"></label>
-                                    <select asp-for="Status" class="form-control select2">
-
-                                        <option value="true">Active</option>
-                                        <option value="false">De-Active</option>
-                                    </select>
-                                    <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
 
 
-                                </div>
+                </div>
+
+
+
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="UserName"></label>
+                            <input asp-for="UserName" class="form-control" />
+                            <span asp-validation-for="UserName" class="text-danger"></span>
+
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+
+                            <label asp-for="Password"></label>
+                            <input asp-for="Password" class="form-control" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Email"></label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+
+                            <label asp-for="MobileNo"></label>
+                            <input asp-for="MobileNo" class="form-control" />
+                            <span asp-validation-for="MobileNo" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Status" class="col-sm-8 control-label"></label>
+                            <div class="col-sm-4">
+                                <label class="input-group-addon input-group-addon-custom">
+                                    <input id="chkIsActive" class="ace ace-switch" type="checkbox" asp-for="Status" />
+                                    <span class="lbl" data-lbl="Yes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;no"></span>
+                                </label>
+                                <span asp-validation-for="Status" class="text-danger"></span>
                             </div>
 
 
                         </div>
+                    </div>
 
-
-
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label asp-for="UserName"></label>
-                                    <input asp-for="UserName" class="form-control" />
-                                    <span asp-validation-for="UserName" class="text-danger"></span>
-
-
-                                </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="ForcePasswordChange" class="col-sm-8 control-label"></label>
+                            <div class="col-sm-4">
+                                <label class="input-group-addon input-group-addon-custom">
+                                    <input id="chkIsActive" class="ace ace-switch" type="checkbox" asp-for="ForcePasswordChange" />
+                                    <span class="lbl" data-lbl="Yes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;no"></span>
+                                </label>
+                                <span asp-validation-for="ForcePasswordChange" class="text-danger"></span>
                             </div>
 
-                            <div class="col-md-6">
-                                <div class="form-group">
-
-                                    <label asp-for="Password"></label>
-                                    <input asp-for="Password" class="form-control" />
-                                    <span asp-validation-for="Password" class="text-danger"></span>
-                                </div>
-                            </div>
 
                         </div>
+                    </div>
+
+                </div>
 
 
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="clearfix form-actions">
+                            <div class="col-md-offset-3 col-md-9">
+                                <button class="btn btn-info" type="submit">
+                                    <i class="ace-icon fa fa-check bigger-110"></i>
+                                    Submit
+                                </button>
 
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="clearfix form-actions">
-                                    <div class="col-md-offset-3 col-md-9">
-                                        <button class="btn btn-info" type="submit">
-                                            <i class="ace-icon fa fa-check bigger-110"></i>
-                                            Submit
-                                        </button>
-
-                                        &nbsp; &nbsp; &nbsp;
-                                        <button class="btn" type="reset">
-                                            <i class="ace-icon fa fa-undo bigger-110"></i>
-                                            Reset
-                                        </button>
-                                    </div>
-                                </div>
+                                &nbsp; &nbsp; &nbsp;
+                                <button class="btn" type="reset">
+                                    <i class="ace-icon fa fa-undo bigger-110"></i>
+                                    Reset
+                                </button>
                             </div>
                         </div>
+                    </div>
+                </div>
                 <input type="hidden" asp-for="userid" />
-</form>
+            </form>
         </div>
     </div>
 
+    <div class="card-body">
+        <table id="dynamic-table" class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Edit</th>
+                    <th>Customer Name (Code)</th>
+                    <th>User Name</th>
+                    <th>Password</th>
 
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card card-primary card-outline card-outline-tabs">
+                    <th>Email ID</th>
+                    <th>Mobile No.</th>
+                    <th>Status</th>
+                    <th>Is Force Password Change</th>
+                </tr>
+            </thead>
+            <tbody>
 
-                <div class="card-body">
-                    <table id="tblUserDetails" class="table table-bordered table-hover">
-                        <thead>
-                            <tr>
-                                <th>Edit</th>
-                                <th>Customer Name (Code)</th>
-                                <th>User Name</th>
-                                <th>Password</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            
 
-                            @for (int i = 0; i < (Model.UserMasters?.Count??0); i++)
-                            {
-                            <tr>
-                                <td>
-                                    <a href="/Customer/AddUser/@Model.UserMasters[i].Id" class="btn btn-info" data-toggle="tooltip" title="Edit Record !">
-                                        Edit
-                                    </a>
-                                    </td>
-                                <td>@Model.UserMasters[i].tblCustomerMaster.CustomerName (@Model.UserMasters[i].tblCustomerMaster.Code)</td>
-                                <td>@Model.UserMasters[i].UserName</td>
-                                <td>@Model.UserMasters[i].Password</td>
-                                <td>@(Model.UserMasters[i].IsActive==true?"Active":"DeActive")</td>
+                @for (int i = 0; i < (Model.UserMasters?.Count ?? 0); i++)
+                {
+                    <tr>
+                        <td>
+                            <a href="/Customer/AddUser/@Model.UserMasters[i].Id" class="btn btn-info" data-toggle="tooltip" title="Edit Record !">
+                                Edit
+                            </a>
+                        </td>
+                        <td>@Model.UserMasters[i].tblCustomerMaster.CustomerName (@Model.UserMasters[i].tblCustomerMaster.Code)</td>
+                        <td>@Model.UserMasters[i].UserName</td>
+                        <td>@Model.UserMasters[i].Password</td>
+                        <td>@Model.UserMasters[i].Email</td>
+                        <td>@Model.UserMasters[i].Phone</td>
 
-                            </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                        <td>@(Model.UserMasters[i].IsActive==true?"Active":"DeActive")</td>
+                        <td>@(Model.UserMasters[i].ForcePasswordChange==true?"Yes":"No")</td>
 
-            </div>
-        </div>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>
 
 @section Scripts {
-    <script>
-        $(document).ready(function () {
-            $("#tblUserDetails").DataTable({ "ajax": null });
-        });
-    </script>
+    @(await Html.PartialAsync("_dateTableScriptPartial",8))
 }

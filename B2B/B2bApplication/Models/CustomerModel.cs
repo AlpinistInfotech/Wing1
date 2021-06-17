@@ -14,6 +14,7 @@ using B2BClasses.Models;
 using Microsoft.Extensions.Configuration;
 using System.IO;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel;
 
 namespace B2bApplication.Models
 {
@@ -177,12 +178,6 @@ namespace B2bApplication.Models
         [DataType(DataType.EmailAddress)]
         public string Email{ set; get; }
 
-
-        [Required]
-        [MaxLength(150)]
-        [Display(Name = "Address")]
-        public string Address { get; set; }
-
         [Required]
         [MaxLength(10)]
         [Display(Name = "Mobile No.")]
@@ -190,6 +185,13 @@ namespace B2bApplication.Models
         [RegularExpression("^[0-9]{10}$", ErrorMessage = "Invalid {0}")]
         public string MobileNo { get; set; }
 
+
+        [Required]
+        [MaxLength(150)]
+        [Display(Name = "Address")]
+        public string Address { get; set; }
+
+        
         [MaxLength(10)]
         [Display(Name = "Alternate Mobile No.")]
         [DataType(DataType.PhoneNumber)]
@@ -223,7 +225,23 @@ namespace B2bApplication.Models
         [Display(Name = "Password")]
         public string Password { get; set; }
 
+        [MaxLength(80)]
+        [DefaultValue("")]
+        [Display(Name = "Email ID")]
+        [DataType(DataType.EmailAddress)]
+        public string Email { set; get; } = "";
+
+
+        [MaxLength(10)]
+        [DefaultValue("")]
+        [Display(Name = "Mobile No.")]
+        [DataType(DataType.PhoneNumber)]
+        [RegularExpression("^[0-9]{10}$", ErrorMessage = "Invalid {0}")]
+        public string MobileNo { get; set; } = "";
+
         public bool Status { get; set; } = true;
+
+        public bool ForcePasswordChange { get; set; } = true;
 
         public int userid { get; set; }
         public List<tblUserMaster> UserMasters { get; set; }
