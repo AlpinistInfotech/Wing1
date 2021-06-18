@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace B2BClasses.Models
 {
@@ -144,8 +145,10 @@ namespace B2BClasses.Models
         [Compare(nameof(Password))]
         [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; }
+
         [Display(Name = "Is Active")]
         public bool IsActive { get; set; }
+
         [Display(Name = "Force Password Change")]
         public bool ForcePasswordChange { get; set; }
         [Required]
@@ -162,13 +165,18 @@ namespace B2BClasses.Models
         public DateTime BlockStartTime { get; set; }
         [Display(Name = "Blocked EndDate")]
         public DateTime BlockEndTime { get; set; }
+
+        [Display(Name = "Customer")]
         public int? CustomerId { get; set; }
         [Display(Name = "Last Login")]
         public DateTime lastLogin { get; set; }
-        public List<int> Roles { get; set; }
-        
 
-    }
+        [Display(Name = "Role")]
+        public List<int> Roles { get; set; }
+
+        public string Oldpassword { get; set; }
+
+     }
 
     
     public class mdlBanks 

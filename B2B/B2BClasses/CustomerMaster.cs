@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 namespace B2BClasses
 {
     
+    
     public interface ICustomerMaster
     {
         int CustomerId { get; set; }
@@ -31,6 +32,7 @@ namespace B2BClasses
         mdlPan FetchPan();
         mdlCustomerSetting FetchSetting();
         List<mdlUserMaster> FetchUserMasters();
+        mdlUserMaster FetchUserMasters(int userId);
         void RollbackTransaction();
         Task<bool> SaveBankDetailsAsync(mdlBanks mdl);
         Task<bool> SaveBasicDetailsAsync(mdlCustomerMaster mdl);
@@ -211,6 +213,43 @@ namespace B2BClasses
             }
             return mdl;
         }
+
+        public mdlUserMaster FetchUserMasters(int userId)
+        {
+
+            mdlUserMaster mdl = new mdlUserMaster();
+            if (userId == 0) return mdl;
+
+            if (!_IsCurrentCustomerPermission)
+            {
+                return mdl;
+            }
+            if (_DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_UserDetail_Read))
+            {
+                mdl = (_context.tblUserMaster.Where(p => p.CustomerId == _CustomerId && p.Id == userId)
+                    .Select(p => new mdlUserMaster
+                    {
+                        UserId = p.Id,
+                        UserName = p.UserName,
+                        Password = p.Password,
+                        ConfirmPassword = p.Password,
+                        Oldpassword=p.Password,
+                        IsActive = p.IsActive,
+                        ForcePasswordChange = p.ForcePasswordChange,
+                        Email = p.Email,
+                        Phone = p.Phone,
+                        IsBlocked = p.IsBlocked,
+                        IsPrimary = p.IsPrimary,
+                        BlockStartTime = p.BlockStartTime,
+                        BlockEndTime = p.BlockEndTime,
+                        CustomerId = p.CustomerId,
+                        lastLogin = p.LastLogin,
+                        Roles = p.tblUserRole.Select(p => p.Role.Value).ToList()
+                    })).FirstOrDefault();
+            }
+            return mdl;
+        }
+
 
         public mdlBanks FetchBanks()
         {
@@ -904,7 +943,7 @@ namespace B2BClasses
                                     saveDataIPFilter.tblCustomerIPFilterDetails.Add(ipAdd);
                                 }
                             }
-                            
+
                         }
                         if (!IsUpdate)
                         {

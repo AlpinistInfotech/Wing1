@@ -206,61 +206,40 @@ namespace B2bApplication.Models
         
     }
 
-    public class mdlAddCustomerUser
-    {
+    //public class mdlAddCustomerUser : mdlUserMaster
+    //{
 
-        [Required]
-        [MaxLength(10)]
-        //[Remote(action: "CustomerCodeValidate", controller: "Customer", ErrorMessage = "Invalid Company Code")]
-        [Display(Name = "Customer Code")]
-        public string CustomerID { set; get; }
-
-        //[Required]
-        [MaxLength(50)]
-        [Display(Name = "User Name")]
-        public string UserName { set; get; }
-
-       
-       // [Required]
-        [MaxLength(50)]
-        [DataType(DataType.Text)]
-        [Display(Name = "Password")]
-        public string Password { get; set; }
-
-        [DataType(DataType.Password)]
-        [Compare(nameof(Password), ErrorMessage = "Password & confirm Password do not match")]
-        public string ConfirmPassword { get; set; }
+    //    [MaxLength(80)]
+    //    [DefaultValue("")]
+    //    [Display(Name = "Email ID")]
+    //    [DataType(DataType.EmailAddress)]
+    //    public string Email { set; get; }
 
 
-        [MaxLength(80)]
-        [DefaultValue("")]
-        [Display(Name = "Email ID")]
-        [DataType(DataType.EmailAddress)]
-        public string Email { set; get; }
+    //    [MaxLength(10)]
+    //    [DefaultValue("")]
+    //    [Display(Name = "Mobile No.")]
+    //    [DataType(DataType.PhoneNumber)]
+    //    [RegularExpression("^[0-9]{10}$", ErrorMessage = "Invalid {0}")]
+    //    public string MobileNo { get; set; }
+
+    //    public bool Status { get; set; } = true;
+
+    //    public bool ForcePasswordChange { get; set; } = true;
+
+    //    public int userid { get; set; }
+
+    //    [Display(Name = "Role")]
+    //    public bool IsAllRole { get; set; } = true;
+
+    //    public List<int> RoleId { get; set; } 
+
+    //    public MultiSelectList _RoleMaster { get; set; }
 
 
-        [MaxLength(10)]
-        [DefaultValue("")]
-        [Display(Name = "Mobile No.")]
-        [DataType(DataType.PhoneNumber)]
-        [RegularExpression("^[0-9]{10}$", ErrorMessage = "Invalid {0}")]
-        public string MobileNo { get; set; }
-
-        public bool Status { get; set; } = true;
-
-        public bool ForcePasswordChange { get; set; } = true;
-
-        public int userid { get; set; }
-
-        [Display(Name = "Role")]
-        public bool IsAllRole { get; set; } = true;
-
-        public MultiSelectList _RoleMaster { get; set; }
-
-
-        public List<tblUserMaster> UserMasters { get; set; }
+    //    public List<tblUserMaster> UserMasters { get; set; }
       
-    }
+    //}
 
     public class mdlCustomerMarkup
     {
