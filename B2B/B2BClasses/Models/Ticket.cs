@@ -11,7 +11,7 @@ namespace B2BClasses.Models
         [Required]
         [Display(Name = "Customer Name")]
         [StringLength(200, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 3)]
-        [RegularExpression("[a-zA-Z0-9/.,\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]]
+        [RegularExpression("[a-zA-Z0-9/.,\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         public int Id { get; set; }
         [Required]
         [Display(Name = "Customer")]
