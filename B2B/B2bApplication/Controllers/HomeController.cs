@@ -45,7 +45,7 @@ namespace B2bApplication.Controllers
         {
             DateTime TodayFromDt = Convert.ToDateTime(DateTime.Now.ToString("dd-MMM-yyyy"));
             DateTime TodayToDt = TodayFromDt.AddDays(1);
-            ViewBag.FlightSearch = _context.tblFlightBookingMaster.Where(p => p.CustomerId == _customerId && p.CreatedDt>= TodayFromDt && p.CreatedDt < TodayToDt).Count();
+            ViewBag.FlightSearch = _context.tblFlightBookingMaster.Where(p => p.CustomerId == _customerId && p.CreatedDt >= TodayFromDt && p.CreatedDt < TodayToDt).Count();
             ViewBag.FlightBook = _context.tblFlightBookingMaster.Where(p => p.CustomerId == _customerId && p.BookingStatus== enmBookingStatus.Booked && p.CreatedDt >= TodayFromDt && p.CreatedDt < TodayToDt).Count();
 
             DateTime WeekFromDt = TodayFromDt.AddDays(0- TodayFromDt.DayOfWeek);

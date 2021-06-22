@@ -23,7 +23,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <button class="btn btn-info" type="Submit" value="Details">Details</button>
+                        <button class="seg-details-btn" type="Submit" value="Details">Details +</button>
                     </div>
                 </div>
                 <div class="col-sm-7">
@@ -33,7 +33,7 @@
                                 @ViewData["FlightFrom"]
                             </div>
                             <div class="row">
-                                @Model.Segment.FirstOrDefault()?.DepartureTime.ToString("HH:mm")
+                                <b> @Model.Segment.FirstOrDefault()?.DepartureTime.ToString("HH:mm")</b>
                             </div>
                             <div class="row">
                                 @Model.Segment.FirstOrDefault()?.DepartureTime.ToString("dd-MMM")
@@ -56,7 +56,7 @@
                                 @ViewData["FlightTo"]
                             </div>
                             <div class="row">
-                                @Model.Segment.LastOrDefault()?.ArrivalTime.ToString("HH:mm")
+                                <b> @Model.Segment.LastOrDefault()?.ArrivalTime.ToString("HH:mm")</b>
                             </div>
                             <div class="row">
                                 @Model.Segment.LastOrDefault()?.ArrivalTime.ToString("dd-MMM")
@@ -66,19 +66,20 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-4 col-md-offset-1">
-                <div class="col-sm-8">
+            <div class="col-sm-5">
+                <div class="col-sm-12 seg-btnbx">
                     @foreach (var totalpricelist in Model.TotalPriceList)
                     {
-                        <div class="row">
+                    <div class="row">
 
-                            <label>
-                                <input type="radio" name="@ViewBag.JourneyType1" value="@totalpricelist.ResultIndex" data-price="@totalpricelist.TotalPrice" class="ace ace-switch ace-switch-4">
-                                <span class="lbl middle"></span>
-                                <small>@(totalpricelist.TotalPrice.ToString("C", nfi))</small>
-                            </label>
-                        </div>
+                        <label>
+                            <input type="radio" name="@ViewBag.JourneyType1" value="@totalpricelist.ResultIndex" data-price="@totalpricelist.TotalPrice" class="ace ace-switch ace-switch-4">
+                            <span class="lbl middle"></span>
+                            <b>@(totalpricelist.TotalPrice.ToString("C", nfi))</b>
+                        </label>
                         <span class="label label-danger arrowed-in">@totalpricelist.ADULT.CabinClass -@totalpricelist.ADULT.ClassOfBooking</span>
+                    </div>
+                        
                     }
 
                 </div>

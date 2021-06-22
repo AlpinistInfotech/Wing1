@@ -166,3 +166,65 @@ body {*/
 .bg-warning1 {
     background-color: #ffc107 !important;
 }
+#divFixedBook {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    z-index: 9999;
+    width: 100%;
+    background: #f5f5f5;
+    box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, .2);
+    height: 65px;
+}
+.widget-box .form-actions {margin-bottom: 0px!important; margin-top: 0px!important;}
+.totalamt #lblTotalAmount {
+    font-size: 15px;
+}
+.totalamt b{
+    font-size: 15px;
+    font-weight: normal;
+    margin-top: 20px;
+    display: inline-block;
+}
+.totalamt button{
+    margin-top: 12px;
+}
+.searchbx {
+    z-index: 1025;
+    left: 0;
+    padding: 0;
+}
+.searchbx .widget-box {
+    margin:0;
+   background:#fff;
+}
+    .searchbx button {
+        float: right;
+        margin-right: 28px;
+        margin-top: 20px;
+        padding: 7px 40px;
+    }
+    .searchbx .widget-main {
+        padding: 0 12px 10px 12px;
+    }
+    .searchbx .widget-main .row .form-group {
+        margin-bottom: 5px!important;
+    }
+.resultbx .widget-box {
+    border: 1px solid #d0d0d0 !important;
+    margin: 5px 0 !important;
+    box-shadow: none !important;
+}
+.resultbx .seg-details-btn {
+    background: #fff;
+    color: #eb8040;
+    border: 1px solid #d4d4d4;
+}
+
+.resultbx .form-actions {
+    border-top: none !important;
+    padding: 10px 20px 10px;
+}
+.resultbx .seg-btnbx label,.resultbx .seg-btnbx .label {
+    display: inline-block;
+}
