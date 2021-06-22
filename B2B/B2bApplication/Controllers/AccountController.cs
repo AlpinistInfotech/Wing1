@@ -2,6 +2,7 @@
 using B2BClasses.Database;
 using B2BClasses.Models;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -47,9 +48,10 @@ namespace B2bApplication.Controllers
                     {
                         userClaims.Add(new Claim(nameof(usr), usr.ToString()));
                     }
-                    var grandmaIdentity = new ClaimsIdentity(userClaims, "User Identity");
+                    var grandmaIdentity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme);
                     var userPrincipal = new ClaimsPrincipal(new[] { grandmaIdentity });
-                    await HttpContext.SignInAsync(userPrincipal);
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, userPrincipal);
+
                     if (!string.IsNullOrEmpty(ReturnUrl))
                     {
                         return LocalRedirect(ReturnUrl);
@@ -71,8 +73,14 @@ namespace B2bApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync();
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login");
+        }
+
+
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     }
 

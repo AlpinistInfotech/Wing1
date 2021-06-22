@@ -97,7 +97,7 @@ namespace B2bApplication.Controllers
         #region ******************Customer Master *************************
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Policy =nameof(enmDocumentMaster.CustomerDetail))]
         public IActionResult CustomerDetail(string Id)
         {
             int CustomerId = _currentUsers.CustomerId;

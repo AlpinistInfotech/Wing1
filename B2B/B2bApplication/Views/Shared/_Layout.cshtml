@@ -127,7 +127,7 @@
 
     <script src="~/assets/js/bootstrap.min.js"></script>
 
-    <!-- page specific plugin scripts -->    
+    <!-- page specific plugin scripts -->
     <script src="~/assets/js/select2.min.js"></script>
     <script src="~/assets/js/jquery-ui.min.js"></script>
     <!--[if lte IE 8]>
@@ -220,5 +220,19 @@
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>*@
     @await RenderSectionAsync("Scripts", required: false)
+    <script src="~/js/site.js"></script>
+    <script>
+        var mustAcceptCookies = false;
+    </script>
+    @{
+        var consentFeature = Context.Features.Get<Microsoft.AspNetCore.Http.Features.ITrackingConsentFeature>();
+        if (!consentFeature?.CanTrack ?? false)
+        {
+            <script>
+                mustAcceptCookies = true;
+            </script>
+        }
+    }
+
 </body>
 </html>
