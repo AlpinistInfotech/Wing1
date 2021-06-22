@@ -14,7 +14,7 @@ namespace B2BClasses.Database
         public int Id { get; set; }
         public int CustomerId { get; set; }
         public int TicketCategory { get; set; }
-        public int TicketId { get; set; }
+        public int TicketMasterId { get; set; }
         public enmTicketStatus TicketStatus { get; set; }
         public enmTicketSubStatus TicketSubStatus { get; set; }
         public string Reason { get; set; }
@@ -27,7 +27,8 @@ namespace B2BClasses.Database
         public string ClosedRemarks { get; set; }
         public DateTime ClosedDate { get; set; }
         public int EstimatedTime { get; set; }
-        public DateTime EstimatedCloseTime { get; set; }
+        public int ActualTime { get; set; }
+        public DateTime EstimatedCloseTime { get; set; }        
         [InverseProperty("tblTicket")]
         public ICollection<tblTicketDetails> tblTicketDetails { get; set; }
     }

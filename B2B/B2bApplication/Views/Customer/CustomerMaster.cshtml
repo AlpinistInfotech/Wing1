@@ -24,6 +24,7 @@
         <div class="space"></div>
 
         <form class="form-horizontal" action="@Url.Action()" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken();
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="tabbable">
                 <ul class="nav nav-tabs padding-16">
