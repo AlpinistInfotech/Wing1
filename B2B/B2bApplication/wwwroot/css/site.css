@@ -240,3 +240,26 @@ body {*/
 .resultbx .seg-btnbx label,.resultbx .seg-btnbx .label {
     display: inline-block;
 }
+.resultbx .stop-arrow i {
+    font-size: 27px;
+    position: relative;
+    color:#585858;
+}
+    .resultbx .stop-arrow i span {
+        position: absolute;
+        left: 2px;
+        top: 11px;
+        width: 4px;
+        height: 4px;
+        background: #fff;
+        border-radius: 50%;
+    }
+    .resultbx .stop-arrow i span:first-child {
+        left: 2px;
+    }
+    .resultbx .stop-arrow i span:nth-child(2) {
+        left: 8px;
+    }
+    .resultbx .stop-arrow i span:nth-child(3) {
+        left: 14px;
+    }

@@ -39,12 +39,12 @@
                                 @Model.Segment.FirstOrDefault()?.DepartureTime.ToString("dd-MMM")
                             </div>
                         </div>
-                        <div class="col-sm-4 center">
+                        <div class="col-sm-4 center stop-arrow">
                             <div class="row">
-                                <i class="fa fa-arrow-right"></i>
+                                <i class="fa fa-long-arrow-right"><span></span><span></span><span></span></i>
                                 @for (int i = 1; i < Model.Segment.Count; i++)
                                 {
-                                    <i class="fa fa-arrow-from-left"></i>
+                                    <i class="fa fa-long-arrow-left"></i>
                                 }
                             </div>
                             <div class="row">
