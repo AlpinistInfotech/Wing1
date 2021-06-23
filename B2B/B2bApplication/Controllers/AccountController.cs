@@ -43,6 +43,7 @@ namespace B2bApplication.Controllers
                     userClaims.Add(new Claim("_CustomerId", userMaster.CustomerId.ToString()));
                     userClaims.Add(new Claim("_Name", userMaster.UserName.ToString()));
                     userClaims.Add(new Claim("_CustomerType", account.customerType.ToString()));
+                   //userClaims.Add(new Claim("CustomerDetail", "CustomerDetail"));
                     
                     foreach (var usr in userRoles)
                     {

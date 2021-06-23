@@ -67,6 +67,10 @@ namespace B2bApplication.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        
+
+
+
 
         [Authorize]
         public async Task<dynamic> GetMenuAsync([FromServices]ICurrentUsers currentUsers,[FromServices] IAccount account)

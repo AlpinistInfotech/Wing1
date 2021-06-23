@@ -96,6 +96,20 @@ namespace B2bApplication.Controllers
 
         #region ******************Customer Master *************************
 
+
+        public mdlCustomerMasterWraper CustomerMasterDetail(string Id)
+        {
+            int CustomerId = _currentUsers.CustomerId;
+            mdlCustomerMasterWraper mdl = new mdlCustomerMasterWraper();
+            mdl.LoadData(CustomerId, _customerMaster, _config);
+            mdl.SetWalletBalance(_context);
+            if (_currentUsers.CustomerType == enmCustomerType.Admin)
+            {
+                mdl.LoadCustomer(_customerMaster);
+            }
+            return mdl;
+        }
+
         [HttpGet]
         [Authorize(Policy =nameof(enmDocumentMaster.CustomerDetail))]
         public IActionResult CustomerDetail(string Id)
