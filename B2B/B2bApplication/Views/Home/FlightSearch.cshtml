@@ -29,7 +29,7 @@
                         <input type="hidden" asp-for="FlightSearchWraper.CabinClass" />
                         <div class="row">
 
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-2">
                                 <label for="OriginFrom"><b>From</b></label>
                                 <div class="row">
                                     <div class="col-sm-11">
@@ -44,7 +44,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-2">
                                 <label for="OriginTo"><b>To</b></label>
                                 <div class="row">
                                     <div class="col-sm-11">
@@ -59,23 +59,23 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-1">
                                 <label for="id-date-picker-1"><b>Journey Type</b></label>
                                 <div class="row">
-                                    <div class="col-sm-11">
+                                    <div class="col-sm-12">
                                         <div class="form-group">
                                             <select id="JourneyType" asp-for="FlightSearchWraper.JourneyType" class="form-control" data-placeholder="Journey Type">
-                                                <option value="1">OneWay </option>
+                                                <option value="1">Oneway </option>
                                                 <option value="2">Return </option>
                                             </select>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-2">
                                 <label for="id-date-picker-1"><b>Travel Date</b></label>
                                 <div class="row">
-                                    <div class="col-sm-11">
+                                    <div class="col-sm-12">
                                         <div class="input-daterange input-group">
                                             <input type="text" class="input-sm form-control" id="DepartureDt" asp-for="FlightSearchWraper.DepartureDt" asp-format="{0:dd-MMM-yyyy}" autocomplete="off" />
                                             <span class="input-group-addon">
@@ -86,10 +86,10 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="form-group col-md-3">
+
+
+                            <div class="form-group col-md-1">
                                 <label for="Adult"><b>Adult</b></label>
                                 <div class="row">
 
@@ -107,7 +107,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-1">
                                 <label for="Child"><b>Child</b></label>
                                 <div class="row">
 
@@ -124,10 +124,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-1">
                                 <label for="Infant"><b>Infant</b></label>
                                 <div class="row">
-                                    
+
                                     <div class="col-sm-11">
                                         <div class="form-group">
                                             <select id="Infant" asp-for="FlightSearchWraper.InfantCount" class="form-control" data-placeholder="Infant">
@@ -141,7 +141,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-2">
                                 <button class="btn btn-info" type="submit">
                                     <i class="ace-icon fa fa-search bigger-110"></i>
                                     Search
@@ -198,7 +198,7 @@
                 @foreach (var res in Model.searchResponse?.Results[0])
                 {
 
-                    <div class="col-sm-12">
+                    <div class="col-sm-12 resultbx">
                         @{ await Html.RenderPartialAsync("_FlightResult", res);}
                     </div>
                 }
@@ -208,7 +208,7 @@
                 @foreach (var res in Model.searchResponse?.Results[1])
                 {
 
-                    <div class="col-sm-12">
+                    <div class="col-sm-12 resultbx">
                         @{ await Html.RenderPartialAsync("_FlightResult", res);}
                     </div>
                 }

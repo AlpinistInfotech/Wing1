@@ -194,9 +194,15 @@ body {*/
     left: 0;
     padding: 0;
 }
+    .searchbx .select2-container--default .select2-selection .select2-selection__clear {
+        right: -15px!important;
+    }
+    .searchbx .input-sm {
+        height:35px;
+    }
 .searchbx .widget-box {
-    margin:0;
-   background:#fff;
+    margin: 0;
+    background: #fff;
 }
     .searchbx button {
         float: right;
@@ -220,10 +226,16 @@ body {*/
     color: #eb8040;
     border: 1px solid #d4d4d4;
 }
-
+.seg-btnbx {
+    padding-right:0;
+}
+.seg-btnbx .label {
+    font-size: 11px !important;
+    padding: 4px !important;
+}
 .resultbx .form-actions {
     border-top: none !important;
-    padding: 10px 20px 10px;
+    padding: 10px 5px 10px;
 }
 .resultbx .seg-btnbx label,.resultbx .seg-btnbx .label {
     display: inline-block;
