@@ -1,6 +1,7 @@
 ﻿using B2BApis.Model;
 using B2BClasses;
 using B2BClasses.Models;
+using B2BClasses.Database;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -27,22 +28,31 @@ namespace B2BApis.Controllers
 
         [Route("Login")]
         [HttpPost]
-        public async Task<mdlUserMasterApi> LoginAsync([FromServices] IAccount account, mdlLogin mdl, string? ReturnUrl)
+        public async Task<mdlUserMasterApi> LoginAsync([FromServices] IAccount account, mdlLogin mdl)
         {
-            mdlUserMasterApi userMaster = null;
+            mdlUserMasterApi userMaster = new mdlUserMasterApi();
             string IPAddress = HttpContext.Connection.RemoteIpAddress.ToString();
             if (ModelState.IsValid)
             {
                 try
                 {
-                    userMaster = (mdlUserMasterApi)await account.LoginAsync(mdl, IPAddress);
-                    userMaster.JSONTokken = GenerateJSONWebToken(userMaster);
-                    userMaster.StatusCode = 1;
-                    userMaster.StatusMessage = "Sucess";
+                    tblUserMaster tbl = await account.LoginAsync(mdl, IPAddress);
+                    if (tbl.CustomerId != null)
+                    {
+                        userMaster.TokenID = GenerateJSONWebToken(tbl);
+                        userMaster.StatusCode = 1;
+                        userMaster.StatusMessage = "Success";
+                    }
+                    else
+                    {
+                        userMaster.TokenID = "";
+                        userMaster.StatusCode = 0;
+                        userMaster.StatusMessage = "Invalid Customer Details";
+                    }
                 }
                 catch (Exception ex)
                 {
-                    userMaster.JSONTokken = "";
+                    userMaster.TokenID = "";
                     userMaster.StatusCode = 0;
                     userMaster.StatusMessage = ex.Message;
                 }
@@ -51,7 +61,7 @@ namespace B2BApis.Controllers
         }
 
 
-        private string GenerateJSONWebToken(mdlUserMasterApi mdl)
+        private string GenerateJSONWebToken(tblUserMaster mdl)
         {
             IActionResult response = Unauthorized();
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
@@ -66,7 +76,8 @@ namespace B2BApis.Controllers
               expires: DateTime.Now.AddHours(Convert.ToInt32(_config["Jwt:tokenExpireinhour"])),
               signingCredentials: credentials);
 
-                return new JwtSecurityTokenHandler().WriteToken(token);
+            return new JwtSecurityTokenHandler().WriteToken(token);
+             
             
         }
 
