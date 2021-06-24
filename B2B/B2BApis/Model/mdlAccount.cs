@@ -8,7 +8,7 @@ namespace B2BApis.Model
 {
     public  class mdlUserMasterApi
     {
-        public string TokenID { get; set; }
+        public string TokenData { get; set; }
         public int StatusCode { get; set; }
         public string StatusMessage { get; set; }
     }

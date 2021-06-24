@@ -30,6 +30,7 @@ namespace B2BApis.Controllers
         [HttpPost]
         public async Task<mdlUserMasterApi> LoginAsync([FromServices] IAccount account, mdlLogin mdl)
         {
+
             mdlUserMasterApi userMaster = new mdlUserMasterApi();
             string IPAddress = HttpContext.Connection.RemoteIpAddress.ToString();
             if (ModelState.IsValid)
@@ -39,20 +40,20 @@ namespace B2BApis.Controllers
                     tblUserMaster tbl = await account.LoginAsync(mdl, IPAddress);
                     if (tbl.CustomerId != null)
                     {
-                        userMaster.TokenID = GenerateJSONWebToken(tbl);
+                        userMaster.TokenData = GenerateJSONWebToken(tbl);
                         userMaster.StatusCode = 1;
                         userMaster.StatusMessage = "Success";
                     }
                     else
                     {
-                        userMaster.TokenID = "";
+                        userMaster.TokenData = "";
                         userMaster.StatusCode = 0;
                         userMaster.StatusMessage = "Invalid Customer Details";
                     }
                 }
                 catch (Exception ex)
                 {
-                    userMaster.TokenID = "";
+                    userMaster.TokenData = "";
                     userMaster.StatusCode = 0;
                     userMaster.StatusMessage = ex.Message;
                 }
