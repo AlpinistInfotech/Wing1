@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace B2BApis.Model
 {
-    public  class mdlUserMasterApi
+    public class mdlBookingSearchApi 
     {
-        public string TokenData { get; set; }
         public int StatusCode { get; set; }
         public string StatusMessage { get; set; }
     }
