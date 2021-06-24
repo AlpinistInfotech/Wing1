@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 namespace B2bApplication.ViewComponents
 {
-    public class CustomerBasicDetailViewComponent : ViewComponent
-    {
+    //public class CustomerBasicDetailViewComponent : ViewComponent
+    //{
 
-    }
+    //}
 }

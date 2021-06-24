@@ -15,8 +15,8 @@ namespace B2BClasses
     {
         int CustomerId { get; set; }
 
-        Task AddBalanceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "",int requestid=0);
-        Task DeductBalanceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "", int requestid = 0);
+        Task AddBalanceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "",int? requestid=0);
+        Task DeductBalanceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "", int? requestid = 0);
         Task<double> GetBalanceAsync();
     }
 
@@ -64,7 +64,7 @@ namespace B2BClasses
             return GetCustomerBalanceAmt(CustomerBalance);
         }
 
-        public async Task DeductBalanceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "",int requestid = 0)
+        public async Task DeductBalanceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "",int? requestid = 0)
         {
             bool CustomerFound = false;
             List<int> UnlimitedWalletBalance = GetFixWalletBalanceCustomer();
@@ -95,7 +95,7 @@ namespace B2BClasses
                     Remarks = Remarks,
                     TransactionDetails = TransactionDetails,
                     TransactionType = TransactionType,
-                    PaymentRequestId=requestid,
+                    PaymentRequestId=(requestid==0?null: requestid),
                 });
                 if (!CustomerFound)
                 {
@@ -111,7 +111,7 @@ namespace B2BClasses
         }
 
 
-        public async Task AddBalanceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "", int requestid = 0)
+        public async Task AddBalanceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "", int? requestid = 0)
         {
             bool CustomerFound = false;
             List<int> UnlimitedWalletBalance = GetFixWalletBalanceCustomer();
@@ -135,7 +135,7 @@ namespace B2BClasses
                     Remarks = Remarks,
                     TransactionDetails = TransactionDetails,
                     TransactionType = TransactionType,
-                    PaymentRequestId = requestid,
+                    PaymentRequestId = (requestid==0?null: requestid),
                 });
                 if (!CustomerFound)
                 {
