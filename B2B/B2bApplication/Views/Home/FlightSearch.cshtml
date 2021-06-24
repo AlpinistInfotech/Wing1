@@ -1,5 +1,6 @@
 ﻿@model B2BClasses.Models.mdlFlightSearch
 @using B2BClasses.Services.Enums
+@inject ICurrentUsers _currentuser
 @{
     ViewData["Title"] = enmDocumentMaster.Flight.GetDocumentDetails().Name;
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -12,7 +13,7 @@
     <input type="hidden" name="FareQuoteRequest.TraceId" value="@(Model.searchResponse?.TraceId??string.Empty)">
     <input type="hidden" id="FareQuoteRequestResultIndex1" name="FareQuoteRequest.ResultIndex" value="">
     <input type="hidden" id="FareQuoteRequestResultIndex2" name="FareQuoteRequest.ResultIndex" value="">
-    
+
 </form>
 
 <div class="row">
@@ -157,7 +158,7 @@
 
     <div id="divFixedBook" class="position-fixed col-md-8 col-sm-12 invisible">
         <div class="container totalamt">
-            <div class="col-md-6"><b>Amount:</b> <strong id="lblTotalAmount"> </strong></div>
+            <div class="col-md-6"><b>Amount:</b> <strong id="lblTotalAmount"> </strong><strong>@_currentuser.cultureInfo.NumberFormat.CurrencySymbol</strong> </div>
             <div class="col-md-6">
                 <button class="btn btn-success pull-right" name='bookFlight'>Book Flight</button>
             </div>
@@ -222,88 +223,86 @@
 </div>
 
 
-    @section Scripts {
-        <script>
-            jQuery(function ($) {
-                $('.select2').select2({ allowClear: true });
-                $('.input-daterange').datepicker({ autoclose: true, format: 'd-M-yyyy', startDate: '3d' });
+@section Scripts {
+    <script>
+        jQuery(function ($) {
+            $('.select2').select2({ allowClear: true });
+            $('.input-daterange').datepicker({ autoclose: true, format: 'd-M-yyyy', startDate: '3d' });
+        });
+
+
+        $(document).ready(function () {
+            var elementPosition = $('.searchbx').offset();
+
+            $(window).scroll(function () {
+                if ($(window).scrollTop() > elementPosition.top) {
+                    $('.searchbx').css('position', 'fixed').css('top', '0');
+                    $('.searchbx .widget-box').css('box-shadow', ' 0px 0px 10px 1px rgba(0, 0, 0, .2)');
+                } else {
+                    $('.searchbx').css('position', 'static');
+                    $('.searchbx .widget-box').css('box-shadow', 'inherit');
+                }
             });
 
-
-            $(document).ready(function () {
-                var elementPosition = $('.searchbx').offset();
-
-                $(window).scroll(function () {
-                    if ($(window).scrollTop() > elementPosition.top) {
-                        $('.searchbx').css('position', 'fixed').css('top', '0');
-                        $('.searchbx .widget-box').css('box-shadow', ' 0px 0px 10px 1px rgba(0, 0, 0, .2)');
-                    } else {
-                        $('.searchbx').css('position', 'static');
-                        $('.searchbx .widget-box').css('box-shadow', 'inherit');
-                    }
-                });
-
-                $("button[name='bookFlight']").click(function () {                    
-                    var resultInde = '';
-                    var resultInde1 = $("input[name='OnwardRadio']:checked").val();
-                    if (resultInde1 == null || resultInde1 == undefined) {
-                        alert('select Flight');
-                        return;                        
-                    }
-                    else {
-                        resultInde = resultInde1;
-                        $("#FareQuoteRequestResultIndex1").val(resultInde1);
-                    }
-                    
-                    var resultInde2 = $("input[name='ReturnRadio']:checked").val();   
-                    if ($("#JourneyType").val() == 2 && (resultInde2 == null || resultInde2 == undefined)) {
-                        alert('select Retrurn Flight');
-                        return;                        
-                    }
-                    else
-                    {                        
-                        $("#FareQuoteRequestResultIndex2").val(resultInde2);
-                        resultInde = resultInde1 + "," + resultInde2;
-                    }
-                    $("#frmFlightReview").submit();
-                });
-
-                function calculateTotalProce()
-                {
-                    var Onward = $("input[name='OnwardRadio']:checked").data('price')
-                    if ((Onward == null || Onward == undefined || Onward== '')) {
-                        Onward = 0;
-                    }
-                    var Return = $("input[name='ReturnRadio']:checked").data('price')
-                    if ((Return == null || Return == undefined || Return=='' )) {
-                        Return = 0;
-                    }
-                    var Total = parseInt(parseFloat(Onward) + parseFloat(Return));
-                    if (Total > 0) {
-                        $("#divFixedBook").removeClass("invisible");
-                        $("#divFixedBook").addClass("visible");
-                        
-                    }
-                    else {
-                        $("#divFixedBook").removeClass("visible");
-                        $("#divFixedBook").addClass("invisible");
-                    }
-                    $("#lblTotalAmount").html(Total);
-                    
-
+            $("button[name='bookFlight']").click(function () {
+                var resultInde = '';
+                var resultInde1 = $("input[name='OnwardRadio']:checked").val();
+                if (resultInde1 == null || resultInde1 == undefined) {
+                    alert('select Flight');
+                    return;
+                }
+                else {
+                    resultInde = resultInde1;
+                    $("#FareQuoteRequestResultIndex1").val(resultInde1);
                 }
 
-                $("input[name='OnwardRadio']").change(function () {
-                    
-                    calculateTotalProce();
-                })
-                $("input[name='ReturnRadio']").change(function () {
-                    
-                    calculateTotalProce();
-                })
-
-                
+                var resultInde2 = $("input[name='ReturnRadio']:checked").val();
+                if ($("#JourneyType").val() == 2 && (resultInde2 == null || resultInde2 == undefined)) {
+                    alert('select Retrurn Flight');
+                    return;
+                }
+                else {
+                    $("#FareQuoteRequestResultIndex2").val(resultInde2);
+                    resultInde = resultInde1 + "," + resultInde2;
+                }
+                $("#frmFlightReview").submit();
             });
 
-        </script>
-    }
+            function calculateTotalProce() {
+                var Onward = $("input[name='OnwardRadio']:checked").data('price')
+                if ((Onward == null || Onward == undefined || Onward == '')) {
+                    Onward = 0;
+                }
+                var Return = $("input[name='ReturnRadio']:checked").data('price')
+                if ((Return == null || Return == undefined || Return == '')) {
+                    Return = 0;
+                }
+                var Total = parseInt(parseFloat(Onward) + parseFloat(Return));
+                if (Total > 0) {
+                    $("#divFixedBook").removeClass("invisible");
+                    $("#divFixedBook").addClass("visible");
+
+                }
+                else {
+                    $("#divFixedBook").removeClass("visible");
+                    $("#divFixedBook").addClass("invisible");
+                }
+                $("#lblTotalAmount").html(Total);
+
+
+            }
+
+            $("input[name='OnwardRadio']").change(function () {
+
+                calculateTotalProce();
+            })
+            $("input[name='ReturnRadio']").change(function () {
+
+                calculateTotalProce();
+            })
+
+
+        });
+
+    </script>
+}

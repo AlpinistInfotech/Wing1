@@ -8,6 +8,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using B2BClasses.Services.Enums;
+using System.Globalization;
+
 namespace B2bApplication
 {
     public interface ICurrentUsers
@@ -20,10 +22,12 @@ namespace B2bApplication
         public bool HaveClaim(enmDocumentMaster claimId);
         public double WalletBalance { get; set; }
         public double CreditBalance { get; set; }
+        CultureInfo cultureInfo { get;}
     }
     public class CurrentUsers : ICurrentUsers
     {
 
+        private CultureInfo _cultureInfo= new CultureInfo("en-IN",false);
         IHttpContextAccessor _httpContext;
         private string _Name ;
         private int _UserId, _CustomerId;
@@ -54,6 +58,8 @@ namespace B2bApplication
         }
 
 
+
+
         private void SetWalletBalance()
         {
             var defaultBalance=_context.tblCustomerBalance.Where(p => p.CustomerId == _CustomerId).FirstOrDefault();
@@ -72,6 +78,8 @@ namespace B2bApplication
 
         }
 
+
+        public CultureInfo cultureInfo { get { return _cultureInfo; } }
         public string Name { get { return _Name; } }
         public int CustomerId { get { return _CustomerId; } }
         public int UserId { get { return _UserId; } }

@@ -53,7 +53,7 @@
         if (isactive) { item.classList.add("active"); itemlink.classList.add("open"); }
         let itemlink = document.createElement("a");        
         itemlink.href = linkname;
-        if (isrootMenu) {
+        if (isrootMenu && menuname !="Dashboard") {
             itemlink.classList.add("dropdown-toggle");
         }
         itemlink.appendChild(fncCreateMenuIcon(iconname));

@@ -1,12 +1,9 @@
 ﻿@model B2BClasses.Services.Air.mdlSearchResult
-@inject Microsoft.Extensions.Configuration.IConfiguration _Configuration
-@{
-    System.Globalization.CultureInfo nfi = new System.Globalization.CultureInfo(_Configuration["CultureInfo"], false);
-}
+@inject ICurrentUsers _currentuser
 <div class="widget-box">
     <div class="clearfix form-actions">
         <div class="col-sm-12">
-           
+
             <div class="col-sm-7">
                 <div class="col-sm-5">
                     <div class="row">
@@ -70,16 +67,16 @@
                 <div class="col-sm-12 seg-btnbx">
                     @foreach (var totalpricelist in Model.TotalPriceList)
                     {
-                    <div class="row">
+                        <div class="row">
 
-                        <label>
-                            <input type="radio" name="@ViewBag.JourneyType1" value="@totalpricelist.ResultIndex" data-price="@totalpricelist.TotalPrice" class="ace ace-switch ace-switch-4">
-                            <span class="lbl middle"></span>
-                            <b>@(totalpricelist.TotalPrice.ToString("C", nfi))</b>
-                        </label>
-                        <span class="label label-danger arrowed-in">@totalpricelist.ADULT.CabinClass -@totalpricelist.ADULT.ClassOfBooking</span>
-                    </div>
-                        
+                            <label>
+                                <input type="radio" name="@ViewBag.JourneyType1" value="@totalpricelist.ResultIndex" data-price="@totalpricelist.TotalPrice" class="ace ace-switch ace-switch-4">
+                                <span class="lbl middle"></span>
+                                <b>@(totalpricelist.TotalPrice.ToString("C", _currentuser.cultureInfo))</b>
+                            </label>
+                            <span class="label label-danger arrowed-in">@totalpricelist.ADULT.CabinClass -@totalpricelist.ADULT.ClassOfBooking</span>
+                        </div>
+
                     }
 
                 </div>
