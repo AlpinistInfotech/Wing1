@@ -1,4 +1,5 @@
 ﻿using B2BClasses.Database;
+using B2BClasses.Services.Air;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,34 @@ namespace B2BApis.Model
     {
         public int StatusCode { get; set; }
         public string StatusMessage { get; set; }
+
+        public IEnumerable<mdlSearchResponse> mdlSearches { get; set; }
+    }
+
+    public class mdlfarequoteApi
+    {
+        public int StatusCode { get; set; }
+        public string StatusMessage { get; set; }
+
+        public List<mdlFareQuotResponse> mdlQuote { get; set; }
+    }
+
+
+    public class mdlfareruleApi
+    {
+        public int StatusCode { get; set; }
+        public string StatusMessage { get; set; }
+
+        public List<mdlFareRuleResponse> mdlFare { get; set; }
+    }
+
+
+
+    public class mdlbooking
+    {
+        public int StatusCode { get; set; }
+        public string StatusMessage { get; set; }
+
+        public mdlBookingResponse mdlBooking { get; set; }
     }
 }
