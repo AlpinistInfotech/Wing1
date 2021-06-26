@@ -21,6 +21,7 @@ using Microsoft.Data.SqlClient;
 using System.Data;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
+using System.Net.Mail;
 
 namespace B2bApplication.Controllers
 {
@@ -309,6 +310,92 @@ namespace B2bApplication.Controllers
         }
 
 
+
+        #endregion
+
+        #region Change Password
+        [Authorize]
+            public IActionResult CustomerChangePassword()
+            {
+                dynamic messagetype = TempData["MessageType"];
+                mdlCustomerChangePassword mdl = new mdlCustomerChangePassword();
+                if (messagetype != null)
+                {
+                    ViewBag.SaveStatus = (int)messagetype;
+                    ViewBag.Message = TempData["Message"];
+                }
+                return View(mdl);
+            }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> CustomerChangePasswordAsync(mdlCustomerChangePassword mdl)
+        {
+            //if (ModelState.IsValid)
+            //{
+                
+            //    var ExistingData = _context.tblUserMaster.FirstOrDefault(p => p.id == mdl.id);
+            //    if (ExistingData != null)
+            //    {
+            //        if (ExistingData.Id != mdl.customerid) // already exists
+            //        {
+            //            TempData["MessageType"] = (int)enmMessageType.Warning;
+            //            TempData["Message"] = _setting.GetErrorMessage(enmMessage.RecordAlreadyExists);
+            //            ViewBag.SaveStatus = (int)TempData["MessageType"];
+            //            ViewBag.Message = TempData["Message"];
+            //        }
+            //        else  // update 
+            //        {
+
+            //            ExistingData.Address = mdl.Address;
+            //            ExistingData.ContactNo = mdl.MobileNo;
+            //            ExistingData.AlternateNo = mdl.AlternateMobileNo;
+            //            ExistingData.Email = mdl.Email;
+            //            ExistingData.IsActive = mdl.Status;
+
+            //            _context.tblCustomerMaster.Update(ExistingData);
+            //            await _context.SaveChangesAsync();
+            //            TempData["MessageType"] = (int)enmMessageType.Success;
+            //            TempData["Message"] = _setting.GetErrorMessage(enmMessage.UpdateSuccessfully);
+
+            //            return RedirectToAction("AddCustomer");
+            //        }
+
+            //    }
+
+            //    else
+            //    {
+
+
+
+            //        _context.tblCustomerMaster.Add(new tblCustomerMaster
+            //        {
+            //            Code = mdl.CustomerCode,
+            //            CustomerName = mdl.CustomerName,
+            //            CustomerType = mdl.customerType,
+            //            Address = mdl.Address,
+            //            ContactNo = mdl.MobileNo,
+            //            AlternateNo = mdl.AlternateMobileNo,
+            //            Email = mdl.Email,
+            //            CreatedBy = _userid,
+            //            CreatedDt = DateTime.Now,
+            //            IsActive = mdl.Status,
+            //        });
+
+
+            //        await _context.SaveChangesAsync();
+
+            //        TempData["MessageType"] = (int)enmMessageType.Success;
+            //        TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
+
+            //        return RedirectToAction("AddCustomer");
+            //    }
+            //}
+
+
+
+            return View(mdl);
+        }
 
         #endregion
 
@@ -788,14 +875,9 @@ namespace B2bApplication.Controllers
 
         }
         
-        public IActionResult CustomerChangePassword()
-        {
-            if (ModelState.IsValid)
-            { 
-                
-            }
-            return View();
-        }
+      
+        
+    
 
         #region CustomerIPFilter
         public IActionResult CustomerIPFilter(string Id)

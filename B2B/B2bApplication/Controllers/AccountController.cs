@@ -8,8 +8,11 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using B2bApplication.Models;
 
 namespace B2bApplication.Controllers
 {
@@ -83,6 +86,36 @@ namespace B2bApplication.Controllers
         {
             return View();
         }
+        //Email Sending
+        [HttpGet]
+        public IActionResult SendEmail()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult SendEmail(mdlEmail mdl)
+        {
+            using (MailMessage msg = new MailMessage(mdl.Email, mdl.To))
+            {
+                //msg.Subject = mdl.Subject;
+                msg.Subject = "Hello Subject";
+                //msg.Body = mdl.Body;
+                msg.Body = "Hello Body";
+                using (SmtpClient smtp = new SmtpClient())
+                {
+                    smtp.Host = "smtp.gmail.com";
+                    smtp.EnableSsl = true;
+                    NetworkCredential NetworkCred = new NetworkCredential("emailid", "password"); //Write sender emailid and password
+                    smtp.UseDefaultCredentials = true;                                          //Problem in Button Control
+                    smtp.Credentials = NetworkCred;
+                    smtp.Port = 587;
+                    smtp.Send(msg);
+                    ViewBag.Message = "Email sent.";
+                }
+            }
+                return View();
+        }
+
     }
 
     
