@@ -398,10 +398,10 @@ namespace B2bApplication.Models
         [Display(Name = "Filter By")]
         public int DateFliterType { get; set; } = 1; //1 = on Booking Date, 2 on Travel Date
         public List<tblFlightBookingMaster> FBMs { get; set; } = new List<tblFlightBookingMaster>();
-        public void loadBookingData(IBooking _booking, int CustomerId)
+        public void loadBookingData(IBooking _booking, int CustomerId,ICurrentUsers currentUser)
         {
             _booking.CustomerId = CustomerId;
-            FBMs = _booking.FlighBookReport(FromDt, ToDt, (DateFliterType == 2 ? false : true), false,false ,bookingStatus);
+            FBMs = _booking.FlighBookReport(FromDt, ToDt, (DateFliterType == 2 ? false : true), currentUser.CustomerType== enmCustomerType.Admin?true: false,false ,bookingStatus);
         }
         public string GetLabelClass(enmBookingStatus bookingStatus)
         {
