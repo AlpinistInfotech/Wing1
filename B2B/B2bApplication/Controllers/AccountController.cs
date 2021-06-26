@@ -105,7 +105,7 @@ namespace B2bApplication.Controllers
                 {
                     smtp.Host = "smtp.gmail.com";
                     smtp.EnableSsl = true;
-                    NetworkCredential NetworkCred = new NetworkCredential("dks.transition@gmail.com", "chemistry_@123D"); //Write sender emailid and password
+                    NetworkCredential NetworkCred = new NetworkCredential("emailid", "password"); //Write sender emailid and password
                     smtp.UseDefaultCredentials = true;                                          //Problem in Button Control
                     smtp.Credentials = NetworkCred;
                     smtp.Port = 587;
