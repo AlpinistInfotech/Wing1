@@ -1,0 +1,150 @@
+﻿@model B2BClasses.Database.tblFlightBookingMaster
+@inject ICurrentUsers _currentUser
+@using B2BClasses.Services.Enums
+@{
+    ViewData["Title"] = enmDocumentMaster.Booking_Flight_Details.GetDocumentDetails().Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<div id="user-profile-2" class="user-profile">
+    <div class="space-20"></div>
+    <div class="tabbable">
+        <ul class="nav nav-tabs padding-18">
+            <li class="active">
+                <a data-toggle="tab" href="#flightBookingDetails_Basic">
+                    <i class="green ace-icon fa fa-university bigger-120"></i>
+                    Basic
+                </a>
+            </li>
+            <li>
+                <a data-toggle="tab" href="#flightBookingDetails_Passenger">
+                    <i class="orange ace-icon fa fa-user bigger-120"></i>
+                    Passenger
+                </a>
+            </li>
+            <li>
+                <a data-toggle="tab" href="#flightBookingDetails_FareDetails">
+                    <i class="green ace-icon fa fa-rss bigger-120"></i>
+                    Fare Details
+                </a>
+            </li>
+            @if (_currentUser.CustomerType == enmCustomerType.Admin)
+            {
+                <li>
+                    <a data-toggle="tab" href="#flightBookingDetails_PurchaseFareDetails">
+                        <i class="green ace-icon fa fa-rss bigger-120"></i>
+                        Purchase Fare
+                    </a>
+                </li>
+            }
+            @if (_currentUser.HaveClaim(enmDocumentMaster.Booking_Flight_Cancel))
+            {
+                <li>
+                    <a data-toggle="tab" href="#flightBookingDetails_CancelFlight">
+                        <i class="orange ace-icon fa fa-cog bigger-120"></i>
+                        Cancel Flight
+                    </a>
+                </li>
+            }
+
+        </ul>
+
+        <div class="tab-content profile-edit-tab-content">
+            <div id="flightBookingDetails_Basic" class="tab-pane in active">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-8 col-sm-offset-2">
+                        <h4 class="blue">
+                            <span class="middle">Status</span>
+                            <span class="label @(Model.BookingStatus== enmBookingStatus.Booked?"label-success":
+            Model.BookingStatus== enmBookingStatus.Refund ?"label-danger": Model.BookingStatus== enmBookingStatus.PartialBooked ?"label-primary":"label-warning" )arrowed-in-right">
+                                <i class="ace-icon fa fa-circle smaller-80 align-middle"></i>
+                                @Model.BookingStatus
+                            </span>
+                        </h4>
+
+                        <div class="profile-user-info">
+                            <div class="profile-info-row">
+                                <div class="profile-info-name">Customer Name</div>
+
+                                <div class="profile-info-value">
+                                    <i class="fa fa-user light-orange bigger-110"></i>
+                                    <span>@Model.CustomerName</span>
+                                </div>
+                            </div>
+
+                            <div class="profile-info-row">
+                                <div class="profile-info-name"> Passenger Count</div>
+                                <div class="profile-info-value">
+                                    <span>Adult - @Model.AdultCount</span>
+                                    <span>Child - @Model.ChildCount</span>
+                                    <span>Infant - @Model.InfantCount</span>
+                                </div>
+                            </div>
+
+                            <div class="profile-info-row">
+                                <div class="profile-info-name"> Journey Type</div>
+                                <div class="profile-info-value">
+                                    <i class="fa fa-shopping-bag light-red bigger-110"></i>
+                                    <span>@Model.JourneyType</span>
+                                </div>
+                            </div>
+
+                            <div class="profile-info-row">
+                                <div class="profile-info-name"> Contact No</div>
+                                <div class="profile-info-value">
+                                    <i class="fa fa-phone light-orange bigger-110"></i>
+                                    <span>@Model.ContactNo</span>
+                                </div>
+                            </div>
+
+                            <div class="profile-info-row">
+                                <div class="profile-info-name"> Email</div>
+                                <div class="profile-info-value">
+                                    <i class="fa fa-envelope light-orange bigger-110"></i>
+                                    <span>@Model.Email</span>
+                                </div>
+                            </div>
+
+                            <div class="profile-info-row">
+                                <div class="profile-info-name"> Transaction Date</div>
+                                <div class="profile-info-value">
+                                    <i class="fa fa-calendar light-blue bigger-110"></i>
+                                    <span>@Model.CreatedDt.ToString("dd-MMM-yyyy hh:mm tt")</span>
+                                </div>
+                            </div>
+
+                            @foreach (var fbs in Model.tblFlightBookingSegments.OrderBy(p => p.SegmentDisplayOrder))
+                            {
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name"> @string.Concat(fbs.Origin, " - " + fbs.Destination)</div>
+                                    <div class="profile-info-value">
+                                        <span>@Model.</span>
+                                    </div>
+                                </div>
+                            }
+
+
+
+
+                            <div class="hr hr-8 dotted"></div>
+
+
+                        </div><!-- /.col -->
+                    </div><!-- /.row -->
+
+                    <div class="space-20"></div>
+                </div><!-- /#home -->
+
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+        <script type="text/javascript">
+            $(function () {
+    var selector = '@ViewBag.ActiveTab';
+            $("#" + selector).addClass("active");
+        });
+   </script>
+
+    }

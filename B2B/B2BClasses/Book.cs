@@ -25,6 +25,7 @@ namespace B2BClasses
         Task<List<mdlFareQuotResponse>> FareQuoteAsync(mdlFareQuotRequest mdlRq);
         Task<List<mdlFareRuleResponse>> FareRule(mdlFareRuleRequest mdlRq);
         List<tblFlightBookingMaster> FlighBookReport(DateTime FromDt, DateTime ToDate, bool OnBookingDt = true, bool AllCustomer = false, bool IncludePurchaseFare = false, enmBookingStatus bookingStatus= enmBookingStatus.All);
+        tblFlightBookingMaster FlighBookDetails(string Id, int CustomerId, enmCustomerType customerType);
         Task<List<enmServiceProvider>> GetActiveProviderAsync();
         Task<List<tblAirline>> GetAirlinesAsync();
         Task<List<tblAirport>> GetAirportAsync();
@@ -73,6 +74,7 @@ namespace B2BClasses
             ToDate = Convert.ToDateTime(ToDate.AddDays(1).ToString("yyyy-MM-dd"));
             FromDt = Convert.ToDateTime(FromDt.ToString("yyyy-MM-dd"));
 
+            List<tblFlightBookingMaster> mdl = null;
             IQueryable<tblFlightBookingMaster> Query = null;
             if (OnBookingDt)
             {
@@ -97,8 +99,52 @@ namespace B2BClasses
             }
 
             Query = Query.Include(p => p.tblFlightBookingSegments).Include(p => p.tblFlightBookingPassengerDetails).Include(p => p.tblFlightBookingFareDetails).Include(p => p.tblFlightBookingGSTDetails);
-            return Query.OrderByDescending(p=>p.CreatedDt).ToList();
+            mdl =Query.OrderByDescending(p=>p.CreatedDt).ToList();
+            if (mdl != null && mdl.Count > 0)
+            {
+                var CustomerIds=mdl.Select(p => p.CustomerId).Distinct().ToList();
+                var Customerdetails = _context.tblCustomerMaster.Where(p => CustomerIds.Contains( p.Id )).Select(p=>new {p.CustomerName,p.Code,p.Id }).ToList();
+                mdl.ForEach(p =>
+                {
+                    var tempCD = Customerdetails.FirstOrDefault(q => q.Id == p.CustomerId);
+                    if (tempCD != null)
+                    {
+                        p.CustomerName = tempCD.Code + " - " + tempCD.CustomerName;
+                    }
+                });                
+            }
+            return mdl;
         }
+
+        public tblFlightBookingMaster FlighBookDetails(string Id, int CustomerId, enmCustomerType customerType)
+        {
+            tblFlightBookingMaster mdl = null;
+
+            IQueryable<tblFlightBookingMaster> Query = null;
+            if (customerType == enmCustomerType.Admin)
+            {
+                Query = _context.tblFlightBookingMaster.Where(p => p.Id == Id );
+            }
+            else
+            {
+                Query = _context.tblFlightBookingMaster.Where(p => p.Id == Id && p.CustomerId == CustomerId  );
+            }
+            Query = Query.Include(p => p.tblFlightBookingSegments);
+            Query = Query.Include(p => p.tblFlightBookingProviderTraceIds);
+            Query = Query.Include(p => p.tblFlightBookingPassengerDetails);
+            Query = Query.Include(p => p.tblFlightBookingGSTDetails);
+            Query = Query.Include(p => p.tblFlightBookingFareDetails);
+            Query = Query.Include(p => p.tblFlightBookingFarePurchaseDetails);
+            mdl =Query.FirstOrDefault();
+            if (mdl != null)
+            {
+                var Customerdetails = _context.tblCustomerMaster.Where(p => p.Id == mdl.CustomerId).FirstOrDefault();
+                mdl.CustomerName = Customerdetails?.Code + " - " + Customerdetails?.CustomerName;
+            }
+            return mdl;
+        }
+
+
 
         public async Task<string> CustomerDataSave(mdlSearchRequest mdlRq, List<tblFlightBookingProviderTraceId> traceIds, enmJourneyType journeyType)
         {
