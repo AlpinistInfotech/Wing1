@@ -1156,26 +1156,33 @@ namespace B2bApplication.Controllers
 
 
         #region ********************* Customer Flight Booking Report *****************************
-        [Authorize]
+        [Authorize(Policy =nameof(enmDocumentMaster.Flight_Booking_Report))]
         [HttpGet]
         public IActionResult FlightBookingReport()
         {
             mdlFlightBookingReport mdl = new mdlFlightBookingReport();
             return View(mdl);
         }
-        [Authorize]
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = nameof(enmDocumentMaster.Flight_Booking_Report))]
         public IActionResult FlightBookingReport(mdlFlightBookingReport mdl,[FromServices]IBooking _booking)
         {
             if (ModelState.IsValid)
             {
-                mdl.loadBookingData(_booking,_customerId);
+                mdl.loadBookingData(_booking,_customerId,_currentUsers);
             }
             return View(mdl);
         }
-
         
+        [Authorize(Policy = nameof(enmDocumentMaster.Flight_Booking_Report))]
+        public IActionResult FlightBookingDetails(string Id, [FromServices] IBooking _booking)
+        {
+            
+
+            return View();
+        }
 
         #endregion
 
