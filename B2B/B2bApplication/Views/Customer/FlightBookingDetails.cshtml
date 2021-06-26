@@ -55,8 +55,8 @@
                     <div class="col-xs-12 col-sm-8 col-sm-offset-2">
                         <h4 class="blue">
                             <span class="middle">Status</span>
-                            <span class="label @(Model.BookingStatus== enmBookingStatus.Booked?"label-success":
-            Model.BookingStatus== enmBookingStatus.Refund ?"label-danger": Model.BookingStatus== enmBookingStatus.PartialBooked ?"label-primary":"label-warning" )arrowed-in-right">
+                            <span class="label @(Model.BookingStatus == enmBookingStatus.Booked ? "label-success" :
+Model.BookingStatus == enmBookingStatus.Refund ? "label-danger" : Model.BookingStatus == enmBookingStatus.PartialBooked ? "label-primary" : "label-warning" )arrowed-in-right">
                                 <i class="ace-icon fa fa-circle smaller-80 align-middle"></i>
                                 @Model.BookingStatus
                             </span>
@@ -136,6 +136,292 @@
                 </div><!-- /#home -->
 
             </div>
+
+            <div id="flightBookingDetails_Passenger" class="tab-pane">
+
+                <div class="row">
+                    <div class="col-xs-12 col-sm-8  col-sm-offset-2">
+
+                        <div class="profile-feed row">
+                            @foreach (var pas in Model.tblFlightBookingPassengerDetails)
+                            {
+                                <div class="col-sm-6">
+                                    <div class="profile-activity clearfix">
+                                        <div>
+                                            @if (pas.passengerType == enmPassengerType.Adult)
+                                            {
+                                                if (pas.Title.ToLower().Contains("mr"))
+                                                {
+                                                    <img class="pull-left" alt="user Image" src="~/assets/images/avatars/avatar.png" />
+                                                }
+                                                else
+                                                {
+                                                    <img class="pull-left" alt="user Image" src="~/assets/images/avatars/avatar1.png" />
+                                                }
+
+                                            }
+                                            else if (pas.passengerType == enmPassengerType.Child)
+                                            {
+                                                <img class="pull-left" alt="user Image" src="~/assets/images/avatars/Child-2.png" />
+                                            }
+                                            else if (pas.passengerType == enmPassengerType.Infant)
+                                            {
+                                                <img class="pull-left" alt="user Image" src="~/assets/images/avatars/baby-2.png" />
+                                            }
+
+
+                                            <a class="user" href="#"> @string.Join(pas.Title, pas.FirstName + " " + pas.LastName) </a>
+
+                                            @if (pas.dob != null)
+                                            {
+
+                                                <div class="time">
+                                                    <i class="ace-icon fa fa-calendar bigger-110"></i>
+                                                    DOB: @(pas.dob.Value.ToString("dd-MMM-yyyy"))
+                                                </div>
+
+                                            }
+
+                                            @if (pas.pNum != null)
+                                            {
+                                                <div class="time">
+
+                                                    <i class="ace-icon fa fa-book bigger-110"></i>
+                                                    <span>Passport No: @pas.pNum</span>
+                                                    <span>Issue Dt: @pas.PassportIssueDate?.ToString("dd-MMM-yyyy")></span>
+                                                    <span>Expiry Dt: @pas.PassportExpiryDate?.ToString("dd-MMM-yyyy")</span>
+                                                </div>
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div><!-- /.col -->
+                            }
+
+                        </div>
+
+                        @{
+                            var GST = Model.tblFlightBookingGSTDetails?.FirstOrDefault();
+                        }
+                        @if (GST != null  )
+                        {
+                    <div class="profile-user-info">
+                        <div class="profile-info-row">
+                            <div class="profile-info-name">Register Name</div>
+                            <div class="profile-info-value">
+                                <i class="fa fa-user light-blue bigger-110"></i>
+                                <span>@GST.registeredName</span>
+                            </div>
+                        </div>
+                        <div class="profile-info-row">
+                            <div class="profile-info-name">GST Number</div>
+                            <div class="profile-info-value">
+                                <i class="fa fa-university light-blue bigger-110"></i>
+                                <span>@GST.gstNumber</span>
+                            </div>
+                        </div>
+
+                        <div class="profile-info-row">
+                            <div class="profile-info-name"> Email</div>
+                            <div class="profile-info-value">
+                                <i class="fa fa-envelope light-orange bigger-110"></i>
+                                <span>@GST.email</span>
+                            </div>
+                        </div>
+
+                        <div class="profile-info-row">
+                            <div class="profile-info-name"> Contact</div>
+                            <div class="profile-info-value">
+                                <i class="fa fa-phone light-red bigger-110"></i>
+                                <span>@GST.mobile</span>
+
+                            </div>
+                        </div>
+
+                        <div class="profile-info-row">
+                            <div class="profile-info-name"> Location </div>
+
+                            <div class="profile-info-value">
+                                <i class="fa fa-map-marker light-orange bigger-110"></i>
+                                <span>@GST.address</span>
+                            </div>
+                        </div>
+
+
+                    </div>
+                        }
+
+
+
+                        <div class="hr hr-8 dotted"></div>
+                    </div>
+                    </div>
+            </div>
+
+            @*<div id="flightBookingDetails_FareDetails" class="tab-pane">
+
+                <div class="row">
+                    <div class="col-xs-12 col-sm-8  col-sm-offset-2">
+
+                        <div class="profile-user-info">
+                            <div class="profile-info-row">
+                                <div class="profile-info-name">Bank</div>
+                                <div class="profile-info-value">
+                                    <i class="fa fa-university light-blue bigger-110"></i>
+                                    <span>@(_master.FetchBankName( Model.banks.BankId))</span>
+                                </div>
+                            </div>
+                            <div class="profile-info-row">
+                                <div class="profile-info-name">IFSC</div>
+
+                                <div class="profile-info-value">
+                                    <span>@Model.banks.IFSC </span>
+                                </div>
+                            </div>
+
+                            <div class="profile-info-row">
+                                <div class="profile-info-name"> Account</div>
+
+                                <div class="profile-info-value">
+                                    <span>@Model.banks.AccountNo</span>
+                                </div>
+                            </div>
+                            <div class="profile-info-row">
+                                <div class="profile-info-name">Beneficiary Name</div>
+
+                                <div class="profile-info-value">
+                                    <span>@Model.banks.NameasonBank</span>
+                                </div>
+                            </div>
+
+                            <div class="profile-info-row">
+                                <div class="profile-info-name"> Branch Address</div>
+
+                                <div class="profile-info-value">
+                                    <i class="fa fa-map-marker light-orange bigger-110"></i>
+                                    <span>@Model.banks.BranchAddress</span>
+                                </div>
+                            </div>
+
+                            <div class="profile-info-row">
+                                <div class="profile-info-name"> UPI ID</div>
+                                <div class="profile-info-value">
+                                    <i class="fa fa-map-marker light-orange bigger-110"></i>
+                                    <span>@Model.banks.UpiId</span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="hr hr-8 dotted"></div>
+                    </div>
+                </div>
+            </div>
+
+            @if (_currentUser.CustomerType == enmCustomerType.Admin)
+            {
+                <div id="flightBookingDetails_PurchaseFareDetails" class="tab-pane">
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-8  col-sm-offset-2">
+
+                            <div class="profile-user-info">
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name">Allowed IP</div>
+                                    <div class="profile-info-value">
+                                        <span>@( Model.customerSetting.AllowedAllIp?"All IP": Model.customerSetting.IPAddess)</span>
+                                    </div>
+                                </div>
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name">Markup Amount</div>
+
+                                    <div class="profile-info-value">
+                                        <span>@Model.customerSetting.MarkupAmount </span>
+                                    </div>
+                                </div>
+
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name">Wallet Alert Amt</div>
+
+                                    <div class="profile-info-value">
+                                        <span>@Model.customerSetting.MinBalance</span>
+                                    </div>
+                                </div>
+
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name">Wallet Balance</div>
+
+                                    <div class="profile-info-value">
+                                        <span>@Model.WalletBalance</span>
+                                    </div>
+                                </div>
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name">Credit Balance</div>
+                                    <div class="profile-info-value">
+                                        <span>@Model.CreditBalace</span>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div class="hr hr-8 dotted"></div>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (_currentUser.HaveClaim(enmDocumentMaster.Booking_Flight_Cancel))
+            {
+
+                <div id="flightBookingDetails_CancelFlight" class="tab-pane">
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-8  col-sm-offset-2">
+
+                            <div class="profile-user-info">
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name">Allowed IP</div>
+                                    <div class="profile-info-value">
+                                        <span>@( Model.customerSetting.AllowedAllIp ? "All IP" : Model.customerSetting.IPAddess)</span>
+                                    </div>
+                                </div>
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name">Markup Amount</div>
+
+                                    <div class="profile-info-value">
+                                        <span>@Model.customerSetting.MarkupAmount </span>
+                                    </div>
+                                </div>
+
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name">Wallet Alert Amt</div>
+
+                                    <div class="profile-info-value">
+                                        <span>@Model.customerSetting.MinBalance</span>
+                                    </div>
+                                </div>
+
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name">Wallet Balance</div>
+
+                                    <div class="profile-info-value">
+                                        <span>@Model.WalletBalance</span>
+                                    </div>
+                                </div>
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name">Credit Balance</div>
+                                    <div class="profile-info-value">
+                                        <span>@Model.CreditBalace</span>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div class="hr hr-8 dotted"></div>
+                        </div>
+                    </div>
+                </div>
+            }*@
+
+
         </div>
     </div>
 
