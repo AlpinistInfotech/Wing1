@@ -331,70 +331,43 @@ namespace B2bApplication.Controllers
         [Authorize]
         public async Task<IActionResult> CustomerChangePasswordAsync(mdlCustomerChangePassword mdl)
         {
-            //if (ModelState.IsValid)
-            //{
-                
-            //    var ExistingData = _context.tblUserMaster.FirstOrDefault(p => p.id == mdl.id);
-            //    if (ExistingData != null)
-            //    {
-            //        if (ExistingData.Id != mdl.customerid) // already exists
-            //        {
-            //            TempData["MessageType"] = (int)enmMessageType.Warning;
-            //            TempData["Message"] = _setting.GetErrorMessage(enmMessage.RecordAlreadyExists);
-            //            ViewBag.SaveStatus = (int)TempData["MessageType"];
-            //            ViewBag.Message = TempData["Message"];
-            //        }
-            //        else  // update 
-            //        {
+            if (ModelState.IsValid)
+            {
 
-            //            ExistingData.Address = mdl.Address;
-            //            ExistingData.ContactNo = mdl.MobileNo;
-            //            ExistingData.AlternateNo = mdl.AlternateMobileNo;
-            //            ExistingData.Email = mdl.Email;
-            //            ExistingData.IsActive = mdl.Status;
+                var ExistingData = _context.tblUserMaster.FirstOrDefault(p => p.Id == _userid);
+                if (ExistingData == null)
+                {
+                    TempData["MessageType"] = (int)enmMessageType.Error;
+                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidData);
 
-            //            _context.tblCustomerMaster.Update(ExistingData);
-            //            await _context.SaveChangesAsync();
-            //            TempData["MessageType"] = (int)enmMessageType.Success;
-            //            TempData["Message"] = _setting.GetErrorMessage(enmMessage.UpdateSuccessfully);
+                }
+                else if (ExistingData.Password != mdl.Password)
+                {
+                    TempData["MessageType"] = (int)enmMessageType.Error;
+                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidOldPassword);
+                }
 
-            //            return RedirectToAction("AddCustomer");
-            //        }
+                else if (ExistingData.Password == mdl.NewPassword)
+                {
+                    TempData["MessageType"] = (int)enmMessageType.Error;
+                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.OldPasswordNewPassordCannotbeSame);
+                }
+                else
+                {
 
-            //    }
+                    ExistingData.Password = mdl.NewPassword;
+                    ExistingData.ModifiedBy = _userid;
+                    ExistingData.ModifiedDt = DateTime.Now;
+                    _context.tblUserMaster.Update(ExistingData);
+                    await _context.SaveChangesAsync();
+                    TempData["MessageType"] = (int)enmMessageType.Success;
+                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.UpdateSuccessfully);
 
-            //    else
-            //    {
+                }
 
+            }
+            return RedirectToAction("CustomerChangePassword");
 
-
-            //        _context.tblCustomerMaster.Add(new tblCustomerMaster
-            //        {
-            //            Code = mdl.CustomerCode,
-            //            CustomerName = mdl.CustomerName,
-            //            CustomerType = mdl.customerType,
-            //            Address = mdl.Address,
-            //            ContactNo = mdl.MobileNo,
-            //            AlternateNo = mdl.AlternateMobileNo,
-            //            Email = mdl.Email,
-            //            CreatedBy = _userid,
-            //            CreatedDt = DateTime.Now,
-            //            IsActive = mdl.Status,
-            //        });
-
-
-            //        await _context.SaveChangesAsync();
-
-            //        TempData["MessageType"] = (int)enmMessageType.Success;
-            //        TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
-
-            //        return RedirectToAction("AddCustomer");
-            //    }
-            //}
-
-
-
-            return View(mdl);
         }
 
         #endregion
