@@ -325,20 +325,26 @@ namespace B2bApplication.Models
     }
 
     public class mdlCustomerChangePassword
-    { 
-        [Required(ErrorMessage ="Enter Old Password")]
-        public string Passowrd { get; set; }
+    {
 
-        [Required(ErrorMessage ="Enter New Password")]
+        [Required(ErrorMessage ="Enter Old Password")]
+        [DataType(DataType.Password)]
+        [Display(Name = "Old Password")]
+        public string Password { get; set; }
+
+        [Required(ErrorMessage = "Enter New Password")]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "New Password")]
         public string NewPassword { get; set; }
 
 
-        [Required(ErrorMessage = "Re-Enter New Password")]
-        [Compare ("NewPassord")]
+        [Required(ErrorMessage = "Confirm New Password")]
+        [Compare(nameof(NewPassword), ErrorMessage = "Password & confirm Password do not match")]
+        [Display(Name = "Confirm New Password")]
+        [DataType(DataType.Password)]
         public string ConfirmNewPassword { get; set; }
+
     }
 
     public class mdlPaymentRequest

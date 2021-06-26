@@ -80,6 +80,8 @@ namespace B2BClasses.Services.Enums
         InvalidData,
         InvalidDocument,
         AccessDenied,
+        InvalidOldPassword,
+        OldPasswordNewPassordCannotbeSame,
     }
 
 
@@ -268,6 +270,10 @@ namespace B2BClasses.Services.Enums
             DisplayOrder: 2, Name: "Customer - Flight API", Description: "Customer - Flight API", Icon: "far fa-circle nav-icon", ActionName: "/Home/CustomerFlightAPI")]
         custiomer_apis = 106,
 
+        [Document(EnmModule: enmModule.Setting, DocumentType: enmDocumentType.Create | enmDocumentType.DisplayMenu,
+        DisplayOrder: 1, Name: "ChangePassword", Description: "Change Password", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CustomerChangePassword", IsAdminClaim = true)]
+        ChangePassword = 107,
+
 
         [Document(EnmModule: enmModule.Master, DocumentType: enmDocumentType.Create | enmDocumentType.DisplayMenu,
         DisplayOrder: 1, Name: "Customer", Description: "Customer Master", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CustomerMaster", IsAdminClaim = true)]
@@ -281,7 +287,9 @@ namespace B2BClasses.Services.Enums
         [Document(EnmModule: enmModule.Master, DocumentType: enmDocumentType.Create | enmDocumentType.DisplayMenu,
         DisplayOrder: 1, Name: "User", Description: "User Master", Icon: "far fa-circle nav-icon", ActionName: "/Customer/AddUser", IsAdminClaim = true)]
         UserMaster = 114,
+
         
+
         #region ************************* Detailed Permission for Customer Masters (From 10001 to 10100 )***************************
         [Document( EnmSubModule: enmSubModule.CustomerDetailsPermission, DocumentType: enmDocumentType.Report,
         DisplayOrder: 1, Name: "BasicDetail Read", Description: "Read Basic Detail ", Icon: "", ActionName: "")]
