@@ -42,7 +42,6 @@ namespace B2BClasses.Database
         [NotMapped]
         public string CustomerName { get; set; }
 
-
     }
 
     
@@ -58,6 +57,11 @@ namespace B2BClasses.Database
         [ForeignKey("tblFlightBookingMaster")] // Foreign Key here
         public string TraceId { get; set; }
         public tblFlightBookingMaster tblFlightBookingMaster { get; set; }
+        [MaxLength(200)]
+        public string BookingId { get; set; }
+        public enmBookingStatus BookingStatus { get; set; }
+        [MaxLength(2000)]
+        public string BookingMessage { get; set; }
     }
 
     public class tblFlightBookingSegment
@@ -176,8 +180,17 @@ namespace B2BClasses.Database
         public double WingTotalMarkup { get; set; }
         public double CustomerMarkup { get; set; }
         public double TotalFare { get; set; }
+        public double Discount { get; set; }
         public double convenience { get; set; }        
         public double NetFare { get; set; }
+        [NotMapped]
+        public string SegmentName { get; set; }
+        [NotMapped]
+        public double AdultBaseFare { get; set; }
+        [NotMapped]
+        public double ChildBaseFare { get; set; }
+        [NotMapped]
+        public double InfantBaseFare { get; set; }
 
     }
     

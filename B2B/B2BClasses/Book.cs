@@ -140,7 +140,28 @@ namespace B2BClasses
             {
                 var Customerdetails = _context.tblCustomerMaster.Where(p => p.Id == mdl.CustomerId).FirstOrDefault();
                 mdl.CustomerName = Customerdetails?.Code + " - " + Customerdetails?.CustomerName;
+
+                if (mdl.tblFlightBookingSegments != null && mdl.tblFlightBookingFareDetails != null)
+                {
+                    foreach (var fd in mdl.tblFlightBookingFareDetails)
+                    {
+                        var FBD = mdl.tblFlightBookingSegments.FirstOrDefault(p => p.SegmentDisplayOrder == fd.SegmentDisplayOrder);
+                        if (FBD != null)
+                        {
+                            fd.SegmentName = string.Concat(FBD.Origin, " - ", FBD.Destination);
+                        }
+                        var bf=mdl.tblFlightBookingFarePurchaseDetails.Where(p => p.SegmentDisplayOrder == fd.SegmentDisplayOrder).FirstOrDefault();
+                        if (bf != null)
+                        {
+                            fd.AdultBaseFare = bf.AdultTotalFare;
+                            fd.ChildBaseFare = bf.ChildTotalFare;
+                            fd.InfantBaseFare = bf.InfantTotalFare;
+                        }
+                    }
+                }
             }
+
+
             return mdl;
         }
 
