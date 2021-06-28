@@ -59,7 +59,7 @@ namespace B2BClasses.Database
         public tblFlightBookingMaster tblFlightBookingMaster { get; set; }
         [MaxLength(200)]
         public string BookingId { get; set; }
-        public enmBookingStatus BookingStatus { get; set; }
+        public enmBookingStatus BookingStatus { get; set; } = enmBookingStatus.Pending;
         [MaxLength(2000)]
         public string BookingMessage { get; set; }
     }
