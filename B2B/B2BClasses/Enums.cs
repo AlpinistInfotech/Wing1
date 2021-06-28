@@ -337,6 +337,15 @@ namespace B2BClasses.Services.Enums
         CustomerDetailsPermission_Setting_Write = 10013,
 
 
+
+
+        [Document(EnmModule: enmModule.Booking, DocumentType: enmDocumentType.Report,
+        DisplayOrder: 1, Name: "Flight Details", Description: "Flight Details permission", Icon: "", ActionName: "")]
+        Booking_Flight_Details = 10100,
+        [Document(EnmModule: enmModule.Booking, DocumentType: enmDocumentType.Report,
+        DisplayOrder: 2, Name: "Flight Cancel", Description: "Flight Cancel", Icon: "", ActionName: "")]
+        Booking_Flight_Cancel = 10101,
+
         #endregion
 
 

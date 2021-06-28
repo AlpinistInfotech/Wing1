@@ -106,6 +106,7 @@
                             View
                         </th>
                         <th>Booking Status</th>
+                        <th>Customer</th>
                         <th>Journey Type</th>
                         <th>Segment</th>
                         <th>Airline(Flight Number)</th>
@@ -125,15 +126,15 @@
                     <tr>
                         <td class="center">
                             <div class="hidden-sm hidden-xs action-buttons">
-                                <a class="blue" href="#">
+                                <a class="blue" href="/Customer/FlightBookingDetails?Id=@md.Id">
                                     <i class="ace-icon fa fa-search-plus bigger-130"></i>
                                 </a>
                                 @*<a class="green" href="/Home/WingMarkup/@md.Id">
                                     <i class="ace-icon fa fa-pencil bigger-130"></i>
-                                </a>
-                                <a class="red" href="/Home/WingMarkup/@md.Id">
-                                    <i class="ace-icon fa fa-trash-o bigger-130"></i>
                                 </a>*@
+                                <a class="red" href="/Customer/FlightBookingDetails?Id=@md.Id&ActiveTab=flightBookingDetails_CancelFlight">
+                                    <i class="ace-icon fa fa-close bigger-130"></i>
+                                </a>
                             </div>
 
                             <div class="hidden-md hidden-lg">
@@ -144,7 +145,7 @@
 
                                     <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
                                         <li>
-                                            <a href="#" class="tooltip-info" data-rel="tooltip" title="View">
+                                            <a href="/Customer/FlightBookingDetails?Id=@md.Id" class="tooltip-info" data-rel="tooltip" title="View">
                                                 <span class="blue">
                                                     <i class="ace-icon fa fa-search-plus bigger-120"></i>
                                                 </span>
@@ -157,33 +158,37 @@
                                                     <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
                                                 </span>
                                             </a>
-                                        </li>
+                                        </li>*@
 
                                         <li>
-                                            <a href="/Home/WingMarkup/@md.Id" class="tooltip-error" data-rel="tooltip" title="Delete">
+                                            <a href="/Customer/FlightBookingDetails?Id=@md.Id&ActiveTab=flightBookingDetails_CancelFlight" class="tooltip-error" data-rel="tooltip" title="Delete">
                                                 <span class="red">
-                                                    <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                                                    <i class="ace-icon fa fa-close bigger-120"></i>
                                                 </span>
                                             </a>
-                                        </li>*@
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
                         </td>
 
+
                         <td>
                             <span class="label label-sm @(Model.GetLabelClass(md.BookingStatus))">@md.BookingStatus</span>
-                            
+
+                        </td>
+                        <td>
+                            @md.CustomerName
                         </td>
                         <td>
                             @md.JourneyType
                         </td>
                         <td>
-                            @string.Join(", ", md.tblFlightBookingSegments.OrderBy(p => p.SegmentDisplayOrder).Select(p => new { Segment = p.Origin + " " + p.Destination }).Select(p=>p.Segment).Distinct())
+                            @string.Join(", ", md.tblFlightBookingSegments.OrderBy(p => p.SegmentDisplayOrder).Select(p => new { Segment = p.Origin + " " + p.Destination }).Select(p => p.Segment).Distinct())
                         </td>
 
                         <td>
-                            @string.Join(", ", md.tblFlightBookingSegments.OrderBy(p => p.SegmentDisplayOrder).Select(p => new { Airline = p.Airline + " (" + p.AirlineCode + "-"+p.FlightNumber + ")" }).Select(p => p.Airline).Distinct())
+                            @string.Join(", ", md.tblFlightBookingSegments.OrderBy(p => p.SegmentDisplayOrder).Select(p => new { Airline = p.Airline + " (" + p.AirlineCode + "-" + p.FlightNumber + ")" }).Select(p => p.Airline).Distinct())
                         </td>
                         <td>
                             @md.CreatedDt.ToString("dd-MMM-yyyy hh:mm tt")
@@ -199,7 +204,7 @@
                             @md.Email
                         </td>
                         <td>
-                            @string.Join(", ", md.tblFlightBookingPassengerDetails.Select(p => new { Passenger =p.Title +" "+p.FirstName }).Select(p => p.Passenger).Distinct())
+                            @string.Join(", ", md.tblFlightBookingPassengerDetails.Select(p => new { Passenger = p.Title + " " + p.FirstName }).Select(p => p.Passenger).Distinct())
                         </td>
                         <td>
                             @md.tblFlightBookingFareDetails.Sum(p => p.NetFare)
@@ -217,7 +222,7 @@
 </div>
 
 @section Scripts {    
-    @(await Html.PartialAsync("_dateTableScriptPartial",12))
+    @(await Html.PartialAsync("_dateTableScriptPartial",13))
 
     <script type="text/javascript">
         jQuery(function ($) {

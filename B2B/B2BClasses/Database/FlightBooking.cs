@@ -39,6 +39,10 @@ namespace B2BClasses.Database
         [InverseProperty("tblFlightBookingMaster")]
         public ICollection<tblFlightBookingFareDetails> tblFlightBookingFareDetails { get; set; }
         public ICollection<tblFlightBookingFarePurchaseDetails> tblFlightBookingFarePurchaseDetails { get; set; }
+        [NotMapped]
+        public string CustomerName { get; set; }
+
+
     }
 
     

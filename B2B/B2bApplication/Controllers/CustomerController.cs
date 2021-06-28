@@ -1231,12 +1231,25 @@ namespace B2bApplication.Controllers
             return View(mdl);
         }
         
+        
         [Authorize(Policy = nameof(enmDocumentMaster.Flight_Booking_Report))]
-        public IActionResult FlightBookingDetails(string Id, [FromServices] IBooking _booking)
+        public IActionResult FlightBookingDetails(string Id,string ActiveTab ,[FromServices] IBooking _booking)
         {
-            
-
-            return View();
+            if (ActiveTab == null)
+            {
+                ActiveTab = "flightBookingDetails_Basic";
+            }
+            ViewBag.ActiveTab = ActiveTab;
+            if (Id == null)
+            {
+                return RedirectToAction("Error404", "Home");
+            }
+            var mdl= _booking.FlighBookDetails(Id, _currentUsers.CustomerId, _currentUsers.CustomerType);
+            if (mdl == null)
+            {
+                return RedirectToAction("AccessDenied", "Customer");
+            }
+            return View(mdl);
         }
 
         #endregion
