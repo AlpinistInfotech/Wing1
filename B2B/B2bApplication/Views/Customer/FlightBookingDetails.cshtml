@@ -140,7 +140,7 @@ Model.BookingStatus == enmBookingStatus.Refund ? "label-danger" : Model.BookingS
             <div id="flightBookingDetails_Passenger" class="tab-pane">
 
                 <div class="row">
-                    <div class="col-xs-12 col-sm-8  col-sm-offset-2">
+                    <div class="col-xs-12 col-md-8  col-md-offset-2">
 
                         <div class="profile-feed row">
                             @foreach (var pas in Model.tblFlightBookingPassengerDetails)
@@ -200,62 +200,67 @@ Model.BookingStatus == enmBookingStatus.Refund ? "label-danger" : Model.BookingS
 
                         </div>
 
-                        @{
-                            var GST = Model.tblFlightBookingGSTDetails?.FirstOrDefault();
-                        }
-                        @if (GST != null  )
-                        {
-                    <div class="profile-user-info">
-                        <div class="profile-info-row">
-                            <div class="profile-info-name">Register Name</div>
-                            <div class="profile-info-value">
-                                <i class="fa fa-user light-blue bigger-110"></i>
-                                <span>@GST.registeredName</span>
-                            </div>
-                        </div>
-                        <div class="profile-info-row">
-                            <div class="profile-info-name">GST Number</div>
-                            <div class="profile-info-value">
-                                <i class="fa fa-university light-blue bigger-110"></i>
-                                <span>@GST.gstNumber</span>
-                            </div>
-                        </div>
-
-                        <div class="profile-info-row">
-                            <div class="profile-info-name"> Email</div>
-                            <div class="profile-info-value">
-                                <i class="fa fa-envelope light-orange bigger-110"></i>
-                                <span>@GST.email</span>
-                            </div>
-                        </div>
-
-                        <div class="profile-info-row">
-                            <div class="profile-info-name"> Contact</div>
-                            <div class="profile-info-value">
-                                <i class="fa fa-phone light-red bigger-110"></i>
-                                <span>@GST.mobile</span>
-
-                            </div>
-                        </div>
-
-                        <div class="profile-info-row">
-                            <div class="profile-info-name"> Location </div>
-
-                            <div class="profile-info-value">
-                                <i class="fa fa-map-marker light-orange bigger-110"></i>
-                                <span>@GST.address</span>
-                            </div>
-                        </div>
-
-
-                    </div>
-                        }
-
-
 
                         <div class="hr hr-8 dotted"></div>
                     </div>
+                </div>
+                <div class="space-10"></div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        @{
+                            var GST = Model.tblFlightBookingGSTDetails?.FirstOrDefault();
+                        }
+                        @if (GST != null && !String.IsNullOrWhiteSpace(GST?.gstNumber))
+                        {
+                            <h4 class="header blue bolder smaller">GST Details</h4>
+                            <div class="profile-user-info">
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name">Register Name</div>
+                                    <div class="profile-info-value">
+                                        <i class="fa fa-user light-blue bigger-110"></i>
+                                        <span>@GST.registeredName</span>
+                                    </div>
+                                </div>
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name">GST Number</div>
+                                    <div class="profile-info-value">
+                                        <i class="fa fa-university light-blue bigger-110"></i>
+                                        <span>@GST.gstNumber</span>
+                                    </div>
+                                </div>
+
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name"> Email</div>
+                                    <div class="profile-info-value">
+                                        <i class="fa fa-envelope light-orange bigger-110"></i>
+                                        <span>@GST.email</span>
+                                    </div>
+                                </div>
+
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name"> Contact</div>
+                                    <div class="profile-info-value">
+                                        <i class="fa fa-phone light-red bigger-110"></i>
+                                        <span>@GST.mobile</span>
+
+                                    </div>
+                                </div>
+
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name"> Location </div>
+
+                                    <div class="profile-info-value">
+                                        <i class="fa fa-map-marker light-orange bigger-110"></i>
+                                        <span>@GST.address</span>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        }
+                        <div class="hr hr-8 dotted"></div>
                     </div>
+                </div>
             </div>
 
             @*<div id="flightBookingDetails_FareDetails" class="tab-pane">
