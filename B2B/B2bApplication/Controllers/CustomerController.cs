@@ -315,17 +315,17 @@ namespace B2bApplication.Controllers
 
         #region Change Password
         [Authorize]
-            public IActionResult CustomerChangePassword()
+        public IActionResult CustomerChangePassword()
+        {
+            dynamic messagetype = TempData["MessageType"];
+            mdlCustomerChangePassword mdl = new mdlCustomerChangePassword();
+            if (messagetype != null)
             {
-                dynamic messagetype = TempData["MessageType"];
-                mdlCustomerChangePassword mdl = new mdlCustomerChangePassword();
-                if (messagetype != null)
-                {
-                    ViewBag.SaveStatus = (int)messagetype;
-                    ViewBag.Message = TempData["Message"];
-                }
-                return View(mdl);
+                ViewBag.SaveStatus = (int)messagetype;
+                ViewBag.Message = TempData["Message"];
             }
+            return View(mdl);
+        }
 
         [HttpPost]
         [Authorize]
