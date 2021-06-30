@@ -436,6 +436,16 @@ namespace WingGateway.Controllers
                 ViewBag.SaveStatus = enmSaveStatus.danger;
                 ViewBag.Message = enmMessage.InvalidData.GetDescription();
             }
+            
+            var supportedTypes = new[] {"jpg", "jpeg", "png"};
+            var fileExt = System.IO.Path.GetExtension(mdl.UploadImages[0].FileName).Substring(1);
+            if (!supportedTypes.Contains(fileExt))
+            {
+                ModelState.AddModelError("IDDocumentUpload","Invalid File Extension - Only Upload jpg/jpeg/png File");
+                ViewBag.SaveStatus = enmSaveStatus.danger;
+                ViewBag.Message = enmMessage.InvalidData.GetDescription();
+            }
+
             if (ModelState.IsValid)
             {
                 List<string> AllFileName = new List<string>();
@@ -446,7 +456,7 @@ namespace WingGateway.Controllers
 
                 foreach (var file in mdl.UploadImages)
                 {
-                    var filename = Guid.NewGuid().ToString() + ".jpeg";
+                    var filename = Guid.NewGuid().ToString() + "."+fileExt;
                     using (var stream = new FileStream(string.Concat(path, filename), FileMode.Create))
                     {
                         AllFileName.Add(filename);

@@ -141,10 +141,18 @@ namespace WingGateway.Models
         [Remote(action: "IsPANNoInUse", controller: "Home", AdditionalFields = "PANId")]
         public string PANNo { get; set; }
 
+        
         [Required]
         [Display(Name = "Upload PAN Card")]
+        //[ValidateFile]
         public List<IFormFile> UploadImages { set; get; }
+        public string ErrorMessgae { get; set; }
 
+        //Customize data validation for Upload Images
+        //public class ValidateFileAttribute : ValidationAttribute
+        //{
+        //    string[] AllowedFileExtensions = new string[] {".jpg",".jpeg",".png"};
+        //}
         
 
         [RegularExpression("[a-zA-Z0-9,/.\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
