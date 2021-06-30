@@ -60,8 +60,10 @@ namespace B2BClasses.Database
         [MaxLength(200)]
         public string BookingId { get; set; }
         public enmBookingStatus BookingStatus { get; set; } = enmBookingStatus.Pending;
-        [MaxLength(2000)]
+        [MaxLength(200)]
         public string BookingMessage { get; set; }
+        [MaxLength(100)]
+        public string TravelDestiantion { get; set; }
     }
 
     public class tblFlightBookingSegment
@@ -120,10 +122,7 @@ namespace B2BClasses.Database
         [MaxLength(200)]
         [ForeignKey("tblFlightBookingMaster")] // Foreign Key here
         public string TraceId { get; set; }
-        public tblFlightBookingMaster tblFlightBookingMaster { get; set; }
-        [MaxLength(200)]
-        public string BookingId { get; set; }
-        public enmServiceProvider ServiceProvider { get; set; }
+        public tblFlightBookingMaster tblFlightBookingMaster { get; set; }        
     }
 
     public class tblFlightBookingGSTDetails

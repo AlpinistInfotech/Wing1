@@ -56,7 +56,7 @@
                         <h4 class="blue">
                             <span class="middle">Status</span>
                             <span class="label @(Model.BookingStatus == enmBookingStatus.Booked ? "label-success" :
-Model.BookingStatus == enmBookingStatus.Refund ? "label-danger" : Model.BookingStatus == enmBookingStatus.PartialBooked ? "label-primary" : "label-warning" ) arrowed-in-right">
+Model.BookingStatus == enmBookingStatus.Refund ? "label-danger" : Model.BookingStatus == enmBookingStatus.PartialBooked ? "label-warning" : "label-info" ) arrowed-in-right">
                                 <i class="ace-icon fa fa-circle smaller-80 align-middle"></i>
                                 @Model.BookingStatus
                             </span>
