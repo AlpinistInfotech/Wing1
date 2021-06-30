@@ -331,14 +331,7 @@ namespace B2BClasses
             }
 
             //Also Update the Status
-
-            var ProvidersDetails = _context.tblFlightBookingProviderTraceId.Where(p => p.TraceId == mdlRq.TraceId && p.BookingId == mdlRq.BookingId);
-            foreach (var pds in ProvidersDetails)
-            {
-                pds.BookingId = mdlRq.BookingId;
-                pds.BookingStatus = bookingStatus;
-                pds.BookingMessage = ResponseMessage;
-            }
+            
             _context.SaveChanges();
             return true;
         }
@@ -399,7 +392,7 @@ namespace B2BClasses
                     mdlR = await wingflight.SearchAsync(mdlRq, _CustomerId);
                     traceIds.Add(new tblFlightBookingProviderTraceId()
                     {
-                        TravelDestiantion= mdlRq.Segments.FirstOrDefault()?.Origin+" - "+ mdlRq.Segments.FirstOrDefault()?.Destination,
+                        
                         ProviderTraceId = mdlR.TraceId,
                         ServiceProvider = sp,
                         SegmentDisplayOrder = 1
@@ -417,8 +410,7 @@ namespace B2BClasses
                         mdlRq.Segments.Add(lst[i]);
                         var md = await wingflight.SearchAsync(mdlRq, _CustomerId);
                         traceIds.Add(new tblFlightBookingProviderTraceId()
-                        {
-                            TravelDestiantion= lst[i].Origin+" - "+lst[i].Destination,
+                        {                            
                             ProviderTraceId = md.TraceId,
                             ServiceProvider = sp,
                             SegmentDisplayOrder = i + 1
