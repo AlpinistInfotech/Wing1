@@ -1,4 +1,4 @@
-﻿using B2BClasses;
+﻿
 using Database;
 using Database.Classes;
 using Microsoft.AspNetCore.Authorization;
@@ -48,6 +48,10 @@ namespace WingGateway.Controllers
             mdlHolidayPackageReportWraper returnData = new mdlHolidayPackageReportWraper();
             WingGateway.Classes.ConsProfile consProfile = new Classes.ConsProfile(_context, _config);
             returnData.HolidayPackageWrapers = consProfile.GetHolidayPackageDetails(loadType, mdl, 0, 0, false);
+
+
+            
+
             return View(returnData);
 
         }
@@ -106,6 +110,31 @@ namespace WingGateway.Controllers
             return returndata;
 
         }
+
+        [Authorize]
+        public async Task<IActionResult> FlightSearch()
+        {
+            //mdlFlightSearch flightSearch = new mdlFlightSearch()
+            //{
+            //    FlightSearchWraper = new mdlFlightSearchWraper()
+            //    {
+            //        AdultCount = 1,
+            //        ChildCount = 0,
+            //        InfantCount = 0,
+            //        CabinClass = B2BClasses.Services.Enums.enmCabinClass.ECONOMY,
+            //        DepartureDt = DateTime.Now,
+            //        ReturnDt = null,
+            //        From = "DEL",
+            //        To = "BOM",
+            //        JourneyType = B2BClasses.Services.Enums.enmJourneyType.OneWay,
+
+            //    }
+            //};
+            //await flightSearch.LoadAirportAsync(_booking);
+            //return View(flightSearch);
+            return View();
+        }
+
 
 
         [Authorize(policy: nameof(enmDocumentMaster.Emp_Dashboard))]
@@ -878,7 +907,7 @@ namespace WingGateway.Controllers
                 if (!result.Succeeded)
                 {
                     TempData["MessageType"] = (int)enmMessageType.Error;
-                    TempData["Message"] = _setting.GetErrorMessage((B2BClasses.Services.Enums.enmMessage)enmMessage.InvalidOldPassword);
+                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidOldPassword);
 
                 }
             }
