@@ -845,5 +845,62 @@ namespace WingGateway.Controllers
 
         #endregion
 
+        #region ChangePassword
+        public IActionResult ChangePassword()
+        {
+            dynamic messagetype = TempData["MessageType"];
+            mdlChangePassword mdl = new mdlChangePassword();
+            if (messagetype != null)
+            {
+                ViewBag.SaveStatus = (int)messagetype;
+                ViewBag.Message = TempData["Message"];
+            }
+            return View(mdl);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> CustomerChangePasswordAsync(mdlChangePassword mdl)
+        {
+            if (ModelState.IsValid)
+            {
+
+                var ExistingData = _context.AspNetUsers.FirstOrDefault(p => p.Id == Id);
+                if (ExistingData == null)
+                {
+                    TempData["MessageType"] = (int)enmMessageType.Error;
+                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidData);
+
+                }
+                else if (ExistingData.Password != mdl.Password)
+                {
+                    TempData["MessageType"] = (int)enmMessageType.Error;
+                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidOldPassword);
+                }
+
+                else if (ExistingData.Password == mdl.NewPassword)
+                {
+                    TempData["MessageType"] = (int)enmMessageType.Error;
+                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.OldPasswordNewPassordCannotbeSame);
+                }
+                else
+                {
+
+                    ExistingData.Password = mdl.NewPassword;
+                    ExistingData.ModifiedBy = _userid;
+                    ExistingData.ModifiedDt = DateTime.Now;
+                    _context.AspNetUsers.Update(ExistingData);
+                    await _context.SaveChangesAsync();
+                    TempData["MessageType"] = (int)enmMessageType.Success;
+                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.UpdateSuccessfully);
+
+                }
+
+            }
+            return RedirectToAction("CustomerChangePassword");
+
+        }
+
+        #endregion
     }
 }
