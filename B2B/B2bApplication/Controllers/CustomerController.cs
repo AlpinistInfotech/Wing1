@@ -793,7 +793,7 @@ namespace B2bApplication.Controllers
             ViewBag.CustomerCodeList = new SelectList(GetCustomerMaster(_context, true, 0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
             
             mdlCustomerWalletReport returnDataMdl = new mdlCustomerWalletReport();
-            returnDataMdl.mdlTcWalletWraper = new List<ProcWalletSearch>();
+            returnDataMdl.mdlTcWalletWraper = new List<ProcWalletSearch_>();
             return View(returnDataMdl);
             //return View(mdl);
 
@@ -810,9 +810,9 @@ namespace B2bApplication.Controllers
 
         #endregion
 
-        public List<ProcWalletSearch> GetTCWalletStatement(mdlCustomerWalletReport mdl, int Nid, int spmode, bool LoadImage)
+        public List<ProcWalletSearch_> GetTCWalletStatement(mdlCustomerWalletReport mdl, int Nid, int spmode, bool LoadImage)
         {
-            List<ProcWalletSearch> returnData = new List<ProcWalletSearch>();
+            List<ProcWalletSearch_> returnData = new List<ProcWalletSearch_>();
 
             using (SqlConnection sqlconnection = new SqlConnection(_config["ConnectionStrings:DefaultConnection"]))
             {
@@ -830,7 +830,7 @@ namespace B2bApplication.Controllers
                     SqlDataReader rd = sqlcmd.ExecuteReader();
                     while (rd.Read())
                     {
-                        returnData.Add(new ProcWalletSearch()
+                        returnData.Add(new ProcWalletSearch_()
                         {
                             Date = Convert.ToString(rd["date_"]),
                             Particulars = Convert.ToString(rd["Particulars"]),

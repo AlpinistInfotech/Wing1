@@ -423,7 +423,10 @@ namespace Database
         [Description("Undefined Exception!!!")]
         UndefinedException,
         [Description("Only one head office can be created!!!")]
-        SingleHeadOfficeException
+        SingleHeadOfficeException,
+        [Description("Invalid Old Password !!!")]
+        InvalidOldPassword
+
     }
 
     public static class EnmDescription
