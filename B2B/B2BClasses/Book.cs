@@ -212,8 +212,17 @@ namespace B2BClasses
             _context.tblFlightBookingFarePurchaseDetails.RemoveRange(_context.tblFlightBookingFarePurchaseDetails.Where(p => p.TraceId == traceId));
 
             int index = 1;
+            string BookingId = "";
             foreach (var mdl in mdls)
             {
+                if (mdl.BookingId?.Split("_").Length >= 2)
+                {
+                    BookingId = mdl.BookingId?.Split("_")[1];
+                }
+                else
+                {
+                    BookingId = mdl.BookingId;
+                }
                 var TPL = mdl.Results.FirstOrDefault().FirstOrDefault().TotalPriceList.FirstOrDefault();
 
                 _context.tblFlightBookingSegment.AddRange(
