@@ -845,7 +845,8 @@ namespace WingGateway.Controllers
 
         #endregion
 
-        #region ChangePassword
+#if false
+#region ChangePassword
         public IActionResult ChangePassword()
         {
             dynamic messagetype = TempData["MessageType"];
@@ -901,6 +902,7 @@ namespace WingGateway.Controllers
 
         }
 
-        #endregion
+#endregion
+#endif
     }
 }
