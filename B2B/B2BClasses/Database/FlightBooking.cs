@@ -29,7 +29,7 @@ namespace B2BClasses.Database
         public int CreatedBy { get; set; }
         public DateTime CreatedDt { get; set; }
         
-        [InverseProperty("tblFlightBookingSegmentMaster")]
+        [InverseProperty("tblFlightBookingMaster")]
         public ICollection<tblFlightBookingSegmentMaster> tblFlightBookingSegmentMaster { get; set; }
         [InverseProperty("tblFlightBookingMaster")]
         public ICollection<tblFlightBookingSegment> tblFlightBookingSegments { get; set; }
