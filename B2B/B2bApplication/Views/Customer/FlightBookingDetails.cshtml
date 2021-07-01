@@ -112,12 +112,23 @@ Model.BookingStatus == enmBookingStatus.Refund ? "label-danger" : Model.BookingS
                                     <span>@Model.CreatedDt.ToString("dd-MMM-yyyy hh:mm tt")</span>
                                 </div>
                             </div>
-                            @foreach (var fbs in Model.tblFlightBookingSegments.OrderBy(p => p.SegmentDisplayOrder))
+                            @foreach (var fbs in Model.tblFlightBookingSegmentMaster.OrderBy(p => p.SegmentDisplayOrder))
                             {
                                 <div class="profile-info-row">
                                     <div class="profile-info-name"> @string.Concat(fbs.Origin, " - " + fbs.Destination)</div>
                                     <div class="profile-info-value">
-                                        <span>@fbs.</span>
+                                        <div class="profile-info-row">
+                                            <div class="profile-info-name">Travel Date</div>
+                                            <div class="profile-info-value">
+                                                <span>@fbs.TravelDt.ToString()</span>
+                                            </div>
+                                        </div>
+                                        <div class="profile-info-row">
+                                            <div class="profile-info-name">Booking Id</div>
+                                            <div class="profile-info-value">
+                                                <span>@fbs.BookingId</span>
+                                            </div>
+                                        </div>                                        
                                     </div>
                                 </div>
                             }

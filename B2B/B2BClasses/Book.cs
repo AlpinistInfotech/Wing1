@@ -98,6 +98,7 @@ namespace B2BClasses
                 Query = Query.Include(p => p.tblFlightBookingFarePurchaseDetails);
             }
 
+            Query = Query.Include(p => p.tblFlightBookingSegmentMaster);
             Query = Query.Include(p => p.tblFlightBookingSegments).Include(p => p.tblFlightBookingPassengerDetails).Include(p => p.tblFlightBookingFareDetails).Include(p => p.tblFlightBookingGSTDetails);
             mdl =Query.OrderByDescending(p=>p.CreatedDt).ToList();
             if (mdl != null && mdl.Count > 0)
@@ -129,6 +130,7 @@ namespace B2BClasses
             {
                 Query = _context.tblFlightBookingMaster.Where(p => p.Id == Id && p.CustomerId == CustomerId  );
             }
+            Query = Query.Include(p => p.tblFlightBookingSegmentMaster);
             Query = Query.Include(p => p.tblFlightBookingSegments);
             Query = Query.Include(p => p.tblFlightBookingProviderTraceIds);
             Query = Query.Include(p => p.tblFlightBookingPassengerDetails);
@@ -204,6 +206,7 @@ namespace B2BClasses
 
         public async Task<bool> CustomerFlightDetailSave(string traceId, List<mdlFareQuotResponse> mdls)
         {
+            _context.tblFlightBookingSegmentMaster.RemoveRange(_context.tblFlightBookingSegmentMaster.Where(p => p.TraceId == traceId));
             _context.tblFlightBookingSegment.RemoveRange(_context.tblFlightBookingSegment.Where(p => p.TraceId == traceId));
             _context.tblFlightBookingFareDetails.RemoveRange(_context.tblFlightBookingFareDetails.Where(p => p.TraceId == traceId));
             _context.tblFlightBookingFarePurchaseDetails.RemoveRange(_context.tblFlightBookingFarePurchaseDetails.Where(p => p.TraceId == traceId));
@@ -231,10 +234,21 @@ namespace B2BClasses
                         TraceId = traceId,
                         TripIndicator = p.TripIndicator,
                         TravelDt = p.DepartureTime.Date,
-
-
                     })
                  );
+
+                _context.tblFlightBookingSegmentMaster.Add(new tblFlightBookingSegmentMaster
+                {
+                    BookingId = mdl.BookingId,
+                    TraceId = traceId,
+                    TravelDt = mdl.SearchQuery.DepartureDt.HasValue ? mdl.SearchQuery.DepartureDt.Value : DateTime.Now,
+                    BookingStatus = enmBookingStatus.Pending,
+                    Destination = mdl.SearchQuery.To,
+                    Origin = mdl.SearchQuery.From,
+                    SegmentDisplayOrder = index,
+                    ServiceProvider = mdl.ServiceProvider,
+                    BookingMessage=string.Empty
+                });
 
                 _context.tblFlightBookingFareDetails.Add(new tblFlightBookingFareDetails()
                 {
@@ -329,8 +343,14 @@ namespace B2BClasses
                 }
                  );
             }
-
             //Also Update the Status
+            var sgm=_context.tblFlightBookingSegmentMaster.Where(p => p.TraceId == mdlRq.TraceId && p.BookingId == mdlRq.BookingId).FirstOrDefault();
+            if (sgm != null)
+            {
+                sgm.BookingStatus = bookingStatus;
+                sgm.BookingMessage = ResponseMessage;
+                _context.Update(sgm);
+            }
             
             _context.SaveChanges();
             return true;
@@ -574,7 +594,7 @@ namespace B2BClasses
                 mdlRs = await wingflight.BookingAsync(mdlRq);
 
                 if (mdlRs.ResponseStatus == 1)
-                {
+                {   
                     CustomerPassengerDetailSave(mdlRq, enmBookingStatus.Booked, sp,String.Empty);
                 }
                 else
