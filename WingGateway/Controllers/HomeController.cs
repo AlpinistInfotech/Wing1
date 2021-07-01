@@ -1,4 +1,5 @@
-﻿using Database;
+﻿using B2BClasses;
+using Database;
 using Database.Classes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -21,13 +22,20 @@ namespace WingGateway.Controllers
     {
         private readonly ILogger<HomeController> _logger;        
         private readonly DBContext _context;
+        private readonly ISettings _setting;
         private readonly IConfiguration _config;
-
-        public HomeController(ILogger<HomeController> logger,DBContext context, IConfiguration config)
+        private readonly ICurrentUsers _currentUsers;
+        private readonly int _userid;
+        public HomeController(ILogger<HomeController> logger,DBContext context, IConfiguration config, ICurrentUsers currentUsers, ISettings setting
+            )
         {
             _logger = logger;            
             _context = context;
             _config = config;
+            _setting = setting;
+            _currentUsers = currentUsers;
+            _userid = _currentUsers.EmpId;
+
         }
 
 
@@ -861,43 +869,55 @@ namespace WingGateway.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> CustomerChangePasswordAsync(mdlChangePassword mdl)
+        public async Task<IActionResult> CustomerChangePasswordAsync(mdlChangePassword mdl, UserManager<ApplicationUser> _userManager, SignInManager<ApplicationUser> _signInManager)
         {
             if (ModelState.IsValid)
             {
 
-                var ExistingData = _context.AspNetUsers.FirstOrDefault(p => p.Id == Id);
-                if (ExistingData == null)
+                var result = await _signInManager.PasswordSignInAsync(_currentUsers.TcId, mdl.Password, true, true);
+                if (!result.Succeeded)
                 {
                     TempData["MessageType"] = (int)enmMessageType.Error;
-                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidData);
+                    TempData["Message"] = _setting.GetErrorMessage((B2BClasses.Services.Enums.enmMessage)enmMessage.InvalidOldPassword);
 
                 }
-                else if (ExistingData.Password != mdl.Password)
-                {
-                    TempData["MessageType"] = (int)enmMessageType.Error;
-                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidOldPassword);
-                }
-
-                else if (ExistingData.Password == mdl.NewPassword)
-                {
-                    TempData["MessageType"] = (int)enmMessageType.Error;
-                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.OldPasswordNewPassordCannotbeSame);
-                }
-                else
-                {
-
-                    ExistingData.Password = mdl.NewPassword;
-                    ExistingData.ModifiedBy = _userid;
-                    ExistingData.ModifiedDt = DateTime.Now;
-                    _context.AspNetUsers.Update(ExistingData);
-                    await _context.SaveChangesAsync();
-                    TempData["MessageType"] = (int)enmMessageType.Success;
-                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.UpdateSuccessfully);
-
-                }
-
             }
+
+            //if (ModelState.IsValid)
+            //{
+
+            //    var ExistingData = _context.UserLogins.FirstOrDefault(p => p.UserId == _userid );
+            //    if (ExistingData == null)
+            //    {
+            //        TempData["MessageType"] = (int)enmMessageType.Error;
+            //        TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidData);
+
+            //    }
+            //    else if (ExistingData.pas != mdl.Password)
+            //    {
+            //        TempData["MessageType"] = (int)enmMessageType.Error;
+            //        TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidOldPassword);
+            //    }
+
+            //    else if (ExistingData.Password == mdl.NewPassword)
+            //    {
+            //        TempData["MessageType"] = (int)enmMessageType.Error;
+            //        TempData["Message"] = _setting.GetErrorMessage(enmMessage.OldPasswordNewPassordCannotbeSame);
+            //    }
+            //    else
+            //    {
+
+            //        ExistingData.Password = mdl.NewPassword;
+            //        ExistingData.ModifiedBy = _userid;
+            //        ExistingData.ModifiedDt = DateTime.Now;
+            //        _context.AspNetUsers.Update(ExistingData);
+            //        await _context.SaveChangesAsync();
+            //        TempData["MessageType"] = (int)enmMessageType.Success;
+            //        TempData["Message"] = _setting.GetErrorMessage(enmMessage.UpdateSuccessfully);
+
+            //    }
+
+            //}
             return RedirectToAction("CustomerChangePassword");
 
         }
