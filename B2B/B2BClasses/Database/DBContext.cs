@@ -62,7 +62,9 @@ namespace B2BClasses.Database
 
         #region ************************* Flight Booking **********************************
         public DbSet<tblFlightBookingMaster> tblFlightBookingMaster { get; set; }
-        public DbSet<tblFlightBookingProviderTraceId> tblFlightBookingProviderTraceId{ get; set; }        
+        public DbSet<tblFlightBookingProviderTraceId> tblFlightBookingProviderTraceId{ get; set; }
+        
+        public DbSet<tblFlightBookingSegmentMaster> tblFlightBookingSegmentMaster { get; set; }
         public DbSet<tblFlightBookingSegment> tblFlightBookingSegment { get; set; }
         public DbSet<tblFlightBookingPassengerDetails> tblFlightBookingPassengerDetails { get; set; }
         public DbSet<tblFlightBookingGSTDetails> tblFlightBookingGSTDetails { get; set; }

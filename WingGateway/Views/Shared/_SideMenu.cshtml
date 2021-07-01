@@ -22,6 +22,7 @@
                     @if (User.Identity.IsAuthenticated)
                     {
                         <a href="#" class="d-block">@(_currentUsers.Name)</a>
+                        <a href="#">@(_currentUsers.TcId)</a>
                     }
                 </div>
             </div>

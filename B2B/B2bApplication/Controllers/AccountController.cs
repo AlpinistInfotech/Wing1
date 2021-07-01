@@ -93,10 +93,14 @@ namespace B2bApplication.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult SendEmail(mdlEmail mdl)
+        public IActionResult SendEmail(mdlEmail mdl, string mail)
         {
+            
+            if (mail == "send")
+            { 
             using (MailMessage msg = new MailMessage(mdl.Email, mdl.To))
             {
+                
                 //msg.Subject = mdl.Subject;
                 msg.Subject = "Hello Subject";
                 //msg.Body = mdl.Body;
@@ -105,15 +109,17 @@ namespace B2bApplication.Controllers
                 {
                     smtp.Host = "smtp.gmail.com";
                     smtp.EnableSsl = true;
-                    NetworkCredential NetworkCred = new NetworkCredential("emailid", "password"); //Write sender emailid and password
-                    smtp.UseDefaultCredentials = true;                                          //Problem in Button Control
+                    NetworkCredential NetworkCred = new NetworkCredential("email", "password"); //Write sender emailid and password
+                    smtp.UseDefaultCredentials = true;                                          
                     smtp.Credentials = NetworkCred;
                     smtp.Port = 587;
                     smtp.Send(msg);
                     ViewBag.Message = "Email sent.";
                 }
             }
-                return View();
+            }
+            return View(mdl);
+            
         }
 
     }

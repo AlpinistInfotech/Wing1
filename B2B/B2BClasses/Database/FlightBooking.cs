@@ -28,6 +28,9 @@ namespace B2BClasses.Database
         public string Email{ get; set; }
         public int CreatedBy { get; set; }
         public DateTime CreatedDt { get; set; }
+        
+        [InverseProperty("tblFlightBookingSegmentMaster")]
+        public ICollection<tblFlightBookingSegmentMaster> tblFlightBookingSegmentMaster { get; set; }
         [InverseProperty("tblFlightBookingMaster")]
         public ICollection<tblFlightBookingSegment> tblFlightBookingSegments { get; set; }
         [InverseProperty("tblFlightBookingMaster")]
@@ -57,11 +60,32 @@ namespace B2BClasses.Database
         [ForeignKey("tblFlightBookingMaster")] // Foreign Key here
         public string TraceId { get; set; }
         public tblFlightBookingMaster tblFlightBookingMaster { get; set; }
+        
+    }
+
+
+    public class tblFlightBookingSegmentMaster
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        public int SegmentDisplayOrder { get; set; }
+        [Required]
+        [MaxLength(20)]
+        public string Origin { get; set; }
+        [Required]
+        [MaxLength(20)]
+        public string Destination { get; set; }
+        public DateTime TravelDt { get; set; }
+        [ForeignKey("tblFlightBookingMaster")] // Foreign Key here
+        public string TraceId { get; set; }
+        public tblFlightBookingMaster tblFlightBookingMaster { get; set; }
         [MaxLength(200)]
         public string BookingId { get; set; }
         public enmBookingStatus BookingStatus { get; set; } = enmBookingStatus.Pending;
-        [MaxLength(2000)]
+        [MaxLength(200)]
         public string BookingMessage { get; set; }
+        public enmServiceProvider ServiceProvider { get; set; }
     }
 
     public class tblFlightBookingSegment
@@ -120,10 +144,7 @@ namespace B2BClasses.Database
         [MaxLength(200)]
         [ForeignKey("tblFlightBookingMaster")] // Foreign Key here
         public string TraceId { get; set; }
-        public tblFlightBookingMaster tblFlightBookingMaster { get; set; }
-        [MaxLength(200)]
-        public string BookingId { get; set; }
-        public enmServiceProvider ServiceProvider { get; set; }
+        public tblFlightBookingMaster tblFlightBookingMaster { get; set; }        
     }
 
     public class tblFlightBookingGSTDetails

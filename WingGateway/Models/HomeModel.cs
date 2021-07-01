@@ -128,22 +128,31 @@ namespace WingGateway.Models
 
 
     public class mdlPAN
-    {
+    {        
         [StringLength(100, ErrorMessage = "The {0} must be at most {1} characters long.", MinimumLength = 3)]
         [Required]
         [Display(Name = "Name (as on PAN Card)")]
         public string PanName { get; set; }
 
         [Required]
+        [RegularExpression("^([A-Za-z]){5}([0-9]){4}([A-Za-z]){1}$", ErrorMessage = "Invalid PAN Number")]
         [Display(Name = "PAN No.")]
         [StringLength(10, ErrorMessage = "The {0} must be at most {1} characters long.",MinimumLength =10)]
         [Remote(action: "IsPANNoInUse", controller: "Home", AdditionalFields = "PANId")]
         public string PANNo { get; set; }
 
+        
         [Required]
         [Display(Name = "Upload PAN Card")]
+        //[ValidateFile]
         public List<IFormFile> UploadImages { set; get; }
+        public string ErrorMessgae { get; set; }
 
+        //Customize data validation for Upload Images
+        //public class ValidateFileAttribute : ValidationAttribute
+        //{
+        //    string[] AllowedFileExtensions = new string[] {".jpg",".jpeg",".png"};
+        //}
         
 
         [RegularExpression("[a-zA-Z0-9,/.\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
