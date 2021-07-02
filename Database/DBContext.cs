@@ -39,6 +39,7 @@ namespace Database
         public DbSet<tblTcSequcence> tblTcSequcence { get; set; }
         public DbSet<tblBankMaster> tblBankMaster { get; set; }
         public DbSet<tblEmpMaster> tblEmpMaster { get; set; }
+        
 
 
         #endregion

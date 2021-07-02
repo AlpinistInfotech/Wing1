@@ -1,6 +1,6 @@
 ﻿namespace Database
 {
-    public class ProcWalletSearch
+    public class ProcWalletSearch_
     {
 
         public string Date { get; set; }

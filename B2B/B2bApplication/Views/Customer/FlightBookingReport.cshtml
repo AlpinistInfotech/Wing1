@@ -184,7 +184,7 @@
                             @md.JourneyType
                         </td>
                         <td>
-                            @string.Join(", ", md.tblFlightBookingSegments.OrderBy(p => p.SegmentDisplayOrder).Select(p => new { Segment = p.Origin + " " + p.Destination }).Select(p => p.Segment).Distinct())
+                            @string.Join(", ", md.tblFlightBookingSegmentMaster.OrderBy(p => p.SegmentDisplayOrder).Select(p => new { Segment = p.Origin + " " + p.Destination }).Select(p => p.Segment).Distinct())
                         </td>
 
                         <td>
@@ -195,7 +195,7 @@
                         </td>
 
                         <td>
-                            @string.Join(", ", md.tblFlightBookingSegments.OrderBy(p => p.SegmentDisplayOrder).Select(p => new { TravelDt = p.TravelDt.ToString("dd-MMM-yyyy") }).Select(p => p.TravelDt).Distinct())
+                            @string.Join(", ", md.tblFlightBookingSegmentMaster.OrderBy(p => p.SegmentDisplayOrder).Select(p => new { TravelDt = p.TravelDt.ToString("dd-MMM-yyyy") }).Select(p => p.TravelDt).Distinct())
                         </td>
                         <td>
                             @md.ContactNo

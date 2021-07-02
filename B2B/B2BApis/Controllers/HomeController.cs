@@ -1,6 +1,7 @@
 ﻿using B2BApis.Model;
 using B2BClasses;
 using B2BClasses.Database;
+using B2BClasses.Models;
 using B2BClasses.Services.Air;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -26,6 +27,46 @@ namespace B2BApis.Controllers
         {
             _config = configuration;
         }
+
+        [Route("SearchAirPort")]
+        [HttpPost]
+        public async Task<mdlAirportApi> SearchAirPorts([FromServices] IBooking booking)
+        {
+            mdlAirportApi airportApi = new mdlAirportApi();
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    isvalid = ValidateToken();
+                    if (isvalid == 0 || _customerId <= 0 || _userId <= 0)
+                    {
+                        airportApi.StatusCode = 0;
+                        airportApi.StatusMessage = "Invalid Token Data";
+                    }
+                    else
+                    {
+                        booking.CustomerId = _customerId;
+                        booking.UserId = _userId;
+                        airportApi.mdlSearches = await booking.GetAirportAsync();
+                        airportApi.StatusCode = 1;
+                        airportApi.StatusMessage = "Success";
+                        airportApi.DefaultFromAirport = "DEL";
+                        airportApi.DefaultToAirport = "BOM";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    airportApi.mdlSearches = null;
+                    airportApi.StatusCode = 0;
+                    airportApi.StatusMessage = ex.Message;
+                }
+            }
+            return airportApi;
+
+        }
+
+        
 
         [Route("SearchFlight")]
         [HttpPost]

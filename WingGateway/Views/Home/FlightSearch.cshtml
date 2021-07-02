@@ -1,0 +1,307 @@
+﻿@model B2BClasses.Models.mdlFlightSearch
+@using B2BClasses.Services.Enums
+@{
+    ViewData["Title"] = enmDocumentMaster.Flight.GetDocumentDetails().Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<input type="hidden" value="@(enmDocumentMaster.Flight)" id="_currentDocument" name="_currentDocument" />
+
+
+<form id="frmFlightReview" asp-controller="Home" asp-action="FlightReview" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="FareQuoteRequest.TraceId" value="@(Model.searchResponse?.TraceId??string.Empty)">
+    <input type="hidden" id="FareQuoteRequestResultIndex1" name="FareQuoteRequest.ResultIndex" value="">
+    <input type="hidden" id="FareQuoteRequestResultIndex2" name="FareQuoteRequest.ResultIndex" value="">
+
+</form>
+
+<div class="row">
+    <div class="col-sm-12 searchbx">
+        <div class="widget-box">
+            <div class="widget-header">
+                <h4 class="widget-title">Search Flight</h4>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <form action="@Url.Action()" method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <input type="hidden" asp-for="FlightSearchWraper.CabinClass" />
+                        <div class="row">
+
+                            <div class="form-group col-md-2">
+                                <label for="OriginFrom"><b>From</b></label>
+                                <div class="row">
+                                    <div class="col-sm-11">
+                                        <div class="form-group">
+                                            <select id="OriginFrom" asp-for="FlightSearchWraper.From" class="select2 form-control" data-placeholder="From">
+                                                @foreach (var d in Model.Airports)
+                                                {
+                                                    <option value="@d.AirportCode">@(d.AirportCode), @d.CityName, @d.CountryCode  </option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label for="OriginTo"><b>To</b></label>
+                                <div class="row">
+                                    <div class="col-sm-11">
+                                        <div class="form-group">
+                                            <select id="OriginTo" asp-for="FlightSearchWraper.To" class="select2 form-control" data-placeholder="To">
+                                                @foreach (var d in Model.Airports)
+                                                {
+                                                    <option value="@d.AirportCode">@(d.AirportCode), @d.CityName, @d.CountryCode </option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-1">
+                                <label for="id-date-picker-1"><b>Journey Type</b></label>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <select id="JourneyType" asp-for="FlightSearchWraper.JourneyType" class="form-control" data-placeholder="Journey Type">
+                                                <option value="1">Oneway </option>
+                                                <option value="2">Return </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label for="id-date-picker-1"><b>Travel Date</b></label>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="input-daterange input-group">
+                                            <input type="text" class="input-sm form-control" id="DepartureDt" asp-for="FlightSearchWraper.DepartureDt" asp-format="{0:dd-MMM-yyyy}" autocomplete="off" />
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-exchange"></i>
+                                            </span>
+                                            <input type="text" class="input-sm form-control" asp-for="FlightSearchWraper.ReturnDt" asp-format="{0:dd-MMM-yyyy}" autocomplete="off" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div class="form-group col-md-1">
+                                <label for="Adult"><b>Adult</b></label>
+                                <div class="row">
+
+                                    <div class="col-sm-11">
+                                        <div class="form-group">
+                                            <select id="Adult" asp-for="FlightSearchWraper.AdultCount" class="form-control" data-placeholder="Adult">
+                                                <option value="1">1</option>
+                                                <option value="2">2 </option>
+                                                <option value="3">3 </option>
+                                                <option value="4">4 </option>
+                                                <option value="5">5 </option>
+                                                <option value="6">6 </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-1">
+                                <label for="Child"><b>Child</b></label>
+                                <div class="row">
+
+                                    <div class="col-sm-11">
+                                        <div class="form-group">
+                                            <select id="Child" asp-for="FlightSearchWraper.ChildCount" class="form-control" data-placeholder="Child">
+                                                <option value="0">0</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-1">
+                                <label for="Infant"><b>Infant</b></label>
+                                <div class="row">
+
+                                    <div class="col-sm-11">
+                                        <div class="form-group">
+                                            <select id="Infant" asp-for="FlightSearchWraper.InfantCount" class="form-control" data-placeholder="Infant">
+                                                <option value="0">0</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <button class="btn btn-info" type="submit">
+                                    <i class="ace-icon fa fa-search bigger-110"></i>
+                                    Search
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="divFixedBook" class="position-fixed col-md-8 col-sm-12 invisible">
+        <div class="container totalamt">
+            <div class="col-md-6"><b>Amount:</b> <strong id="lblTotalAmount"> </strong><strong></strong> </div>
+            <div class="col-md-6">
+                <button class="btn btn-success pull-right" name='bookFlight'>Book Flight</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        @{
+            ViewData["JourneyType"] = ((Model.searchResponse?.Results?.Count ?? 0) == 1) ? 1 : 2;
+            ViewBag.AdultCount = Model.FlightSearchWraper.AdultCount;
+            ViewBag.ChildCount = Model.FlightSearchWraper.ChildCount;
+            ViewBag.InfantCount = Model.FlightSearchWraper.InfantCount;
+        }
+
+        @{ ViewBag.JourneyType1 = "OnwardRadio"; }
+        @if ((Model.searchResponse?.Results?.Count ?? 0) == 1)
+        {
+
+
+            @foreach (var res in Model.searchResponse?.Results.FirstOrDefault())
+            {
+
+                <div class="container resultbx">
+                    @{ await Html.RenderPartialAsync("_FlightResult", res);}
+                </div>
+
+            }
+        }
+    </div>
+
+
+
+    @if ((Model.searchResponse?.Results?.Count ?? 0) > 1)
+    {
+
+        <div class="row">
+            @{ ViewBag.JourneyType1 = "OnwardRadio"; }
+            <div class="col-md-6">
+                @foreach (var res in Model.searchResponse?.Results[0])
+                {
+
+                    <div class="col-sm-12 resultbx">
+                        @{ await Html.RenderPartialAsync("_FlightResult", res);}
+                    </div>
+                }
+            </div>
+            <div class="col-md-6">
+                @{ ViewBag.JourneyType1 = "ReturnRadio"; }
+                @foreach (var res in Model.searchResponse?.Results[1])
+                {
+
+                    <div class="col-sm-12 resultbx">
+                        @{ await Html.RenderPartialAsync("_FlightResult", res);}
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+
+
+
+</div>
+
+
+@section Scripts {
+    <script>
+        jQuery(function ($) {
+            $('.select2').select2({ allowClear: true });
+            $('.input-daterange').datepicker({ autoclose: true, format: 'd-M-yyyy', startDate: '3d' });
+        });
+
+
+        $(document).ready(function () {
+            var elementPosition = $('.searchbx').offset();
+
+            $(window).scroll(function () {
+                if ($(window).scrollTop() > elementPosition.top) {
+                    $('.searchbx').css('position', 'fixed').css('top', '0');
+                    $('.searchbx .widget-box').css('box-shadow', ' 0px 0px 10px 1px rgba(0, 0, 0, .2)');
+                } else {
+                    $('.searchbx').css('position', 'static');
+                    $('.searchbx .widget-box').css('box-shadow', 'inherit');
+                }
+            });
+
+            $("button[name='bookFlight']").click(function () {
+                var resultInde = '';
+                var resultInde1 = $("input[name='OnwardRadio']:checked").val();
+                if (resultInde1 == null || resultInde1 == undefined) {
+                    alert('select Flight');
+                    return;
+                }
+                else {
+                    resultInde = resultInde1;
+                    $("#FareQuoteRequestResultIndex1").val(resultInde1);
+                }
+
+                var resultInde2 = $("input[name='ReturnRadio']:checked").val();
+                if ($("#JourneyType").val() == 2 && (resultInde2 == null || resultInde2 == undefined)) {
+                    alert('select Retrurn Flight');
+                    return;
+                }
+                else {
+                    $("#FareQuoteRequestResultIndex2").val(resultInde2);
+                    resultInde = resultInde1 + "," + resultInde2;
+                }
+                $("#frmFlightReview").submit();
+            });
+
+            function calculateTotalProce() {
+                var Onward = $("input[name='OnwardRadio']:checked").data('price')
+                if ((Onward == null || Onward == undefined || Onward == '')) {
+                    Onward = 0;
+                }
+                var Return = $("input[name='ReturnRadio']:checked").data('price')
+                if ((Return == null || Return == undefined || Return == '')) {
+                    Return = 0;
+                }
+                var Total = parseInt(parseFloat(Onward) + parseFloat(Return));
+                if (Total > 0) {
+                    $("#divFixedBook").removeClass("invisible");
+                    $("#divFixedBook").addClass("visible");
+
+                }
+                else {
+                    $("#divFixedBook").removeClass("visible");
+                    $("#divFixedBook").addClass("invisible");
+                }
+                $("#lblTotalAmount").html(Total);
+
+
+            }
+
+            $("input[name='OnwardRadio']").change(function () {
+
+                calculateTotalProce();
+            })
+            $("input[name='ReturnRadio']").change(function () {
+
+                calculateTotalProce();
+            })
+
+
+        });
+
+    </script>
+}

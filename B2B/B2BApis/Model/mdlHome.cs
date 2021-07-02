@@ -15,6 +15,17 @@ namespace B2BApis.Model
         public IEnumerable<mdlSearchResponse> mdlSearches { get; set; }
     }
 
+    public class mdlAirportApi
+    {
+        public int StatusCode { get; set; }
+        public string StatusMessage { get; set; }
+        public string DefaultFromAirport { get; set; }
+        public string DefaultToAirport { get; set; }
+
+        public List<tblAirport> mdlSearches { get; set; }
+    }
+
+
     public class mdlfarequoteApi
     {
         public int StatusCode { get; set; }

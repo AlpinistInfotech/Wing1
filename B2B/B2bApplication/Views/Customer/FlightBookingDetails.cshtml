@@ -52,7 +52,7 @@
         <div class="tab-content profile-edit-tab-content">
             <div id="flightBookingDetails_Basic" class="tab-pane in active">
                 <div class="row">
-                    <div class="col-xs-12 col-sm-8 col-sm-offset-2">
+                    <div class="col-xs-12 col-sm-10 col-sm-offset-1">
                         <h4 class="blue">
                             <span class="middle">Status</span>
                             <span class="label @(Model.BookingStatus == enmBookingStatus.Booked ? "label-success" :
@@ -112,12 +112,71 @@ Model.BookingStatus == enmBookingStatus.Refund ? "label-danger" : Model.BookingS
                                     <span>@Model.CreatedDt.ToString("dd-MMM-yyyy hh:mm tt")</span>
                                 </div>
                             </div>
-                            @foreach (var fbs in Model.tblFlightBookingSegments.OrderBy(p => p.SegmentDisplayOrder))
+                            @foreach (var fbs in Model.tblFlightBookingSegmentMaster.OrderBy(p => p.SegmentDisplayOrder))
                             {
                                 <div class="profile-info-row">
                                     <div class="profile-info-name"> @string.Concat(fbs.Origin, " - " + fbs.Destination)</div>
                                     <div class="profile-info-value">
-                                        <span>@fbs.</span>
+                                        <div class="profile-info-row">
+                                            <div class="profile-info-name">Travel Date</div>
+                                            <div class="profile-info-value">
+                                                <span>@fbs.TravelDt.ToString()</span>
+                                                <span class="label @(fbs.BookingStatus == enmBookingStatus.Booked ? "label-success" :
+fbs.BookingStatus == enmBookingStatus.Refund ? "label-danger" : fbs.BookingStatus == enmBookingStatus.PartialBooked ? "label-warning" : "label-info" ) arrowed-in-right">
+                                                    <i class="ace-icon fa fa-circle smaller-80 align-middle"></i>
+                                                    @fbs.BookingStatus
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="profile-info-row">
+                                            <div class="profile-info-name">Booking Id</div>
+                                            <div class="profile-info-value">
+                                                <span>@(fbs.BookingId.Split("_")?.Length>=2? @fbs.BookingId.Split("_")?[1]:"")</span>
+                                                @if (_currentUser.CustomerType == enmCustomerType.Admin)
+                                                {
+                                            <span class="label label-warning ">                                                
+                                                @fbs.ServiceProvider
+                                            </span>
+                                                }
+                                            </div>
+                                        </div>
+
+
+                                        @foreach (var fbd in Model.tblFlightBookingSegments.Where(p => p.SegmentDisplayOrder == fbs.SegmentDisplayOrder).OrderBy(p => p.TripIndicator))
+                                        {
+                                            <div class="col-sm-6">
+                                                <div class="profile-activity clearfix">
+                                                    <div>
+                                                        <img class="pull-left" alt="user Image" src="~/AirlinesLogo/@(fbd.AirlineCode).png" />
+                                                        <a class="user" href="#"> @string.Concat(fbd.Airline, " - ", fbd.FlightNumber) </a>
+
+                                                        <div class="profile-info-row">
+                                                            <div class="profile-info-value">
+                                                                <span>@string.Concat(fbd.Origin, "-", fbd.Destination)</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="profile-info-row">
+                                                            <div class="profile-info-value">
+                                                                <i class="ace-icon fa fa-book bigger-110"></i>
+                                                                <span>Departure: @fbd.DepartureTime.ToString("dd-MMM-yyyy HH:mm") </span>
+                                                                <span>Arrival : @fbd.ArrivalTime.ToString("dd-MMM-yyyy HH:mm")</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="profile-info-row">
+                                                            <div class="profile-info-value">
+                                                                <span>Cabin Class: @fbd.CabinClass </span>
+                                                                <span>Booking Class : @fbd.ClassOfBooking</span>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div><!-- /.col -->
+                                        }
+
+
                                     </div>
                                 </div>
                             }

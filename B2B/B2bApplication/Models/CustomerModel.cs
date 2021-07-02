@@ -302,7 +302,7 @@ namespace B2bApplication.Models
         [Required]
         [Display(Name = "Customer Type")]
         public string CustomerID { set; get; }
-        public List<ProcWalletSearch> mdlTcWalletWraper { get; set; }
+        public List<ProcWalletSearch_> mdlTcWalletWraper { get; set; }
     }
 
     public class mdlCustomerIPFilter

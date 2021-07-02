@@ -4,7 +4,7 @@
     ViewData["Title"] = "Registration";
     Layout = "~/Views/Shared/_LoginLayout.cshtml";
 }
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <div class="register-box">
     <div class="register-logo">
         <a href="#"><b>Travel</b>Wing</a>
@@ -136,7 +136,12 @@
 
                 <div class="form-group">
                    
-                            <input type="submit" value="Register" class="btn btn-primary" />
+                            @*<input type="submit" value="Register" class="btn btn-primary" />*@
+                    <button type="submit" value="Register" class="btn btn-primary">Register
+                        <div class="spinner-border d-none" id="mydiv" role="status">
+
+                        </div>
+                    </button>
                 </div>
             </form>
 
@@ -158,3 +163,12 @@
     <script src="~/js/CountryState.js"></script>
     
     }
+
+<!--JQuery for Spinner Near Submit Button-->
+<script>
+    $(document).ready(function () {
+        $("button").click(function () {
+            $("#mydiv").removeClass("d-none");
+        });
+    });
+</script>

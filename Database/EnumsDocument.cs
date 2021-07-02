@@ -29,6 +29,8 @@ namespace Database
         Gateway_Team = 5,
         [Module(EnmApplication: enmApplication.Gateway, IsArea: false, DisplayOrder: 0, Name: "Setting", Description: "", Icon: "nav-icon far fa-plus-square", AreaName: "", CntrlName: "Setting")]
         Gateway_Setting = 6,
+        [Module(EnmApplication: enmApplication.Gateway, IsArea: false, DisplayOrder: 0, Name: "Change Password", Description: "", Icon: "nav-icon far fa-plus-square", AreaName: "", CntrlName: "ChangePassword")]
+        Gateway_ChangePassword = 7,
 
 
         [Module(EnmApplication: enmApplication.CRM, IsArea: false, DisplayOrder: 0, Name: "Profile", Description: "TC, bank, Pan, address contact etc", Icon: "nav-icon far fa-plus-square", AreaName: "", CntrlName: "Wing")]
@@ -421,7 +423,10 @@ namespace Database
         [Description("Undefined Exception!!!")]
         UndefinedException,
         [Description("Only one head office can be created!!!")]
-        SingleHeadOfficeException
+        SingleHeadOfficeException,
+        [Description("Invalid Old Password !!!")]
+        InvalidOldPassword
+
     }
 
     public static class EnmDescription

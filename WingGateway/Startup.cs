@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WingGateway.Classes;
-
 namespace WingGateway
 {
     public class Startup
@@ -38,8 +37,11 @@ namespace WingGateway
                     option.Lockout.MaxFailedAccessAttempts = 4;
                     option.Lockout.DefaultLockoutTimeSpan = new TimeSpan(24, 0, 0);
                 }
-            ).AddEntityFrameworkStores<DBContext>();            
+            ).AddEntityFrameworkStores<DBContext>();
+            services.AddScoped<ISettings>(ctx => new  Settings(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
 
+            services.AddHttpClient();
+            
             #region ************* Services Registration ************************
             services.AddScoped<ICaptchaGenratorBase>(ctx => new CaptchaGenratorBase(ctx.GetRequiredService<DBContext>()));
             services.AddScoped<ISequenceMaster>(ctx => new SequenceMaster(ctx.GetRequiredService<DBContext>()));
