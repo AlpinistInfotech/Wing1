@@ -900,6 +900,7 @@ namespace WingGateway.Controllers
         [Authorize]
         public async Task<IActionResult> CustomerChangePasswordAsync(mdlChangePassword mdl, UserManager<ApplicationUser> _userManager, SignInManager<ApplicationUser> _signInManager)
         {
+            
             if (ModelState.IsValid)
             {
 
@@ -910,6 +911,16 @@ namespace WingGateway.Controllers
                     TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidOldPassword);
 
                 }
+                
+                else 
+                {
+                    var user = new ApplicationUser
+                    {
+                        PasswordHash = mdl.NewPassword
+                    };
+                    _userManager.ChangePasswordAsync(user, mdl.Password, mdl.NewPassword);
+                }
+                
             }
 
             //if (ModelState.IsValid)
