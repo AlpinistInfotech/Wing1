@@ -3,9 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
-using Database;
 
-namespace WingGateway
+namespace Database
 {
 
     public interface ISettings

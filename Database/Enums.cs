@@ -4,8 +4,68 @@ using System.Text;
 
 namespace Database
 {
-    
 
+    public enum enmJourneyType
+    {
+        OneWay = 1, Return = 2, MultiStop = 3, AdvanceSearch = 4, SpecialReturn = 5
+    }
+
+    public enum enmCabinClass
+    {
+        //ALL=1,
+        ECONOMY = 2,
+        PREMIUM_ECONOMY = 3,
+        BUSINESS = 4,
+        //PremiumBusiness=5,
+        FIRST = 6
+    }
+
+
+    public enum enmPreferredDepartureTime
+    {
+        AnyTime = 1,
+        Morning = 2,
+        AfterNoon = 3,
+        Evening = 4,
+        Night = 5
+    }
+
+    public enum enmBookingStatus
+    {
+        Pending = 0,
+        Booked = 1,
+        Refund = 2,
+        PartialBooked = 3,
+        Failed = 4,
+        All = 100,
+    }
+
+
+
+    public enum enmCustomerType
+    {
+        Admin = 1,
+        MLM = 2,
+        B2B = 3,
+        B2C = 4,
+        InHouse = 5
+    }
+
+
+    public enum enmServiceProvider
+    {
+        None = 0,
+        TBO = 1,
+        TripJack = 2,
+        Kafila = 3
+    }
+
+    public enum enmPassengerType
+    {
+        Adult = 1,
+        Child = 2,
+        Infant = 3,
+    }
     public enum enmGender
     {
         Male = 1,

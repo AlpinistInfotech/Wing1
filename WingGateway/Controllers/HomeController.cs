@@ -121,16 +121,15 @@ namespace WingGateway.Controllers
             //        AdultCount = 1,
             //        ChildCount = 0,
             //        InfantCount = 0,
-            //        CabinClass = B2BClasses.Services.Enums.enmCabinClass.ECONOMY,
+            //        CabinClass = enmCabinClass.ECONOMY,
             //        DepartureDt = DateTime.Now,
             //        ReturnDt = null,
             //        From = "DEL",
             //        To = "BOM",
-            //        JourneyType = B2BClasses.Services.Enums.enmJourneyType.OneWay,
+            //        JourneyType = enmJourneyType.OneWay,
 
             //    }
             //};
-            //await flightSearch.LoadAirportAsync(_booking);
             //return View(flightSearch);
             return View();
         }
