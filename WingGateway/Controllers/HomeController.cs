@@ -882,7 +882,7 @@ namespace WingGateway.Controllers
 
         #endregion
 
-#if false
+
 #region ChangePassword
         public IActionResult ChangePassword()
         {
@@ -952,6 +952,6 @@ namespace WingGateway.Controllers
         }
 
 #endregion
-#endif
+
     }
 }
