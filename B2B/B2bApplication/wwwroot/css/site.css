@@ -225,6 +225,7 @@ body {*/
     background: #fff;
     color: #eb8040;
     border: 1px solid #d4d4d4;
+    font-size:12px;
 }
 .seg-btnbx {
     padding-right:0;
@@ -263,3 +264,30 @@ body {*/
     .resultbx .stop-arrow i span:nth-child(3) {
         left: 14px;
     }
+    .mob-modi-btn {display:none;width:100%;}
+    .clos{color: #D15B47;
+    font-weight: bold;
+    font-style: normal;
+    float: right;
+    margin-right: 10px;
+    font-size: 24px;display:none}
+@media only screen and (max-width: 991px) {
+    .searchbx .select2-container{
+        width:98%!important;
+    }
+    .searchbx .clradlt {
+        clear: both;
+    }
+}
+@media only screen and (max-width: 767px) {
+    .mob-modi-btn {
+        display: block;
+    }
+    .searchbx {
+        display: none;
+        position: fixed;
+        top: 50px;
+        left: 0;
+    }
+    .clos{display:block;}
+}
