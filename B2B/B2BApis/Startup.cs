@@ -30,7 +30,29 @@ namespace B2BApis
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+            });
+
+
+            //services.AddCors(options =>
+            //{
+
+            //    options.AddPolicy("AllowSpecificOrigin",
+
+            //    builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials());
+            //    //builder => builder.WithOrigins("http://192.168.10.129:1010", "http://192.168.10.129:1016", "http://14.143.182.168:1010", "http://14.143.182.168:1016", "http://localhost:51625", "https://localhost:51625").AllowAnyMethod().AllowAnyHeader().AllowCredentials());
+            //    //builder => builder.WithOrigins("http://192.168.10.129:1013").AllowAnyMethod().AllowAnyHeader().AllowCredentials());
+
+            //});
+
+
+
             services.AddDbContext<DBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
             services.AddScoped<IAccount>(ctx => new Account(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
             services.AddScoped<ITripJack>(ctx => new TripJack(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
@@ -52,7 +74,11 @@ namespace B2BApis
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "B2BApis v1"));
-            }
+                }
+
+            app.UseCors("CorsPolicy");
+
+            //app.UseCors("AllowSpecificOrigin");
 
             app.UseHttpsRedirection();
 
