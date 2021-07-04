@@ -70,7 +70,9 @@ namespace B2BClasses.Database
         public DbSet<tblFlightBookingGSTDetails> tblFlightBookingGSTDetails { get; set; }
         public DbSet<tblFlightBookingServices> tblFlightBookingServices { get; set; }
         public DbSet<tblFlightBookingFareDetails> tblFlightBookingFareDetails { get; set; }
-        public DbSet<tblFlightBookingFarePurchaseDetails> tblFlightBookingFarePurchaseDetails { get; set; }       
+        public DbSet<tblFlightBookingFarePurchaseDetails> tblFlightBookingFarePurchaseDetails { get; set; }
+        public DbSet<tblFlightCancelation> tblFlightCancelation { get; set; }
+        
         #endregion
 
 

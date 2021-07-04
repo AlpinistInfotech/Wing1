@@ -278,11 +278,10 @@ namespace B2bApplication.Controllers
                     TempData["mdl_"] = s;
                     TempData["MessageType"] = (int)enmMessageType.Warning;
                     TempData["Message"] = _setting.GetErrorMessage(enmMessage.InsufficientWalletBalance);
-                    return RedirectToAction("FlightReview");
-                    
+                    return RedirectToAction("FlightReview");                    
                 }
                 else
-                {
+                {   
                     await customerWallet.DeductBalanceAsync(DateTime.Now ,mdl.TotalFare,enmTransactionType.TicketBook, string.Concat("Booking Ids", string.Join( ',',mdl.FareQuotResponse.Select(p=>p.BookingId))) );
                 }
 
@@ -311,6 +310,8 @@ namespace B2bApplication.Controllers
                     mdlres.BookingId.Add(Result.ResponseStatus == 1 ?Result.bookingId: Result.Error.Message);
                     if (!(Result.ResponseStatus == 1))
                     {
+
+
                         ViewBag.SaveStatus = (int)enmMessageType.Warning;
                         ViewBag.Message = Result.Error.Message;
                     }
@@ -329,11 +330,13 @@ namespace B2bApplication.Controllers
                 {
                     if (mdlres.IsSucess.Any(p => p))
                     {
-                        bookingStatus = enmBookingStatus.PartialBooked;                        
+                        bookingStatus = enmBookingStatus.PartialBooked;
                     }
                     else
                     {
                         bookingStatus = enmBookingStatus.Failed;
+                        //return the all Amount
+                        await customerWallet.AddBalanceAsync(DateTime.Now, mdl.TotalFare, enmTransactionType.TicketBook, string.Concat("Booking Ids", string.Join(',', mdl.FareQuotResponse.Select(p => p.BookingId))));
                     }                      
                 }
                 else

@@ -41,7 +41,7 @@ namespace B2BClasses.Services.Air
                 byte[] data = Encoding.UTF8.GetBytes(requestData);
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                 request.Method = "POST";
-                request.ContentType = "application/json";                
+                request.ContentType = "application/json";
                 request.Headers.Add("apikey", _config["TripJack:Credential:apikey"]);
                 Stream dataStream = request.GetRequestStream();
                 dataStream.Write(data, 0, data.Length);
@@ -54,7 +54,7 @@ namespace B2BClasses.Services.Air
                 }
                 using (StreamReader readStream = new StreamReader(rsp))
                 {
-                    mdl.Code = 0;                    
+                    mdl.Code = 0;
                     mdl.Message = readStream.ReadToEnd();//JsonConvert.DeserializeXmlNode(readStream.ReadToEnd(), "root").InnerXml;
                 }
                 return mdl;
@@ -74,8 +74,8 @@ namespace B2BClasses.Services.Air
                     String responseMessage = new StreamReader(stream).ReadToEnd();
                     mdl.Message = responseMessage;
                 }
-                
-                
+
+
             }
             catch (Exception ex)
             {
@@ -130,7 +130,7 @@ namespace B2BClasses.Services.Air
                 {
                     mdl.Message = "Invalid Connection";
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -155,17 +155,17 @@ namespace B2BClasses.Services.Air
                 request.JourneyType == enmJourneyType.MultiStop)
             {
                 request.JourneyType = enmJourneyType.OneWay;
-                var lst = request.Segments.ToList();                
+                var lst = request.Segments.ToList();
                 for (int i = 0; i < lst.Count; i++)
                 {
                     request.Segments = new List<mdlSegmentRequest>();
                     request.Segments.Add(lst[i]);
-                    mdlSearchResponse tempRe= SearchFromDb(request);
+                    mdlSearchResponse tempRe = SearchFromDb(request);
                     if (tempRe == null)
                     {
                         tempRe = await SearchFromTripJackAsync(request);
                     }
-                    
+
                     if (response == null)
                     {
                         response = tempRe;
@@ -176,15 +176,15 @@ namespace B2BClasses.Services.Air
                         {
                             response.Results.Add(tempRe.Results.FirstOrDefault());
                         }
-                        
+
                     }
                 }
             }
             //Add Provider Previx in Result index
-            int tripjackId=(int)enmServiceProvider.TripJack;
+            int tripjackId = (int)enmServiceProvider.TripJack;
             response.Results?.ForEach(p =>
             {
-                p.ForEach(q => q.TotalPriceList.ForEach(r => r.ResultIndex = ""+tripjackId + "_" + r.ResultIndex));
+                p.ForEach(q => q.TotalPriceList.ForEach(r => r.ResultIndex = "" + tripjackId + "_" + r.ResultIndex));
             });
 
             return response;
@@ -212,7 +212,7 @@ namespace B2BClasses.Services.Air
         {
             return await BookingFromTripJacAsync(request);
         }
-        
+
 
         #region *******************Search Class***************************
 
@@ -589,7 +589,7 @@ namespace B2BClasses.Services.Air
             mdlSearchResponse mdlS = null;
             string tboUrl = _config["TripJack:API:Search"];
 
-            
+
             string jsonString = JsonConvert.SerializeObject(SearchRequestMap(request));
             var HaveResponse = GetResponseZip(jsonString, tboUrl);
             {
@@ -601,7 +601,7 @@ namespace B2BClasses.Services.Air
                 {
                     if (mdl.status.success)//success
                     {
-                        if (mdl.searchResult?.tripInfos==null)
+                        if (mdl.searchResult?.tripInfos == null)
                         {
                             mdlS = new mdlSearchResponse()
                             {
@@ -1129,8 +1129,8 @@ namespace B2BClasses.Services.Air
             var Existing = _context.tblTripJackTravelDetail.Where(p => p.TraceId == request.TraceId && p.ExpireDt > currentDate).FirstOrDefault();
             if (Existing != null)
             {
-                _context.Database.ExecuteSqlRaw("delete from tblTripJackTravelDetailResult where TravelDetailId=@p0", Existing.TravelDetailId );
-                _context.Database.ExecuteSqlRaw("delete from tblTripJackTravelDetail where TravelDetailId=@p0",Existing.TravelDetailId );
+                _context.Database.ExecuteSqlRaw("delete from tblTripJackTravelDetailResult where TravelDetailId=@p0", Existing.TravelDetailId);
+                _context.Database.ExecuteSqlRaw("delete from tblTripJackTravelDetail where TravelDetailId=@p0", Existing.TravelDetailId);
                 await _context.SaveChangesAsync();
             }
         }
@@ -1151,7 +1151,7 @@ namespace B2BClasses.Services.Air
             mdlFareQuotResponse mdlS = null;
             FareQuotResponse mdl = null;
 
-            DateTime DepartureDt = DateTime.Now, ArrivalDt= DateTime.Now;
+            DateTime DepartureDt = DateTime.Now, ArrivalDt = DateTime.Now;
 
 
             string tboUrl = _config["TripJack:API:FareQuote"];
@@ -1164,7 +1164,7 @@ namespace B2BClasses.Services.Air
 
             if (mdl != null)
             {
-                
+
                 if (mdl.status.success)//success
                 {
                     List<List<mdlSearchResult>> AllResults = new List<List<mdlSearchResult>>();
@@ -1184,7 +1184,7 @@ namespace B2BClasses.Services.Air
 
                         ServiceProvider = enmServiceProvider.TripJack,
                         TraceId = request.TraceId,
-                        BookingId = ServiceProvider +"_" +mdl.bookingId,
+                        BookingId = ServiceProvider + "_" + mdl.bookingId,
                         ResponseStatus = 1,
                         IsPriceChanged = mdl.alerts?.Any(p => p.oldFare != p.newFare) ?? false,
                         Error = new mdlError()
@@ -1195,12 +1195,14 @@ namespace B2BClasses.Services.Air
                         Origin = mdl.searchQuery.routeInfos.FirstOrDefault()?.fromCityOrAirport.code,
                         Destination = mdl.searchQuery.routeInfos.FirstOrDefault()?.toCityOrAirport.code,
                         Results = AllResults,
-                        TotalPriceInfo = new mdlTotalPriceInfo() {
+                        TotalPriceInfo = new mdlTotalPriceInfo()
+                        {
                             BaseFare = mdl.totalPriceInfo?.totalFareDetail?.fC?.BF ?? 0,
                             TaxAndFees = mdl.totalPriceInfo?.totalFareDetail?.fC?.TAF ?? 0,
                             TotalFare = mdl.totalPriceInfo?.totalFareDetail?.fC?.TF ?? 0,
                         },
-                        SearchQuery = new Models.mdlFlightSearchWraper() {
+                        SearchQuery = new Models.mdlFlightSearchWraper()
+                        {
                             AdultCount = mdl.searchQuery?.paxInfo?.ADULT ?? 0,
                             ChildCount = mdl.searchQuery?.paxInfo?.CHILD ?? 0,
                             InfantCount = mdl.searchQuery?.paxInfo?.INFANT ?? 0,
@@ -1210,23 +1212,27 @@ namespace B2BClasses.Services.Air
                             From = mdl.searchQuery?.routeInfos?.FirstOrDefault()?.fromCityOrAirport?.code,
                             To = mdl.searchQuery?.routeInfos?.FirstOrDefault()?.toCityOrAirport?.code
                         },
-                        FareQuoteCondition = new mdlFareQuoteCondition() {
-                            dob = new mdlDobCondition() {
+                        FareQuoteCondition = new mdlFareQuoteCondition()
+                        {
+                            dob = new mdlDobCondition()
+                            {
                                 adobr = mdl.conditions?.dob?.adobr ?? false,
                                 cdobr = mdl.conditions?.dob?.cdobr ?? false,
                                 idobr = mdl.conditions?.dob?.idobr ?? false,
                             },
-                            GstCondition = new mdlGstCondition() {
+                            GstCondition = new mdlGstCondition()
+                            {
                                 IsGstMandatory = mdl.conditions?.gst?.igm ?? false,
                                 IsGstApplicable = mdl.conditions?.gst?.gstappl ?? true,
                             },
                             IsHoldApplicable = mdl.conditions?.isBA ?? false,
-                            PassportCondition=new mdlPassportCondition() { 
-                                IsPassportExpiryDate= mdl.conditions?.pcs?.pped??false,
-                                isPassportIssueDate= mdl.conditions?.pcs?.pid ?? false,
-                                isPassportRequired= mdl.conditions?.pcs?.pm??false,
+                            PassportCondition = new mdlPassportCondition()
+                            {
+                                IsPassportExpiryDate = mdl.conditions?.pcs?.pped ?? false,
+                                isPassportIssueDate = mdl.conditions?.pcs?.pid ?? false,
+                                isPassportRequired = mdl.conditions?.pcs?.pm ?? false,
                             }
-                            
+
                         }
 
                     };
@@ -1502,45 +1508,47 @@ namespace B2BClasses.Services.Air
             {
                 _gstInfo = new GstInfo()
                 {
-                    address= request.gstInfo.address,
+                    address = request.gstInfo.address,
                     email = request.gstInfo.email,
                     gstNumber = request.gstInfo.gstNumber,
                     mobile = request.gstInfo.mobile,
-                    registeredName = request.gstInfo.registeredName,                    
+                    registeredName = request.gstInfo.registeredName,
                 };
             }
-            PaymentInfos[] paymentInfos =null;
+            PaymentInfos[] paymentInfos = null;
             if (request.paymentInfos != null)
             {
-                paymentInfos =request.paymentInfos.Select(p => new PaymentInfos { amount = p.amount }).ToArray();
+                paymentInfos = request.paymentInfos.Select(p => new PaymentInfos { amount = p.amount }).ToArray();
             }
 
 
             BookingRequest mdl = new BookingRequest()
             {
-                bookingId= request.BookingId,
-                gstInfo= _gstInfo,
-                deliveryInfo= new Deliveryinfo()
+                bookingId = request.BookingId,
+                gstInfo = _gstInfo,
+                deliveryInfo = new Deliveryinfo()
                 {
                     contacts = request.deliveryInfo?.contacts,
                     emails = request.deliveryInfo?.emails,
                 },
-                travellerInfo= request.travellerInfo.Select(p=>new Travellerinfo {
-                    ti=p.Title.ToUpper(),fN=p.FirstName,
-                    lN=p.LastName,
-                    dob=p.dob.HasValue? p.dob.Value.ToString("yyyy-MM-dd"):null,
-                    eD=p.PassportExpiryDate.ToString("yyyy-MM-dd"),
-                    pid=p.PassportIssueDate.ToString("yyyy-MM-dd"),
-                    pNum=p.pNum,
-                    pt=p.passengerType.ToString().Trim().ToUpper(),
-                    ssrBaggageInfos= p.ssrBaggageInfos==null?null:( new SSRS() {key= p.ssrBaggageInfos.key, value= p.ssrBaggageInfos.value}),
+                travellerInfo = request.travellerInfo.Select(p => new Travellerinfo
+                {
+                    ti = p.Title.ToUpper(),
+                    fN = p.FirstName,
+                    lN = p.LastName,
+                    dob = p.dob.HasValue ? p.dob.Value.ToString("yyyy-MM-dd") : null,
+                    eD = p.PassportExpiryDate.ToString("yyyy-MM-dd"),
+                    pid = p.PassportIssueDate.ToString("yyyy-MM-dd"),
+                    pNum = p.pNum,
+                    pt = p.passengerType.ToString().Trim().ToUpper(),
+                    ssrBaggageInfos = p.ssrBaggageInfos == null ? null : (new SSRS() { key = p.ssrBaggageInfos.key, value = p.ssrBaggageInfos.value }),
                     ssrSeatInfos = p.ssrSeatInfos == null ? null : (new SSRS() { key = p.ssrSeatInfos.key, value = p.ssrSeatInfos.value }),
                     ssrMealInfos = p.ssrMealInfos == null ? null : (new SSRS() { key = p.ssrMealInfos.key, value = p.ssrMealInfos.value }),
                     ssrExtraServiceInfos = p.ssrExtraServiceInfos == null ? null : (new SSRS() { key = p.ssrExtraServiceInfos.key, value = p.ssrExtraServiceInfos.value }),
 
 
                 }).ToArray(),
-                paymentInfos= paymentInfos
+                paymentInfos = paymentInfos
             };
             return mdl;
         }
@@ -1551,7 +1559,7 @@ namespace B2BClasses.Services.Air
             mdlBookingResponse mdlS = null;
             BookingResponse mdl = null;
             //set the Upper case in pax type
-           
+
 
             string tboUrl = _config["TripJack:API:Book"];
             string jsonString = System.Text.Json.JsonSerializer.Serialize(BookingRequestMap(request));
@@ -1567,14 +1575,14 @@ namespace B2BClasses.Services.Air
                 {
                     mdlS = new mdlBookingResponse()
                     {
-                        bookingId= mdl.bookingId,
+                        bookingId = mdl.bookingId,
                         Error = new mdlError()
                         {
                             Code = 0,
                             Message = ""
                         },
                         ResponseStatus = 1,
-                        
+
                     };
                 }
                 else
@@ -1585,7 +1593,7 @@ namespace B2BClasses.Services.Air
                         Error = new mdlError()
                         {
                             Code = 12,
-                            Message = mdl.errors?.FirstOrDefault()?.message??"",
+                            Message = mdl.errors?.FirstOrDefault()?.message ?? "",
                         }
                     };
                 }
@@ -1600,7 +1608,7 @@ namespace B2BClasses.Services.Air
                     Error = new mdlError()
                     {
                         Code = 100,
-                        Message = data.errors[0].message??"Unable to Process",
+                        Message = data.errors[0].message ?? "Unable to Process",
                     }
                 };
             }
@@ -1619,7 +1627,7 @@ namespace B2BClasses.Services.Air
             public Travellerinfo[] travellerInfo { get; set; }
             public Deliveryinfo deliveryInfo { get; set; }
             public GstInfo gstInfo { get; set; }
-            public PaymentInfos[]paymentInfos { get; set; }
+            public PaymentInfos[] paymentInfos { get; set; }
         }
 
         public class PaymentInfos
@@ -1630,7 +1638,7 @@ namespace B2BClasses.Services.Air
         public class Deliveryinfo
         {
             public List<string> emails { get; set; }
-            public List< string> contacts { get; set; }
+            public List<string> contacts { get; set; }
         }
 
         public class Travellerinfo
@@ -1674,13 +1682,372 @@ namespace B2BClasses.Services.Air
             public Error[] errors { get; set; }
         }
 
-        
+
 
 
         #endregion
 
 
 
+        #endregion
+
+
+        #region ********************** Flight Cancelation *************************
+        private mdlCancelationRequest CancelRequestMap(mdlCancellationRequest request)
+        {
+            mdlCancelationRequest mdl = new mdlCancelationRequest()
+            {
+                bookingId = request.bookingId,
+                remarks = request.remarks,
+                trips = request?.trips.Select(p => new Trip
+                {
+                    src = p.srcAirport,
+                    dest = p.destAirport,
+                    departureDate = p.departureDate.ToString("yyyy-MM-dd"),
+                    travellers = p.travellers?.Select(q => new Traveller { fn = q.FirstName, ln = q.LastName }).ToArray()
+                }).ToArray()
+            };
+            return mdl;
+        }
+
+        public async Task<mdlFlightCancellationChargeResponse> CancelationChargeAsync(mdlCancellationRequest request)
+        {
+
+            mdlFlightCancellationChargeResponse mdlS = null;
+            TripCancelChargesResponse mdl = null;
+            //set the Upper case in pax type
+
+            string tboUrl = _config["TripJack:API:CancellationCharge"];
+            string jsonString = System.Text.Json.JsonSerializer.Serialize(CancelRequestMap(request));
+            var HaveResponse = GetResponse(jsonString, tboUrl);
+            if (HaveResponse.Code == 0)
+            {
+                mdl = (JsonConvert.DeserializeObject<TripCancelChargesResponse>(HaveResponse.Message));
+            }
+            if (mdl != null)
+            {
+                if (mdl?.status.success ?? false)//success
+                {
+                    mdlS = new mdlFlightCancellationChargeResponse()
+                    {
+                        status = new mdlStatus()
+                        {
+                            success = true,
+                            httpStatus = 200,
+                        },
+                        bookingId = mdl.bookingId,
+                        trips = mdl.trips?.Select(p => new mdlCancelCharges
+                        {
+                            airlines = p.airlines,
+                            srcAirport = p.src,
+                            destAirport = p.dest,
+                            departureDate = Convert.ToDateTime(p.departureDate),
+                            flightNumbers = p.flightNumbers,
+                            amendmentInfo = new mdlAmendmentinfo()
+                            {
+                                ADULT = new mdlRefundAmount()
+                                {
+                                    amendmentCharges = p.amendmentInfo?.ADULT?.amendmentCharges ?? 0,
+                                    refundAmount = p.amendmentInfo?.ADULT?.refundAmount ?? 0,
+                                    totalFare = p.amendmentInfo?.ADULT?.totalFare ?? 0
+                                },
+                                CHILD = new mdlRefundAmount()
+                                {
+                                    amendmentCharges = p.amendmentInfo?.CHILD?.amendmentCharges ?? 0,
+                                    refundAmount = p.amendmentInfo?.CHILD?.refundAmount ?? 0,
+                                    totalFare = p.amendmentInfo?.CHILD?.totalFare ?? 0
+                                },
+                                INFANT = new mdlRefundAmount()
+                                {
+                                    amendmentCharges = p.amendmentInfo?.INFANT?.amendmentCharges ?? 0,
+                                    refundAmount = p.amendmentInfo?.INFANT?.refundAmount ?? 0,
+                                    totalFare = p.amendmentInfo?.INFANT?.totalFare ?? 0
+                                },
+                            }
+                        }).ToList(),
+                        ResponseStatus = 1,
+
+                    };
+                }
+                else
+                {
+                    mdlS = new mdlFlightCancellationChargeResponse()
+                    {
+                        ResponseStatus = 2,
+                        Error = new mdlError()
+                        {
+                            Code = 12,
+                            Message = mdl.errors?.FirstOrDefault()?.message ?? "",
+                        }
+                    };
+                }
+
+            }
+            else
+            {
+                dynamic data = JObject.Parse(HaveResponse.Message);
+                mdlS = new mdlFlightCancellationChargeResponse()
+                {
+                    ResponseStatus = 100,
+                    Error = new mdlError()
+                    {
+                        Code = 100,
+                        Message = data.errors[0].message ?? "Unable to Process",
+                    }
+                };
+            }
+            return mdlS;
+        }
+
+
+        public async Task<mdlCancelationDetails> CancelationDetailsAsync(string request)
+        {
+
+            mdlCancelationDetails mdlS = null;
+            clsCancelationDetails mdl = null;
+            //set the Upper case in pax type
+
+            string tboUrl = _config["TripJack:API:CancellationDetail"];
+            var requestData = new { amendmentId = request };
+
+            string jsonString = System.Text.Json.JsonSerializer.Serialize(requestData);
+            var HaveResponse = GetResponse(jsonString, tboUrl);
+            if (HaveResponse.Code == 0)
+            {
+                mdl = (JsonConvert.DeserializeObject<clsCancelationDetails>(HaveResponse.Message));
+            }
+            if (mdl != null)
+            {
+                if (mdl?.status.success ?? false)//success
+                {
+                    mdlS = new mdlCancelationDetails()
+                    {
+                        status = new mdlStatus()
+                        {
+                            success = true,
+                            httpStatus = 200,
+                        },
+                        bookingId = mdl.bookingId,
+                        trips = mdl.trips?.Select(p => new mdlCancelTrip
+                        {
+                            airlines = p.airlines,
+                            src = p.src,
+                            dest = p.dest,
+                            date = p.date,
+                            flightNumbers = p.flightNumbers,
+                            travellers = p.travellers.Select(q => new mdlCancelTraveller
+                            {
+                                amendmentCharges = q.amendmentCharges,
+                                refundableamount = q.refundAmount,
+                                totalFare = q.totalFare,
+                                fn = q.fn,
+                                ln = q.ln
+
+                            }).ToList(),
+                        }).ToList(),
+                        ResponseStatus = 1
+
+                    };
+                }
+                else
+                {
+                    mdlS = new mdlCancelationDetails()
+                    {
+                        ResponseStatus = 2,
+                        Error = new mdlError()
+                        {
+                            Code = 12,
+                            Message = mdl.errors?.FirstOrDefault()?.message ?? "",
+                        }
+                    };
+                }
+
+            }
+            else
+            {
+                dynamic data = JObject.Parse(HaveResponse.Message);
+                mdlS = new mdlCancelationDetails()
+                {
+                    ResponseStatus = 100,
+                    Error = new mdlError()
+                    {
+                        Code = 100,
+                        Message = data.errors[0].message ?? "Unable to Process",
+                    }
+                };
+            }
+            return mdlS;
+        }
+
+        public async Task<mdlFlightCancellationResponse> CancellationAsync(mdlCancellationRequest request)
+        {
+
+            mdlFlightCancellationResponse mdlS = null;
+            CancelationResponse mdl = null;
+            //set the Upper case in pax type
+            string tboUrl = _config["TripJack:API:Cancellation"];
+            string jsonString = System.Text.Json.JsonSerializer.Serialize(CancelRequestMap(request));
+            var HaveResponse = GetResponse(jsonString, tboUrl);
+            if (HaveResponse.Code == 0)
+            {
+                mdl = (JsonConvert.DeserializeObject<CancelationResponse>(HaveResponse.Message));
+            }
+
+            if (mdl != null)
+            {
+                if (mdl.status.success)//success
+                {
+                    mdlS = new mdlFlightCancellationResponse()
+                    {
+                        bookingId = mdl.bookingId,
+                        amendmentId = mdl.amendmentId,
+                        Error = new mdlError()
+                        {
+                            Code = 0,
+                            Message = ""
+                        },
+                        ResponseStatus = 1,
+
+                    };
+                }
+                else
+                {
+                    mdlS = new mdlFlightCancellationResponse()
+                    {
+                        ResponseStatus = 3,
+                        Error = new mdlError()
+                        {
+                            Code = 12,
+                            Message = mdl.errors?.FirstOrDefault()?.message ?? "",
+                        }
+                    };
+                }
+
+            }
+            else
+            {
+                dynamic data = JObject.Parse(HaveResponse.Message);
+                mdlS = new mdlFlightCancellationResponse()
+                {
+                    ResponseStatus = 100,
+                    Error = new mdlError()
+                    {
+                        Code = 100,
+                        Message = data.errors[0].message ?? "Unable to Process",
+                    }
+                };
+            }
+
+            return mdlS;
+        }
+
+        #region ****************** Flight Cancelation classes**********************
+
+        public class mdlCancelationRequest
+        {
+            public string bookingId { get; set; }
+            public string type { get; set; }
+            public string remarks { get; set; }
+            public Trip[] trips { get; set; }
+        }
+
+        public class Trip
+        {
+            public string src { get; set; }
+            public string dest { get; set; }
+            public string departureDate { get; set; }
+            public Traveller[] travellers { get; set; }
+        }
+
+        public class Traveller
+        {
+            public string fn { get; set; }
+            public string ln { get; set; }
+            public double amendmentCharges { get; set; }
+            public double refundAmount { get; set; }
+            public double totalFare { get; set; }
+        }
+
+
+
+        public class TripCancelChargesResponse
+        {
+            public string bookingId { get; set; }
+            public TripCancelCharges[] trips { get; set; }
+            public Status status { get; set; }
+            public Error[] errors { get; set; }
+            public Metainfo metaInfo { get; set; }
+        }
+
+        public class TripCancelCharges
+        {
+            public string src { get; set; }
+            public string dest { get; set; }
+            public string departureDate { get; set; }
+            public string[] flightNumbers { get; set; }
+            public string[] airlines { get; set; }
+            public Amendmentinfo amendmentInfo { get; set; }
+
+
+        }
+
+        public class Amendmentinfo
+        {
+            public passenger ADULT { get; set; }
+            public passenger CHILD { get; set; }
+            public passenger INFANT { get; set; }
+        }
+
+        public class passenger
+        {
+            public double amendmentCharges { get; set; }
+            public double refundAmount { get; set; }
+            public double totalFare { get; set; }
+        }
+
+
+        public class CancelationResponse
+        {
+            public string bookingId { get; set; }
+            public string amendmentId { get; set; }
+            public Status status { get; set; }
+            public Metainfo metaInfo { get; set; }
+            public Error[] errors { get; set; }
+        }
+
+        public class clsCancelationDetails
+        {
+            public string bookingId { get; set; }
+            public string amendmentId { get; set; }
+            public string amendmentStatus { get; set; }
+            public double amendmentCharges { get; set; }
+            public double refundableamount { get; set; }
+            public CancelTrip[] trips { get; set; }
+            public Status status { get; set; }
+            public Metainfo metaInfo { get; set; }
+            public Error[] errors { get; set; }
+        }
+
+        
+        public class CancelTrip
+        {
+            public string src { get; set; }
+            public string dest { get; set; }
+            public string date { get; set; }
+            public string[] flightNumbers { get; set; }
+            public string[] airlines { get; set; }
+            public Traveller[] travellers { get; set; }
+        }
+
+        public class CancelTraveller
+        {
+            public string fn { get; set; }
+            public string ln { get; set; }
+            public double amendmentCharges { get; set; }
+            public double refundableamount { get; set; }
+            public double totalFare { get; set; }
+        }
+        #endregion
         #endregion
 
     }
