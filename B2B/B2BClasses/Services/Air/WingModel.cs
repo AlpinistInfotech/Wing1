@@ -368,6 +368,7 @@ namespace B2BClasses.Services.Air
 
     public class mdlCancellationRequest
     {
+        public string TraceId { get; set; }
         public string bookingId { get; set; }
         public string type { get; set; }
         public string remarks { get; set; }
@@ -416,7 +417,7 @@ namespace B2BClasses.Services.Air
         public mdlAmendmentinfo amendmentInfo { get; set; }        
     }
 
-    public class mdlAmendmentinfo
+    public class mdlAmendmentinfo: mdlTravellerBasicInfo
     {
         public mdlRefundAmount ADULT { get; set; }
         public mdlRefundAmount CHILD { get; set; }
@@ -425,13 +426,45 @@ namespace B2BClasses.Services.Air
 
     public class mdlRefundAmount
     {
-        public float amendmentCharges { get; set; }
-        public float refundAmount { get; set; }
-        public float totalFare { get; set; }
+        public double amendmentCharges { get; set; }
+        public double refundAmount { get; set; }
+        public double totalFare { get; set; }
     }
 
 
+    public class mdlCancelationDetails
+    {
+        public string bookingId { get; set; }
+        public string amendmentId { get; set; }
+        public string amendmentStatus { get; set; }
+        public double amendmentCharges { get; set; }
+        public double refundableamount { get; set; }
+        public List< mdlCancelTrip> trips { get; set; }
+        public mdlStatus status { get; set; }
+        public mdlMetainfo metaInfo { get; set; }
+        public mdlError Error { get; set; }
+        public int ResponseStatus { get; set; }
+    }
 
+
+    public class mdlCancelTrip
+    {
+        public string src { get; set; }
+        public string dest { get; set; }
+        public string date { get; set; }
+        public string[] flightNumbers { get; set; }
+        public string[] airlines { get; set; }
+        public List< mdlCancelTraveller> travellers { get; set; }
+    }
+
+    public class mdlCancelTraveller
+    {
+        public string fn { get; set; }
+        public string ln { get; set; }
+        public double amendmentCharges { get; set; }
+        public double refundableamount { get; set; }
+        public double totalFare { get; set; }
+    }
 
 
 

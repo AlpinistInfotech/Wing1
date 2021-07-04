@@ -42,6 +42,9 @@ namespace B2BClasses.Database
         [InverseProperty("tblFlightBookingMaster")]
         public ICollection<tblFlightBookingFareDetails> tblFlightBookingFareDetails { get; set; }
         public ICollection<tblFlightBookingFarePurchaseDetails> tblFlightBookingFarePurchaseDetails { get; set; }
+        [InverseProperty("tblFlightBookingMaster")]
+        public ICollection<tblFlightCancelation> tblFlightCancelation { get; set; }
+        
         [NotMapped]
         public string CustomerName { get; set; }
 
@@ -86,6 +89,10 @@ namespace B2BClasses.Database
         [MaxLength(200)]
         public string BookingMessage { get; set; }
         public enmServiceProvider ServiceProvider { get; set; }
+        [MaxLength(200)]
+        public string CancelationId { get; set; }
+        [MaxLength(2000)]
+        public string CancelationRemarks { get; set; }
     }
 
     public class tblFlightBookingSegment
@@ -237,6 +244,33 @@ namespace B2BClasses.Database
         public double InfantNetFare { get; set; }
         public double TotalFare { get; set; }
         public double NetFare { get; set; }
+    }
+
+    public class tblFlightCancelation
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        public int SegmentDisplayOrder { get; set; }
+        public string src { get; set; }
+        public string dest { get; set; }
+        public string date { get; set; }
+        public string flightNumbers { get; set; }
+        public string airlines { get; set; }
+        public string fn { get; set; }
+        public string ln { get; set; }
+        public double amendmentCharges { get; set; }
+        public double refundableamount { get; set; }
+        public double totalFare { get; set; }
+        public string bookingId { get; set; }
+        public string amendmentId { get; set; }
+        [ForeignKey("tblFlightBookingMaster")] // Foreign Key here
+        [MaxLength(200)]
+        public string TraceId { get; set; }
+        public tblFlightBookingMaster tblFlightBookingMaster { get; set; }
+        public DateTime CancelDate { get; set; }
+        public string CancelRemarks { get; set; }
+
     }
 
 

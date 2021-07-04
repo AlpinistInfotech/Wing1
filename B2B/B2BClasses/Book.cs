@@ -313,6 +313,50 @@ namespace B2BClasses
         }
 
 
+        private async Task< bool> CancelationSaveinDb(IWingFlight wingflight, mdlCancellationRequest mdlRq, mdlFlightCancellationResponse mdlRes, ICustomerWallet customerWallet)
+        {
+            //Get the Customer
+            var CustomerId=_context.tblFlightBookingMaster.Where(p => p.Id == mdlRq.TraceId).FirstOrDefault()?.CustomerId??0;
+            customerWallet.CustomerId = CustomerId;
+            var FlightDetails=_context.tblFlightBookingSegmentMaster.Where(p => p.TraceId == mdlRq.TraceId && p.BookingId == mdlRq.bookingId).FirstOrDefault();
+            if (FlightDetails != null)
+            {
+                FlightDetails.BookingStatus = enmBookingStatus.Refund;
+                FlightDetails.CancelationId = mdlRes.amendmentId;
+                FlightDetails.CancelationRemarks = mdlRq.remarks;
+                _context.tblFlightBookingSegmentMaster.Update(FlightDetails);
+                var cancelationDetails = await wingflight.CancelationDetailsAsync(mdlRes.amendmentId);
+
+                foreach (var ca in cancelationDetails.trips)
+                {
+                    _context.tblFlightCancelation.AddRange(
+                    ca.travellers.Select(p => new tblFlightCancelation
+                    {
+                        airlines = string.Join(",", ca.airlines),
+                        flightNumbers = string.Join(",", ca.flightNumbers),
+                        src = ca.src,
+                        dest = ca.dest,
+                        date = ca.date,
+                        CancelDate = DateTime.Now,
+                        fn = p.fn,
+                        ln = p.ln,
+                        amendmentCharges = p.amendmentCharges,
+                        refundableamount = p.refundableamount,
+                        totalFare = p.totalFare,
+                        amendmentId = mdlRes.amendmentId,
+                        bookingId = mdlRes.bookingId,
+                        CancelRemarks = mdlRq.remarks,
+                        TraceId = mdlRq.TraceId,
+                        SegmentDisplayOrder = FlightDetails.SegmentDisplayOrder
+                    }));
+                }
+
+            }
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public bool CustomerPassengerDetailSave(mdlBookingRequest mdlRq, enmBookingStatus bookingStatus, enmServiceProvider sp,string ResponseMessage)
         {
 
@@ -614,7 +658,36 @@ namespace B2BClasses
             return mdlRs;
         }
 
+
         
+
+        public async Task<mdlBookingResponse> CancelationAsync(mdlCancellationRequest mdlRq, ICustomerWallet customerWallet)
+        {
+            mdlFlightCancellationResponse mdlRs = new mdlFlightCancellationResponse();
+
+            var traceDetails = _context.tblFlightBookingSegmentMaster.Where(p => p.TraceId == mdlRq.TraceId && p.BookingId == mdlRq.bookingId).FirstOrDefault();
+            if (traceDetails == null)
+            {
+                throw new Exception("Invalid booking details");
+            }
+            if (traceDetails.BookingStatus == enmBookingStatus.Refund)
+            {
+                throw new Exception("Flight is already in cancel State");
+            }
+            if (traceDetails.BookingStatus != enmBookingStatus.Booked)
+            {
+                throw new Exception("only Booked flight can cancel the ticket");
+            }
+            var sp = traceDetails.ServiceProvider;            
+            IWingFlight wingflight = GetFlightObject(sp);
+            mdlRs = await wingflight.CancellationAsync(mdlRq);
+            if (mdlRs.ResponseStatus == 1)
+            {
+                CancelationSaveinDb(wingflight, mdlRq, mdlRs, customerWallet);
+            }            
+            return mdlRs;
+        }
+
         #endregion
 
     }

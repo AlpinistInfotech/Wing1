@@ -232,6 +232,21 @@ namespace B2BClasses.Services.Air
             throw new NotImplementedException();
         }
 
+        public Task<mdlFlightCancellationChargeResponse> CancelationChargeAsync(mdlCancellationRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<mdlFlightCancellationResponse> CancellationAsync(mdlCancellationRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<mdlCancelationDetails> CancelationDetailsAsync(string request)
+        {
+            throw new NotImplementedException();
+        }
+
         public class mdlAuthenticateRequest
         {
             public string ClientId { get; set; }

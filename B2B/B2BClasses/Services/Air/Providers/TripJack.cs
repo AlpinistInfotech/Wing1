@@ -1699,8 +1699,12 @@ namespace B2BClasses.Services.Air
             {
                 bookingId = request.bookingId,
                 remarks = request.remarks,
-                trips = request?.trips.Select(p => new Trip { src = p.srcAirport, dest = p.destAirport, departureDate = p.departureDate.ToString("yyyy-MM-dd"),
-                travellers= p.travellers?.Select(q=>new Traveller {fn=q.FirstName, ln=q.LastName }).ToArray() 
+                trips = request?.trips.Select(p => new Trip
+                {
+                    src = p.srcAirport,
+                    dest = p.destAirport,
+                    departureDate = p.departureDate.ToString("yyyy-MM-dd"),
+                    travellers = p.travellers?.Select(q => new Traveller { fn = q.FirstName, ln = q.LastName }).ToArray()
                 }).ToArray()
             };
             return mdl;
@@ -1722,24 +1726,30 @@ namespace B2BClasses.Services.Air
             }
             if (mdl != null)
             {
-                if (mdl?.status.success??false)//success
+                if (mdl?.status.success ?? false)//success
                 {
                     mdlS = new mdlFlightCancellationChargeResponse()
                     {
-                        status = new mdlStatus() {
-                            success=true,
-                           httpStatus=200,
+                        status = new mdlStatus()
+                        {
+                            success = true,
+                            httpStatus = 200,
                         },
                         bookingId = mdl.bookingId,
-                        trips= mdl.trips?.Select(p=>new mdlCancelCharges {airlines=p.airlines,
-                        srcAirport= p.src, destAirport=p.dest, 
-                            departureDate= Convert.ToDateTime( p.departureDate),
-                         flightNumbers=p.flightNumbers, 
-                            amendmentInfo= new mdlAmendmentinfo() { 
-                                ADULT= new mdlRefundAmount() {
-                                    amendmentCharges= p.amendmentInfo?.ADULT?.amendmentCharges??0,
-                                     refundAmount= p.amendmentInfo?.ADULT?.refundAmount?? 0,
-                                    totalFare= p.amendmentInfo?.ADULT?.totalFare ?? 0
+                        trips = mdl.trips?.Select(p => new mdlCancelCharges
+                        {
+                            airlines = p.airlines,
+                            srcAirport = p.src,
+                            destAirport = p.dest,
+                            departureDate = Convert.ToDateTime(p.departureDate),
+                            flightNumbers = p.flightNumbers,
+                            amendmentInfo = new mdlAmendmentinfo()
+                            {
+                                ADULT = new mdlRefundAmount()
+                                {
+                                    amendmentCharges = p.amendmentInfo?.ADULT?.amendmentCharges ?? 0,
+                                    refundAmount = p.amendmentInfo?.ADULT?.refundAmount ?? 0,
+                                    totalFare = p.amendmentInfo?.ADULT?.totalFare ?? 0
                                 },
                                 CHILD = new mdlRefundAmount()
                                 {
@@ -1753,8 +1763,8 @@ namespace B2BClasses.Services.Air
                                     refundAmount = p.amendmentInfo?.INFANT?.refundAmount ?? 0,
                                     totalFare = p.amendmentInfo?.INFANT?.totalFare ?? 0
                                 },
-                            } 
-                         }).ToList(),
+                            }
+                        }).ToList(),
                         ResponseStatus = 1,
 
                     };
@@ -1789,6 +1799,86 @@ namespace B2BClasses.Services.Air
             return mdlS;
         }
 
+
+        public async Task<mdlCancelationDetails> CancelationDetailsAsync(string request)
+        {
+
+            mdlCancelationDetails mdlS = null;
+            clsCancelationDetails mdl = null;
+            //set the Upper case in pax type
+
+            string tboUrl = _config["TripJack:API:CancellationDetail"];
+            var requestData = new { amendmentId = request };
+
+            string jsonString = System.Text.Json.JsonSerializer.Serialize(requestData);
+            var HaveResponse = GetResponse(jsonString, tboUrl);
+            if (HaveResponse.Code == 0)
+            {
+                mdl = (JsonConvert.DeserializeObject<clsCancelationDetails>(HaveResponse.Message));
+            }
+            if (mdl != null)
+            {
+                if (mdl?.status.success ?? false)//success
+                {
+                    mdlS = new mdlCancelationDetails()
+                    {
+                        status = new mdlStatus()
+                        {
+                            success = true,
+                            httpStatus = 200,
+                        },
+                        bookingId = mdl.bookingId,
+                        trips = mdl.trips?.Select(p => new mdlCancelTrip
+                        {
+                            airlines = p.airlines,
+                            src = p.src,
+                            dest = p.dest,
+                            date = p.date,
+                            flightNumbers = p.flightNumbers,
+                            travellers = p.travellers.Select(q => new mdlCancelTraveller
+                            {
+                                amendmentCharges = q.amendmentCharges,
+                                refundableamount = q.refundAmount,
+                                totalFare = q.totalFare,
+                                fn = q.fn,
+                                ln = q.ln
+
+                            }).ToList(),
+                        }).ToList(),
+                        ResponseStatus = 1
+
+                    };
+                }
+                else
+                {
+                    mdlS = new mdlCancelationDetails()
+                    {
+                        ResponseStatus = 2,
+                        Error = new mdlError()
+                        {
+                            Code = 12,
+                            Message = mdl.errors?.FirstOrDefault()?.message ?? "",
+                        }
+                    };
+                }
+
+            }
+            else
+            {
+                dynamic data = JObject.Parse(HaveResponse.Message);
+                mdlS = new mdlCancelationDetails()
+                {
+                    ResponseStatus = 100,
+                    Error = new mdlError()
+                    {
+                        Code = 100,
+                        Message = data.errors[0].message ?? "Unable to Process",
+                    }
+                };
+            }
+            return mdlS;
+        }
+
         public async Task<mdlFlightCancellationResponse> CancellationAsync(mdlCancellationRequest request)
         {
 
@@ -1810,7 +1900,7 @@ namespace B2BClasses.Services.Air
                     mdlS = new mdlFlightCancellationResponse()
                     {
                         bookingId = mdl.bookingId,
-                        amendmentId= mdl.amendmentId,
+                        amendmentId = mdl.amendmentId,
                         Error = new mdlError()
                         {
                             Code = 0,
@@ -1873,6 +1963,9 @@ namespace B2BClasses.Services.Air
         {
             public string fn { get; set; }
             public string ln { get; set; }
+            public double amendmentCharges { get; set; }
+            public double refundAmount { get; set; }
+            public double totalFare { get; set; }
         }
 
 
@@ -1894,7 +1987,7 @@ namespace B2BClasses.Services.Air
             public string[] flightNumbers { get; set; }
             public string[] airlines { get; set; }
             public Amendmentinfo amendmentInfo { get; set; }
-            
+
 
         }
 
@@ -1907,9 +2000,9 @@ namespace B2BClasses.Services.Air
 
         public class passenger
         {
-            public float amendmentCharges { get; set; }
-            public float refundAmount { get; set; }
-            public float totalFare { get; set; }
+            public double amendmentCharges { get; set; }
+            public double refundAmount { get; set; }
+            public double totalFare { get; set; }
         }
 
 
@@ -1920,6 +2013,39 @@ namespace B2BClasses.Services.Air
             public Status status { get; set; }
             public Metainfo metaInfo { get; set; }
             public Error[] errors { get; set; }
+        }
+
+        public class clsCancelationDetails
+        {
+            public string bookingId { get; set; }
+            public string amendmentId { get; set; }
+            public string amendmentStatus { get; set; }
+            public double amendmentCharges { get; set; }
+            public double refundableamount { get; set; }
+            public CancelTrip[] trips { get; set; }
+            public Status status { get; set; }
+            public Metainfo metaInfo { get; set; }
+            public Error[] errors { get; set; }
+        }
+
+        
+        public class CancelTrip
+        {
+            public string src { get; set; }
+            public string dest { get; set; }
+            public string date { get; set; }
+            public string[] flightNumbers { get; set; }
+            public string[] airlines { get; set; }
+            public Traveller[] travellers { get; set; }
+        }
+
+        public class CancelTraveller
+        {
+            public string fn { get; set; }
+            public string ln { get; set; }
+            public double amendmentCharges { get; set; }
+            public double refundableamount { get; set; }
+            public double totalFare { get; set; }
         }
         #endregion
         #endregion

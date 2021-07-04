@@ -17,6 +17,7 @@ namespace B2BClasses.Services.Air
         Task<mdlBookingResponse> BookingAsync(mdlBookingRequest request);
         Task<mdlFlightCancellationChargeResponse> CancelationChargeAsync(mdlCancellationRequest request);
         Task<mdlFlightCancellationResponse> CancellationAsync(mdlCancellationRequest request);
+        Task<mdlCancelationDetails> CancelationDetailsAsync(string request);
     }
 
     //public class WingFlight
