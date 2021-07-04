@@ -21,11 +21,7 @@
                             <div class="form-group">
                                 <label asp-for="BookingType"></label>
 
-                                <select asp-for="BookingType" class="form-control select2">
-                                    @foreach (var data in Enum.GetValues(typeof(enmBookingType)))
-                                    {
-                                        <option value="@(data)">@data.ToString() </option>
-                                    }
+                                <select asp-for="BookingType" id="ddlairportname" name="ddlairportname" class="form-control select2">
                                 </select>
                                 <span asp-validation-for="BookingType" class="text-danger"></span>
                             </div>
