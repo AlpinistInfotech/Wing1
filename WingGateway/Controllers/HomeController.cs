@@ -882,7 +882,7 @@ namespace WingGateway.Controllers
         #endregion
 
 
-#region ChangePassword
+        #region ChangePassword
         public IActionResult ChangePassword()
         {
             dynamic messagetype = TempData["MessageType"];
@@ -897,6 +897,7 @@ namespace WingGateway.Controllers
 
         [HttpPost]
         [Authorize]
+        [ActionName("ChangePassword")]
         public async Task<IActionResult> CustomerChangePasswordAsync(mdlChangePassword mdl, UserManager<ApplicationUser> _userManager, SignInManager<ApplicationUser> _signInManager)
         {
             
@@ -918,8 +919,9 @@ namespace WingGateway.Controllers
                         PasswordHash = mdl.NewPassword
                     };
                     _userManager.ChangePasswordAsync(user, mdl.Password, mdl.NewPassword);
+
                 }
-                
+
             }
 
             //if (ModelState.IsValid)
