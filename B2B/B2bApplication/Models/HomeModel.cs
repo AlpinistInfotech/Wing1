@@ -71,7 +71,7 @@ namespace B2bApplication.Models
             if (InfantCount > 0)
             {
                 InfantBaseFare = InfantTotalBaseFare ;
-                InfantTotalBaseFare = InfantBaseFare * InfantBaseFare;
+                InfantTotalBaseFare = InfantBaseFare * InfantCount;
             }
             TotalBaseFare = AdultTotalBaseFare+ ChildTotalBaseFare+ InfantTotalBaseFare;
             TotalFare = FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.TotalPrice?? 0).Sum();
