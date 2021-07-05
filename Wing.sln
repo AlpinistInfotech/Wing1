@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WingGateway", "WingGateway\WingGateway.csproj", "{E0989A37-81B6-4BC4-8244-BBD0FA12D8D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WingGateway", "Wing\WingGateway\WingGateway.csproj", "{E0989A37-81B6-4BC4-8244-BBD0FA12D8D3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Database", "Database\Database.csproj", "{227FBFF5-9E84-49C6-A4A5-7B998F92900D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Database", "Wing\Database\Database.csproj", "{227FBFF5-9E84-49C6-A4A5-7B998F92900D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F7864276-9462-47D6-9E68-0372881996C6}"
 	ProjectSection(SolutionItems) = preProject
@@ -19,6 +19,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "B2BApis", "B2B\B2BApis\B2BApis.csproj", "{8AA77290-BCBB-4F6A-AD45-CBD0E52F9492}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "B2bApplication", "B2B\B2bApplication\B2bApplication.csproj", "{C01C71F1-C16D-48B6-A354-41ECDF0E9723}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Wing", "Wing", "{2BA32172-0B4F-4888-9D7E-DD3D91CBBD10}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WingApis", "Wing\WingApis\WingApis.csproj", "{44854CE5-DEE5-4AC8-808C-EFDDC8BAC9F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,14 +50,21 @@ Global
 		{C01C71F1-C16D-48B6-A354-41ECDF0E9723}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C01C71F1-C16D-48B6-A354-41ECDF0E9723}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C01C71F1-C16D-48B6-A354-41ECDF0E9723}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44854CE5-DEE5-4AC8-808C-EFDDC8BAC9F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44854CE5-DEE5-4AC8-808C-EFDDC8BAC9F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44854CE5-DEE5-4AC8-808C-EFDDC8BAC9F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44854CE5-DEE5-4AC8-808C-EFDDC8BAC9F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{E0989A37-81B6-4BC4-8244-BBD0FA12D8D3} = {2BA32172-0B4F-4888-9D7E-DD3D91CBBD10}
+		{227FBFF5-9E84-49C6-A4A5-7B998F92900D} = {2BA32172-0B4F-4888-9D7E-DD3D91CBBD10}
 		{CD16B36C-AA5A-45C3-8E51-474484A0D1B2} = {62E96518-33B2-48FF-8EAE-432450F374D1}
 		{8AA77290-BCBB-4F6A-AD45-CBD0E52F9492} = {62E96518-33B2-48FF-8EAE-432450F374D1}
 		{C01C71F1-C16D-48B6-A354-41ECDF0E9723} = {62E96518-33B2-48FF-8EAE-432450F374D1}
+		{44854CE5-DEE5-4AC8-808C-EFDDC8BAC9F1} = {2BA32172-0B4F-4888-9D7E-DD3D91CBBD10}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6BBFCEED-32F0-4091-9A2E-734FF920D0C7}
