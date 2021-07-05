@@ -405,6 +405,20 @@ namespace B2bApplication.Models
         public string remarks { get; set; }
 
     }
+
+
+    public class mdlFlightCancel
+    {
+        public string traceId { get; set; }
+        public int segementDisplayOrder { get; set; }
+        public string remarks { get; set; }
+        public List< mdlPassengers> passengers { get; set; }
+    }
+    public class mdlPassengers
+    {
+        public int pid { get; set; }
+        public bool check { get; set; }
+    }
 }
 
 

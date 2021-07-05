@@ -353,6 +353,7 @@ namespace B2BClasses.Services.Air
     {
         public bool success { get; set; }
         public int httpStatus { get; set; }
+        public string  message { get; set; }
     }
 
     public class mdlMetainfo

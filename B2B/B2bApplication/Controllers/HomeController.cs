@@ -228,6 +228,101 @@ namespace B2bApplication.Controllers
             return View(mdl);
         }
 
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]     
+        [Route("/Home/FlightCancel")]
+        public async Task<mdlStatus> FlightCancelAsync(mdlFlightCancel mdl,  [FromServices] ICurrentUsers currentUsers,[FromServices] ICustomerWallet customerWallet)
+        {
+            mdlStatus returnData= new mdlStatus()
+            {
+                httpStatus = 200,
+                message = null,
+                success = false
+            };
+            
+
+            if (currentUsers.HaveClaim(enmDocumentMaster.Booking_Flight_Cancel))
+            {
+
+                var flightDetails=_context.tblFlightBookingMaster.Where(p => p.Id == mdl.traceId).FirstOrDefault();
+                if (flightDetails == null)
+                {
+                    returnData.message = "Invalid Request";
+                    return returnData;
+                }
+                if (currentUsers.CustomerType == enmCustomerType.Admin || currentUsers.CustomerId == flightDetails.CustomerId)
+                {
+                    returnData.message = "Unauthorize Request";
+                    return returnData;
+                }
+                var SegmentData=  _context.tblFlightBookingSegmentMaster.Where(p => p.TraceId == mdl.traceId && p.SegmentDisplayOrder == mdl.segementDisplayOrder).FirstOrDefault();
+                if (SegmentData == null)
+                {
+                    returnData.message = "Invalid Request";
+                    return returnData;
+                }
+                if (SegmentData.BookingStatus == enmBookingStatus.Refund)
+                {
+                    returnData.message = "Already Refunded";
+                    return returnData;
+                }
+                if (SegmentData.BookingStatus != enmBookingStatus.Booked)
+                {
+                    returnData.message = "Ticket not booked";
+                    return returnData;
+                }
+
+                List<int> PasengerId = mdl.passengers.Where(p => p.check).Select(p => p.pid).ToList();
+                var passengerList=_context.tblFlightBookingPassengerDetails.Where(p => PasengerId.Contains(p.Id));
+
+                mdlCancellationTripDetail _mdlCancellationTripDetail = new mdlCancellationTripDetail()
+                {
+                    srcAirport = SegmentData.Origin,
+                    destAirport = SegmentData.Destination,
+                    departureDate = SegmentData.TravelDt,
+                    travellers = passengerList.Select(q => new mdlTravellerBasicInfo { FirstName = q.FirstName, LastName = q.LastName }).ToArray()
+                };
+                mdlCancellationTripDetail[] _mdlCancellationTripDetails = { _mdlCancellationTripDetail };
+
+                mdlCancellationRequest mdlRq = new mdlCancellationRequest()
+                {
+                    bookingId = SegmentData.BookingId,
+                    remarks = mdl.remarks,
+                    TraceId = mdl.traceId,
+                    type = "CANCELLATION",
+                    trips = _mdlCancellationTripDetails,
+                };
+                mdlFlightCancellationResponse res = await _booking.CancelationAsync(mdlRq, customerWallet);
+                if (res.ResponseStatus == 1)
+                {
+                    returnData.success = true;
+                    returnData.message = "Cancel Successfully " + res.amendmentId;
+                }
+                else
+                {
+                    returnData.message = res.Error?.Message;
+                }
+            }
+            else
+            {
+                return new mdlStatus()
+                {
+                    httpStatus = 401,
+                    message = "Unautorize Access",
+                    success = false
+                };
+            }
+            return new mdlStatus()
+            {
+                httpStatus = 401,
+                message = "Unautorize Access",
+                success = false
+            };
+
+
+        }
+
 
 
         [AcceptVerbs("Get", "Post")]

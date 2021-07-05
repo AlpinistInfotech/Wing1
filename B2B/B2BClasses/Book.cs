@@ -12,20 +12,22 @@ using System.Threading.Tasks;
 namespace B2BClasses
 {
     
+    
     public interface IBooking
     {
         int CustomerId { get; set; }
         int UserId { get; set; }
 
         Task<mdlBookingResponse> BookingAsync(mdlBookingRequest mdlRq);
+        Task<mdlFlightCancellationResponse> CancelationAsync(mdlCancellationRequest mdlRq, ICustomerWallet customerWallet);
         bool CompleteBooking(string traceIds, enmBookingStatus bookingStatus);
-        Task<string> CustomerDataSave(mdlSearchRequest mdlRq, List<tblFlightBookingProviderTraceId> traceIds,enmJourneyType journeyType);
+        Task<string> CustomerDataSave(mdlSearchRequest mdlRq, List<tblFlightBookingProviderTraceId> traceIds, enmJourneyType journeyType);
         Task<bool> CustomerFlightDetailSave(string traceId, List<mdlFareQuotResponse> mdls);
         bool CustomerPassengerDetailSave(mdlBookingRequest mdlRq, enmBookingStatus bookingStatus, enmServiceProvider sp, string ResponseMessage);
         Task<List<mdlFareQuotResponse>> FareQuoteAsync(mdlFareQuotRequest mdlRq);
         Task<List<mdlFareRuleResponse>> FareRule(mdlFareRuleRequest mdlRq);
-        List<tblFlightBookingMaster> FlighBookReport(DateTime FromDt, DateTime ToDate, bool OnBookingDt = true, bool AllCustomer = false, bool IncludePurchaseFare = false, enmBookingStatus bookingStatus= enmBookingStatus.All);
         tblFlightBookingMaster FlighBookDetails(string Id, int CustomerId, enmCustomerType customerType);
+        List<tblFlightBookingMaster> FlighBookReport(DateTime FromDt, DateTime ToDate, bool OnBookingDt = true, bool AllCustomer = false, bool IncludePurchaseFare = false, enmBookingStatus bookingStatus = enmBookingStatus.All);
         Task<List<enmServiceProvider>> GetActiveProviderAsync();
         Task<List<tblAirline>> GetAirlinesAsync();
         Task<List<tblAirport>> GetAirportAsync();
@@ -47,7 +49,7 @@ namespace B2BClasses
         public int UserId { get { return _userId; } set { _userId = value; } }
 
 
-        public Booking(DBContext context, IConfiguration config, ITripJack tripJack,ITBO tBO)
+        public Booking(DBContext context, IConfiguration config, ITripJack tripJack, ITBO tBO)
         {
             _context = context;
             _config = config;
@@ -69,7 +71,7 @@ namespace B2BClasses
         #region ***********************Flight********************************
 
 
-        public List<tblFlightBookingMaster> FlighBookReport(DateTime FromDt, DateTime ToDate, bool OnBookingDt = true, bool AllCustomer = false, bool IncludePurchaseFare = false, enmBookingStatus bookingStatus= enmBookingStatus.All)
+        public List<tblFlightBookingMaster> FlighBookReport(DateTime FromDt, DateTime ToDate, bool OnBookingDt = true, bool AllCustomer = false, bool IncludePurchaseFare = false, enmBookingStatus bookingStatus = enmBookingStatus.All)
         {
             ToDate = Convert.ToDateTime(ToDate.AddDays(1).ToString("yyyy-MM-dd"));
             FromDt = Convert.ToDateTime(FromDt.ToString("yyyy-MM-dd"));
@@ -100,11 +102,11 @@ namespace B2BClasses
 
             Query = Query.Include(p => p.tblFlightBookingSegmentMaster);
             Query = Query.Include(p => p.tblFlightBookingSegments).Include(p => p.tblFlightBookingPassengerDetails).Include(p => p.tblFlightBookingFareDetails).Include(p => p.tblFlightBookingGSTDetails);
-            mdl =Query.OrderByDescending(p=>p.CreatedDt).ToList();
+            mdl = Query.OrderByDescending(p => p.CreatedDt).ToList();
             if (mdl != null && mdl.Count > 0)
             {
-                var CustomerIds=mdl.Select(p => p.CustomerId).Distinct().ToList();
-                var Customerdetails = _context.tblCustomerMaster.Where(p => CustomerIds.Contains( p.Id )).Select(p=>new {p.CustomerName,p.Code,p.Id }).ToList();
+                var CustomerIds = mdl.Select(p => p.CustomerId).Distinct().ToList();
+                var Customerdetails = _context.tblCustomerMaster.Where(p => CustomerIds.Contains(p.Id)).Select(p => new { p.CustomerName, p.Code, p.Id }).ToList();
                 mdl.ForEach(p =>
                 {
                     var tempCD = Customerdetails.FirstOrDefault(q => q.Id == p.CustomerId);
@@ -112,7 +114,7 @@ namespace B2BClasses
                     {
                         p.CustomerName = tempCD.Code + " - " + tempCD.CustomerName;
                     }
-                });                
+                });
             }
             return mdl;
         }
@@ -124,11 +126,11 @@ namespace B2BClasses
             IQueryable<tblFlightBookingMaster> Query = null;
             if (customerType == enmCustomerType.Admin)
             {
-                Query = _context.tblFlightBookingMaster.Where(p => p.Id == Id );
+                Query = _context.tblFlightBookingMaster.Where(p => p.Id == Id);
             }
             else
             {
-                Query = _context.tblFlightBookingMaster.Where(p => p.Id == Id && p.CustomerId == CustomerId  );
+                Query = _context.tblFlightBookingMaster.Where(p => p.Id == Id && p.CustomerId == CustomerId);
             }
             Query = Query.Include(p => p.tblFlightBookingSegmentMaster);
             Query = Query.Include(p => p.tblFlightBookingSegments);
@@ -138,7 +140,7 @@ namespace B2BClasses
             Query = Query.Include(p => p.tblFlightBookingFareDetails);
             Query = Query.Include(p => p.tblFlightBookingFarePurchaseDetails);
             Query = Query.Include(p => p.tblFlightCancelation);
-            mdl =Query.FirstOrDefault();
+            mdl = Query.FirstOrDefault();
             if (mdl != null)
             {
                 var Customerdetails = _context.tblCustomerMaster.Where(p => p.Id == mdl.CustomerId).FirstOrDefault();
@@ -153,7 +155,7 @@ namespace B2BClasses
                         {
                             fd.SegmentName = string.Concat(FBD.Origin, " - ", FBD.Destination);
                         }
-                        var bf=mdl.tblFlightBookingFarePurchaseDetails.Where(p => p.SegmentDisplayOrder == fd.SegmentDisplayOrder).FirstOrDefault();
+                        var bf = mdl.tblFlightBookingFarePurchaseDetails.Where(p => p.SegmentDisplayOrder == fd.SegmentDisplayOrder).FirstOrDefault();
                         if (bf != null)
                         {
                             fd.AdultBaseFare = bf.AdultTotalFare;
@@ -257,7 +259,7 @@ namespace B2BClasses
                     Origin = mdl.SearchQuery.From,
                     SegmentDisplayOrder = index,
                     ServiceProvider = mdl.ServiceProvider,
-                    BookingMessage=string.Empty
+                    BookingMessage = string.Empty
                 });
 
                 _context.tblFlightBookingFareDetails.Add(new tblFlightBookingFareDetails()
@@ -314,12 +316,12 @@ namespace B2BClasses
         }
 
 
-        private async Task< bool> CancelationSaveinDb(IWingFlight wingflight, mdlCancellationRequest mdlRq, mdlFlightCancellationResponse mdlRes, ICustomerWallet customerWallet)
+        private async Task<bool> CancelationSaveinDb(IWingFlight wingflight, mdlCancellationRequest mdlRq, mdlFlightCancellationResponse mdlRes, ICustomerWallet customerWallet)
         {
             //Get the Customer
-            var CustomerId=_context.tblFlightBookingMaster.Where(p => p.Id == mdlRq.TraceId).FirstOrDefault()?.CustomerId??0;
+            var CustomerId = _context.tblFlightBookingMaster.Where(p => p.Id == mdlRq.TraceId).FirstOrDefault()?.CustomerId ?? 0;
             customerWallet.CustomerId = CustomerId;
-            var FlightDetails=_context.tblFlightBookingSegmentMaster.Where(p => p.TraceId == mdlRq.TraceId && p.BookingId == mdlRq.bookingId).FirstOrDefault();
+            var FlightDetails = _context.tblFlightBookingSegmentMaster.Where(p => p.TraceId == mdlRq.TraceId && p.BookingId == mdlRq.bookingId).FirstOrDefault();
             if (FlightDetails != null)
             {
                 FlightDetails.BookingStatus = enmBookingStatus.Refund;
@@ -358,7 +360,7 @@ namespace B2BClasses
             return true;
         }
 
-        public bool CustomerPassengerDetailSave(mdlBookingRequest mdlRq, enmBookingStatus bookingStatus, enmServiceProvider sp,string ResponseMessage)
+        public bool CustomerPassengerDetailSave(mdlBookingRequest mdlRq, enmBookingStatus bookingStatus, enmServiceProvider sp, string ResponseMessage)
         {
 
             var tm = _context.tblFlightBookingMaster.Where(p => p.Id == mdlRq.TraceId).FirstOrDefault();
@@ -367,7 +369,7 @@ namespace B2BClasses
             tm.BookingStatus = bookingStatus;
             _context.tblFlightBookingMaster.Update(tm);
 
-            _context.tblFlightBookingPassengerDetails.RemoveRange(_context.tblFlightBookingPassengerDetails.Where(p => p.TraceId == mdlRq.TraceId ));
+            _context.tblFlightBookingPassengerDetails.RemoveRange(_context.tblFlightBookingPassengerDetails.Where(p => p.TraceId == mdlRq.TraceId));
             _context.tblFlightBookingPassengerDetails.AddRange(
             mdlRq.travellerInfo.Select(p => new tblFlightBookingPassengerDetails
             {
@@ -398,14 +400,14 @@ namespace B2BClasses
                  );
             }
             //Also Update the Status
-            var sgm=_context.tblFlightBookingSegmentMaster.Where(p => p.TraceId == mdlRq.TraceId && p.BookingId == mdlRq.BookingId).FirstOrDefault();
+            var sgm = _context.tblFlightBookingSegmentMaster.Where(p => p.TraceId == mdlRq.TraceId && p.BookingId == mdlRq.BookingId).FirstOrDefault();
             if (sgm != null)
             {
                 sgm.BookingStatus = bookingStatus;
                 sgm.BookingMessage = ResponseMessage;
                 _context.Update(sgm);
             }
-            
+
             _context.SaveChanges();
             return true;
         }
@@ -436,7 +438,7 @@ namespace B2BClasses
             switch (serviceProvider)
             {
                 case enmServiceProvider.TBO:
-                      return _tbo ;                    
+                    return _tbo;
                 case enmServiceProvider.TripJack:
                     return _tripJack;
             }
@@ -466,7 +468,7 @@ namespace B2BClasses
                     mdlR = await wingflight.SearchAsync(mdlRq, _CustomerId);
                     traceIds.Add(new tblFlightBookingProviderTraceId()
                     {
-                        
+
                         ProviderTraceId = mdlR.TraceId,
                         ServiceProvider = sp,
                         SegmentDisplayOrder = 1
@@ -484,7 +486,7 @@ namespace B2BClasses
                         mdlRq.Segments.Add(lst[i]);
                         var md = await wingflight.SearchAsync(mdlRq, _CustomerId);
                         traceIds.Add(new tblFlightBookingProviderTraceId()
-                        {                            
+                        {
                             ProviderTraceId = md.TraceId,
                             ServiceProvider = sp,
                             SegmentDisplayOrder = i + 1
@@ -648,8 +650,8 @@ namespace B2BClasses
                 mdlRs = await wingflight.BookingAsync(mdlRq);
 
                 if (mdlRs.ResponseStatus == 1)
-                {   
-                    CustomerPassengerDetailSave(mdlRq, enmBookingStatus.Booked, sp,String.Empty);
+                {
+                    CustomerPassengerDetailSave(mdlRq, enmBookingStatus.Booked, sp, String.Empty);
                 }
                 else
                 {
@@ -660,9 +662,9 @@ namespace B2BClasses
         }
 
 
-        
 
-        public async Task<mdlBookingResponse> CancelationAsync(mdlCancellationRequest mdlRq, ICustomerWallet customerWallet)
+
+        public async Task<mdlFlightCancellationResponse> CancelationAsync(mdlCancellationRequest mdlRq, ICustomerWallet customerWallet)
         {
             mdlFlightCancellationResponse mdlRs = new mdlFlightCancellationResponse();
 
@@ -679,13 +681,13 @@ namespace B2BClasses
             {
                 throw new Exception("only Booked flight can cancel the ticket");
             }
-            var sp = traceDetails.ServiceProvider;            
+            var sp = traceDetails.ServiceProvider;
             IWingFlight wingflight = GetFlightObject(sp);
             mdlRs = await wingflight.CancellationAsync(mdlRq);
             if (mdlRs.ResponseStatus == 1)
             {
-                CancelationSaveinDb(wingflight, mdlRq, mdlRs, customerWallet);
-            }            
+               await CancelationSaveinDb(wingflight, mdlRq, mdlRs, customerWallet);
+            }
             return mdlRs;
         }
 
