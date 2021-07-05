@@ -137,6 +137,7 @@ namespace B2BClasses
             Query = Query.Include(p => p.tblFlightBookingGSTDetails);
             Query = Query.Include(p => p.tblFlightBookingFareDetails);
             Query = Query.Include(p => p.tblFlightBookingFarePurchaseDetails);
+            Query = Query.Include(p => p.tblFlightCancelation);
             mdl =Query.FirstOrDefault();
             if (mdl != null)
             {

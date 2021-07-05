@@ -37,15 +37,14 @@
                     </a>
                 </li>
             }
-            @if (_currentUser.HaveClaim(enmDocumentMaster.Booking_Flight_Cancel))
-            {
+           
                 <li>
                     <a data-toggle="tab" href="#flightBookingDetails_CancelFlight">
                         <i class="red ace-icon fa fa-cog bigger-120"></i>
                         Cancel Flight
                     </a>
                 </li>
-            }
+           
 
         </ul>
 
@@ -199,7 +198,6 @@ fbs.BookingStatus == enmBookingStatus.Refund ? "label-danger" : fbs.BookingStatu
 
                 <div class="row">
                     <div class="col-xs-12 col-md-8  col-md-offset-2">
-
                         <div class="profile-feed row">
                             @foreach (var pas in Model.tblFlightBookingPassengerDetails.Distinct())
                             {
@@ -419,114 +417,254 @@ fbs.BookingStatus == enmBookingStatus.Refund ? "label-danger" : fbs.BookingStatu
                         </div>
             </div>
 
-            @*  @if (_currentUser.CustomerType == enmCustomerType.Admin)
+         @if (_currentUser.CustomerType == enmCustomerType.Admin)
         {
             <div id="flightBookingDetails_PurchaseFareDetails" class="tab-pane">
-
                 <div class="row">
-                    <div class="col-xs-12 col-sm-8  col-sm-offset-2">
+                    <div class="col-xs-12 col-sm-10  col-sm-offset-1">
+                        <div id="accordion" class="accordion-style2">
+                            @foreach (var md in Model.tblFlightBookingSegmentMaster)
+                            {
+                            <div class="group">
+                                <h3 class="accordion-header">@(string.Concat(md.Origin ," - ",md.Destination))</h3>
+                                <div class="col-xs-12">
+                                    @foreach (var mdt in Model.tblFlightBookingFarePurchaseDetails.Where(p => p.SegmentDisplayOrder == md.SegmentDisplayOrder))
+                                    {
+                                    <div class="profile-user-info">
+                                        <div class="profile-info-row">
+                                            <div class="profile-info-name">Service Provider</div>
+                                            <div class="profile-info-value">
+                                                <span>@(mdt.Provider.ToString())</span>
+                                            </div>
+                                        </div>
+                                        <div class="profile-info-row">
+                                            <div class="profile-info-name">Adult BaseFare</div>
+                                            <div class="profile-info-value">
+                                                <span>@(mdt.AdultBaseFare.ToString("C",_currentUser.cultureInfo))</span>
+                                            </div>
+                                        </div>
+                                        <div class="profile-info-row">
+                                            <div class="profile-info-name">Child BaseFare</div>
+                                            <div class="profile-info-value">
+                                                <span>@(mdt.ChildBaseFare.ToString("C",_currentUser.cultureInfo))</span>
+                                            </div>
+                                        </div>
+                                        <div class="profile-info-row">
+                                            <div class="profile-info-name">Infant BaseFare</div>
+                                            <div class="profile-info-value">
+                                                <span>@(mdt.InfantBaseFare.ToString("C",_currentUser.cultureInfo))</span>
+                                            </div>
+                                        </div>
+                                        <div class="profile-info-row">
+                                            <div class="profile-info-name">Adult TotalFare</div>
+                                            <div class="profile-info-value">
+                                                <span>@(mdt.AdultTotalFare.ToString("C",_currentUser.cultureInfo))</span>
+                                            </div>
+                                        </div>
+                                        <div class="profile-info-row">
+                                            <div class="profile-info-name">Child TotalFare</div>
+                                            <div class="profile-info-value">
+                                                <span>@(mdt.ChildTotalFare.ToString("C",_currentUser.cultureInfo))</span>
+                                            </div>
+                                        </div>
+                                        <div class="profile-info-row">
+                                            <div class="profile-info-name">Infant TotalFare</div>
+                                            <div class="profile-info-value">
+                                                <span>@(mdt.InfantTotalFare.ToString("C",_currentUser.cultureInfo))</span>
+                                            </div>
+                                        </div>
+                                        <div class="profile-info-row">
+                                            <div class="profile-info-name">Adult NetFare</div>
+                                            <div class="profile-info-value">
+                                                <span>@(mdt.AdultNetFare.ToString("C",_currentUser.cultureInfo))</span>
+                                            </div>
+                                        </div>
+                                        <div class="profile-info-row">
+                                            <div class="profile-info-name">Child NetFare</div>
+                                            <div class="profile-info-value">
+                                                <span>@(mdt.ChildNetFare.ToString("C",_currentUser.cultureInfo))</span>
+                                            </div>
+                                        </div>
+                                        <div class="profile-info-row">
+                                            <div class="profile-info-name">Infant NetFare</div>
+                                            <div class="profile-info-value">
+                                                <span>@(mdt.InfantNetFare.ToString("C",_currentUser.cultureInfo))</span>
+                                            </div>
+                                        </div>
 
-                        <div class="profile-user-info">
-                            <div class="profile-info-row">
-                                <div class="profile-info-name">Allowed IP</div>
-                                <div class="profile-info-value">
-                                    <span>@( Model.customerSetting.AllowedAllIp?"All IP": Model.customerSetting.IPAddess)</span>
+
+                                        <div class="profile-info-row">
+                                            <div class="profile-info-name">Total Net Fare</div>
+
+                                            <div class="profile-info-value">
+                                                <span class="bolder red">@(mdt.NetFare.ToString("C",_currentUser.cultureInfo))</span>
+                                            </div>
+                                        </div>
+
+                                        
+                                    </div>
+                                        <div class="hr hr-8 dotted"></div>
+                                    }
+
+
                                 </div>
                             </div>
-                            <div class="profile-info-row">
-                                <div class="profile-info-name">Markup Amount</div>
-
-                                <div class="profile-info-value">
-                                    <span>@Model.customerSetting.MarkupAmount </span>
-                                </div>
-                            </div>
-
-                            <div class="profile-info-row">
-                                <div class="profile-info-name">Wallet Alert Amt</div>
-
-                                <div class="profile-info-value">
-                                    <span>@Model.customerSetting.MinBalance</span>
-                                </div>
-                            </div>
-
-                            <div class="profile-info-row">
-                                <div class="profile-info-name">Wallet Balance</div>
-
-                                <div class="profile-info-value">
-                                    <span>@Model.WalletBalance</span>
-                                </div>
-                            </div>
-                            <div class="profile-info-row">
-                                <div class="profile-info-name">Credit Balance</div>
-                                <div class="profile-info-value">
-                                    <span>@Model.CreditBalace</span>
-                                </div>
-                            </div>
-
-
+                             }
                         </div>
-                        <div class="hr hr-8 dotted"></div>
-                    </div>
-                </div>
+
+                     </div>
+                 </div>
             </div>
         }
-        @if (_currentUser.HaveClaim(enmDocumentMaster.Booking_Flight_Cancel))
-        {
+        
 
             <div id="flightBookingDetails_CancelFlight" class="tab-pane">
 
                 <div class="row">
                     <div class="col-xs-12 col-sm-8  col-sm-offset-2">
+                        @if (_currentUser.HaveClaim(enmDocumentMaster.Booking_Flight_Cancel))
+                        {
+                        <form method="post" action="/Home/FlightCancel">
+                            @Html.AntiForgeryToken()
 
-                        <div class="profile-user-info">
-                            <div class="profile-info-row">
-                                <div class="profile-info-name">Allowed IP</div>
-                                <div class="profile-info-value">
-                                    <span>@( Model.customerSetting.AllowedAllIp ? "All IP" : Model.customerSetting.IPAddess)</span>
+                            @foreach (var md in Model.tblFlightBookingSegmentMaster)
+                            {
+                                <div class="group">
+                                    <h3 class="accordion-header">@(string.Concat(md.Origin ," - ",md.Destination))</h3>
+                                    <div class="col-xs-12">
+                                        @foreach (var mdt in Model.tblFlightBookingFarePurchaseDetails.Where(p => p.SegmentDisplayOrder == md.SegmentDisplayOrder))
+                                        {
+                                            <div class="profile-user-info">
+                                                <div class="profile-info-row">
+                                                    <div class="profile-info-name">Service Provider</div>
+                                                    <div class="profile-info-value">
+                                                        <span>@(mdt.Provider.ToString())</span>
+                                                    </div>
+                                                </div>
+                                                <div class="profile-info-row">
+                                                    <div class="profile-info-name">Adult BaseFare</div>
+                                                    <div class="profile-info-value">
+                                                        <span>@(mdt.AdultBaseFare.ToString("C",_currentUser.cultureInfo))</span>
+                                                    </div>
+                                                </div>
+                                                <div class="profile-info-row">
+                                                    <div class="profile-info-name">Child BaseFare</div>
+                                                    <div class="profile-info-value">
+                                                        <span>@(mdt.ChildBaseFare.ToString("C",_currentUser.cultureInfo))</span>
+                                                    </div>
+                                                </div>
+                                                <div class="profile-info-row">
+                                                    <div class="profile-info-name">Infant BaseFare</div>
+                                                    <div class="profile-info-value">
+                                                        <span>@(mdt.InfantBaseFare.ToString("C",_currentUser.cultureInfo))</span>
+                                                    </div>
+                                                </div>
+                                                <div class="profile-info-row">
+                                                    <div class="profile-info-name">Adult TotalFare</div>
+                                                    <div class="profile-info-value">
+                                                        <span>@(mdt.AdultTotalFare.ToString("C",_currentUser.cultureInfo))</span>
+                                                    </div>
+                                                </div>
+                                                <div class="profile-info-row">
+                                                    <div class="profile-info-name">Child TotalFare</div>
+                                                    <div class="profile-info-value">
+                                                        <span>@(mdt.ChildTotalFare.ToString("C",_currentUser.cultureInfo))</span>
+                                                    </div>
+                                                </div>
+                                                <div class="profile-info-row">
+                                                    <div class="profile-info-name">Infant TotalFare</div>
+                                                    <div class="profile-info-value">
+                                                        <span>@(mdt.InfantTotalFare.ToString("C",_currentUser.cultureInfo))</span>
+                                                    </div>
+                                                </div>
+                                                <div class="profile-info-row">
+                                                    <div class="profile-info-name">Adult NetFare</div>
+                                                    <div class="profile-info-value">
+                                                        <span>@(mdt.AdultNetFare.ToString("C",_currentUser.cultureInfo))</span>
+                                                    </div>
+                                                </div>
+                                                <div class="profile-info-row">
+                                                    <div class="profile-info-name">Child NetFare</div>
+                                                    <div class="profile-info-value">
+                                                        <span>@(mdt.ChildNetFare.ToString("C",_currentUser.cultureInfo))</span>
+                                                    </div>
+                                                </div>
+                                                <div class="profile-info-row">
+                                                    <div class="profile-info-name">Infant NetFare</div>
+                                                    <div class="profile-info-value">
+                                                        <span>@(mdt.InfantNetFare.ToString("C",_currentUser.cultureInfo))</span>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="profile-info-row">
+                                                    <div class="profile-info-name">Total Net Fare</div>
+
+                                                    <div class="profile-info-value">
+                                                        <span class="bolder red">@(mdt.NetFare.ToString("C",_currentUser.cultureInfo))</span>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                            <div class="hr hr-8 dotted"></div>
+                                        }
+
+
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="profile-info-row">
-                                <div class="profile-info-name">Markup Amount</div>
+                            }
+                            <div class="hr hr-8 dotted"></div>
+                        </form>
+                        }
+                            <div class="space-20"></div>
+                            <table class="table table-striped table-hover">
+                                <thead class="thin-border-bottom">
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>
+                                            <i class="ace-icon fa fa-suitcase"></i>
+                                            Segment
+                                        </th>
+                                        <th>Departure Date</th>
+                                        <th>Cancelation Date</th>
+                                        <th>Airline</th>
+                                        <th>Flight No</th>
+                                        <th>Passenger</th>
+                                        <th>Charge</th>
+                                        <th>Refund Amount</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
 
-                                <div class="profile-info-value">
-                                    <span>@Model.customerSetting.MarkupAmount </span>
-                                </div>
-                            </div>
+                                <tbody>
+                                    @foreach (var pasenger in Model.tblFlightCancelation)
+                                    {
+                                        <tr>
+                                            <td>@pasenger.amendmentId </td>
+                                            <td class="">@( string.Concat(pasenger.src, "-", pasenger.dest)) </td>
+                                            <td>@pasenger.date </td>
+                                            <td>@(pasenger.CancelDate.ToString("dd-MMM-yyyy")) </td>
+                                            <td>@(pasenger.airlines) </td>
+                                            <td>@(pasenger.flightNumbers) </td>
+                                            <td>@(string.Concat( pasenger.fn, " ", pasenger.ln)) </td>
+                                            <td>@(pasenger.amendmentCharges.ToString("C",_currentUser.cultureInfo)) </td>
+                                            <td>@(pasenger.refundableamount.ToString("C",_currentUser.cultureInfo)) </td>
+                                            <td>@(pasenger.CancelRemarks) </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
 
-                            <div class="profile-info-row">
-                                <div class="profile-info-name">Wallet Alert Amt</div>
-
-                                <div class="profile-info-value">
-                                    <span>@Model.customerSetting.MinBalance</span>
-                                </div>
-                            </div>
-
-                            <div class="profile-info-row">
-                                <div class="profile-info-name">Wallet Balance</div>
-
-                                <div class="profile-info-value">
-                                    <span>@Model.WalletBalance</span>
-                                </div>
-                            </div>
-                            <div class="profile-info-row">
-                                <div class="profile-info-name">Credit Balance</div>
-                                <div class="profile-info-value">
-                                    <span>@Model.CreditBalace</span>
-                                </div>
-                            </div>
-
-
-                        </div>
-                        <div class="hr hr-8 dotted"></div>
-                    </div>
+</div>
                 </div>
             </div>
-        }*@
+        
 
 
         </div>
     </div>
-
+</div>
     @section Scripts {
         <script type="text/javascript">
             $(function () {
