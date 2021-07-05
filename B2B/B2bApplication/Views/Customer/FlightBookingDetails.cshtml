@@ -521,7 +521,7 @@ fbs.BookingStatus == enmBookingStatus.Refund ? "label-danger" : fbs.BookingStatu
             <div id="flightBookingDetails_CancelFlight" class="tab-pane">
 
                 <div class="row">
-                    <div class="col-xs-12 col-sm-8  col-sm-offset-2">
+                    <div class="col-xs-12 col-sm-10  col-sm-offset-1">
                         @if (_currentUser.HaveClaim(enmDocumentMaster.Booking_Flight_Cancel))
                         {
                             @foreach (var md in Model.tblFlightBookingSegmentMaster)
@@ -644,13 +644,12 @@ fbs.BookingStatus == enmBookingStatus.Refund ? "label-danger" : fbs.BookingStatu
             // The function takes Form and the event object as parameter
             function SubmitForm(frm, caller,LoadDetails) {
                 caller.preventDefault();
-                var fdata = new FormData();
-                //var file = $(frm).find('input:file[name="uploadfile"]')[0].files[0];
-                //fdata.append("file", file);
-                if (LoadDetails == 0) {
-                    console.log(fdata);
-                    if (fdata.remarks == null || fdata.remarks == "") {
+                var fdata = new FormData(frm);
+                var remaks = $(frm).find('input:text[name="remarks"]').val();
+                if (LoadDetails == 0) {                    
+                    if (remaks == null || remaks== "") {
                         alert("Remarks Required");
+                        return;
                     }
                     if (!confirm('Are you sure to Cancel')) {
                         return;
@@ -666,10 +665,10 @@ fbs.BookingStatus == enmBookingStatus.Refund ? "label-danger" : fbs.BookingStatu
                         success: function (data) {
                             if (LoadDetails == 0) {
                                 if (data.Status) {
-                                    toastr.success(data.Message, "Success", { timeOut: 2500 });
+                                    toastr.success(data.message, "Success", { timeOut: 2500 });
                                 }
                                 else {
-                                    toastr.error(data.Message,"Error", {timeOut: 10000});
+                                    toastr.error(data.message,"Error", {timeOut: 10000});
                                 }
                             }
                             else {

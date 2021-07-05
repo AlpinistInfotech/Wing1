@@ -1699,6 +1699,7 @@ namespace B2BClasses.Services.Air
             {
                 bookingId = request.bookingId,
                 remarks = request.remarks,
+                type= request.type,
                 trips = request?.trips.Select(p => new Trip
                 {
                     src = p.srcAirport,

@@ -251,7 +251,7 @@ namespace B2bApplication.Controllers
                     returnData.message = "Invalid Request";
                     return returnData;
                 }
-                if (currentUsers.CustomerType == enmCustomerType.Admin || currentUsers.CustomerId == flightDetails.CustomerId)
+                if (!(currentUsers.CustomerType == enmCustomerType.Admin || currentUsers.CustomerId == flightDetails.CustomerId))
                 {
                     returnData.message = "Unauthorize Request";
                     return returnData;
@@ -298,10 +298,12 @@ namespace B2bApplication.Controllers
                 {
                     returnData.success = true;
                     returnData.message = "Cancel Successfully " + res.amendmentId;
+                    return returnData;
                 }
                 else
                 {
                     returnData.message = res.Error?.Message;
+                    return returnData;
                 }
             }
             else
