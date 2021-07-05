@@ -1,4 +1,5 @@
-﻿@model WingGateway.Models.mdlHolidayPackageReportWraper
+﻿@model  WingGateway.Models.mdlHolidayPackageReportWraper
+ 
 @using Database
 @{
     ViewData["Title"] = Database.enmDocumentMaster.Gateway_Dashboard.GetDocumentDetails().Name;
@@ -190,10 +191,21 @@
         <a href="javascript:void(0)" class="btn btn-sm btn-secondary float-right">View All Orders</a>
     </div>
     <!-- /.card-footer -->
+
+    <input type="hidden" id="AirlinesAPIList_APIURL" asp-for="AirlinesAPIList.APIURL" />
+    <input type="hidden" id="AirlinesAPIList_AirportSearch" asp-for="AirlinesAPIList.AirportSearch" />
+
 </div>
 
 @section Scripts {
 
+    <script >
 
+        //if (window.localStorage.length == 0)
+        {
+            window.localStorage.setItem("AirlinesAPIList_APIURL", document.getElementById('AirlinesAPIList_APIURL').value);
+            window.localStorage.setItem("AirlinesAPIList_AirportSearch", document.getElementById('AirlinesAPIList_AirportSearch').value);
+        }
+    </script>
 
 }

@@ -4,24 +4,22 @@ $(document).ready(function ()
     callairportAPI('ddlairportname',0);
 }
 )
-
+var airport_lst;
 function callairportAPI(ControlId, EmployeeId) {
 
     $('#loader').show();
     ControlId = '#' + ControlId;
 
-    localStorage.removeItem("airport_lst")
-    var airport_lst;
+   // localStorage.removeItem("airport_lst")
+    
     var lst = localStorage.getItem("airport_lst");
     if (lst != undefined && lst != null && lst != "" && lst.length > 0) {
-        airport_lst = JSON.parse(lst);
-        
+        airport_lst = JSON.parse(lst);    
     }
 
     else {
 
-        alert('calling');
-        var apiurl = 'https://localhost:44341/api/Home/sEARCHaIRPORT';
+        var apiurl = localStorage.getItem("AirlinesAPIList_APIURL") + '' + localStorage.getItem("AirlinesAPIList_AirportSearch");
         $.ajax({
             type: "POST",
             url: apiurl,
@@ -57,25 +55,17 @@ function callairportAPI(ControlId, EmployeeId) {
         });
 
     }
-
-    alert(JSON.stringify(airport_lst).length);
-
-    if (airport_lst != null && airport_lst != "" && JSON.stringify(airport_lst).length > 0) {
+    
+    if (airport_lst != null && airport_lst != "" && airport_lst.mdlSearches.length > 0) {
         
-        alert('sadasafdsadf');
             //if (SelectedVal == 0) {
             //    $(ControlId).empty().append('<option selected="selected" value="0">All</option>');
-            //    // $(ControlId).append('<option value="0">All</option>');
+            $(ControlId).append('<option value=""></option>');
             //}
             //else { $(ControlId).empty().append('<option selected="selected" value="0">All</option>'); }
-         alert('asd')
-        alert(airport_lst)
-        airport_lst = JSON.stringify(airport_lst);
-            $.each(airport_lst, function (data, value) {
-                alert('asd')
-                alert(value);
-                
-                $(ControlId).append($("<option></option>").val(value.airportCode).html(value.airportName));
+        $.each(airport_lst.mdlSearches, function (data, value) {
+
+            $(ControlId).append($("<option></option>").val(value.airportCode).html(value.airportName + '-' + value.airportCode + ' ' + value.cityName + ' ' + value.countryName));
             });
 
             //get and set selected value

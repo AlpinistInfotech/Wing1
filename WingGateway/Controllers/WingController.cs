@@ -653,6 +653,8 @@ namespace WingGateway.Controllers
             mdlHolidayPackageReportWraper returnDataMdl = new mdlHolidayPackageReportWraper();
             returnDataMdl.FilterModel = new mdlFilterModel() { dateFilter = new mdlDateFilter(), idFilter = new mdlIdFilter(), IsReport = true };
             returnDataMdl.HolidayPackageWrapers = new List<ProcHolidayPackageSearch>();
+
+
             return View(returnDataMdl);
         }
         [HttpPost]

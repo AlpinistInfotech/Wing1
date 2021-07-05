@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace WingGateway.Models
 {
-    public class mdlTreeWraper: mdlTree
+    public class mdlTreeWraper : mdlTree
     {
         public int id { get; set; }
         public string text { get; set; }
@@ -22,7 +22,7 @@ namespace WingGateway.Models
     public class mdlKyc
     {
         [Required]
-        [Display(Name = "Id Proof Type")]        
+        [Display(Name = "Id Proof Type")]
         public enmIdentityProof IdProofType { get; set; } = enmIdentityProof.Aadhar;
 
         [Required]
@@ -38,7 +38,7 @@ namespace WingGateway.Models
         [StringLength(200, ErrorMessage = "The {0} must be at most {1} characters long.")]
         [RegularExpression("[a-zA-Z0-9,/.\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         [Display(Name = "Remarks")]
-        public string Remarks{ set; get; }
+        public string Remarks { set; get; }
 
         [Display(Name = "Is Approved")]
         public enmApprovalType? IsApproved { get; set; } = null;
@@ -50,7 +50,7 @@ namespace WingGateway.Models
         [RegularExpression("[a-zA-Z0-9,/.\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         [Display(Name = "Approval Remarks")]
         public string ApprovalRemarks { set; get; }
-        public List<byte[]> fileData { set; get; }       
+        public List<byte[]> fileData { set; get; }
     }
 
 
