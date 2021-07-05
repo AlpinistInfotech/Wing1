@@ -42,19 +42,19 @@ namespace WingGateway.Models
         [Display(Name = "TcId")]
         [StringLength(11, ErrorMessage = "The {0} must be at {2} characters long.", MinimumLength = 11)]
         [RegularExpression("[a-zA-Z0-9]*$", ErrorMessage = "Invalid {0}, no special charcter")]
-        
+
         [Remote(action: "IsSponsorValid", controller: "Account", ErrorMessage = "Invalid Id")]
         public string TcId { get; set; }
     }
 
     public class mdlFilterModel
-    {   
-        public mdlDateFilter dateFilter { get; set; }   
+    {
+        public mdlDateFilter dateFilter { get; set; }
         public mdlIdFilter idFilter { get; set; }
         public bool IsReport { get; set; } = false;
     }
 
- 
+
     public class mdlTcBankWraper : mdlBank
     {
         public int DetailId { get; set; }
@@ -66,24 +66,33 @@ namespace WingGateway.Models
         public string ApproverName { get; set; }
         public DateTime RequestDate { get; set; }
         public string UploadImageName { get; set; }
-        
+
     }
-    public class mdlTcBankReportWraper 
+    public class mdlTcBankReportWraper
     {
         public mdlFilterModel FilterModel { get; set; }
         public List<mdlTcBankWraper> TcBankWrapers { get; set; }
     }
-    
-    
-    
+
+
+
     public class mdlHolidayPackageReportWraper
     {
         public mdlFilterModel FilterModel { get; set; }
         public List<ProcHolidayPackageSearch> HolidayPackageWrapers { get; set; }
+
+        public APIData AirlinesAPIList { get; set; } 
+
     }
 
+    public class APIData
+    {
+        public string APIURL { get; set; } = "";
+        public string AirportSearch { get; set; } = "";
 
-    public class mdlHolidayPackageWraper : mdlHolidayPackage
+    }
+
+public class mdlHolidayPackageWraper : mdlHolidayPackage
     {
         public int DetailId { get; set; }
         public DateTime CreatedDt { get; set; }

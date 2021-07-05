@@ -48,9 +48,9 @@ namespace WingGateway.Controllers
             mdlHolidayPackageReportWraper returnData = new mdlHolidayPackageReportWraper();
             WingGateway.Classes.ConsProfile consProfile = new Classes.ConsProfile(_context, _config);
             returnData.HolidayPackageWrapers = consProfile.GetHolidayPackageDetails(loadType, mdl, 0, 0, false);
-
-
-            
+            returnData.AirlinesAPIList  = new APIData();
+            returnData.AirlinesAPIList.APIURL = _config["AirlinesAPIList:APIURL"];
+            returnData.AirlinesAPIList.AirportSearch = _config["AirlinesAPIList:AirportSearch"];
 
             return View(returnData);
 
