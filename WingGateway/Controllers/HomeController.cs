@@ -26,7 +26,9 @@ namespace WingGateway.Controllers
         private readonly IConfiguration _config;
         private readonly ICurrentUsers _currentUsers;
         private readonly int _userid;
-        public HomeController(ILogger<HomeController> logger,DBContext context, IConfiguration config, ICurrentUsers currentUsers, ISettings setting
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        public HomeController(ILogger<HomeController> logger,DBContext context, IConfiguration config, ICurrentUsers currentUsers, ISettings setting, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager
             )
         {
             _logger = logger;            
@@ -35,6 +37,8 @@ namespace WingGateway.Controllers
             _setting = setting;
             _currentUsers = currentUsers;
             _userid = _currentUsers.EmpId;
+            this._userManager = userManager;
+            this._signInManager = signInManager;
 
         }
 
@@ -885,28 +889,17 @@ namespace WingGateway.Controllers
         #region ChangePassword
         public IActionResult ChangePassword()
         {
-            dynamic messagetype = TempData["MessageType"];
-            mdlChangePassword mdl = new mdlChangePassword();
-            if (messagetype != null)
-            {
-                ViewBag.SaveStatus = (int)messagetype;
-                ViewBag.Message = TempData["Message"];
-            }
-            return View(mdl);
+            return View();
         }
-
         [HttpPost]
-        [Authorize]
-        [ActionName("ChangePassword")]
-        public async Task<IActionResult> CustomerChangePasswordAsync(mdlChangePassword mdl, UserManager<ApplicationUser> _userManager, SignInManager<ApplicationUser> _signInManager)
+        public async Task<IActionResult> ChangePassword(mdlChangePassword mdl)
         {
             if (ModelState.IsValid)
             {
                 var user = await _userManager.GetUserAsync(User);
                 if (user == null)
                 {
-                    //return RedirectToAction("Login");
-                    ViewBag.Message = "No User Exists";
+                    return ViewBag.Message = "No User Exist";
                 }
                 var result = await _userManager.ChangePasswordAsync(user, mdl.Password, mdl.NewPassword);
                 if (!result.Succeeded)
@@ -918,71 +911,12 @@ namespace WingGateway.Controllers
                     return View();
                 }
                 await _signInManager.RefreshSignInAsync(user);
-                //return View("ChangePasswordConfirmation");
-                ViewBag.Mesage = "Password chaged successfully";
+                return View("/Home/ChangePasswordConfirmation");
             }
             return View(mdl);
-
-            //if (ModelState.IsValid)
-            //{
-
-            //    var result = await _signInManager.PasswordSignInAsync(_currentUsers.TcId, mdl.Password, true, true);
-            //    if (!result.Succeeded)
-            //    {
-            //        TempData["MessageType"] = (int)enmMessageType.Error;
-            //        TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidOldPassword);
-
-            //    }
-            //    var user = 
-            //    else 
-            //    {
-                    
-            //        _userManager.ChangePasswordAsync(user, mdl.Password, mdl.NewPassword);
-
-            //    }
-
-            //}
-
-            //if (ModelState.IsValid)
-            //{
-
-            //    var ExistingData = _context.UserLogins.FirstOrDefault(p => p.UserId == _userid );
-            //    if (ExistingData == null)
-            //    {
-            //        TempData["MessageType"] = (int)enmMessageType.Error;
-            //        TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidData);
-
-            //    }
-            //    else if (ExistingData.pas != mdl.Password)
-            //    {
-            //        TempData["MessageType"] = (int)enmMessageType.Error;
-            //        TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidOldPassword);
-            //    }
-
-            //    else if (ExistingData.Password == mdl.NewPassword)
-            //    {
-            //        TempData["MessageType"] = (int)enmMessageType.Error;
-            //        TempData["Message"] = _setting.GetErrorMessage(enmMessage.OldPasswordNewPassordCannotbeSame);
-            //    }
-            //    else
-            //    {
-
-            //        ExistingData.Password = mdl.NewPassword;
-            //        ExistingData.ModifiedBy = _userid;
-            //        ExistingData.ModifiedDt = DateTime.Now;
-            //        _context.AspNetUsers.Update(ExistingData);
-            //        await _context.SaveChangesAsync();
-            //        TempData["MessageType"] = (int)enmMessageType.Success;
-            //        TempData["Message"] = _setting.GetErrorMessage(enmMessage.UpdateSuccessfully);
-
-            //    }
-
-            //}
-            //return RedirectToAction("CustomerChangePassword");
-
         }
 
-#endregion
+        #endregion
 
     }
 }
