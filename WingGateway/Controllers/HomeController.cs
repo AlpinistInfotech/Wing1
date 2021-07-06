@@ -900,29 +900,48 @@ namespace WingGateway.Controllers
         [ActionName("ChangePassword")]
         public async Task<IActionResult> CustomerChangePasswordAsync(mdlChangePassword mdl, UserManager<ApplicationUser> _userManager, SignInManager<ApplicationUser> _signInManager)
         {
-            
             if (ModelState.IsValid)
             {
-
-                var result = await _signInManager.PasswordSignInAsync(_currentUsers.TcId, mdl.Password, true, true);
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    //return RedirectToAction("Login");
+                    ViewBag.Message = "No User Exists";
+                }
+                var result = await _userManager.ChangePasswordAsync(user, mdl.Password, mdl.NewPassword);
                 if (!result.Succeeded)
                 {
-                    TempData["MessageType"] = (int)enmMessageType.Error;
-                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidOldPassword);
-
-                }
-                
-                else 
-                {
-                    var user = new ApplicationUser
+                    foreach (var error in result.Errors)
                     {
-                        PasswordHash = mdl.NewPassword
-                    };
-                    _userManager.ChangePasswordAsync(user, mdl.Password, mdl.NewPassword);
-
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return View();
                 }
-
+                await _signInManager.RefreshSignInAsync(user);
+                //return View("ChangePasswordConfirmation");
+                ViewBag.Mesage = "Password chaged successfully";
             }
+            return View(mdl);
+
+            //if (ModelState.IsValid)
+            //{
+
+            //    var result = await _signInManager.PasswordSignInAsync(_currentUsers.TcId, mdl.Password, true, true);
+            //    if (!result.Succeeded)
+            //    {
+            //        TempData["MessageType"] = (int)enmMessageType.Error;
+            //        TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidOldPassword);
+
+            //    }
+            //    var user = 
+            //    else 
+            //    {
+                    
+            //        _userManager.ChangePasswordAsync(user, mdl.Password, mdl.NewPassword);
+
+            //    }
+
+            //}
 
             //if (ModelState.IsValid)
             //{
@@ -959,7 +978,7 @@ namespace WingGateway.Controllers
             //    }
 
             //}
-            return RedirectToAction("CustomerChangePassword");
+            //return RedirectToAction("CustomerChangePassword");
 
         }
 
