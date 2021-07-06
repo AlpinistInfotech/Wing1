@@ -24,7 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\B2B\B2BClasses\B2BClasses.csproj" />
     <ProjectReference Include="..\Database\Database.csproj" />
   </ItemGroup>
 
