@@ -221,9 +221,7 @@ namespace B2bApplication.Controllers
             {
                 mdl = new mdlFlightReview();
             }
-            await mdl.LoadFareQuotationAsync(_customerId, _booking, _markup);
-            //save Data
-            await _booking.CustomerFlightDetailSave(mdl.FareQuoteRequest.TraceId,mdl.FareQuotResponse);
+            await mdl.LoadFareQuotationAsync(_customerId, _booking, _markup);            
             mdl.BookingRequestDefaultData();
             return View(mdl);
         }
@@ -407,8 +405,6 @@ namespace B2bApplication.Controllers
                     mdlres.BookingId.Add(Result.ResponseStatus == 1 ?Result.bookingId: Result.Error.Message);
                     if (!(Result.ResponseStatus == 1))
                     {
-
-
                         ViewBag.SaveStatus = (int)enmMessageType.Warning;
                         ViewBag.Message = Result.Error.Message;
                     }

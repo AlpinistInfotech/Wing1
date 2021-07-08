@@ -207,7 +207,7 @@ namespace B2bApplication.Models
                 _markup.WingConvenienceAmount(md, this.travellerInfo);
                 _markup.CalculateTotalPriceAfterMarkup(md.Results, md.SearchQuery.AdultCount, md.SearchQuery.ChildCount, md.SearchQuery.InfantCount);
             }
-            
+            await _booking.CustomerFlightDetailSave(FareQuoteRequest.TraceId, FareQuotResponse);
         }
 
     }
