@@ -248,10 +248,9 @@ namespace B2BClasses
                         TravelDt = p.DepartureTime.Date,
                     })
                  );
-
                 _context.tblFlightBookingSegmentMaster.Add(new tblFlightBookingSegmentMaster
                 {
-                    BookingId = mdl.BookingId.Split("_")?[1],
+                    BookingId = BookingId,
                     TraceId = traceId,
                     TravelDt = mdl.SearchQuery.DepartureDt.HasValue ? mdl.SearchQuery.DepartureDt.Value : DateTime.Now,
                     BookingStatus = enmBookingStatus.Pending,

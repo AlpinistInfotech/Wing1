@@ -201,7 +201,7 @@ namespace B2bApplication.Controllers
             {
                 mdl = new mdlFlightReview();
             }
-            await mdl.LoadFareQuotationAsync(_customerId, _booking, _markup);
+            await mdl.LoadFareQuotationAsync(_customerId, _booking, _markup, _context);
 
             //save Data
             await _booking.CustomerFlightDetailSave(mdl.FareQuoteRequest.TraceId, mdl.FareQuotResponse);
@@ -221,7 +221,7 @@ namespace B2bApplication.Controllers
             {
                 mdl = new mdlFlightReview();
             }
-            await mdl.LoadFareQuotationAsync(_customerId, _booking, _markup);            
+            await mdl.LoadFareQuotationAsync(_customerId, _booking, _markup, _context);            
             mdl.BookingRequestDefaultData();
             return View(mdl);
         }
@@ -355,7 +355,7 @@ namespace B2bApplication.Controllers
 
 
 
-                await mdl.LoadFareQuotationAsync(_customerId, _booking, _markup);
+                await mdl.LoadFareQuotationAsync(_customerId, _booking, _markup,_context);
                 IsPriceChanged = mdl.FareQuotResponse.Any(p => p.IsPriceChanged);
                 if (IsPriceChanged)
                 {
@@ -377,7 +377,7 @@ namespace B2bApplication.Controllers
                 }
                 else
                 {   
-                    await customerWallet.DeductBalanceAsync(DateTime.Now ,mdl.TotalFare,enmTransactionType.TicketBook, string.Concat("Booking Ids", string.Join( ',',mdl.FareQuotResponse.Select(p=>p.BookingId))) );
+                    await customerWallet.DeductBalanceAsync(DateTime.Now ,mdl.TotalFare,enmTransactionType.TicketBook, mdl.FareQuoteRequest.TraceId) );
                 }
 
                 //if Price not chnage then Book the Flight
@@ -438,8 +438,6 @@ namespace B2bApplication.Controllers
                 }
             }
             _booking.CompleteBooking(mdl.FareQuoteRequest.TraceId ?? "", bookingStatus);
-
-
 
             return View(mdlres);
         }

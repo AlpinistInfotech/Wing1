@@ -158,11 +158,17 @@ namespace B2bApplication.Models
             SetFareAmount();
         }
 
-        public async Task LoadFareQuotationAsync(int CustomerId, IBooking _booking, IMarkup _markup)
+        public async Task LoadFareQuotationAsync(int CustomerId, IBooking _booking, IMarkup _markup, DBContext _context)
         {
             _booking.CustomerId = CustomerId;
             this.FareQuotResponse = new List<mdlFareQuotResponse>();
             this.FareRule = new List<mdlFareRuleResponse>();
+            //Check Is Flight is Already Booked Coreponding to this TraceID
+            if (_context.tblFlightBookingSegmentMaster.Where(p => p.TraceId == FareQuoteRequest.TraceId && p.BookingStatus != enmBookingStatus.Pending).Count() > 0)
+            {
+                throw new Exception("Flight Ticket is already Booked");
+            }
+
             this.FareQuotResponse.AddRange(await _booking.FareQuoteAsync(FareQuoteRequest));
             foreach (var md in FareQuotResponse)
             {
