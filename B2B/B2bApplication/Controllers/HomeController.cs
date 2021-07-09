@@ -376,8 +376,8 @@ namespace B2bApplication.Controllers
                     return RedirectToAction("FlightReview");                    
                 }
                 else
-                {   
-                    await customerWallet.DeductBalanceAsync(DateTime.Now ,mdl.TotalFare,enmTransactionType.TicketBook, mdl.FareQuoteRequest.TraceId) );
+                {
+                    await customerWallet.DeductBalanceAsync(DateTime.Now, mdl.TotalFare, enmTransactionType.TicketBook, mdl.FareQuoteRequest.TraceId);
                 }
 
                 //if Price not chnage then Book the Flight
