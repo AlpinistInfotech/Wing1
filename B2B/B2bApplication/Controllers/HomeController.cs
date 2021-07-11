@@ -331,7 +331,7 @@ namespace B2bApplication.Controllers
 
         
         [Authorize]
-        [HttpGet]
+        [HttpPost]
         [Route("/Home/FlightCancelDetails")]
         public async Task<IActionResult> FlightCancelDetailsAsync(mdlFlightCancel mdl, [FromServices] ICurrentUsers currentUsers)
         {
@@ -381,7 +381,7 @@ namespace B2bApplication.Controllers
                 type = "CANCELLATION",
                 trips = _mdlCancellationTripDetails,
             };
-            var mdlRes=_booking.CancelationChargeAsync(mdlRq);
+            var mdlRes=await _booking.CancelationChargeAsync(mdlRq);
             return PartialView("_FlightCancelDetail", mdlRes);
         }
 

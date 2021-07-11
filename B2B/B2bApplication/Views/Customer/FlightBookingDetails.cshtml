@@ -719,7 +719,20 @@ Model.BookingStatus == enmBookingStatus.Refund ? "label-danger" : Model.BookingS
             }
             else {
                 $('#exampleModal').modal('show');
-                $("#divCancelationCharge").load("/Home/FlightCancelDetails?handler=Partial", fdata);
+                $.ajax(
+                    {
+                        type: "POST",
+                        url: "/Home/FlightCancelDetails",
+                        data: fdata,
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            $("#divCancelationCharge").html(data);
+                        },
+                        error: function (data) {
+                            toastr.error(data, "Error", { timeOut: 10000 });
+                        }
+                    })                
                 
             }
 
