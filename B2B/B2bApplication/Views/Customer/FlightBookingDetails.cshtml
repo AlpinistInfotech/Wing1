@@ -6,6 +6,28 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
 }
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Cancelation Charge</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="divCancelationCharge">
+                Loading data
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>                
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="user-profile-2" class="user-profile">
     <div class="space-20"></div>
     <div class="tabbable">
@@ -139,7 +161,7 @@ Model.BookingStatus == enmBookingStatus.Refund ? "label-danger" : Model.BookingS
                                                 }
                                             </div>
                                         </div>
-                                        
+
                                         @foreach (var fbd in Model.tblFlightBookingSegments.Where(p => p.SegmentDisplayOrder == fbs.SegmentDisplayOrder).OrderBy(p => p.TripIndicator))
                                         {
                                             <div class="col-sm-6">
@@ -660,44 +682,49 @@ Model.BookingStatus == enmBookingStatus.Refund ? "label-danger" : Model.BookingS
             });
 
             // The function takes Form and the event object as parameter
-            function SubmitForm(frm, caller,LoadDetails) {
-                caller.preventDefault();
-                var fdata = new FormData(frm);
-                var remaks = $(frm).find('input:text[name="remarks"]').val();
-                if (LoadDetails == 0) {                    
-                    if (remaks == null || remaks== "") {
-                        alert("Remarks Required");
-                        return;
-                    }
-                    if (!confirm('Are you sure to Cancel')) {
-                        return;
-                    }
+        function SubmitForm(frm, caller, LoadDetails) {
+            caller.preventDefault();
+            var fdata = new FormData(frm);
+            var remaks = $(frm).find('input:text[name="remarks"]').val();
+            if (LoadDetails == 0) {
+                if (remaks == null || remaks == "") {
+                    alert("Remarks Required");
+                    return;
                 }
+                if (!confirm('Are you sure to Cancel')) {
+                    return;
+                }
+            }
+
+            if (LoadDetails != 1) {
                 $.ajax(
                     {
                         type: frm.method,
-                        url: (LoadDetails == 1 ?"/Home/FlightCancelDetails" :frm.action),
+                        url: frm.action,
                         data: fdata,
                         processData: false,
                         contentType: false,
                         success: function (data) {
-                            if (LoadDetails == 0) {
-                                if (data.success) {
-                                    toastr.success(data.message, "Success", { timeOut: 2500 });
-                                }
-                                else {
-                                    toastr.error(data.message,"Error", {timeOut: 10000});
-                                }
+                            if (data.success) {
+                                toastr.success(data.message, "Success", { timeOut: 2500 });
                             }
                             else {
-
+                                toastr.error(data.message, "Error", { timeOut: 10000 });
                             }
                         },
                         error: function (data) {
                             toastr.error(data, "Error", { timeOut: 10000 });
                         }
                     })
-            };
+            }
+            else {
+                $('#exampleModal').modal('show');
+                $("#divCancelationCharge").load("/Home/FlightCancelDetails?handler=Partial", fdata);
+                
+            }
+
+                
+         };
 
 
 

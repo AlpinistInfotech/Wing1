@@ -1,0 +1,78 @@
+﻿
+@model B2BClasses.Services.Air.mdlFlightCancellationChargeResponse
+@inject ICurrentUsers _currentUser
+
+@if (ViewBag.HaveError)
+{
+    <div class="alert alert-danger">
+        <button type="button" class="close" data-dismiss="alert">
+            <i class="ace-icon fa fa-times"></i>
+        </button>
+
+        <strong>
+            <i class="ace-icon fa fa-times"></i>
+            Error!
+        </strong>
+
+        @ViewBag.ErrorMessage
+        <br>
+    </div>
+}
+else
+{
+    @foreach (var trip in Model.trips)
+    {
+        <div class="profile-user-info">
+            <h4 class="blue">
+                <span class="middle">@string.Concat(trip.srcAirport, " - ", trip.destAirport) </span>
+            </h4>
+            <div class="profile-info-row">
+                <div class="profile-info-name">Travel Date</div>
+                <div class="profile-info-value">
+                    <i class="fa fa-user light-orange bigger-110"></i>
+                    <span>@trip.departureDate.ToString("dd-MMM-yyyy") </span>
+                </div>
+            </div>
+            <div class="profile-info-row">
+                <div class="profile-info-name">Flight Number</div>
+                <div class="profile-info-value">
+                    <i class="fa fa-user light-orange bigger-110"></i>
+                    <span>@string.Join(", ", trip.flightNumbers)</span>
+                </div>
+            </div>
+            <div class="profile-info-row">
+                <div class="profile-info-name">Airline</div>
+                <div class="profile-info-value">
+                    <i class="fa fa-user light-orange bigger-110"></i>
+                    <span>@string.Join(", ", trip.airlines)</span>
+                </div>
+            </div>
+            <div class="profile-info-row">
+                <div class="profile-info-name">Adult</div>
+                <div class="profile-info-value">
+                    <i class="fa fa-user light-orange bigger-110"></i>
+                    <span><b>Charge : </b> @trip?.amendmentInfo?.ADULT.amendmentCharges.ToString("C", _currentUser.cultureInfo) </span>
+                    <span><b> Refund Amount : </b> @trip?.amendmentInfo?.ADULT.refundAmount.ToString("C", _currentUser.cultureInfo) </span>
+                </div>
+            </div>
+            <div class="profile-info-row">
+                <div class="profile-info-name">Adult</div>
+                <div class="profile-info-value">
+                    <i class="fa fa-user light-orange bigger-110"></i>
+                    <span><b>Charge : </b> @trip?.amendmentInfo?.CHILD.amendmentCharges.ToString("C", _currentUser.cultureInfo) </span>
+                    <span><b> Refund Amount : </b> @trip?.amendmentInfo?.CHILD.refundAmount.ToString("C", _currentUser.cultureInfo) </span>
+                </div>
+            </div>
+            <div class="profile-info-row">
+                <div class="profile-info-name">Adult</div>
+                <div class="profile-info-value">
+                    <i class="fa fa-user light-orange bigger-110"></i>
+                    <span><b>Charge : </b> @trip?.amendmentInfo?.INFANT.amendmentCharges.ToString("C", _currentUser.cultureInfo) </span>
+                    <span><b> Refund Amount : </b> @trip?.amendmentInfo?.INFANT.refundAmount.ToString("C", _currentUser.cultureInfo) </span>
+                </div>
+            </div>
+        </div>
+    }
+
+}
+

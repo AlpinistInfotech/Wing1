@@ -20,6 +20,7 @@ namespace B2BClasses
 
         Task<mdlBookingResponse> BookingAsync(mdlBookingRequest mdlRq);
         Task<mdlFlightCancellationResponse> CancelationAsync(mdlCancellationRequest mdlRq, ICustomerWallet customerWallet);
+        Task<mdlFlightCancellationChargeResponse> CancelationChargeAsync(mdlCancellationRequest mdlRq);
         bool CompleteBooking(string traceIds, enmBookingStatus bookingStatus);
         Task<string> CustomerDataSave(mdlSearchRequest mdlRq, List<tblFlightBookingProviderTraceId> traceIds, enmJourneyType journeyType);
         Task<bool> CustomerFlightDetailSave(string traceId, List<mdlFareQuotResponse> mdls);
@@ -169,7 +170,6 @@ namespace B2BClasses
 
             return mdl;
         }
-
 
 
         public async Task<string> CustomerDataSave(mdlSearchRequest mdlRq, List<tblFlightBookingProviderTraceId> traceIds, enmJourneyType journeyType)
@@ -696,6 +696,29 @@ namespace B2BClasses
             {
                await CancelationSaveinDb(wingflight, mdlRq, mdlRs, customerWallet);
             }
+            return mdlRs;
+        }
+
+        public async Task<mdlFlightCancellationChargeResponse> CancelationChargeAsync(mdlCancellationRequest mdlRq)
+        {
+            mdlFlightCancellationChargeResponse mdlRs = new mdlFlightCancellationChargeResponse();
+
+            var traceDetails = _context.tblFlightBookingSegmentMaster.Where(p => p.TraceId == mdlRq.TraceId && p.BookingId == mdlRq.bookingId).FirstOrDefault();
+            if (traceDetails == null)
+            {
+                throw new Exception("Invalid booking details");
+            }
+            if (traceDetails.BookingStatus == enmBookingStatus.Refund)
+            {
+                throw new Exception("Flight is already in cancel State");
+            }
+            if (traceDetails.BookingStatus != enmBookingStatus.Booked)
+            {
+                throw new Exception("only Booked flight can cancel the ticket");
+            }
+            var sp = traceDetails.ServiceProvider;
+            IWingFlight wingflight = GetFlightObject(sp);
+            mdlRs = await wingflight.CancelationChargeAsync(mdlRq);            
             return mdlRs;
         }
 

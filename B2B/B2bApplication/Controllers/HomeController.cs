@@ -329,6 +329,61 @@ namespace B2bApplication.Controllers
         }
 
 
+        
+        [Authorize]
+        [HttpGet]
+        [Route("/Home/FlightCancelDetails")]
+        public async Task<IActionResult> FlightCancelDetailsAsync(mdlFlightCancel mdl, [FromServices] ICurrentUsers currentUsers)
+        {
+            ViewBag.HaveError = false;
+            ViewBag.ErrorMessage = "";
+            var flightDetails = _context.tblFlightBookingMaster.Where(p => p.Id == mdl.traceId).FirstOrDefault();
+            if (flightDetails == null)
+            {
+                ViewBag.HaveError = true; ViewBag.ErrorMessage = "Invalid Request";
+                return PartialView("_FlightCancelDetail", null);
+
+            }
+            if (!(currentUsers.CustomerType == enmCustomerType.Admin || currentUsers.CustomerId == flightDetails.CustomerId))
+            {
+                ViewBag.HaveError = true; ViewBag.ErrorMessage = "Unauthorize Request";
+                return PartialView("_FlightCancelDetail", null);
+            }
+            var SegmentData = _context.tblFlightBookingSegmentMaster.Where(p => p.TraceId == mdl.traceId && p.SegmentDisplayOrder == mdl.segementDisplayOrder).FirstOrDefault();
+            if (SegmentData == null)
+            {
+                ViewBag.HaveError = true; ViewBag.ErrorMessage = "Invalid Request";
+                return PartialView("_FlightCancelDetail", null);
+            }
+            if (SegmentData.BookingStatus != enmBookingStatus.Booked)
+            {
+                ViewBag.HaveError = true; ViewBag.ErrorMessage = "Ticket not booked";
+                return PartialView("_FlightCancelDetail", null);
+            }
+
+            List<int> PasengerId = mdl.passengers.Where(p => p.check).Select(p => p.pid).ToList();
+            var passengerList = _context.tblFlightBookingPassengerDetails.Where(p => PasengerId.Contains(p.Id));
+
+            mdlCancellationTripDetail _mdlCancellationTripDetail = new mdlCancellationTripDetail()
+            {
+                srcAirport = SegmentData.Origin,
+                destAirport = SegmentData.Destination,
+                departureDate = SegmentData.TravelDt,
+                travellers = passengerList.Select(q => new mdlTravellerBasicInfo { FirstName = q.FirstName, LastName = q.LastName }).ToArray()
+            };
+            mdlCancellationTripDetail[] _mdlCancellationTripDetails = { _mdlCancellationTripDetail };
+
+            mdlCancellationRequest mdlRq = new mdlCancellationRequest()
+            {
+                bookingId = SegmentData.BookingId,
+                remarks = mdl.remarks,
+                TraceId = mdl.traceId,
+                type = "CANCELLATION",
+                trips = _mdlCancellationTripDetails,
+            };
+            var mdlRes=_booking.CancelationChargeAsync(mdlRq);
+            return PartialView("_FlightCancelDetail", mdlRes);
+        }
 
         [AcceptVerbs("Get", "Post")]
         [ValidateAntiForgeryToken]
