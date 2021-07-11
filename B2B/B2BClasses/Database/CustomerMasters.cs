@@ -311,6 +311,8 @@ namespace B2BClasses.Database
         [ForeignKey("tblPaymentRequest")] // Foreign Key here
         public int? PaymentRequestId { get; set; }
         public tblPaymentRequest tblPaymentRequest { get; set; }
+        [NotMapped]
+        public double Balance { get; set; }
     }
 
     

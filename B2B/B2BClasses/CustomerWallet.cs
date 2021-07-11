@@ -17,6 +17,7 @@ namespace B2BClasses
 
         Task AddBalanceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "",int? requestid=0);
         Task DeductBalanceAsync(DateTime TransactionDt, double Amount, enmTransactionType TransactionType, string TransactionDetails, string Remarks = "", int? requestid = 0);
+        Task<List<tblWalletDetailLedger>> GetLedegerBalance(DateTime fromDt, DateTime toDate);
         Task<double> GetBalanceAsync();
     }
 
@@ -149,6 +150,22 @@ namespace B2BClasses
                 throw ex;
             }
         }
+
+
+        public async Task<List< tblWalletDetailLedger>> GetLedegerBalance(DateTime fromDt, DateTime toDate)
+        {
+            fromDt = Convert.ToDateTime(fromDt.ToString("dd-MMM-yyyy"));
+            toDate= Convert.ToDateTime(toDate.AddDays(1).ToString("dd-MMM-yyyy")).AddSeconds(-1);
+            var Openingbalance = _context.tblWalletDetailLedger.Where(p => p.CustomerId == _CustomerId && p.TransactionDt < fromDt).Select(p => new {Balance= p.Credit - p.Debit })
+                .Sum(p=>p.Balance);
+            var transdetails =await _context.tblWalletDetailLedger.Where(p => p.CustomerId == _CustomerId && p.TransactionDt >= fromDt && p.TransactionDt <= toDate).ToListAsync();
+            transdetails.ForEach(p => {
+                Openingbalance = Openingbalance + p.Credit - p.Debit;
+                p.Balance = Openingbalance;
+            });
+            return transdetails;
+        }
+
 
     }
 }

@@ -1,5 +1,5 @@
 ﻿@model mdlCustomerWalletReport
-
+@inject ICurrentUsers _currentUser
 @using B2BClasses.Services.Enums
 
 @{
@@ -7,8 +7,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-  
-                
+
+
 <div class="row">
     <div class="col-md-12">
         <div class="card card-primary">
@@ -76,7 +76,7 @@
                             <div class="info-box-content">
                                 <span class="info-box-text">Wallet Balance</span>
 
-                                <span class="info-box-number">@((Model.mdlTcWalletWraper?.FirstOrDefault()?.current_ewallet_amt)??0)</span>
+                                <span class="info-box-number">@(_currentUser.WalletBalance)</span>
                             </div>
                             <!-- /.info-box-content -->
                         </div>
@@ -93,23 +93,29 @@
                                 <th style="display:none">Edit</th>
                                 <th style="width:200px">Date</th>
                                 <th style="width:200px">Particulars</th>
+                                <th>Type</th>
                                 <th>Credit</th>
                                 <th>Debit</th>
                                 <th>Balance</th>
+                                <td>Remarks</td>
+                                <td>PaymentRequestId </td>
                             </tr>
                         </thead>
                         <tbody>
                             @for (int i = 0; i < Model.mdlTcWalletWraper.Count(); i++)
                             {
-                                <tr>
+                            <tr>
 
-                                    <td style="display:none"><a href="javascript:DoPost(@Model.CustomerID)" data-toggle="tooltip" title="Edit Record !"><i class="nav-icon fas fa-edit"></i></a></td>
-                                    <td>@Model.mdlTcWalletWraper[i].Date</td>
-                                    <td>@Model.mdlTcWalletWraper[i].Particulars</td>
-                                    <td>@Model.mdlTcWalletWraper[i].Credit</td>
-                                    <td>@Model.mdlTcWalletWraper[i].Debit</td>
-                                    <td>@Model.mdlTcWalletWraper[i].Balance</td>
-                                </tr>
+                                <td style="display:none"><a href="javascript:DoPost(@Model.CustomerID)" data-toggle="tooltip" title="Edit Record !"><i class="nav-icon fas fa-edit"></i></a></td>
+                                <td>@Model.mdlTcWalletWraper[i].TransactionDt.ToString("dd-MMM-yyyy HH:mm:ss")</td>
+                                <td>@Model.mdlTcWalletWraper[i].TransactionDetails</td>
+                                <td>@Model.mdlTcWalletWraper[i].TransactionType</td>
+                                <td>@Model.mdlTcWalletWraper[i].Credit.ToString("C", _currentUser.cultureInfo) </td>
+                                <td>@Model.mdlTcWalletWraper[i].Debit.ToString("C", _currentUser.cultureInfo)</td>
+                                <td>@Model.mdlTcWalletWraper[i].Balance.ToString("C", _currentUser.cultureInfo)</td>
+                                <td>@Model.mdlTcWalletWraper[i].Remarks</td>
+                                <td>@Model.mdlTcWalletWraper[i].PaymentRequestId </td>
+                            </tr>
                             }
                         </tbody>
                     </table>
@@ -123,5 +129,5 @@
 </div>
 
 @section Scripts {
-    @(await Html.PartialAsync("_dateTableScriptPartial",6))
+    @(await Html.PartialAsync("_dateTableScriptPartial",9))
 }

@@ -789,68 +789,45 @@ namespace B2bApplication.Controllers
 
         public IActionResult CustomerwalletReport()
         {
+            if (_currentUsers.CustomerType == enmCustomerType.Admin)
+            {
+                ViewBag.CustomerCodeList = new SelectList(GetCustomerMaster(_context, false, 0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName");
+            }
+            else
+            {
+                ViewBag.CustomerCodeList = new SelectList(GetCustomerMaster(_context, false, _currentUsers.CustomerId).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName");
+            }
+            
             mdlCustomerWallet mdl = new mdlCustomerWallet();
-            ViewBag.CustomerCodeList = new SelectList(GetCustomerMaster(_context, true, 0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
             
             mdlCustomerWalletReport returnDataMdl = new mdlCustomerWalletReport();
-            returnDataMdl.mdlTcWalletWraper = new List<ProcWalletSearch_>();
+            returnDataMdl.mdlTcWalletWraper = new List<tblWalletDetailLedger>();
             return View(returnDataMdl);
-            //return View(mdl);
-
         }
 
         [HttpPost]
-        public IActionResult CustomerwalletReport(mdlCustomerWalletReport mdl, string submitdata)
+        public async Task<IActionResult> CustomerwalletReport(mdlCustomerWalletReport mdl, string submitdata, [FromServices]ICustomerWallet customerWallet)
         {
-            ViewBag.CustomerCodeList = new SelectList(GetCustomerMaster(_context, true, 0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
-
-            mdl.mdlTcWalletWraper = GetTCWalletStatement(mdl, 0, 0, true);
+            if (_currentUsers.CustomerType == enmCustomerType.Admin)
+            {
+                ViewBag.CustomerCodeList = new SelectList(GetCustomerMaster(_context, false, 0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
+                int CustomerId = 0;
+                int.TryParse(mdl.CustomerID, out CustomerId);
+                customerWallet.CustomerId = CustomerId;
+            }
+            else
+            {
+                ViewBag.CustomerCodeList = new SelectList(GetCustomerMaster(_context, false, _currentUsers.CustomerId).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
+                customerWallet.CustomerId = _currentUsers.CustomerId;
+            }
+            
+            mdl.mdlTcWalletWraper = await customerWallet.GetLedegerBalance(mdl.FromDt, mdl.ToDt);
             return View(mdl);
         }
 
         #endregion
 
-        public List<ProcWalletSearch_> GetTCWalletStatement(mdlCustomerWalletReport mdl, int Nid, int spmode, bool LoadImage)
-        {
-            List<ProcWalletSearch_> returnData = new List<ProcWalletSearch_>();
-
-            using (SqlConnection sqlconnection = new SqlConnection(_config["ConnectionStrings:DefaultConnection"]))
-            {
-                using (SqlCommand sqlcmd = new SqlCommand("proc_wallet_search", sqlconnection))
-                {
-                    sqlcmd.CommandType = CommandType.StoredProcedure;
-                    sqlcmd.Parameters.Add(new SqlParameter("datefrom", mdl.FromDt));
-                    sqlcmd.Parameters.Add(new SqlParameter("dateto", mdl.ToDt));
-                    sqlcmd.Parameters.Add(new SqlParameter("id", mdl.CustomerID));
-                    sqlcmd.Parameters.Add(new SqlParameter("session_nid", Nid));
-                    sqlcmd.Parameters.Add(new SqlParameter("spmode", spmode));
-
-
-                    sqlconnection.Open();
-                    SqlDataReader rd = sqlcmd.ExecuteReader();
-                    while (rd.Read())
-                    {
-                        returnData.Add(new ProcWalletSearch_()
-                        {
-                            Date = Convert.ToString(rd["date_"]),
-                            Particulars = Convert.ToString(rd["Particulars"]),
-                            Credit = Convert.ToDecimal(rd["Credit"]),
-                            Debit = Convert.ToDecimal(rd["Debit"]),
-                            Balance = Convert.ToDecimal(rd["Balance"]),
-                            current_ewallet_amt = Convert.ToDecimal(rd["current_ewallet_amt"]),
-                        });
-                    }
-                }
-
-            }
-
-            return returnData;
-
-        }
         
-      
-        
-    
 
         #region CustomerIPFilter
         public IActionResult CustomerIPFilter(string Id)

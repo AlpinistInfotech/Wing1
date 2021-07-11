@@ -266,4 +266,7 @@ namespace B2BClasses.Models
         public string MPin { get; set; } = "0000";
     }
 
+    
+
+
 }
