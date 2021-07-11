@@ -119,9 +119,9 @@ Model.BookingStatus == enmBookingStatus.Refund ? "label-danger" : Model.BookingS
                                         <div class="profile-info-row">
                                             <div class="profile-info-name">Travel Date</div>
                                             <div class="profile-info-value">
-                                                <span>@fbs.TravelDt.ToString()</span>
+                                                <span>@fbs.TravelDt.ToString("dd-MMM-yyyy")</span>
                                                 <span class="label @(fbs.BookingStatus == enmBookingStatus.Booked ? "label-success" :
-fbs.BookingStatus == enmBookingStatus.Refund ? "label-danger" : fbs.BookingStatus == enmBookingStatus.PartialBooked ? "label-warning" : "label-info" ) arrowed-in-right">
+                                                    fbs.BookingStatus == enmBookingStatus.Refund ? "label-danger" : fbs.BookingStatus == enmBookingStatus.PartialBooked ? "label-warning" : "label-info" ) arrowed-in-right">
                                                     <i class="ace-icon fa fa-circle smaller-80 align-middle"></i>
                                                     @fbs.BookingStatus
                                                 </span>
@@ -130,7 +130,7 @@ fbs.BookingStatus == enmBookingStatus.Refund ? "label-danger" : fbs.BookingStatu
                                         <div class="profile-info-row">
                                             <div class="profile-info-name">Booking Id</div>
                                             <div class="profile-info-value">
-                                                <span>@(fbs.BookingId.Split("_")?.Length>=2? @fbs.BookingId.Split("_")?[1]:"")</span>
+                                                <span>@fbs.BookingId</span>
                                                 @if (_currentUser.CustomerType == enmCustomerType.Admin)
                                                 {
                                                     <span class="label label-warning ">
@@ -139,8 +139,7 @@ fbs.BookingStatus == enmBookingStatus.Refund ? "label-danger" : fbs.BookingStatu
                                                 }
                                             </div>
                                         </div>
-
-
+                                        
                                         @foreach (var fbd in Model.tblFlightBookingSegments.Where(p => p.SegmentDisplayOrder == fbs.SegmentDisplayOrder).OrderBy(p => p.TripIndicator))
                                         {
                                             <div class="col-sm-6">
@@ -535,28 +534,47 @@ fbs.BookingStatus == enmBookingStatus.Refund ? "label-danger" : fbs.BookingStatu
 
                                         <div class="col-xs-12">
                                             <div class="row">
-                                                @foreach (var mdt in Model.tblFlightBookingPassengerDetails)
+                                                @{var Passenger = Model.tblFlightBookingPassengerDetails.ToArray();}
+                                                @for (int index = 0; index < Passenger.Count(); index++)
                                                 {
-                                                    <div class="col-sm-6">
-                                                        <div class="form-group">
-                                                            <label class="col-sm-8 control-label">@(string.Concat( mdt.FirstName, mdt.LastName))</label>
-                                                            <div class="col-sm-4">
-                                                                <label class="input-group-addon input-group-addon-custom">
-                                                                    <input class="ace ace-switch" type="checkbox" name="passengers.check" checked />
-                                                                    <span class="lbl" data-lbl="Yes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;no"></span>
-                                                                    <input type="hidden" name="passengers.pid" value="@mdt.Id" />
-                                                                </label>
+                                                    @if (Model.tblFlightCancelation.Where(p => p.src == md.Origin && p.dest == md.Destination && p.fn == Passenger[index].FirstName && p.ln == Passenger[index].LastName).Any())
+                                                    {
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group disabled">
+                                                                <div class="col-sm-2">
+                                                                    <label class="input-group-addon input-group-addon-custom">
+                                                                        <input class="ace ace-switch" type="checkbox" name="passengers[@index].check" data-val="false" value="false" />
+                                                                        <span class="lbl" data-lbl="Yes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;no"></span>
+                                                                        <input type="hidden" name="passengers[@index].pid" value="@Passenger[index].Id" />
+                                                                    </label>
+                                                                </div>
+                                                                <label class="col-sm-8 control-label">@(string.Concat(Passenger[index].FirstName, Passenger[index].LastName))</label>
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group">
+                                                                <div class="col-sm-2">
+                                                                    <label class="input-group-addon input-group-addon-custom">
+                                                                        <input class="ace ace-switch" type="checkbox" name="passengers[@index].check" data-val="true" value="true" checked />
+                                                                        <span class="lbl" data-lbl="Yes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;no"></span>
+                                                                        <input type="hidden" name="passengers[@index].pid" value="@Passenger[index].Id" />
+                                                                    </label>
+                                                                </div>
+                                                                <label class="col-sm-8 control-label">@(string.Concat(Passenger[index].FirstName, Passenger[index].LastName))</label>
+                                                            </div>
+                                                        </div>
+                                                    }
+
                                                 }
                                             </div>
                                             <div class="row">
-
                                                 <div class="col-sm-6">
                                                     <div class="form-group">
-                                                        <label class="col-sm-8 control-label">Remarks</label>
-                                                        <div class="col-sm-4">
+                                                        <label class="col-sm-4  control-label">Remarks</label>
+                                                        <div class="col-sm-8">
                                                             <label class="input-group-addon input-group-addon-custom">
                                                                 <input class="ace ace-switch" type="text" name="remarks" maxlength="50" />
                                                             </label>
@@ -664,7 +682,7 @@ fbs.BookingStatus == enmBookingStatus.Refund ? "label-danger" : fbs.BookingStatu
                         contentType: false,
                         success: function (data) {
                             if (LoadDetails == 0) {
-                                if (data.Status) {
+                                if (data.success) {
                                     toastr.success(data.message, "Success", { timeOut: 2500 });
                                 }
                                 else {

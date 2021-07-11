@@ -96,6 +96,9 @@ namespace B2bApplication
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            //Enable this For 404 Source Code
+            /*
             app.Use(async (context, next) =>
             {
                 await next();
@@ -105,7 +108,7 @@ namespace B2bApplication
                     await next();
                 }
             });
-
+            */
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

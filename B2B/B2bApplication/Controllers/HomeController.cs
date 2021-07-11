@@ -238,7 +238,12 @@ namespace B2bApplication.Controllers
                 message = null,
                 success = false
             };
-            
+
+            if (mdl.passengers== null || mdl.passengers.Count==0 || mdl.passengers.All(p=>p.check==false))
+            {
+                returnData.message = "Please select a Passenger";
+                return returnData;
+            }
 
             if (currentUsers.HaveClaim(enmDocumentMaster.Booking_Flight_Cancel))
             {

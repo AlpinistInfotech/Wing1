@@ -317,46 +317,55 @@ namespace B2BClasses
 
         private async Task<bool> CancelationSaveinDb(IWingFlight wingflight, mdlCancellationRequest mdlRq, mdlFlightCancellationResponse mdlRes, ICustomerWallet customerWallet)
         {
-            //Get the Customer
-            var CustomerId = _context.tblFlightBookingMaster.Where(p => p.Id == mdlRq.TraceId).FirstOrDefault()?.CustomerId ?? 0;
-            customerWallet.CustomerId = CustomerId;
-            var FlightDetails = _context.tblFlightBookingSegmentMaster.Where(p => p.TraceId == mdlRq.TraceId && p.BookingId == mdlRq.bookingId).FirstOrDefault();
-            if (FlightDetails != null)
+            
+
+            try
             {
-                FlightDetails.BookingStatus = enmBookingStatus.Refund;
-                FlightDetails.CancelationId = mdlRes.amendmentId;
-                FlightDetails.CancelationRemarks = mdlRq.remarks;
-                _context.tblFlightBookingSegmentMaster.Update(FlightDetails);
-                var cancelationDetails = await wingflight.CancelationDetailsAsync(mdlRes.amendmentId);
-
-                foreach (var ca in cancelationDetails.trips)
+                var CustomerData = _context.tblFlightBookingMaster.Where(p => p.Id == mdlRq.TraceId).FirstOrDefault();
+                
+                var CustomerId = CustomerData?.CustomerId ?? 0;
+                customerWallet.CustomerId = CustomerId;
+                var FlightDetails = _context.tblFlightBookingSegmentMaster.Where(p => p.TraceId == mdlRq.TraceId && p.BookingId == mdlRq.bookingId).FirstOrDefault();
+                if (FlightDetails != null)
                 {
-                    _context.tblFlightCancelation.AddRange(
-                    ca.travellers.Select(p => new tblFlightCancelation
+                    FlightDetails.BookingStatus = enmBookingStatus.Refund;
+                    FlightDetails.CancelationId = mdlRes.amendmentId;
+                    FlightDetails.CancelationRemarks = mdlRq.remarks;
+                    _context.tblFlightBookingSegmentMaster.Update(FlightDetails);
+                    var cancelationDetails = await wingflight.CancelationDetailsAsync(mdlRes.amendmentId);
+                    foreach (var ca in cancelationDetails.trips)
                     {
-                        airlines = string.Join(",", ca.airlines),
-                        flightNumbers = string.Join(",", ca.flightNumbers),
-                        src = ca.src,
-                        dest = ca.dest,
-                        date = ca.date,
-                        CancelDate = DateTime.Now,
-                        fn = p.fn,
-                        ln = p.ln,
-                        amendmentCharges = p.amendmentCharges,
-                        refundableamount = p.refundableamount,
-                        totalFare = p.totalFare,
-                        amendmentId = mdlRes.amendmentId,
-                        bookingId = mdlRes.bookingId,
-                        CancelRemarks = mdlRq.remarks,
-                        TraceId = mdlRq.TraceId,
-                        SegmentDisplayOrder = FlightDetails.SegmentDisplayOrder
-                    }));
+                        _context.tblFlightCancelation.AddRange(
+                        ca.travellers.Select(p => new tblFlightCancelation
+                        {
+                            airlines = string.Join(",", ca.airlines),
+                            flightNumbers = string.Join(",", ca.flightNumbers),
+                            src = ca.src,
+                            dest = ca.dest,
+                            date = ca.date,
+                            CancelDate = DateTime.Now,
+                            fn = p.fn,
+                            ln = p.ln,
+                            amendmentCharges = p.amendmentCharges,
+                            refundableamount = p.refundableamount,
+                            totalFare = p.totalFare,
+                            amendmentId = mdlRes.amendmentId,
+                            bookingId = mdlRes.bookingId,
+                            CancelRemarks = mdlRq.remarks,
+                            TraceId = mdlRq.TraceId,
+                            SegmentDisplayOrder = FlightDetails.SegmentDisplayOrder
+                        }));
+                    }
+                    CustomerData.BookingStatus = enmBookingStatus.Refund;
+                    _context.tblFlightBookingMaster.Update(CustomerData);
                 }
-
+                await _context.SaveChangesAsync();                
+                return true;
             }
-
-            await _context.SaveChangesAsync();
-            return true;
+            catch(Exception ex)
+            {
+                throw  ex;
+            }            
         }
 
         public bool CustomerPassengerDetailSave(mdlBookingRequest mdlRq, enmBookingStatus bookingStatus, enmServiceProvider sp, string ResponseMessage)
