@@ -26,9 +26,10 @@ namespace B2bApplication.Controllers
         private readonly IBooking _booking;
         private readonly ISettings _setting;
         private readonly IMarkup _markup;
-        int _customerId,_userId;
+        private readonly ICurrentUsers _currentUsers;
+
         public HomeController(ILogger<HomeController> logger, DBContext context, IBooking booking,
-            ISettings setting, IMarkup markup
+            ISettings setting, IMarkup markup, ICurrentUsers currentUsers
             )
         {
             _context = context;
@@ -36,8 +37,7 @@ namespace B2bApplication.Controllers
             _setting = setting;
             _booking = booking;
             _markup = markup;
-            _customerId = 1;
-            _userId = 1;
+            _currentUsers = currentUsers;
         }
 
         [Authorize]
@@ -45,13 +45,13 @@ namespace B2bApplication.Controllers
         {
             DateTime TodayFromDt = Convert.ToDateTime(DateTime.Now.ToString("dd-MMM-yyyy"));
             DateTime TodayToDt = TodayFromDt.AddDays(1);
-            ViewBag.FlightSearch = _context.tblFlightBookingMaster.Where(p => p.CustomerId == _customerId && p.CreatedDt >= TodayFromDt && p.CreatedDt < TodayToDt).Count();
-            ViewBag.FlightBook = _context.tblFlightBookingMaster.Where(p => p.CustomerId == _customerId && p.BookingStatus== enmBookingStatus.Booked && p.CreatedDt >= TodayFromDt && p.CreatedDt < TodayToDt).Count();
+            ViewBag.FlightSearch = _context.tblFlightBookingMaster.Where(p => p.CustomerId == _currentUsers.CustomerId && p.CreatedDt >= TodayFromDt && p.CreatedDt < TodayToDt).Count();
+            ViewBag.FlightBook = _context.tblFlightBookingMaster.Where(p => p.CustomerId == _currentUsers.CustomerId && p.BookingStatus== enmBookingStatus.Booked && p.CreatedDt >= TodayFromDt && p.CreatedDt < TodayToDt).Count();
 
             DateTime WeekFromDt = TodayFromDt.AddDays(0- TodayFromDt.DayOfWeek);
             DateTime WeekToDt = TodayToDt;
-            ViewBag.FlightSearchWeek = _context.tblFlightBookingMaster.Where(p => p.CustomerId == _customerId && p.CreatedDt >= WeekFromDt && p.CreatedDt < WeekToDt).Count();
-            ViewBag.FlightBookWeek = _context.tblFlightBookingMaster.Where(p => p.CustomerId == _customerId && p.BookingStatus == enmBookingStatus.Booked && p.CreatedDt >= WeekFromDt && p.CreatedDt < WeekToDt).Count();
+            ViewBag.FlightSearchWeek = _context.tblFlightBookingMaster.Where(p => p.CustomerId == _currentUsers.CustomerId && p.CreatedDt >= WeekFromDt && p.CreatedDt < WeekToDt).Count();
+            ViewBag.FlightBookWeek = _context.tblFlightBookingMaster.Where(p => p.CustomerId == _currentUsers.CustomerId && p.BookingStatus == enmBookingStatus.Booked && p.CreatedDt >= WeekFromDt && p.CreatedDt < WeekToDt).Count();
 
             return View();
         }
@@ -131,7 +131,7 @@ namespace B2bApplication.Controllers
         }
 
 
-        //[Authorize(policy: nameof(enmDocumentMaster.Flight))]
+        [Authorize(policy: nameof(enmDocumentMaster.Flight))]
         [Authorize]
         public async Task<IActionResult> FlightSearch()
         {
@@ -154,7 +154,7 @@ namespace B2bApplication.Controllers
         }
 
         [HttpPost]
-        //[Authorize(policy: nameof(enmDocumentMaster.Flight))]
+        [Authorize(policy: nameof(enmDocumentMaster.Flight))]
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> FlightSearch(mdlFlightSearch mdl, [FromServices]IConfiguration configuration)
@@ -191,6 +191,7 @@ namespace B2bApplication.Controllers
 
 
         [AcceptVerbs("Get")]
+        [Authorize(policy: nameof(enmDocumentMaster.Flight))]
         public async Task<IActionResult> FlightReviewAsync()
         {
             var mdls = TempData["mdl_"] as string;
@@ -201,7 +202,7 @@ namespace B2bApplication.Controllers
             {
                 mdl = new mdlFlightReview();
             }
-            await mdl.LoadFareQuotationAsync(_customerId, _booking, _markup, _context);
+            await mdl.LoadFareQuotationAsync(_currentUsers.CustomerId, _booking, _markup, _context);
 
             //save Data
             await _booking.CustomerFlightDetailSave(mdl.FareQuoteRequest.TraceId, mdl.FareQuotResponse);
@@ -213,7 +214,8 @@ namespace B2bApplication.Controllers
 
         [AcceptVerbs("Post")]
         [ValidateAntiForgeryToken]
-        [Authorize]
+        
+        [Authorize(policy: nameof(enmDocumentMaster.Flight))]
         public async Task<IActionResult> FlightReview(mdlFlightReview mdl)
         {
             
@@ -221,7 +223,7 @@ namespace B2bApplication.Controllers
             {
                 mdl = new mdlFlightReview();
             }
-            await mdl.LoadFareQuotationAsync(_customerId, _booking, _markup, _context);            
+            await mdl.LoadFareQuotationAsync(_currentUsers.CustomerId, _booking, _markup, _context);            
             mdl.BookingRequestDefaultData();
             return View(mdl);
         }
@@ -387,7 +389,7 @@ namespace B2bApplication.Controllers
 
         [AcceptVerbs("Get", "Post")]
         [ValidateAntiForgeryToken]
-        [Authorize]
+        [Authorize(policy: nameof(enmDocumentMaster.Flight))]
         public async Task<IActionResult> FlightBook(mdlFlightReview mdl, [FromServices]ICustomerWallet customerWallet )
         {
             mdlFlighBook mdlres = new mdlFlighBook() {FareQuotResponse= new List<mdlFareQuotResponse>(), IsSucess=new List<bool>() , BookingId= new List<string>()};
@@ -415,7 +417,7 @@ namespace B2bApplication.Controllers
 
 
 
-                await mdl.LoadFareQuotationAsync(_customerId, _booking, _markup,_context);
+                await mdl.LoadFareQuotationAsync(_currentUsers.CustomerId, _booking, _markup,_context);
                 IsPriceChanged = mdl.FareQuotResponse.Any(p => p.IsPriceChanged);
                 if (IsPriceChanged)
                 {
@@ -426,7 +428,7 @@ namespace B2bApplication.Controllers
                     return RedirectToAction("FlightReview");                    
                 }
                 
-                customerWallet.CustomerId = _customerId;
+                customerWallet.CustomerId = _currentUsers.CustomerId;
                 double WalletBalance=await customerWallet.GetBalanceAsync();
                 if (WalletBalance < mdl.NetFare)
                 {                    
@@ -502,9 +504,9 @@ namespace B2bApplication.Controllers
             return View(mdlres);
         }
 
-        
-        
-        [Authorize]
+
+        [HttpGet]
+        [Authorize(policy: nameof(enmDocumentMaster.Markup))]
         public async Task<IActionResult> WingMarkup(string Id,[FromServices] IMarkup markup)
         {   
             ViewBag.Message = TempData["Message"];
@@ -532,7 +534,7 @@ namespace B2bApplication.Controllers
             return View(mdl);
         }
 
-        [Authorize]
+        [Authorize(policy: nameof(enmDocumentMaster.Markup))]
         [HttpPost]
         public async Task<IActionResult> WingMarkup(mdlWingMarkupWraper mdl,string submitData, [FromServices]IMarkup markup)
         {
@@ -606,7 +608,7 @@ namespace B2bApplication.Controllers
             {
                 if (submitData == "deleteData")
                 {
-                    if (markup.RemoveMarkup(mdl.WingMarkup.Id, _userId))
+                    if (markup.RemoveMarkup(mdl.WingMarkup.Id, _currentUsers.UserId ))
                     {
                         TempData["MessageType"] = (int)enmMessageType.Success;
                         TempData["Message"] = _setting.GetErrorMessage(enmMessage.DeleteSuccessfully);
@@ -617,7 +619,7 @@ namespace B2bApplication.Controllers
                 {
                     if (IsUpdated)
                     {
-                        if (markup.RemoveMarkup(mdl.WingMarkup.Id, _userId) && markup.AddMarkup(mdl.WingMarkup, _userId))
+                        if (markup.RemoveMarkup(mdl.WingMarkup.Id, _currentUsers.UserId) && markup.AddMarkup(mdl.WingMarkup, _currentUsers.UserId))
                         {
                             TempData["MessageType"] = (int)enmMessageType.Success;
                             TempData["Message"] = _setting.GetErrorMessage(enmMessage.UpdateSuccessfully);
@@ -626,7 +628,7 @@ namespace B2bApplication.Controllers
                     }
                     else
                     {
-                        if (markup.AddMarkup(mdl.WingMarkup, _userId))
+                        if (markup.AddMarkup(mdl.WingMarkup, _currentUsers.UserId))
                         {
                             TempData["MessageType"] = (int)enmMessageType.Success;
                             TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
@@ -647,7 +649,8 @@ namespace B2bApplication.Controllers
         }
 
 
-        [Authorize]
+        [HttpGet]
+        [Authorize(policy: nameof(enmDocumentMaster.ConvenienceFee))]
         public async Task<IActionResult> Convenience(string Id, [FromServices] IMarkup markup)
         {
             ViewBag.Message = TempData["Message"];
@@ -675,7 +678,7 @@ namespace B2bApplication.Controllers
             return View(mdl);
         }
 
-        [Authorize]
+        [Authorize(policy: nameof(enmDocumentMaster.ConvenienceFee))]
         [HttpPost]
         public async Task<IActionResult> Convenience(mdlWingMarkupWraper mdl, string submitData, [FromServices] IMarkup markup)
         {
@@ -749,7 +752,7 @@ namespace B2bApplication.Controllers
             {
                 if (submitData == "deleteData")
                 {
-                    if (markup.RemoveConvenience(mdl.WingMarkup.Id, _userId))
+                    if (markup.RemoveConvenience(mdl.WingMarkup.Id, _currentUsers.UserId))
                     {
                         TempData["MessageType"] = (int)enmMessageType.Success;
                         TempData["Message"] = _setting.GetErrorMessage(enmMessage.DeleteSuccessfully);
@@ -760,7 +763,7 @@ namespace B2bApplication.Controllers
                 {
                     if (IsUpdated)
                     {
-                        if (markup.RemoveConvenience(mdl.WingMarkup.Id, _userId) && markup.AddConvenience(mdl.WingMarkup, _userId))
+                        if (markup.RemoveConvenience(mdl.WingMarkup.Id, _currentUsers.UserId) && markup.AddConvenience(mdl.WingMarkup, _currentUsers.UserId))
                         {
                             TempData["MessageType"] = (int)enmMessageType.Success;
                             TempData["Message"] = _setting.GetErrorMessage(enmMessage.UpdateSuccessfully);
@@ -769,7 +772,7 @@ namespace B2bApplication.Controllers
                     }
                     else
                     {
-                        if (markup.AddConvenience(mdl.WingMarkup, _userId))
+                        if (markup.AddConvenience(mdl.WingMarkup, _currentUsers.UserId))
                         {
                             TempData["MessageType"] = (int)enmMessageType.Success;
                             TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
@@ -789,8 +792,8 @@ namespace B2bApplication.Controllers
             return View(mdl);
         }
 
-
-        [Authorize]
+        [HttpGet]
+        [Authorize(policy: nameof(enmDocumentMaster.Discount))]
         public async Task<IActionResult> Discount(string Id, [FromServices] IMarkup markup)
         {
             ViewBag.Message = TempData["Message"];
@@ -818,7 +821,7 @@ namespace B2bApplication.Controllers
             return View(mdl);
         }
 
-        [Authorize]
+        [Authorize(policy: nameof(enmDocumentMaster.Discount))]
         [HttpPost]
         public async Task<IActionResult> Discount(mdlWingMarkupWraper mdl, string submitData, [FromServices] IMarkup markup)
         {
@@ -892,7 +895,7 @@ namespace B2bApplication.Controllers
             {
                 if (submitData == "deleteData")
                 {
-                    if (markup.RemoveDiscount(mdl.WingMarkup.Id, _userId))
+                    if (markup.RemoveDiscount(mdl.WingMarkup.Id, _currentUsers.UserId))
                     {
                         TempData["MessageType"] = (int)enmMessageType.Success;
                         TempData["Message"] = _setting.GetErrorMessage(enmMessage.DeleteSuccessfully);
@@ -903,7 +906,7 @@ namespace B2bApplication.Controllers
                 {
                     if (IsUpdated)
                     {
-                        if (markup.RemoveDiscount(mdl.WingMarkup.Id, _userId) && markup.AddDiscount(mdl.WingMarkup, _userId))
+                        if (markup.RemoveDiscount(mdl.WingMarkup.Id, _currentUsers.UserId) && markup.AddDiscount(mdl.WingMarkup, _currentUsers.UserId))
                         {
                             TempData["MessageType"] = (int)enmMessageType.Success;
                             TempData["Message"] = _setting.GetErrorMessage(enmMessage.UpdateSuccessfully);
@@ -912,7 +915,7 @@ namespace B2bApplication.Controllers
                     }
                     else
                     {
-                        if (markup.AddDiscount(mdl.WingMarkup, _userId))
+                        if (markup.AddDiscount(mdl.WingMarkup, _currentUsers.UserId))
                         {
                             TempData["MessageType"] = (int)enmMessageType.Success;
                             TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
@@ -1026,7 +1029,7 @@ namespace B2bApplication.Controllers
             {
                 if (submitData == "deleteData")
                 {
-                    if (markup.RemoveCustomerFlightAPI(mdl.WingMarkup.Id, _userId))
+                    if (markup.RemoveCustomerFlightAPI(mdl.WingMarkup.Id, _currentUsers.UserId))
                     {
                         TempData["MessageType"] = (int)enmMessageType.Success;
                         TempData["Message"] = _setting.GetErrorMessage(enmMessage.DeleteSuccessfully);
@@ -1037,7 +1040,7 @@ namespace B2bApplication.Controllers
                 {
                     if (IsUpdated)
                     {
-                        if (markup.RemoveCustomerFlightAPI(mdl.WingMarkup.Id, _userId) && markup.AddCustomerFlightAPI(mdl.WingMarkup, _userId))
+                        if (markup.RemoveCustomerFlightAPI(mdl.WingMarkup.Id, _currentUsers.UserId) && markup.AddCustomerFlightAPI(mdl.WingMarkup, _currentUsers.UserId))
                         {
                             TempData["MessageType"] = (int)enmMessageType.Success;
                             TempData["Message"] = _setting.GetErrorMessage(enmMessage.UpdateSuccessfully);
@@ -1046,7 +1049,7 @@ namespace B2bApplication.Controllers
                     }
                     else
                     {
-                        if (markup.AddCustomerFlightAPI(mdl.WingMarkup, _userId))
+                        if (markup.AddCustomerFlightAPI(mdl.WingMarkup, _currentUsers.UserId))
                         {
                             TempData["MessageType"] = (int)enmMessageType.Success;
                             TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
