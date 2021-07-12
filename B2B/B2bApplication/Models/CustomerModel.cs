@@ -376,7 +376,8 @@ namespace B2bApplication.Models
 
         public List<mdlPaymentRequestWraper> PaymentRequestList { get; set; }
 
-
+        [Display(Name = "Upload Document")]
+        public string TransactionNumber { get; set; }
     }
 
     public class mdlPaymentRequestWraper : tblPaymentRequest

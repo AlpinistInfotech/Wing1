@@ -131,8 +131,7 @@ namespace B2bApplication.Controllers
         }
 
 
-        [Authorize(policy: nameof(enmDocumentMaster.Flight))]
-        [Authorize]
+        [Authorize(policy: nameof(enmDocumentMaster.Flight))]        
         public async Task<IActionResult> FlightSearch()
         {
             mdlFlightSearch flightSearch = new mdlFlightSearch() { 
@@ -155,8 +154,7 @@ namespace B2bApplication.Controllers
 
         [HttpPost]
         [Authorize(policy: nameof(enmDocumentMaster.Flight))]
-        [ValidateAntiForgeryToken]
-        [Authorize]
+        [ValidateAntiForgeryToken]        
         public async Task<IActionResult> FlightSearch(mdlFlightSearch mdl, [FromServices]IConfiguration configuration)
         {
             int CustomerId = 1;
@@ -393,9 +391,6 @@ namespace B2bApplication.Controllers
         public async Task<IActionResult> FlightBook(mdlFlightReview mdl, [FromServices]ICustomerWallet customerWallet )
         {
             mdlFlighBook mdlres = new mdlFlighBook() {FareQuotResponse= new List<mdlFareQuotResponse>(), IsSucess=new List<bool>() , BookingId= new List<string>()};
-            
-            
-
             bool IsPriceChanged = false;
             if (!(mdl == null || mdl.FareQuoteRequest == null))
             {
@@ -439,7 +434,7 @@ namespace B2bApplication.Controllers
                 }
                 else
                 {
-                    await customerWallet.DeductBalanceAsync(DateTime.Now, mdl.TotalFare, enmTransactionType.TicketBook, mdl.FareQuoteRequest.TraceId);
+                    await customerWallet.DeductBalanceAsync(DateTime.Now, mdl.NetFare, enmTransactionType.TicketBook, mdl.FareQuoteRequest.TraceId);
                 }
 
                 //if Price not chnage then Book the Flight
@@ -491,7 +486,7 @@ namespace B2bApplication.Controllers
                     {
                         bookingStatus = enmBookingStatus.Failed;
                         //return the all Amount
-                        await customerWallet.AddBalanceAsync(DateTime.Now, mdl.TotalFare, enmTransactionType.TicketBook, string.Concat("Booking Ids", string.Join(',', mdl.FareQuotResponse.Select(p => p.BookingId))));
+                        await customerWallet.AddBalanceAsync(DateTime.Now, mdl.NetFare, enmTransactionType.TicketBook, string.Concat("Booking Ids", string.Join(',', mdl.FareQuotResponse.Select(p => p.BookingId))));
                     }                      
                 }
                 else

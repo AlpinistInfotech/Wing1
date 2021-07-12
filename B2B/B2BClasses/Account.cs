@@ -63,7 +63,7 @@ namespace B2BClasses
             {
                 throw new Exception("Invalid User IP");
             }
-            var userMaster = _context.tblUserMaster.Where(p => p.UserName == mdl.Username && p.IsActive).FirstOrDefault();
+            var userMaster = _context.tblUserMaster.Where(p => p.UserName == mdl.Username && p.CustomerId== customerMaster.Id && p.IsActive).FirstOrDefault();
             if (userMaster == null || userMaster.Password != mdl.Password)
             {
                 throw new Exception("Invalid Username/Password");

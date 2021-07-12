@@ -966,8 +966,8 @@ namespace B2bApplication.Controllers
         #endregion
 
         #region PaymentRequest
-
-        [Authorize]
+        [HttpGet]
+        [Authorize(policy: nameof(enmDocumentMaster.CreditRequest))]
         public IActionResult PaymentRequest()
         {
 
@@ -980,17 +980,31 @@ namespace B2bApplication.Controllers
 
             }
 
-            ViewBag.CustomerCodeList = new SelectList(GetCustomerMaster(_context, true, 0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName", mdl.CustomerID);
+
+            if (_currentUsers.CustomerType == enmCustomerType.Admin)
+            {
+                ViewBag.CustomerCodeList = new SelectList(GetCustomerMaster(_context, true, 0).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName");
+            }
+            else
+            {
+                ViewBag.CustomerCodeList = new SelectList(GetCustomerMaster(_context, true, _currentUsers.CustomerId ).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName");
+            }
+            
             return View(mdl);
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(policy: nameof(enmDocumentMaster.CreditRequest))]
         public async Task<IActionResult> PaymentRequestAsync(mdlPaymentRequest mdl)
         {
 
             DateTime fromdate= Convert.ToDateTime(DateTime.Now.ToString("dd-MMM-yyyy"));
             DateTime todate= Convert.ToDateTime(DateTime.Now.AddDays(1).ToString("dd-MMM-yyyy"));
+
+            if ( ModelState.IsValid)
+            { 
+            }
+
             var ExistingData = _context.tblPaymentRequest.FirstOrDefault(p => p.CustomerId == mdl.CustomerID && p.RequestedAmt == mdl.CreditAmt && p.CreatedDt >= fromdate && p.CreatedDt < todate);
             if (ExistingData!=null)
             {
@@ -1004,29 +1018,29 @@ namespace B2bApplication.Controllers
                 var path = Path.Combine(
                          Directory.GetCurrentDirectory(),
                          "wwwroot/" + filePath);
-                //if (mdl.UploadImages == null || mdl.UploadImages.Count == 0 || mdl.UploadImages[0] == null || mdl.UploadImages[0].Length == 0)
-                //{
- 
-                //    TempData["MessageType"] = (int)enmSaveStatus.danger;
-                //    TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidDocument);
-                //    return RedirectToAction("PaymentRequest");
-                //}
+                if (mdl.UploadImages == null || mdl.UploadImages.Count == 0 || mdl.UploadImages[0] == null || mdl.UploadImages[0].Length == 0)
+                {
 
-                //List<string> AllFileName = new List<string>();
+                    TempData["MessageType"] = (int)enmSaveStatus.danger;
+                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidDocument);
+                    return RedirectToAction("PaymentRequest");
+                }
 
-                //bool exists = System.IO.Directory.Exists(path);
-                //if (!exists)
-                //    System.IO.Directory.CreateDirectory(path);
+                List<string> AllFileName = new List<string>();
 
-                //foreach (var file in mdl.UploadImages)
-                //{
-                //    var filename = Guid.NewGuid().ToString() + System.IO.Path.GetExtension(file.FileName) ;
-                //    using (var stream = new FileStream(string.Concat(path, filename), FileMode.Create))
-                //    {
-                //        AllFileName.Add(filename);
-                //        await file.CopyToAsync(stream);
-                //    }
-                //}
+                bool exists = System.IO.Directory.Exists(path);
+                if (!exists)
+                    System.IO.Directory.CreateDirectory(path);
+
+                foreach (var file in mdl.UploadImages)
+                {
+                    var filename = Guid.NewGuid().ToString() + System.IO.Path.GetExtension(file.FileName);
+                    using (var stream = new FileStream(string.Concat(path, filename), FileMode.Create))
+                    {
+                        AllFileName.Add(filename);
+                        await file.CopyToAsync(stream);
+                    }
+                }
 
                 _context.tblPaymentRequest.Add(new tblPaymentRequest
                 {
@@ -1036,7 +1050,7 @@ namespace B2bApplication.Controllers
                     RequestType=mdl.RequestType,
                     CreatedBy = _userid,
                     CreatedDt = DateTime.Now,
-                    UploadImages = ""//string.Join<string>(",", AllFileName)
+                    UploadImages = string.Join<string>(",", AllFileName)
                 });
 
                 await _context.SaveChangesAsync();
@@ -1044,7 +1058,7 @@ namespace B2bApplication.Controllers
                 TempData["MessageType"] = (int)enmMessageType.Success;
                 TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
             }
-                return RedirectToAction("PaymentRequest");
+            return RedirectToAction("PaymentRequest");
 
         }
 

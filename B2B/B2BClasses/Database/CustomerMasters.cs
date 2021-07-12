@@ -342,6 +342,11 @@ namespace B2BClasses.Database
         public tblCustomerMaster tblCustomerMaster { get; set; }
         public double RequestedAmt { get; set; }
         public enmApprovalStatus Status { get; set; }
+        [Required]
+        [MaxLength(200)]
+        public string TransactionNumber { get; set; }
+        [Required]        
+        public DateTime TransactionDate{ get; set; }
         public int CreatedBy { get; set; }
         public DateTime CreatedDt { get; set; }
         [MaxLength(200)]
