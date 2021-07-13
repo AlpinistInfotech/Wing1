@@ -10,9 +10,8 @@ using static WingApis.ResponseAPI;
 
 namespace WingApis.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-
+    [Route("api/[controller]")]
     public class FlightAPIController : ControllerBase
     {
         IConfiguration _config;
@@ -25,8 +24,13 @@ namespace WingApis.Controllers
             _config = configuration;
         }
 
-
-        //[Route("SearchAirPort")]
+        //[HttpGet]
+        //public IEnumerable<string> Get()
+        //{
+        //    string[] testdata = { "prabhakar", "ram", "Mohan" };
+        //    return testdata;
+        //}
+        [Route("SearchAirPort")]
         //[HttpPost]
         public async Task<mdlResponsedata> SearchAirPorts()
         {
