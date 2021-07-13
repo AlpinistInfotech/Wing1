@@ -5,10 +5,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace WingApis
 {
-    class ResponseAPI
+    public class ResponseAPI
     {
 
         private readonly DBContext _context;
@@ -29,7 +30,7 @@ namespace WingApis
             public string Message { get; set; }
         }
 
-        public mdlResponsedata GetResponse(string requestData, string url,string tokendata)
+        public Task<mdlResponsedata> GetResponse(string requestData, string url, string tokendata)
         {
             mdlResponsedata mdl = new mdlResponsedata();
             mdl.Code = 1;
@@ -41,7 +42,7 @@ namespace WingApis
                 request.Method = "POST";
                 request.ContentType = "application/json";
                 request.Headers.Add("Authorization", tokendata);
-                Stream dataStream = request.GetRequestStream();
+                Stream dataStream =  request.GetRequestStream();
                 dataStream.Write(data, 0, data.Length);
                 dataStream.Close();
                 WebResponse webResponse = request.GetResponse();
@@ -55,7 +56,7 @@ namespace WingApis
                     mdl.Code = 0;
                     mdl.Message = readStream.ReadToEnd();//JsonConvert.DeserializeXmlNode(readStream.ReadToEnd(), "root").InnerXml;
                 }
-                return mdl;
+                return Task.FromResult(mdl);
             }
             catch (WebException webEx)
             {
@@ -80,7 +81,7 @@ namespace WingApis
                 mdl.Code = 1;
                 mdl.Message = ex.Message;
             }
-            return mdl;
+            return Task.FromResult(mdl);
         }
 
     }
