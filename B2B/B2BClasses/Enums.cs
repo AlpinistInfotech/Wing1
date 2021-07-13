@@ -24,6 +24,15 @@ namespace B2BClasses.Services.Enums
         NotRelevent =7
     }
 
+    public enum enmBankTransactionType
+    {
+        None=0,
+        UPI=1,
+        NEFT = 2,
+        RTGS=3,
+        CHEQUE=4
+    }
+
     public enum enmBookingStatus
     {
         Pending=0,

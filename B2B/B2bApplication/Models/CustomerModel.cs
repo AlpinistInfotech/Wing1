@@ -353,31 +353,27 @@ namespace B2bApplication.Models
         [Required]
         [Display(Name = "Customer Code")]
         public int CustomerID { set; get; }
-
         [Required]
-        [Range(0,1000000) ]
+        [Range(0,1000000)]
         [Display(Name = "Requested Amount")]
         public double CreditAmt { set; get; }
-
-        [MaxLength(250)]
+        [StringLength(250, ErrorMessage = "The {0} value cannot exceed {1} characters. ")]        
         [Display(Name = "Remarks")]
         public string Remarks { get; set; }
-
         [Display(Name = "Status")]
         public enmApprovalStatus Status { set; get; }
-
         [Display(Name = "Request Type")]
         public enmRequestType RequestType { set; get; }
-
+        [Display(Name = "Transaction Type")]
+        public enmBankTransactionType BankTransactionType { set; get; } = enmBankTransactionType.None;
         [Display(Name = "Upload Document")]
         public List<IFormFile> UploadImages { set; get; }
-
         public List<byte[]> fileData { set; get; }
-
         public List<mdlPaymentRequestWraper> PaymentRequestList { get; set; }
-
-        [Display(Name = "Upload Document")]
+        [Display(Name = "Transaction No")]
         public string TransactionNumber { get; set; }
+        [Display(Name = "Transaction Date")]
+        public DateTime TransactionDate { get; set; }
     }
 
     public class mdlPaymentRequestWraper : tblPaymentRequest

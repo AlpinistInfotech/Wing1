@@ -347,6 +347,7 @@ namespace B2BClasses.Database
         public string TransactionNumber { get; set; }
         [Required]        
         public DateTime TransactionDate{ get; set; }
+        public enmBankTransactionType TransactionType { get; set; }
         public int CreatedBy { get; set; }
         public DateTime CreatedDt { get; set; }
         [MaxLength(200)]
