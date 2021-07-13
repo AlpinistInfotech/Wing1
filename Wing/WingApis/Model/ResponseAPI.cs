@@ -6,6 +6,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WingApis
 {
@@ -30,8 +31,9 @@ namespace WingApis
             public string Message { get; set; }
         }
 
-        public Task<mdlResponsedata> GetResponse(string requestData, string url, string tokendata)
+        public Task<mdlResponsedata> GetResponse(string url, string requestData,  string tokendata)
         {
+            
             mdlResponsedata mdl = new mdlResponsedata();
             mdl.Code = 1;
             mdl.Message = string.Empty;
