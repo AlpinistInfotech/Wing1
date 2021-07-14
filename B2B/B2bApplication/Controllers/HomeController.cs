@@ -1063,11 +1063,25 @@ namespace B2bApplication.Controllers
             mdl.SetDefaultDropDown(_context);
             return View(mdl);
         }
-        public IActionResult ProviderSettings()
+        public async Task<IActionResult> ProviderSettings()
         {
             
             return View();
         }
-       
+        [HttpPost]
+        public async Task<IActionResult> ProviderSettings(tblActiveSerivceProvider mdl)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.tblActiveSerivceProvider.Add(mdl);
+                _context.SaveChanges();
+                if (mdl.ServiceProvider > 0)
+                {
+                    ViewBag.Success = "Data Inserted";
+                }
+                ModelState.Clear();
+            }
+            return View();
+        }
     }
 }

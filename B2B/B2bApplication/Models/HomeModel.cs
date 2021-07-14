@@ -428,10 +428,14 @@ namespace B2bApplication.Models
 
     public class mdlProviderSettings
     {
+        [Display(Name="Service Provider")]
         public enmServiceProvider ServiceProvider { get; set; }
+        [Display(Name = "Is Active")]
         public bool IsEnabled { get; set; }
         public string Remarks { get; set; }
+        [Display(Name = "Modified By Name")]
         public int? ModifiedBy { get; set; }
+        [Display(Name = "Modified Date")]
         public DateTime? ModifiedDt { get; set; }
     }
 }

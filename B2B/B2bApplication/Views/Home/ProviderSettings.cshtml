@@ -26,6 +26,7 @@
                         </a>
                     </div>
                 </div>
+                </div>
 
                 <div class="widget-body">
                     <div class="widget-main">
@@ -35,7 +36,7 @@
                                     <label asp-for="ServiceProvider" class="col-sm-4 control-label"></label>
                                     <div class="col-sm-8">
                                         <select asp-for="ServiceProvider" class="form-control select2">
-                                            <option value="List of All Providers"> On Ticket </option>
+                                            <option value="List of All Providers"> List of All Providers </option>
                                             <option value="Provider 1"> Provider 1</option>
                                             <option value="Provider 2"> Provider 2</option>
                                             <option value="Provider 3"> Provider 3</option>
@@ -43,11 +44,12 @@
                                         <span asp-validation-for="ServiceProvider" class="text-danger"></span>
                                     </div>
                                 </div>
-                            </div>  
-                            
-                               
-                            
-                         </div>
+                            </div>
+                            </div>
+
+
+
+                        </div>
 
                         <div class="row">
                             <div class="col-md-4">
@@ -77,7 +79,33 @@
                             </div>
 
                         </div>
-            </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="clearfix form-actions">
+                                    <div class="col-md-offset-3 col-md-9">
+                                        <button class="btn btn-info" type="submit">
+                                            <i class="ace-icon fa fa-check bigger-110"></i>
+                                            @*@(Model.WingMarkup.Id > 0? "update":"Save")*@
+                                            Save
+                                        </button>
+                                        &nbsp;
+                                        <a href="/Home/ProviderSettings" class="btn">
+                                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                                            Reset
+                                        </a>
+                                        &nbsp;
+                                        @*@if (Model.WingMarkup.Id > 0)
+                                        {
+                                            <button class="btn btn-danger" type="submit" name="submitData" value="deleteData">
+                                                <i class="ace-icon fa fa-trash-o bigger-110"></i>
+                                                Delete
+                                            </button>
+                                        }*@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
 
 
