@@ -911,7 +911,7 @@ namespace WingGateway.Controllers
                     return View();
                 }
                 await _signInManager.RefreshSignInAsync(user);
-                return View("/Home/ChangePasswordConfirmation");
+                return View("ChangePasswordConfirmation");
             }
             return View(mdl);
         }
