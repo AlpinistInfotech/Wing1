@@ -425,6 +425,15 @@ namespace B2bApplication.Models
         public int pid { get; set; }
         public bool check { get; set; }
     }
+
+    public class mdlProviderSettings
+    {
+        public enmServiceProvider ServiceProvider { get; set; }
+        public bool IsEnabled { get; set; }
+        public string Remarks { get; set; }
+        public int? ModifiedBy { get; set; }
+        public DateTime? ModifiedDt { get; set; }
+    }
 }
 
 

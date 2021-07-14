@@ -1063,6 +1063,11 @@ namespace B2bApplication.Controllers
             mdl.SetDefaultDropDown(_context);
             return View(mdl);
         }
-
+        public IActionResult ProviderSettings()
+        {
+            
+            return View();
+        }
+       
     }
 }
