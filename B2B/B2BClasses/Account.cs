@@ -3,6 +3,7 @@ using B2BClasses.Models;
 using B2BClasses.Services.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace B2BClasses
         Task<bool> IsValidIPAsync(int CustomerId, string UserIp);
         Task<tblUserMaster> LoginAsync(mdlLogin mdl, string UserIp);
         Task<IEnumerable<enmDocumentMaster>> GetEnmDocumentsAsync(int UserId);
+        Task<string> GetTokken(ISettings settings, int CustomerId_, int userId_);
     }
 
     public class Account : IAccount
@@ -76,5 +78,23 @@ namespace B2BClasses
             var AllRoles = await _context.tblUserRole.Where(p => p.UserId == UserId).Select(p => p.Role).ToListAsync();
             return _context.tblRoleClaim.Where(p => AllRoles.Contains(p.Role)).Select(p => p.ClaimId).Distinct();           
         }
+
+
+        public async Task<string> GetTokken(ISettings settings,int CustomerId_, int userId_)
+        {
+            string tboUrl = _config["API:GenrateToken"];
+            string jsonString = JsonConvert.SerializeObject(new{ CustomerId= CustomerId_, userId = userId_ });
+            var HaveResponse = settings.GetResponse(jsonString, tboUrl, "POST");
+
+            if (HaveResponse.Code == 0)
+            {
+                return HaveResponse.Message;
+            }
+            else
+            {
+                throw new Exception(HaveResponse.Message);
+            }
+        }
+
     }
 }

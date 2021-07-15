@@ -26,5 +26,10 @@ namespace B2bApplication.Controllers
         {
             return currentUsers.Name;
         }
+
+        public IActionResult FlightSearch()
+        {
+            return View();
+        }
     }
 }

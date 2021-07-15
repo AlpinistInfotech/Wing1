@@ -40,7 +40,7 @@ namespace B2BApis.Controllers
                     tblUserMaster tbl = await account.LoginAsync(mdl, IPAddress);
                     if (tbl.CustomerId != null)
                     {
-                        userMaster.TokenData = GenerateJSONWebToken(tbl);
+                        userMaster.TokenData = GenerateJSONWebToken(tbl.CustomerId??0, tbl.Id);
                         userMaster.StatusCode = 1;
                         userMaster.StatusMessage = "Success";
                     }
@@ -62,14 +62,16 @@ namespace B2BApis.Controllers
         }
 
 
-        private string GenerateJSONWebToken(tblUserMaster mdl)
+        [Route("GenrateToken")]
+        [HttpPost]
+        public string GenerateJSONWebToken(int CustomerId,int UserId )
         {
-            IActionResult response = Unauthorized();
+            
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             List<Claim> _claim = new List<Claim>();
-            _claim.Add(new Claim("__customerId", mdl.CustomerId.ToString()));
-            _claim.Add(new Claim("__UserId", mdl.Id.ToString()));
+            _claim.Add(new Claim("__customerId", CustomerId.ToString()));
+            _claim.Add(new Claim("__UserId", UserId.ToString()));
                
             var token = new JwtSecurityToken(_config["Jwt:Issuer"],
                 _config["Jwt:audience"],
