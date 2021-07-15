@@ -79,6 +79,28 @@
 
                             </div>
 
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="TransactionNumber"></label>
+                                        <input asp-for="TransactionNumber" class="form-control" />
+                                        <span asp-validation-for="TransactionNumber" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="TransactionDate"></label>
+                                        <input asp-for="TransactionDate" type="date" class="form-control" />
+                                        <span asp-validation-for="TransactionDate" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
                             <div class="row">
 
                                 <div class="col-md-12">
@@ -86,7 +108,7 @@
                                         <label asp-for="UploadImages"></label>
                                         <div class="input-group">
                                             <div class="custom-file">
-                                                <input asp-for="UploadImages" class="custom-file-input" accept="image/x-png,image/jpeg/xls/xlsx/doc/" />
+                                                <input asp-for="UploadImages" class="custom-file-input" accept="image/x-png,image/jpeg" multiple />
                                             </div>
                                         </div>
                                         <span asp-validation-for="UploadImages" class="text-danger"></span>
@@ -126,5 +148,11 @@
 </div>
 
 @section Scripts {
+    <script src="~/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
 
+    <script>
+        $(document).ready(function () {
+            bsCustomFileInput.init();
+        });
+    </script>
 }
