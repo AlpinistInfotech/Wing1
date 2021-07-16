@@ -25,6 +25,7 @@ namespace B2bApplication.Models
         [Display(Name = "Customer Name")]
 
         public int CustomerId { get; set; }        
+        
         [Display(Name = "Logo")]
         public IFormFile Logo { set; get; }
         public byte[] LogoData { set; get; }
@@ -353,25 +354,36 @@ namespace B2bApplication.Models
         [Required]
         [Display(Name = "Customer Code")]
         public int CustomerID { set; get; }
+        
         [Required]
-        [Range(0,1000000)]
+        [Range(1,1000000)]
         [Display(Name = "Requested Amount")]
+        
         public double CreditAmt { set; get; }
-        [StringLength(250, ErrorMessage = "The {0} value cannot exceed {1} characters. ")]        
+
+        [System.ComponentModel.DefaultValue("")]
+        [StringLength(250, ErrorMessage = "The {0} value cannot exceed {1} characters. ")]
         [Display(Name = "Remarks")]
-        public string Remarks { get; set; }
+        public string Remarks { get; set; } = "";
+        
         [Display(Name = "Status")]
         public enmApprovalStatus Status { set; get; }
+        
         [Display(Name = "Request Type")]
         public enmRequestType RequestType { set; get; }
+        
         [Display(Name = "Transaction Type")]
         public enmBankTransactionType BankTransactionType { set; get; } = enmBankTransactionType.None;
+        
+        //[Required(ErrorMessage = "Please Select Document")]
         [Display(Name = "Upload Document")]
         public List<IFormFile> UploadImages { set; get; }
         public List<byte[]> fileData { set; get; }
         public List<mdlPaymentRequestWraper> PaymentRequestList { get; set; }
+
         [Display(Name = "Transaction No")]
         public string TransactionNumber { get; set; }
+
         [Display(Name = "Transaction Date")]
         public DateTime TransactionDate { get; set; }
     }

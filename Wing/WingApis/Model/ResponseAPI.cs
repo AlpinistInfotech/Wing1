@@ -56,7 +56,8 @@ namespace WingApis
                 using (StreamReader readStream = new StreamReader(rsp))
                 {
                     mdl.Code = 0;
-                    mdl.Message = readStream.ReadToEnd();//JsonConvert.DeserializeXmlNode(readStream.ReadToEnd(), "root").InnerXml;
+                    mdl.Message =  readStream.ReadToEnd();//JsonConvert.DeserializeXmlNode(readStream.ReadToEnd(), "root").InnerXml;
+                
                 }
                 return Task.FromResult(mdl);
             }

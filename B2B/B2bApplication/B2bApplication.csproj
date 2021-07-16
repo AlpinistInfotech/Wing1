@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\Upload\" />
     <Folder Include="wwwroot\Upload\PaymentRequestFile\" />
   </ItemGroup>
 
