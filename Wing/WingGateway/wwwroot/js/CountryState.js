@@ -12,7 +12,6 @@
         if (countrydropdown != null) {
             console.log("Remove Drop down");
             removeOptions(countrydropdown);
-
             var defaultoption = document.createElement("option");
             defaultoption.text = "Select Country";            
             countrydropdown.add(defaultoption);

@@ -33,7 +33,6 @@ namespace B2BApis.Controllers
         public async Task<mdlAirportApi> SearchAirPorts([FromServices] IBooking booking)
         {
             mdlAirportApi airportApi = new mdlAirportApi();
-
             if (ModelState.IsValid)
             {
                 try
