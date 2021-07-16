@@ -13,6 +13,7 @@ using System.Net.Mail;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using B2bApplication.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace B2bApplication.Controllers
 {
@@ -120,6 +121,13 @@ namespace B2bApplication.Controllers
             }
             return View(mdl);
             
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<string> GetTokkenAsync([FromServices]IAccount account, [FromServices]ISettings settings,[FromServices]ICurrentUsers currentUsers )
+        {
+           return await account.GetTokken(settings, currentUsers.CustomerId, currentUsers.UserId);
         }
 
     }
