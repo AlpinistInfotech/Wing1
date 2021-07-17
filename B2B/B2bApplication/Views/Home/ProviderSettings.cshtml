@@ -62,6 +62,9 @@
                                         <input type="text" asp-for="Remarks" class="form-control" />
                                         <span asp-validation-for="Remarks" class="text-danger"></span>
                                     </div>
+                                    @*@Html.HiddenFor(model => model.ModifiedBy)
+
+                                    @Html.HiddenFor(model => model.ModifiedDt)*@
 
                                 </div>
                             </div>
@@ -86,6 +89,7 @@
                                         <i class="ace-icon fa fa-undo bigger-110"></i>
                                         Reset
                                     </a>
+                                    <label class="text-danger">@ViewBag.Success</label>
                                     &nbsp;
                                     @*@if (Model.WingMarkup.Id > 0)
                                         {

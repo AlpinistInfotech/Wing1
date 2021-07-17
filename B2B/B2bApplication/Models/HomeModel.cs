@@ -434,9 +434,9 @@ namespace B2bApplication.Models
         public bool IsEnabled { get; set; }
         public string Remarks { get; set; }
         [Display(Name = "Modified By Name")]
-        public int? ModifiedBy { get; set; }
+        public string ModifiedBy { get; set; }
         [Display(Name = "Modified Date")]
-        public DateTime? ModifiedDt { get; set; }
+        public DateTime ModifiedDt { get; set; } 
     }
 }
 

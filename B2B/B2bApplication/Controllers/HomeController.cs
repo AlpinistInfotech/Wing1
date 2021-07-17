@@ -15,7 +15,7 @@ using B2BClasses.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
-using Microsoft.AspNetCore.Mvc.Rendering;
+
 
 namespace B2bApplication.Controllers
 {
@@ -1064,21 +1064,40 @@ namespace B2bApplication.Controllers
             return View(mdl);
         }
         public async Task<IActionResult> ProviderSettings()
-        {   
+        {
+           
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> ProviderSettings(tblActiveSerivceProvider mdl)
+        public async Task<IActionResult> ProviderSettings(mdlProviderSettings mdl,tblActiveSerivceProvider provider)
         {
+
+            
+            mdl.ModifiedDt = System.DateTime.Now;
+            mdl.ModifiedBy = _currentUsers.Name;
+            //tblActiveSerivceProvider provider = new tblActiveSerivceProvider();
+
             if (ModelState.IsValid)
             {
-                _context.tblActiveSerivceProvider.Add(mdl);
-                _context.SaveChanges();
-                if (mdl.ServiceProvider > 0)
+
+                var dbdata = _context.tblActiveSerivceProvider.Where(x => x.ServiceProvider == mdl.ServiceProvider ).FirstOrDefault();
+                if (dbdata != null)
                 {
-                    ViewBag.Success = "Data Inserted";
+                    dbdata.IsEnabled = provider.IsEnabled;
+                    dbdata.Remarks = provider.Remarks;
+                    dbdata.ModifiedDt = mdl.ModifiedDt;
+                    dbdata.ModifiedBy = _currentUsers.UserId;
+                    _context.Entry(dbdata).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                    _context.SaveChanges();
+                    //_context.tblActiveSerivceProvider.Add(provider);
+                    //_context.SaveChanges();
+                    //ViewBag.Success = "Data Inserted";
                 }
-                ModelState.Clear();
+                else
+                {
+                    ViewBag.Success = "Data not inserted";
+                }
+
             }
             return View();
         }
