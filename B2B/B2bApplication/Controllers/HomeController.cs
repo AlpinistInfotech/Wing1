@@ -1064,8 +1064,7 @@ namespace B2bApplication.Controllers
             return View(mdl);
         }
         public async Task<IActionResult> ProviderSettings()
-        {
-            
+        {   
             return View();
         }
         [HttpPost]

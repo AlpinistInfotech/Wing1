@@ -1,5 +1,6 @@
 ﻿@using B2BClasses.Database
 @model B2bApplication.Models.mdlProviderSettings
+@using B2BClasses.Services.Enums
 @{
     ViewData["Title"] = "Provider Settings";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -15,8 +16,7 @@
         <!-- PAGE CONTENT BEGINS -->
         <form action="@Url.Action()" method="post">
             @Html.AntiForgeryToken()
-            <div asp-validation-summary="All" class="text-danger"></div>
-            @*<input type="hidden" asp-for="WingMarkup.Id" />*@
+            <div asp-validation-summary="All" class="text-danger"></div>            
             <div class="widget-box">
                 <div class="widget-header">
                     <h4 class="widget-title">@ViewData["Title"]</h4>
@@ -26,8 +26,6 @@
                         </a>
                     </div>
                 </div>
-                </div>
-
                 <div class="widget-body">
                     <div class="widget-main">
                         <div class="row">
@@ -36,37 +34,27 @@
                                     <label asp-for="ServiceProvider" class="col-sm-4 control-label"></label>
                                     <div class="col-sm-8">
                                         <select asp-for="ServiceProvider" class="form-control select2">
-                                            <option value="List of All Providers"> List of All Providers </option>
-                                            <option value="Provider 1"> Provider 1</option>
-                                            <option value="Provider 2"> Provider 2</option>
-                                            <option value="Provider 3"> Provider 3</option>
+                                            @foreach (var prov in Enum.GetValues(typeof(enmServiceProvider)))
+                                            {
+                                                <option value="@(prov)">@prov.ToString()</option>
+                                            }
                                         </select>
                                         <span asp-validation-for="ServiceProvider" class="text-danger"></span>
                                     </div>
                                 </div>
                             </div>
-                            </div>
-
-
-
-                        </div>
-
-                        <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label asp-for="IsEnabled" class="col-sm-4 control-label"></label>
                                     <div class="col-sm-8">
-                                        <select asp-for="IsEnabled" class="form-control select2">
-                                            <option value="1"> Yes </option>
-                                            <option value="0"> No</option>
-
-                                        </select>
+                                        <label class="input-group-addon input-group-addon-custom">
+                                            <input id="cboxIsAllPessengerType" class="ace ace-switch" type="checkbox" asp-for="IsEnabled" />
+                                            <span class="lbl" data-lbl="Yes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No"></span>
+                                        </label>
                                         <span asp-validation-for="IsEnabled" class="text-danger"></span>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label asp-for="Remarks" class="col-sm-4 control-label"></label>
@@ -79,36 +67,50 @@
                             </div>
 
                         </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="clearfix form-actions">
-                                    <div class="col-md-offset-3 col-md-9">
-                                        <button class="btn btn-info" type="submit">
-                                            <i class="ace-icon fa fa-check bigger-110"></i>
-                                            @*@(Model.WingMarkup.Id > 0? "update":"Save")*@
-                                            Save
-                                        </button>
-                                        &nbsp;
-                                        <a href="/Home/ProviderSettings" class="btn">
-                                            <i class="ace-icon fa fa-undo bigger-110"></i>
-                                            Reset
-                                        </a>
-                                        &nbsp;
-                                        @*@if (Model.WingMarkup.Id > 0)
+
+
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="clearfix form-actions">
+                                <div class="col-md-offset-3 col-md-9">
+                                    <button class="btn btn-info" type="submit">
+                                        <i class="ace-icon fa fa-check bigger-110"></i>
+                                        @*@(Model.WingMarkup.Id > 0? "update":"Save")*@
+                                        Save
+                                    </button>
+                                    &nbsp;
+                                    <a href="/Home/ProviderSettings" class="btn">
+                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                        Reset
+                                    </a>
+                                    &nbsp;
+                                    @*@if (Model.WingMarkup.Id > 0)
                                         {
                                             <button class="btn btn-danger" type="submit" name="submitData" value="deleteData">
                                                 <i class="ace-icon fa fa-trash-o bigger-110"></i>
                                                 Delete
                                             </button>
                                         }*@
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-
+            </div>
 
         </form>
     </div>
 </div>
+
+@section Scripts {
+    
+    <script type="text/javascript">
+        jQuery(function ($) {
+            $('.select2').select2();            
+        });
+  </script>
+}
