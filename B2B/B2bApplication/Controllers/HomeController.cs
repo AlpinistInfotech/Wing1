@@ -1063,6 +1063,7 @@ namespace B2bApplication.Controllers
             mdl.SetDefaultDropDown(_context);
             return View(mdl);
         }
+
         public async Task<IActionResult> ProviderSettings()
         {   
             return View();
