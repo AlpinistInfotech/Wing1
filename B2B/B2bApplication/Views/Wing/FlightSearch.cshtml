@@ -21,11 +21,11 @@
                                     <div id="toggle-result-page" data-toggle="buttons" class="btn-group no-margin">
                                         <label class="btn btn-sm btn-yellow active">
                                             <span class="bigger-110">Oneway</span>
-                                            <input type="radio" value="1" />
+                                            <input type="radio" ng-model="journeyType" value="1" />
                                         </label>
                                         <label class="btn btn-sm btn-yellow">
                                             <span class="bigger-110">Rerturn</span>
-                                            <input type="radio" value="2" />
+                                            <input type="radio" ng-model="journeyType" value="2" />
                                         </label>
                                     </div>
                                 </div>
@@ -56,11 +56,11 @@
                         <label for="id-date-picker-1" class="col-xs-4">Travel Date</label>
                         <div class="col-xs-8">
                             <div class="input-daterange input-group">
-                                <input type="text" class="input-sm form-control" id="DepartureDt" asp-format="{0:dd-MMM-yyyy}" autocomplete="off" />
-                                <span class="input-group-addon">
+                                <input type="text" class="input-sm form-control" id="DepartureDt" ng-model="departureDt" autocomplete="off" />
+                                <span ng-hide="{{journeyType=='1'}}" class="input-group-addon">
                                     <i class="fa fa-exchange"></i>
                                 </span>
-                                <input type="text" class="input-sm form-control" asp-format="{0:dd-MMM-yyyy}" autocomplete="off" />
+                                <input ng-hide="{{journeyType=='1'}}" type="text" class="input-sm form-control"  id="arrivalDt" ng-model="arrivalDt"  autocomplete="off" />
                             </div>
                         </div>
                     </div>

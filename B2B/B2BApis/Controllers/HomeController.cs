@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace B2BApis.Controllers
@@ -28,7 +29,7 @@ namespace B2BApis.Controllers
             _config = configuration;
         }
         [Route("SearchAirPort")]
-        [Authorize(policy: nameof(enmDocumentMaster.Search_Flight))]
+        //[Authorize(Policy = nameof(enmDocumentMaster.Search_Flight), AuthenticationSchemes = "Bearer")]
         public async Task<mdlAirportApi> SearchAirPorts([FromServices] IBooking booking)
         {
             mdlAirportApi airportApi = new mdlAirportApi();

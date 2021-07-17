@@ -78,8 +78,7 @@ namespace B2BClasses
                 byte[] data = Encoding.UTF8.GetBytes(requestData);
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                 request.Method = MethodType??"GET";
-                request.ContentType = "application/json";
-                request.Headers.Add("apikey", _config["TripJack:Credential:apikey"]);
+                request.ContentType = "application/json";                
                 Stream dataStream = request.GetRequestStream();
                 dataStream.Write(data, 0, data.Length);
                 dataStream.Close();

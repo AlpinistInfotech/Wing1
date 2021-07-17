@@ -1,5 +1,6 @@
 ﻿var app = angular.module('flightSearchApp', []);
 app.controller('flightCtrl', function ($scope, $http) {
+    EnableLoader();
     var apiRootPath = localStorage.getItem("_apiRootPath");
     let tokkenData = {};
     let temptokkenData = sessionStorage.getItem('_tokkenData')    
@@ -21,12 +22,13 @@ app.controller('flightCtrl', function ($scope, $http) {
                 if (response.data.statusCode == 1) {
                     $scope.airportData = response.data.tblAirports;
                     localStorage.setItem("Airport", JSON.stringify($scope.airportData));
+                    DisableLoader();
                 }
             });
     }
     else {
-        console.log(tempairport);
         $scope.airportData = JSON.parse(tempairport);
+        DisableLoader();
     }
 
     
