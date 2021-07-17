@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="row" ng-app="myApp">
+<div class="row" ng-app="flightSearchApp" ng-controller="flightCtrl" >
     <div class="col-xs-12">
 
         <div class="search-area well no-padding-bottom ">
@@ -36,7 +36,8 @@
                         <label for="OriginFrom" class="col-xs-3">Origin</label>
                         <div class="col-xs-9">
                             <div class="form-group">
-                                <select id="OriginFrom" ng-model="OriginFrom" class="select2 form-control" data-placeholder="Origin">
+                                <select id="OriginFrom" ng-model="Origin" class="select2 form-control" data-placeholder="Origin">
+                                    <option ng-repeat="x in airportData" ng-value="{{x.airportCode}}">{{x.cityName}},{{x.countryCode}}  {{x.airportCode}}</option>
                                 </select>
                             </div>
                         </div>
@@ -45,7 +46,8 @@
                         <label for="OriginTo" class="col-xs-3">Destination</label>
                         <div class="col-xs-9">
                             <div class="form-group">
-                                <select id="OriginTo" ng-model="OriginTo" class="select2 form-control" data-placeholder="Destination">
+                                <select id="OriginTo" ng-model="Destination" class="select2 form-control" data-placeholder="Destination">
+                                    <option ng-repeat="x in airportData" ng-value="{{x.airportCode}}">{{x.cityName}},{{x.countryCode}}  {{x.airportCode}}</option>
                                 </select>
                             </div>
                         </div>
@@ -129,6 +131,7 @@
 </div>
 
 @section Scripts {
+    <script src="~/js/FlightSeacrh.js"></script>
     <script>
         jQuery(function ($) {
             $('.select2').select2({ allowClear: true });

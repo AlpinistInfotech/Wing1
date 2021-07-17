@@ -15,6 +15,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using B2BClasses.Services.Enums;
+using Microsoft.AspNetCore.Authorization;
 
 namespace B2BApis
 {
@@ -40,19 +42,6 @@ namespace B2BApis
             });
 
 
-            //services.AddCors(options =>
-            //{
-
-            //    options.AddPolicy("AllowSpecificOrigin",
-
-            //    builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials());
-            //    //builder => builder.WithOrigins("http://192.168.10.129:1010", "http://192.168.10.129:1016", "http://14.143.182.168:1010", "http://14.143.182.168:1016", "http://localhost:51625", "https://localhost:51625").AllowAnyMethod().AllowAnyHeader().AllowCredentials());
-            //    //builder => builder.WithOrigins("http://192.168.10.129:1013").AllowAnyMethod().AllowAnyHeader().AllowCredentials());
-
-            //});
-
-
-
             services.AddDbContext<DBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
             services.AddScoped<IAccount>(ctx => new Account(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
             services.AddScoped<ITripJack>(ctx => new TripJack(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
@@ -64,6 +53,16 @@ namespace B2BApis
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "B2BApis", Version = "v1" });
             });
+
+            services.AddAuthorization(options =>
+            {
+                foreach (enmDocumentMaster _enm in Enum.GetValues(typeof(enmDocumentMaster)))
+                {
+                    options.AddPolicy(_enm.ToString(), policy => policy.Requirements.Add(new AccessRightRequirement(_enm)));
+                }
+
+            });
+            services.AddScoped<IAuthorizationHandler, AccessRightHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -74,16 +73,13 @@ namespace B2BApis
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "B2BApis v1"));
-                }
+            }
 
             app.UseCors("CorsPolicy");
-
             //app.UseCors("AllowSpecificOrigin");
-
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

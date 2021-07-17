@@ -127,7 +127,7 @@ namespace B2bApplication.Controllers
         [HttpGet]
         public async Task<string> GetTokkenAsync([FromServices]IAccount account, [FromServices]ISettings settings,[FromServices]ICurrentUsers currentUsers )
         {
-           return await account.GetTokken(settings, currentUsers.CustomerId, currentUsers.UserId);
+           return await account.GetTokken(settings, currentUsers.CustomerId, currentUsers.UserId, currentUsers.CustomerType, currentUsers.Name);
         }
 
     }

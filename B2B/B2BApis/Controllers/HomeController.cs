@@ -29,7 +29,6 @@ namespace B2BApis.Controllers
         }
 
         [Route("SearchAirPort")]
-        [HttpPost]
         public async Task<mdlAirportApi> SearchAirPorts([FromServices] IBooking booking)
         {
             mdlAirportApi airportApi = new mdlAirportApi();
@@ -47,7 +46,7 @@ namespace B2BApis.Controllers
                     {
                         booking.CustomerId = _customerId;
                         booking.UserId = _userId;
-                        airportApi.mdlSearches = await booking.GetAirportAsync();
+                        airportApi.tblAirports = await booking.GetAirportAsync();
                         airportApi.StatusCode = 1;
                         airportApi.StatusMessage = "Success";
                         airportApi.DefaultFromAirport = "DEL";
@@ -56,7 +55,7 @@ namespace B2BApis.Controllers
                 }
                 catch (Exception ex)
                 {
-                    airportApi.mdlSearches = null;
+                    airportApi.tblAirports = null;
                     airportApi.StatusCode = 0;
                     airportApi.StatusMessage = ex.Message;
                 }
