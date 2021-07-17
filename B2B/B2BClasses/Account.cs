@@ -18,7 +18,7 @@ namespace B2BClasses
         Task<bool> IsValidIPAsync(int CustomerId, string UserIp);
         Task<tblUserMaster> LoginAsync(mdlLogin mdl, string UserIp);
         Task<IEnumerable<enmDocumentMaster>> GetEnmDocumentsAsync(int UserId);
-        Task<string> GetTokken(ISettings settings, int CustomerId_, int userId_);
+        Task<string> GetTokken(ISettings settings, int CustomerId_, int userId_, enmCustomerType customerType_, string Name_);
     }
 
     public class Account : IAccount
@@ -65,7 +65,7 @@ namespace B2BClasses
             {
                 throw new Exception("Invalid User IP");
             }
-            var userMaster = _context.tblUserMaster.Where(p => p.UserName == mdl.Username && p.CustomerId== customerMaster.Id && p.IsActive).FirstOrDefault();
+            var userMaster = _context.tblUserMaster.Where(p => p.UserName == mdl.Username && p.CustomerId== customerMaster.Id && p.IsActive).Include(p=>p.tblCustomerMaster).FirstOrDefault();
             if (userMaster == null || userMaster.Password != mdl.Password)
             {
                 throw new Exception("Invalid Username/Password");
@@ -80,12 +80,11 @@ namespace B2BClasses
         }
 
 
-        public async Task<string> GetTokken(ISettings settings,int CustomerId_, int userId_)
+        public async Task<string> GetTokken(ISettings settings,int CustomerId_, int userId_, enmCustomerType customerType_, string Name_)
         {
             string tboUrl = _config["API:GenrateToken"];
-            string jsonString = JsonConvert.SerializeObject(new{ CustomerId= CustomerId_, userId = userId_ });
+            string jsonString = JsonConvert.SerializeObject(new{ CustomerId= CustomerId_, userId = userId_ , customerType = customerType_ , Name = Name_ });
             var HaveResponse = settings.GetResponse(jsonString, tboUrl, "POST");
-
             if (HaveResponse.Code == 0)
             {
                 return HaveResponse.Message;

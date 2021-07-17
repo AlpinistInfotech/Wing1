@@ -29,3 +29,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 });
+
+function EnableLoader() {
+    document.getElementById("loader").style.display = "block"
+}
+function DisableLoader() {
+    document.getElementById("loader").style.display = "none"
+}
+

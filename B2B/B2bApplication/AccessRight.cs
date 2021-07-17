@@ -10,7 +10,6 @@ namespace B2bApplication
     public class AccessRightRequirement : IAuthorizationRequirement
     {
         public enmDocumentMaster accessRight;
-
         public AccessRightRequirement(enmDocumentMaster  accessRight)
         {
             this.accessRight = accessRight;

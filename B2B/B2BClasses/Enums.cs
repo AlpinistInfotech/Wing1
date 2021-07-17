@@ -352,9 +352,14 @@ namespace B2BClasses.Services.Enums
         DisplayOrder: 1, Name: "Flight Details", Description: "Flight Details permission", Icon: "", ActionName: "")]
         Booking_Flight_Details = 10100,
         [Document(EnmModule: enmModule.Booking, DocumentType: enmDocumentType.Report,
-        DisplayOrder: 2, Name: "Flight Cancel", Description: "Flight Cancel", Icon: "", ActionName: "")]
+        DisplayOrder: 2, Name: "Cancel Flight", Description: "Flight Cancel", Icon: "", ActionName: "")]
         Booking_Flight_Cancel = 10101,
-
+        [Document(EnmModule: enmModule.Booking, DocumentType: enmDocumentType.Create,
+        DisplayOrder: 3, Name: "Book Flight", Description: "Flight Booking", Icon: "", ActionName: "")]
+        Booking_Flight = 10102,
+        [Document(EnmModule: enmModule.Booking, DocumentType: enmDocumentType.Create,
+        DisplayOrder: 4, Name: "Search Flight", Description: "Search Flight", Icon: "", ActionName: "")]
+        Search_Flight = 10103,
         #endregion
 
 

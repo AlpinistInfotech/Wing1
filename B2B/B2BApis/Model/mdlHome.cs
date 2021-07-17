@@ -22,7 +22,7 @@ namespace B2BApis.Model
     {
         public string DefaultFromAirport { get; set; }
         public string DefaultToAirport { get; set; }
-        public List<tblAirport> mdlSearches { get; set; }
+        public List<tblAirport> tblAirports { get; set; }
     }
 
 

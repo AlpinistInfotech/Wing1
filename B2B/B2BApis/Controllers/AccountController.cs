@@ -13,6 +13,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using B2BClasses.Services.Enums;
+using IdentityModel.Client;
 
 namespace B2BApis.Controllers
 {
@@ -40,7 +42,7 @@ namespace B2BApis.Controllers
                     tblUserMaster tbl = await account.LoginAsync(mdl, IPAddress);
                     if (tbl.CustomerId != null)
                     {
-                        userMaster.TokenData = GenerateJSONWebToken(tbl.CustomerId??0, tbl.Id);
+                        userMaster.TokenData =await GenerateJSONWebTokenAsync(new mdlTookenRequest() { CustomerId =tbl.CustomerId ?? 0,UserId= tbl.Id,customerType= tbl.tblCustomerMaster.CustomerType, Name=tbl.tblCustomerMaster.CustomerName } );
                         userMaster.StatusCode = 1;
                         userMaster.StatusMessage = "Success";
                     }
@@ -62,23 +64,25 @@ namespace B2BApis.Controllers
         }
 
 
+        
+
         [Route("GenrateToken")]
         [HttpPost]
-        public string GenerateJSONWebToken(int CustomerId,int UserId )
+        public async Task<string> GenerateJSONWebTokenAsync(mdlTookenRequest request )
         {
             
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             List<Claim> _claim = new List<Claim>();
-            _claim.Add(new Claim("__customerId", CustomerId.ToString()));
-            _claim.Add(new Claim("__UserId", UserId.ToString()));
-               
+            _claim.Add(new Claim("_CustomerId", request.CustomerId.ToString()));
+            _claim.Add(new Claim("_UserId", request.UserId.ToString()));
+            _claim.Add(new Claim("_CustomerType", ((int)request.customerType).ToString()));
+            _claim.Add(new Claim("_Name", request.Name ??""));
             var token = new JwtSecurityToken(_config["Jwt:Issuer"],
                 _config["Jwt:audience"],
               _claim,
               expires: DateTime.Now.AddHours(Convert.ToInt32(_config["Jwt:tokenExpireinhour"])),
               signingCredentials: credentials);
-
             return new JwtSecurityTokenHandler().WriteToken(token);
              
             

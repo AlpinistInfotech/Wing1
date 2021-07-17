@@ -8,8 +8,7 @@
         let requestUrl = webRootPath + "/Account/GetTokken";// + currentApplication ;
         $.ajax({ url: requestUrl }).done(function (data) {
             
-            currentDate = currentDate.setHours(currentDate.getHours() + 2);
-            alert(currentDate);
+            currentDate = currentDate.setHours(currentDate.getHours() + 2);            
             sessionStorage.setItem('_tokkenData', JSON.stringify({ tokken: data, expiryTime: currentDate }));
         });
     }

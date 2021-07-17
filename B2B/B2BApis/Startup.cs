@@ -15,6 +15,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using B2BClasses.Services.Enums;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using IdentityServer4.AccessTokenValidation;
 
 namespace B2BApis
 {
@@ -30,7 +38,8 @@ namespace B2BApis
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddHttpContextAccessor();
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
@@ -38,32 +47,44 @@ namespace B2BApis
                         .AllowAnyMethod()
                         .AllowAnyHeader());
             });
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = Configuration["Jwt:Issuer"],
+                    ValidAudience = Configuration["Jwt:Issuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"])),
+                };
+            });
+            services.AddAuthorization(options =>
+            {
+                foreach (enmDocumentMaster _enm in Enum.GetValues(typeof(enmDocumentMaster)))
+                {
+                    options.AddPolicy(_enm.ToString(), policy => policy.Requirements.Add(new AccessRightRequirement(_enm)));
+                }
 
-
-            //services.AddCors(options =>
-            //{
-
-            //    options.AddPolicy("AllowSpecificOrigin",
-
-            //    builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials());
-            //    //builder => builder.WithOrigins("http://192.168.10.129:1010", "http://192.168.10.129:1016", "http://14.143.182.168:1010", "http://14.143.182.168:1016", "http://localhost:51625", "https://localhost:51625").AllowAnyMethod().AllowAnyHeader().AllowCredentials());
-            //    //builder => builder.WithOrigins("http://192.168.10.129:1013").AllowAnyMethod().AllowAnyHeader().AllowCredentials());
-
-            //});
-
-
-
+            });
+            services.AddScoped<IAuthorizationHandler, AccessRightHandler>();
+            
             services.AddDbContext<DBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
             services.AddScoped<IAccount>(ctx => new Account(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
             services.AddScoped<ITripJack>(ctx => new TripJack(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
             services.AddScoped<ITBO>(ctx => new TBO(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
             services.AddScoped<IBooking>(ctx => new Booking(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>(), ctx.GetRequiredService<ITripJack>(), ctx.GetRequiredService<ITBO>()));
+           services.AddScoped<ICurrentUsers>(ctx => new CurrentUsers( ctx.GetRequiredService<DBContext>()));
+            //services.AddScoped<ICurrentUsers>(ctx => new CurrentUsers(ctx.GetRequiredService<IHttpContextAccessor>(), ctx.GetRequiredService<DBContext>()));
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "B2BApis", Version = "v1" });
             });
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -74,22 +95,19 @@ namespace B2BApis
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "B2BApis v1"));
-                }
+            }
 
-            app.UseCors("CorsPolicy");
-
-            //app.UseCors("AllowSpecificOrigin");
-
+            app.UseCors("CorsPolicy");            
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
-
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
         }
     }
 }
