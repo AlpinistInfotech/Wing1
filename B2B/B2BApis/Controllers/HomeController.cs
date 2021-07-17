@@ -3,6 +3,8 @@ using B2BClasses;
 using B2BClasses.Database;
 using B2BClasses.Models;
 using B2BClasses.Services.Air;
+using B2BClasses.Services.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -15,20 +17,18 @@ namespace B2BApis.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-
     public class HomeController : ControllerBase
     {
         IConfiguration _config;
         int _customerId;
         int _userId;
         int isvalid = 0;
-
         public HomeController(IConfiguration configuration)
         {
             _config = configuration;
         }
-
         [Route("SearchAirPort")]
+        [Authorize(policy: nameof(enmDocumentMaster.Search_Flight))]
         public async Task<mdlAirportApi> SearchAirPorts([FromServices] IBooking booking)
         {
             mdlAirportApi airportApi = new mdlAirportApi();
@@ -36,22 +36,10 @@ namespace B2BApis.Controllers
             {
                 try
                 {
-                    isvalid = ValidateToken();
-                    if (isvalid == 0 || _customerId <= 0 || _userId <= 0)
-                    {
-                        airportApi.StatusCode = 0;
-                        airportApi.StatusMessage = "Invalid Token Data";
-                    }
-                    else
-                    {
-                        booking.CustomerId = _customerId;
-                        booking.UserId = _userId;
-                        airportApi.tblAirports = await booking.GetAirportAsync();
-                        airportApi.StatusCode = 1;
-                        airportApi.StatusMessage = "Success";
-                        airportApi.DefaultFromAirport = "DEL";
-                        airportApi.DefaultToAirport = "BOM";
-                    }
+                    booking.CustomerId = _customerId;
+                    booking.UserId = _userId;
+                    airportApi.tblAirports = await booking.GetAirportAsync();
+                    airportApi.StatusCode = 1;
                 }
                 catch (Exception ex)
                 {
@@ -63,11 +51,9 @@ namespace B2BApis.Controllers
             return airportApi;
 
         }
-
-        
-
         [Route("SearchFlight")]
         [HttpPost]
+        [Authorize(policy: nameof(enmDocumentMaster.Search_Flight))]
         public async Task<mdlBookingSearchApi> SearchFlight([FromServices] IBooking booking, mdlSearchRequest mdl)
         {
             mdlBookingSearchApi bookingsearch = new mdlBookingSearchApi();
@@ -75,21 +61,12 @@ namespace B2BApis.Controllers
             if (ModelState.IsValid)
             {
                 try
-                { 
-                    isvalid = ValidateToken();
-                    if (isvalid == 0 || _customerId<=0 || _userId<=0)
-                    {
-                        bookingsearch.StatusCode = 0;
-                        bookingsearch.StatusMessage = "Invalid Token Data";
-                    }
-                    else
-                    {
-                        booking.CustomerId = _customerId;
-                        booking.UserId = _userId;
-                        bookingsearch.mdlSearches = await booking.SearchFlight(mdl);
-                        bookingsearch.StatusCode = 1;
-                        bookingsearch.StatusMessage = "Success";
-                    }
+                {
+                    booking.CustomerId = _customerId;
+                    booking.UserId = _userId;
+                    bookingsearch.mdlSearches = await booking.SearchFlight(mdl);
+                    bookingsearch.StatusCode = 1;
+                    bookingsearch.StatusMessage = "Success";
                 }
                 catch (Exception ex)
                 {
@@ -104,6 +81,7 @@ namespace B2BApis.Controllers
 
         [Route("FareQuote")]
         [HttpPost]
+        [Authorize(policy: nameof(enmDocumentMaster.Search_Flight))]
         public async Task<mdlfarequoteApi> FareQuote([FromServices] IBooking booking, mdlFareQuotRequest mdl)
         {
             mdlfarequoteApi mdlfarequote = new mdlfarequoteApi();
@@ -112,20 +90,11 @@ namespace B2BApis.Controllers
             {
                 try
                 {
-                    isvalid = ValidateToken();
-                    if (isvalid == 0 || _customerId <= 0 || _userId <= 0)
-                    {
-                        mdlfarequote.StatusCode = 0;
-                        mdlfarequote.StatusMessage = "Invalid Token Data";
-                    }
-                    else
-                    {
-                        booking.CustomerId = _customerId;
-                        booking.UserId = _userId;
-                        mdlfarequote.mdlQuote = await booking.FareQuoteAsync(mdl);
-                        mdlfarequote.StatusCode = 1;
-                        mdlfarequote.StatusMessage = "Success";
-                    }
+                    booking.CustomerId = _customerId;
+                    booking.UserId = _userId;
+                    mdlfarequote.mdlQuote = await booking.FareQuoteAsync(mdl);
+                    mdlfarequote.StatusCode = 1;
+                    mdlfarequote.StatusMessage = "Success";
                 }
                 catch (Exception ex)
                 {
@@ -139,6 +108,7 @@ namespace B2BApis.Controllers
 
         [Route("FareRule")]
         [HttpPost]
+        [Authorize(policy: nameof(enmDocumentMaster.Search_Flight))]
         public async Task<mdlfareruleApi> FareRule([FromServices] IBooking booking, mdlFareRuleRequest mdl)
         {
             mdlfareruleApi mdlfarerule = new mdlfareruleApi();
@@ -147,20 +117,11 @@ namespace B2BApis.Controllers
             {
                 try
                 {
-                    isvalid = ValidateToken();
-                    if (isvalid == 0 || _customerId <= 0 || _userId <= 0)
-                    {
-                        mdlfarerule.StatusCode = 0;
-                        mdlfarerule.StatusMessage = "Invalid Token Data";
-                    }
-                    else
-                    {
-                        booking.CustomerId = _customerId;
-                        booking.UserId = _userId;
-                        mdlfarerule.mdlFare = await booking.FareRule(mdl);
-                        mdlfarerule.StatusCode = 1;
-                        mdlfarerule.StatusMessage = "Success";
-                    }
+                    booking.CustomerId = _customerId;
+                    booking.UserId = _userId;
+                    mdlfarerule.mdlFare = await booking.FareRule(mdl);
+                    mdlfarerule.StatusCode = 1;
+                    mdlfarerule.StatusMessage = "Success";
                 }
                 catch (Exception ex)
                 {
@@ -175,6 +136,7 @@ namespace B2BApis.Controllers
 
         [Route("Booking")]
         [HttpPost]
+        [Authorize(policy: nameof(enmDocumentMaster.Booking_Flight))]
         public async Task<mdlbooking> Booking([FromServices] IBooking booking, mdlBookingRequest mdl)
         {
             mdlbooking mdlbook = new mdlbooking();
@@ -183,20 +145,11 @@ namespace B2BApis.Controllers
             {
                 try
                 {
-                    isvalid = ValidateToken();
-                    if (isvalid == 0 || _customerId <= 0 || _userId <= 0)
-                    {
-                        mdlbook.StatusCode = 0;
-                        mdlbook.StatusMessage = "Invalid Token Data";
-                    }
-                    else
-                    {
-                        booking.CustomerId = _customerId;
-                        booking.UserId = _userId;
-                        mdlbook.mdlBooking = await booking.BookingAsync(mdl);
-                        mdlbook.StatusCode = 1;
-                        mdlbook.StatusMessage = "Success";
-                    }
+                    booking.CustomerId = _customerId;
+                    booking.UserId = _userId;
+                    mdlbook.mdlBooking = await booking.BookingAsync(mdl);
+                    mdlbook.StatusCode = 1;
+                    mdlbook.StatusMessage = "Success";
                 }
                 catch (Exception ex)
                 {
@@ -208,24 +161,5 @@ namespace B2BApis.Controllers
 
         }
 
-
-        private int ValidateToken()
-        {
-            try
-            {
-                var handler = new JwtSecurityTokenHandler();
-                string authHeader = Request.Headers["Authorization"];
-                authHeader = authHeader.Replace("Bearer ", "");
-                var jsonToken = handler.ReadToken(authHeader);
-                var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-                _customerId = Convert.ToInt32( tokenS.Claims.First(claim => claim.Type == "__customerId").Value);
-                _userId = Convert.ToInt32(tokenS.Claims.First(claim => claim.Type == "__UserId").Value);
-                isvalid = 1;
-            }
-            catch {
-                isvalid = 0;
-            }
-            return isvalid;
-        }
     }
 }
