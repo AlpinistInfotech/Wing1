@@ -115,6 +115,7 @@ namespace B2BClasses.Services.Air
         public double Convenience { get; set; }
         public double TotalConvenience { get; set; }
         public double TotalPrice { get; set; }
+        public double Discount { get; set; }
         public double NetPrice { get; set; }
     }
 

@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="row" ng-app="flightSearchApp" ng-controller="flightCtrl" >
+<div class="row" ng-app="flightSearchApp" ng-controller="flightCtrl">
     <div class="col-xs-12">
 
         <div class="search-area well no-padding-bottom ">
@@ -36,7 +36,7 @@
                         <label for="OriginFrom" class="col-xs-3">Origin</label>
                         <div class="col-xs-9">
                             <div class="form-group">
-                                <select id="OriginFrom" ng-model="Origin" class="select2 form-control" data-placeholder="Origin">
+                                <select id="Origin" ng-model="Origin" class="select2 form-control" data-placeholder="Origin">
                                     <option ng-repeat="x in airportData" ng-value="{{x.airportCode}}">{{x.cityName}},{{x.countryCode}}  {{x.airportCode}}</option>
                                 </select>
                             </div>
@@ -46,7 +46,7 @@
                         <label for="OriginTo" class="col-xs-3">Destination</label>
                         <div class="col-xs-9">
                             <div class="form-group">
-                                <select id="OriginTo" ng-model="Destination" class="select2 form-control" data-placeholder="Destination">
+                                <select id="Destination" ng-model="Destination" class="select2 form-control" data-placeholder="Destination">
                                     <option ng-repeat="x in airportData" ng-value="{{x.airportCode}}">{{x.cityName}},{{x.countryCode}}  {{x.airportCode}}</option>
                                 </select>
                             </div>
@@ -60,16 +60,16 @@
                                 <span ng-hide="{{journeyType=='1'}}" class="input-group-addon">
                                     <i class="fa fa-exchange"></i>
                                 </span>
-                                <input ng-hide="{{journeyType=='1'}}" type="text" class="input-sm form-control"  id="arrivalDt" ng-model="arrivalDt"  autocomplete="off" />
+                                <input ng-hide="{{journeyType=='1'}}" type="text" class="input-sm form-control" id="arrivalDt" ng-model="returnDt" autocomplete="off" />
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group no-margin col-xs-6 col-md-4">
-                        <label for="OriginFrom" class="col-xs-3">Adult: &nbsp;</label>
+                        <label for="Adult" class="col-xs-3">Adult: &nbsp;</label>
                         <div class="col-xs-9">
                             <div class="form-group">
-                                <select id="Adult" class="form-control" data-placeholder="Adult">
+                                <select id="Adult" ng-model="adultCount" class="form-control" data-placeholder="Adult">
                                     <option value="1">1</option>
                                     <option value="2">2 </option>
                                     <option value="3">3 </option>
@@ -81,10 +81,10 @@
                         </div>
                     </div>
                     <div class="form-group no-margin col-xs-6 col-md-4">
-                        <label for="OriginFrom" class="col-xs-3">Child: &nbsp;</label>
+                        <label for="child" class="col-xs-3">Child: &nbsp;</label>
                         <div class="col-xs-9">
                             <div class="form-group">
-                                <select id="Child" class="form-control" data-placeholder="Child">
+                                <select id="Child" ng-model="childCount" class="form-control" data-placeholder="Child">
                                     <option value="0">0</option>
                                     <option value="1">1</option>
                                     <option value="2">2</option>
@@ -95,10 +95,10 @@
                         </div>
                     </div>
                     <div class="form-group no-margin col-xs-6 col-md-4">
-                        <label for="OriginFrom" class="col-xs-3">Infant: &nbsp;</label>
+                        <label for="infant" class="col-xs-3">Infant: &nbsp;</label>
                         <div class="col-xs-9">
                             <div class="form-group">
-                                <select id="Infant" class="form-control" data-placeholder="Infant">
+                                <select id="Infant" ng-model="infantCount" class="form-control" data-placeholder="Infant">
                                     <option value="0">0</option>
                                     <option value="1">1</option>
                                     <option value="2">2</option>
@@ -109,7 +109,7 @@
                         </div>
                     </div>
                     <div class="col-md-4 col-xs-6 middle pull-right">
-                        <button class="btn btn-info" type="submit">
+                        <button class="btn btn-info" ng-click="funcFlightSearch()">
                             <i class="ace-icon fa fa-search bigger-110"></i>
                             Search
                         </button>
@@ -117,28 +117,245 @@
 
                 </div>
 
-               
+
 
 
 
                 <div class="clearfix"></div>
             </form>
         </div>
-
-
         <div class="hr dotted"></div>
     </div>
-</div>
+    <div class="col-xs-12">
+        <div>
+            <div class="row search-page" id="search-page-1">
+                <div class="col-xs-12">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-3">
+                            <div class="search-area well well-sm">
+                                <div class="search-filter-header bg-primary">
+                                    <h5 class="smaller no-margin-bottom">
+                                        <i class="ace-icon fa fa-sliders light-green bigger-130"></i>&nbsp; Refine your Search
+                                    </h5>
+                                </div>
 
-@section Scripts {
-    <script src="~/js/FlightSeacrh.js"></script>
-    <script>
-        jQuery(function ($) {
-            $('.select2').select2({ allowClear: true });
-            $('.input-daterange').datepicker({ autoclose: true, format: 'd-M-yyyy', startDate: '3d' });
-        });
-    </script>
-}
+                                <div class="space-10"></div>
+
+                                
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-11 col-md-10">
+                                            <div class="input-group">
+                                                <div class="pull-right">
+                                                    <b class="text-primary">Order By :</b>
+                                                    &nbsp;
+                                                    <select ng-model="orderBy">
+                                                        <option value="1">Departure Time</option>
+                                                        <option value="2">Arrival Time</option>
+                                                        <option value="3">Price</option>
+                                                    </select>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                
+
+                                <div class="hr hr-dotted"></div>
+
+                                <h4 class="blue smaller">
+                                    <i class="fa fa-tags"></i>
+                                    Flight Class
+                                </h4>
+
+                                <div class="tree-container">
+                                    <ul id="cat-tree"></ul>
+                                </div>
+
+                                <div class="hr hr-dotted"></div>
+
+                                <h4 class="blue smaller">
+                                    <i class="fa fa-map-marker light-orange bigger-110"></i>
+                                    Prefrence
+                                </h4>
+
+                                <div>
+                                    <select multiple="" name="state" class="select2 tag-input-style" data-placeholder="Click to Choose...">
+                                        <option value="">All</option>
+                                        <option value="Direct">Direct</option>
+                                        <option value="AK">One Stop</option>
+                                    </select>
+                                </div>
+
+                                <div class="hr hr-dotted"></div>
+
+                                <h4 class="blue smaller">
+                                    <i class="fa fa-location-arrow light-grey bigger-110"></i>
+                                    Budget
+                                </h4>
+
+                                <div class="search-filter-element">
+                                    <span>within</span>
+                                    &nbsp;
+                                    <div id="slider-range" class="inline"></div>
+                                    &nbsp;
+                                    <span>Price</span>
+                                </div>
+
+                                <div class="hr hr-dotted hr-24"></div>
+
+                                <div class="text-center">
+                                    <button type="button" class="btn btn-default btn-round btn-sm btn-white">
+                                        <i class="ace-icon fa fa-remove red2"></i>
+                                        Reset
+                                    </button>
+
+                                    <button type="button" class="btn btn-default btn-round btn-white">
+                                        <i class="ace-icon fa fa-refresh green"></i>
+                                        Update
+                                    </button>
+                                </div>
+
+                                <div class="space-4"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-9">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="media search-media">
+                                        <div class="media-left">
+                                            <a href="#">
+                                                <img class="media-object" data-src="holder.js/72x72" />
+                                            </a>
+                                        </div>
+
+                                        <div class="media-body">
+                                            <div>
+                                                <h4 class="media-heading">
+                                                    <a href="#" class="blue">Media heading</a>
+                                                </h4>
+                                            </div>
+                                            <p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis ...</p>
+
+                                            <div class="search-actions text-center">
+                                                <span class="text-info">$</span>
+
+                                                <span class="blue bolder bigger-150">300</span>
+
+                                                monthly
+                                                <div class="action-buttons bigger-125">
+                                                    <a href="#">
+                                                        <i class="ace-icon fa fa-phone green"></i>
+                                                    </a>
+
+                                                    <a href="#">
+                                                        <i class="ace-icon fa fa-heart red"></i>
+                                                    </a>
+
+                                                    <a href="#">
+                                                        <i class="ace-icon fa fa-star orange2"></i>
+                                                    </a>
+                                                </div>
+                                                <a class="search-btn-action btn btn-sm btn-block btn-info">Book it!</a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="media search-media disabled">
+                                        <div class="media-left">
+                                            <a href="#">
+                                                <img class="media-object" data-src="holder.js/72x72" />
+                                            </a>
+                                        </div>
+
+                                        <div class="media-body">
+                                            <div>
+                                                <h4 class="media-heading">
+                                                    <a href="#" class="blue">Media heading</a>
+                                                </h4>
+                                            </div>
+                                            <p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis ...</p>
+
+                                            <div class="search-actions text-center">
+                                                <span class="grey">$</span>
+
+                                                <span class="grey bolder bigger-125">250</span>
+
+                                                monthly
+                                                <div class="action-buttons bigger-125">
+                                                    <a href="#">
+                                                        <i class="ace-icon fa fa-phone green"></i>
+                                                    </a>
+
+                                                    <a href="#">
+                                                        <i class="ace-icon fa fa-heart red"></i>
+                                                    </a>
+
+                                                    <a href="#">
+                                                        <i class="ace-icon fa fa-star orange2"></i>
+                                                    </a>
+                                                </div>
+                                                <a class="search-btn-action btn btn-sm btn-block btn-grey disabled">Unavailable!</a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="media search-media">
+                                        <div class="media-left">
+                                            <a href="#">
+                                                <img class="media-object" data-src="holder.js/72x72" />
+                                            </a>
+                                        </div>
+
+                                        <div class="media-body">
+                                            <div>
+                                                <h4 class="media-heading">
+                                                    <a href="#" class="blue">Media heading</a>
+                                                </h4>
+                                            </div>
+                                            <p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis ...</p>
+
+                                            <div class="search-actions text-center">
+                                                <span class="text-info">$</span>
+
+                                                <span class="blue bolder bigger-150">220</span>
+
+                                                monthly
+                                                <div class="action-buttons bigger-125">
+                                                    <a href="#">
+                                                        <i class="ace-icon fa fa-phone green"></i>
+                                                    </a>
+
+                                                    <a href="#">
+                                                        <i class="ace-icon fa fa-heart red"></i>
+                                                    </a>
+
+                                                    <a href="#">
+                                                        <i class="ace-icon fa fa-star orange2"></i>
+                                                    </a>
+                                                </div>
+                                                <a class="search-btn-action btn btn-sm btn-block btn-info">Book it!</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+    @section Scripts {
+        <script src="~/js/FlightSeacrh.js"></script>
+        <script>
+            jQuery(function ($) {
+                $('.select2').select2({ allowClear: true });
+                $('.input-daterange').datepicker({ autoclose: true, format: 'd-M-yyyy', startDate: '3d' });
+            });
+        </script>
+    }
 
 
 

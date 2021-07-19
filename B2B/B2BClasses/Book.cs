@@ -446,7 +446,7 @@ namespace B2BClasses
             switch (serviceProvider)
             {
                 case enmServiceProvider.TBO:
-                    return _tbo;
+                    return null;
                 case enmServiceProvider.TripJack:
                     return _tripJack;
             }
@@ -467,6 +467,10 @@ namespace B2BClasses
             {
                 mdlSearchResponse mdlR = null;
                 IWingFlight wingflight = GetFlightObject(sp);
+                if (wingflight == null)
+                {
+                    continue;
+                }
                 if (mdlRq.JourneyType == enmJourneyType.SpecialReturn)
                 {
                     throw new NotImplementedException();

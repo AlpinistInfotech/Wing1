@@ -54,7 +54,7 @@ namespace B2BApis.Controllers
         }
         [Route("SearchFlight")]
         [HttpPost]
-        [Authorize(policy: nameof(enmDocumentMaster.Search_Flight))]
+        //[Authorize(policy: nameof(enmDocumentMaster.Search_Flight))]
         public async Task<mdlBookingSearchApi> SearchFlight([FromServices] IBooking booking, mdlSearchRequest mdl)
         {
             mdlBookingSearchApi bookingsearch = new mdlBookingSearchApi();
@@ -65,7 +65,7 @@ namespace B2BApis.Controllers
                 {
                     booking.CustomerId = _customerId;
                     booking.UserId = _userId;
-                    bookingsearch.mdlSearches = await booking.SearchFlight(mdl);
+                    bookingsearch.mdlSearches = await booking.SearchFlightMinPrices(mdl);
                     bookingsearch.StatusCode = 1;
                     bookingsearch.StatusMessage = "Success";
                 }

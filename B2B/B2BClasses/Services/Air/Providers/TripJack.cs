@@ -404,7 +404,7 @@ namespace B2BClasses.Services.Air
 
         private SearchqueryWraper SearchRequestMap(mdlSearchRequest request)
         {
-            enmCabinClass enmCabin = request.Segments[0].FlightCabinClass;
+            enmCabinClass enmCabin = request.Segments[0].FlightCabinClass== enmCabinClass.ALL? enmCabinClass.ECONOMY: request.Segments[0].FlightCabinClass;
             List<Routeinfo> routeinfos = new List<Routeinfo>();
             for (int i = 0; i < request.Segments.Count(); i++)
             {

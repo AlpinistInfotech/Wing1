@@ -15,7 +15,7 @@ namespace B2BApis.Model
 
     public class mdlBookingSearchApi : mdlHttpStatus
     {
-        public IEnumerable<mdlSearchResponse> mdlSearches { get; set; }
+        public mdlSearchResponse mdlSearches { get; set; }
     }
 
     public class mdlAirportApi : mdlHttpStatus
