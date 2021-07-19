@@ -970,7 +970,7 @@ namespace B2BClasses.Services.Air
             public Fd1 fd { get; set; }
             public string fareIdentifier { get; set; }
             public string id { get; set; }
-            public string messages { get; set; }
+            public string[] messages { get; set; }
             public string[] msri { get; set; }
             public string sri { get; set; }
         }
