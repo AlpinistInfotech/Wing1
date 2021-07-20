@@ -1067,7 +1067,7 @@ namespace B2bApplication.Controllers
 
         #region Credit Approval
 
-        public IActionResult CreditApproval()
+        public IActionResult PaymentApproval()
         {
             dynamic messagetype = TempData["MessageType"];
             mdlPaymentRequest mdl = new mdlPaymentRequest();
@@ -1081,7 +1081,7 @@ namespace B2bApplication.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreditApprovalAsync(mdlPaymentRequest mdl, [FromServices] ICustomerWallet customerWallet)
+        public async Task<IActionResult> PaymentApprovalAsync(mdlPaymentRequest mdl, [FromServices] ICustomerWallet customerWallet)
         {
             List<int> creditpending_checkedlist = mdl.PaymentRequestList.Where(p => p.paymentrequestid).Select(p => p.Id).ToList();
             var TobeUpdated = _context.tblPaymentRequest.Where(p => creditpending_checkedlist.Contains(p.Id) && p.Status == enmApprovalStatus.Pending).ToList();

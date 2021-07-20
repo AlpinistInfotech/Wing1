@@ -386,6 +386,8 @@ namespace B2bApplication.Models
 
         [Display(Name = "Transaction Date")]
         public DateTime TransactionDate { get; set; }
+        public List<mdlPaymentWraper> PaymentWraper { get; set; }
+
     }
 
     public class mdlPaymentRequestWraper : tblPaymentRequest
@@ -394,6 +396,10 @@ namespace B2bApplication.Models
         public string CustomerName { get; set; }
         public string Code { get; set; }
 
+    }
+
+    public class mdlPaymentWraper  : tblPaymentRequest
+    {
     }
 
     public class mdlFlightBookingReport
