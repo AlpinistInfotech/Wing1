@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "B2BClasses": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}

@@ -11,18 +11,24 @@ app.controller('flightCtrl', function ($scope, $http) {
     }
     let tempairport = localStorage.getItem("Airport");    
     if (tempairport == null) {
-        var config = {
+        
+
+        fetch(apiRootPath + "api/Home/SearchAirPort", {
+            method: "GET",            
             headers: {
+                "Content-Type": "application/json; charset=utf-8",
                 'Authorization': 'Bearer ' + tokkenData.tokken,
-                "Content-Type": "application/json; charset=utf-8"
             }
-        }
-        $http.get(apiRootPath +"api/Home/SearchAirPort", config)
-            .then(function (response) {
+        }).then(function (response) {
+
                 if (response.data.statusCode == 1) {
                     $scope.airportData = response.data.tblAirports;
                     localStorage.setItem("Airport", JSON.stringify($scope.airportData));
                     DisableLoader();
+                }
+                else {
+                    DisableLoader();
+                    toastr.error(response.data.statusMessage, "Error", { timeOut: 10000 });
                 }
             });
     }
@@ -67,11 +73,15 @@ app.controller('flightCtrl', function ($scope, $http) {
             body: modelData 
         }).then(response => response.json())
             .then(data => {
-                if (data.statusCode == 1){
+                if (data.statusCode == 1) {
                     $scope.mdlSearches = data.mdlSearches;
-                    
                     DisableLoader();
                 }
+                else {
+                    DisableLoader();
+                    toastr.error(response.data.statusMessage, "Error", { timeOut: 10000 });
+                }
+
             }).catch(function (err) {
                 alert("Something went wrong!", err);
             });
