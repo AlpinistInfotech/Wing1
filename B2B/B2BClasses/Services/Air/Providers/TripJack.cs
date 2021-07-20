@@ -595,6 +595,7 @@ namespace B2BClasses.Services.Air
             {
                 if (HaveResponse.Code == 0)
                 {
+                    HaveResponse.Message = HaveResponse.Message.Replace(",\"messages\":[]", "");
                     mdl = (JsonConvert.DeserializeObject<SearchresultWraper>(HaveResponse.Message));
                 }
                 if (mdl != null)
