@@ -1076,7 +1076,7 @@ namespace B2bApplication.Controllers
                 ViewBag.SaveStatus = (int)messagetype;
                 ViewBag.Message = TempData["Message"];
             }
-            mdl.PaymentRequestList = GetPaymentRequest(_context, 0, 0);
+     //       mdl.PaymentRequestList = GetPaymentRequest(_context, 0, 0);
             return View(mdl);
         }
 
@@ -1089,7 +1089,7 @@ namespace B2bApplication.Controllers
             using (var transaction = _context.Database.BeginTransaction())
             {
                 try
-                {
+            {
                  TobeUpdated.ForEach(p =>
             {
                 p.Status = mdl.Status;
