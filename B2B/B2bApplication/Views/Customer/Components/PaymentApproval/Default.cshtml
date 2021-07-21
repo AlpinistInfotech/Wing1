@@ -50,16 +50,10 @@
                                         </button>
 
                                         <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+                                            
+                                            
                                             <li>
-                                                <a href="#" class="tooltip-info" data-rel="tooltip" title="View">
-                                                    <span class="blue">
-                                                        <i class="ace-icon fa fa-search-plus bigger-120"></i>
-                                                    </span>
-                                                </a>
-                                            </li>
-
-                                            <li>
-                                                <a href="/Home/WingMarkup/@md.Id" class="tooltip-success" data-rel="tooltip" title="Edit">
+                                                <a href="/Home/WingMarkup/@md.Id" class="success" data-rel="tooltip" title="Approved">
                                                     <span class="green">
                                                         <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
                                                     </span>
@@ -67,7 +61,7 @@
                                             </li>
 
                                             <li>
-                                                <a href="/Home/WingMarkup/@md.Id" class="tooltip-error" data-rel="tooltip" title="Delete">
+                                                <a href="/Home/WingMarkup/@md.Id" class="ui-icon-cancel" data-rel="tooltip" title="Reject">
                                                     <span class="red">
                                                         <i class="ace-icon fa fa-trash-o bigger-120"></i>
                                                     </span>
@@ -78,7 +72,7 @@
                                 </div>
                             </td>
                             <td>
-                                @md.tblCustomerMaster.CustomerName  -  @md.tblCustomerMaster.Code
+                                @md.Code
                             </td>
                             <td>
                                 @md.TransactionType
@@ -93,7 +87,9 @@
                                 @md.TransactionDate.ToString("dd-MMM-yyyy")
                             </td>
                             <td>
-                                @md.UploadImages
+                                <a href="@md.UploadImages" class="success" data-rel="tooltip" title="View File" target="_blank">View File
+                                </a>
+                                
                             </td>
                             <td>
                                 @md.CreatedRemarks
