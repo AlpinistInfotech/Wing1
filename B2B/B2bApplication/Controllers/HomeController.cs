@@ -318,12 +318,12 @@ namespace B2bApplication.Controllers
                     success = false
                 };
             }
-            return new mdlStatus()
-            {
-                httpStatus = 401,
-                message = "Unautorize Access",
-                success = false
-            };
+            //return new mdlStatus()
+            //{
+            //    httpStatus = 401,
+            //    message = "Unautorize Access",
+            //    success = false
+            //};
 
 
         }
@@ -502,7 +502,7 @@ namespace B2bApplication.Controllers
 
         [HttpGet]
         [Authorize(policy: nameof(enmDocumentMaster.Markup))]
-        public async Task<IActionResult> WingMarkup(string Id,[FromServices] IMarkup markup)
+        public IActionResult WingMarkup(string Id,[FromServices] IMarkup markup)
         {   
             ViewBag.Message = TempData["Message"];
             if (ViewBag.Message != null)
@@ -516,7 +516,7 @@ namespace B2bApplication.Controllers
                 int.TryParse(Id, out ID);
                 if (ID > 0)
                 {
-                    mdl.WingMarkup = markup.LoadMarkup(0).FirstOrDefault();
+                    mdl.WingMarkup = markup.LoadMarkup(ID).FirstOrDefault();
                 }
                 
             }
@@ -531,7 +531,7 @@ namespace B2bApplication.Controllers
 
         [Authorize(policy: nameof(enmDocumentMaster.Markup))]
         [HttpPost]
-        public async Task<IActionResult> WingMarkup(mdlWingMarkupWraper mdl,string submitData, [FromServices]IMarkup markup)
+        public IActionResult WingMarkup(mdlWingMarkupWraper mdl,string submitData, [FromServices]IMarkup markup)
         {
             bool IsUpdated = false;
             if (mdl.WingMarkup.Id>0)
@@ -646,7 +646,7 @@ namespace B2bApplication.Controllers
 
         [HttpGet]
         [Authorize(policy: nameof(enmDocumentMaster.ConvenienceFee))]
-        public async Task<IActionResult> Convenience(string Id, [FromServices] IMarkup markup)
+        public IActionResult Convenience(string Id, [FromServices] IMarkup markup)
         {
             ViewBag.Message = TempData["Message"];
             if (ViewBag.Message != null)
@@ -660,7 +660,7 @@ namespace B2bApplication.Controllers
                 int.TryParse(Id, out ID);
                 if (ID > 0)
                 {
-                    mdl.WingMarkup = markup.LoadConvenience(0).FirstOrDefault();
+                    mdl.WingMarkup = markup.LoadConvenience(ID).FirstOrDefault();
                 }
 
             }
@@ -675,7 +675,7 @@ namespace B2bApplication.Controllers
 
         [Authorize(policy: nameof(enmDocumentMaster.ConvenienceFee))]
         [HttpPost]
-        public async Task<IActionResult> Convenience(mdlWingMarkupWraper mdl, string submitData, [FromServices] IMarkup markup)
+        public IActionResult Convenience(mdlWingMarkupWraper mdl, string submitData, [FromServices] IMarkup markup)
         {
             bool IsUpdated = false;
             if (mdl.WingMarkup.Id > 0)
@@ -789,7 +789,7 @@ namespace B2bApplication.Controllers
 
         [HttpGet]
         [Authorize(policy: nameof(enmDocumentMaster.Discount))]
-        public async Task<IActionResult> Discount(string Id, [FromServices] IMarkup markup)
+        public IActionResult Discount(string Id, [FromServices] IMarkup markup)
         {
             ViewBag.Message = TempData["Message"];
             if (ViewBag.Message != null)
@@ -803,7 +803,7 @@ namespace B2bApplication.Controllers
                 int.TryParse(Id, out ID);
                 if (ID > 0)
                 {
-                    mdl.WingMarkup = markup.LoadDiscount(0).FirstOrDefault();
+                    mdl.WingMarkup = markup.LoadDiscount(ID).FirstOrDefault();
                 }
 
             }
@@ -818,7 +818,7 @@ namespace B2bApplication.Controllers
 
         [Authorize(policy: nameof(enmDocumentMaster.Discount))]
         [HttpPost]
-        public async Task<IActionResult> Discount(mdlWingMarkupWraper mdl, string submitData, [FromServices] IMarkup markup)
+        public IActionResult Discount(mdlWingMarkupWraper mdl, string submitData, [FromServices] IMarkup markup)
         {
             bool IsUpdated = false;
             if (mdl.WingMarkup.Id > 0)
@@ -932,7 +932,7 @@ namespace B2bApplication.Controllers
 
 
         [Authorize]
-        public async Task<IActionResult> CustomerFlightAPI(string Id, [FromServices] IMarkup markup)
+        public IActionResult CustomerFlightAPI(string Id, [FromServices] IMarkup markup)
         {
             ViewBag.Message = TempData["Message"];
             if (ViewBag.Message != null)
@@ -946,7 +946,7 @@ namespace B2bApplication.Controllers
                 int.TryParse(Id, out ID);
                 if (ID > 0)
                 {
-                    mdl.WingMarkup = markup.LoadCustomerFlightAPI(0).FirstOrDefault();
+                    mdl.WingMarkup = markup.LoadCustomerFlightAPI(ID).FirstOrDefault();
                 }
 
             }
@@ -961,7 +961,7 @@ namespace B2bApplication.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> CustomerFlightAPI(mdlWingMarkupWraper mdl, string submitData, [FromServices] IMarkup markup)
+        public IActionResult CustomerFlightAPI(mdlWingMarkupWraper mdl, string submitData, [FromServices] IMarkup markup)
         {
             bool IsUpdated = false;
             if (mdl.WingMarkup.Id > 0)
@@ -1052,8 +1052,6 @@ namespace B2bApplication.Controllers
                         }
                     }
                 }
-
-
             }
             else
             {
@@ -1064,13 +1062,13 @@ namespace B2bApplication.Controllers
             return View(mdl);
         }
 
-        public async Task<IActionResult> ProviderSettings()
+        public IActionResult ProviderSettings()
         {
            
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> ProviderSettings(mdlProviderSettings mdl,tblActiveSerivceProvider provider)
+        public IActionResult ProviderSettings(mdlProviderSettings mdl,tblActiveSerivceProvider provider)
         {
 
             
