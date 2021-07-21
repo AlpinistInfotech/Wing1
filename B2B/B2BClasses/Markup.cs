@@ -783,6 +783,76 @@ namespace B2BClasses
             }
         }
 
+
+        public void WingDiscount(List<List<mdlSearchResult>> mdl, int AdultCount = 1, int ChildCount = 0, int InfantCount = 0)
+        {
+            if (mdl == null)
+            {
+                return;
+            }
+            List<mdlWingMarkup> allMarkup = LoadMarkup(0, false, true);
+            LoadMarkupAirlineCode(allMarkup);
+            for (int i = 0; i < mdl.Count; i++)
+            {
+                for (int j = 0; j < mdl[i].Count; j++)
+                {
+                    for (int k = 0; k < allMarkup.Count; k++)
+                    {
+
+                        if (AirlineApplicability(allMarkup[k], mdl[i][j]) &&
+                            ServiceProviderApplicability(allMarkup[k], mdl[i][j]) &&
+                            FlightDirectMarkup(allMarkup[k], mdl[i][j])
+                            )
+                        {
+
+                            if (allMarkup[k].Applicability.HasFlag(enmMarkupApplicability.OnTicket))
+                            {
+                                for (int j1 = 0; j1 < mdl[i][j].TotalPriceList.Count; j1++)
+                                {
+                                    if (FlightCabinClass(allMarkup[k], mdl[i][j].TotalPriceList[j1]))
+                                    {
+                                        mdl[i][j].TotalPriceList[j1].WingMarkup =
+                                            mdl[i][j].TotalPriceList[j1].WingMarkup + allMarkup[k].Amount;
+                                    }
+                                }
+                            }
+                            else if (allMarkup[k].Applicability.HasFlag(enmMarkupApplicability.OnPassenger))
+                            {
+                                for (int j1 = 0; j1 < mdl[i][j].TotalPriceList.Count; j1++)
+                                {
+                                    if (FlightCabinClass(allMarkup[k], mdl[i][j].TotalPriceList[j1]))
+                                    {
+                                        //Adult Markup
+                                        if (AdultCount > 0 && (allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Adult) || allMarkup[k].IsAllPessengerType))
+                                        {
+                                            mdl[i][j].TotalPriceList[j1].ADULT.FareComponent.WingMarkup =
+                                            mdl[i][j].TotalPriceList[j1].ADULT?.FareComponent?.WingMarkup ?? 0 + (allMarkup[k].Amount);
+                                        }
+                                        if (ChildCount > 0 && (allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Child) || allMarkup[k].IsAllPessengerType))
+                                        {
+                                            mdl[i][j].TotalPriceList[j1].CHILD.FareComponent.WingMarkup =
+                                            mdl[i][j].TotalPriceList[j1].CHILD?.FareComponent?.WingMarkup ?? 0 + (allMarkup[k].Amount);
+                                        }
+                                        if (InfantCount > 0 && (allMarkup[k].MarkupPassengerType.Any(p => p == enmPassengerType.Infant) || allMarkup[k].IsAllPessengerType))
+                                        {
+                                            mdl[i][j].TotalPriceList[j1].INFANT.FareComponent.WingMarkup =
+                                            mdl[i][j].TotalPriceList[j1].INFANT?.FareComponent?.WingMarkup ?? 0 + (allMarkup[k].Amount);
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+
+
+
+
+                    }
+
+                }
+            }
+        }
+
         public void CustomerMarkup(List<List<mdlSearchResult>> mdl)
         {
             double MarkupAmount = 0;
