@@ -1,27 +1,23 @@
 ﻿@{
-    ViewData["Title"] = "404";
+    ViewData["Title"] = "Hotel";
 }
 <div class="error-container">
     <div class="well">
         <h1 class="grey lighter smaller">
-            <span class="blue bigger-125">
-                <i class="ace-icon fa fa-sitemap"></i>
-                404
-            </span>
-            Page Not Found
+            Book Hotel
         </h1>
 
         <hr />
         <h3 class="lighter smaller">We looked everywhere but we couldn't find it!</h3>
 
         <div>
-            <form class="form-search">
+            <form class="form-search" action="/Home/PageSearch" method="post">
                 <span class="input-icon align-middle">
                     <i class="ace-icon fa fa-search"></i>
 
-                    <input type="text" class="search-query" placeholder="Give it a search..." />
+                    <input type="text" name="Pagename" class="search-query" placeholder="Give it a search..." />
                 </span>
-                <button class="btn btn-sm" type="button">Go!</button>
+                <button class="btn btn-sm" type="submit">Go!</button>
             </form>
 
             <div class="space"></div>

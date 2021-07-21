@@ -72,6 +72,59 @@ namespace B2bApplication.Controllers
             return View();
         }
 
+        public IActionResult Hotel()
+        {
+            return View();
+        }
+        public IActionResult TrainBuses()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult PageSearch()
+        {
+            mdlPageSearch mdl = new mdlPageSearch();
+            return View(mdl);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PageSearchAsync(mdlPageSearch mdl, [FromServices] IAccount account)
+        {
+            bool LoadAll = false;
+            if (string.IsNullOrEmpty(mdl.Pagename) || string.IsNullOrWhiteSpace(mdl.Pagename))
+            {
+                LoadAll = true;
+            }
+
+            List<Document> alldocument = new List<Document>();
+            var eDms = (await account.GetEnmDocumentsAsync(_currentUsers.UserId));
+            foreach (var doc in eDms)
+            {
+                var DD = doc.GetDocumentDetails();
+                if (DD.DocumentType.HasFlag(enmDocumentType.DisplayMenu))
+                {
+                    if (LoadAll)
+                    {
+                        alldocument.Add(DD);
+                    }
+                    else
+                    {
+                        if (DD.Name.Trim().ToLower().Contains(mdl.Pagename.Trim().ToLower()) || DD.Description.Trim().ToLower().Contains(mdl.Pagename.Trim().ToLower()) || doc.ToString().Trim().ToLower().Contains(mdl.Pagename.Trim().ToLower()))
+                        {
+                            alldocument.Add(DD);
+                        }
+                    }
+                    
+                }
+            }
+
+            mdl.alldocument = alldocument;
+
+            return View(mdl);
+        }
+
+
 
         [Authorize]
         public async Task<dynamic> GetMenuAsync([FromServices]ICurrentUsers currentUsers,[FromServices] IAccount account)
@@ -175,6 +228,8 @@ namespace B2bApplication.Controllers
                 mdl.searchResponse = (await _booking.SearchFlightMinPrices(mdl.searchRequest));
                 _markup.CustomerMarkup(mdl.searchResponse.Results);
                 _markup.WingMarkupAmount(mdl.searchResponse.Results, mdl.FlightSearchWraper.AdultCount, mdl.FlightSearchWraper.ChildCount, mdl.FlightSearchWraper.InfantCount);
+                _markup.WingDiscountAmount(mdl.searchResponse.Results, mdl.FlightSearchWraper.AdultCount, mdl.FlightSearchWraper.ChildCount, mdl.FlightSearchWraper.InfantCount);
+
                 _markup.CalculateTotalPriceAfterMarkup(mdl.searchResponse.Results, mdl.FlightSearchWraper.AdultCount, mdl.FlightSearchWraper.ChildCount, mdl.FlightSearchWraper.InfantCount);
                 if ((mdl?.searchResponse?.Results?.Count() ?? 0) == 0)
                 {

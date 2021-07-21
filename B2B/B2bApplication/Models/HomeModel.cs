@@ -13,6 +13,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace B2bApplication.Models
 {
 
+    public class mdlPageSearch
+    {
+        public string Pagename{get;set;}
+        public List<Document> alldocument { get; set; }
+    }
+
     public class mdlFlightReview
     {
         public mdlFareQuotRequest FareQuoteRequest { get; set; }
