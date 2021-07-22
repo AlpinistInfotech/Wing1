@@ -278,28 +278,27 @@
 
                     <ul class="dropdown-menu dropdown-light-blue dropdown-caret">
                         <li>
-                            <a href="#">
+                            <a href="/Home/Privacy">
                                 <i class="ace-icon fa fa-eye bigger-110 blue"></i>
-                                Monthly Visitors
+                                Privacy Policy
                             </a>
                         </li>
 
                         <li>
-                            <a href="#">
+                            <a href="/Home/Faq">
                                 <i class="ace-icon fa fa-user bigger-110 blue"></i>
                                 Active Users
                             </a>
                         </li>
 
-                        <li>
+                        @*<li>
                             <a href="#">
                                 <i class="ace-icon fa fa-cog bigger-110 blue"></i>
                                 Settings
                             </a>
-                        </li>
+                        </li>*@
                     </ul>
                 </li>
-
                 <li>
                     <a href="#">
                         <i class="ace-icon fa fa-envelope"></i>
@@ -309,12 +308,12 @@
                 </li>
             </ul>
 
-            <form class="navbar-form navbar-left form-search" role="search">
+            <form class="navbar-form navbar-left form-search" role="search" action="/Home/PageSearch" method="post">
                 <div class="form-group">
-                    <input type="text" placeholder="search" />
+                    <input type="text" placeholder="search" name="Pagename" />
                 </div>
 
-                <button type="button" class="btn btn-mini btn-info2">
+                <button type="submit" class="btn btn-mini btn-info2">
                     <i class="ace-icon fa fa-search icon-only bigger-110"></i>
                 </button>
             </form>

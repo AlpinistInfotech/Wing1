@@ -149,7 +149,7 @@ namespace B2bApplication.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> CustomerMaster(string Id,[FromServices]IMasters masters )
+        public IActionResult CustomerMaster(string Id,[FromServices]IMasters masters )
         {
             dynamic messagetype = TempData["MessageType"];            
             if (messagetype != null)

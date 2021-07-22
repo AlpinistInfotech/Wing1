@@ -150,7 +150,7 @@ namespace B2BClasses.Services.Air
         public double NetCommission { get; set; }
         public double SSRP { get; set; }
         public double WingMarkup { get; set; }
-
+        public double WingDiscount { get; set; }
     }
 
     public class mdlSSRP
