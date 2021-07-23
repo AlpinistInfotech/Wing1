@@ -1062,6 +1062,16 @@ namespace B2bApplication.Controllers
             }
             return RedirectToAction("PaymentRequest");
         }
+
+
+        [Authorize(Policy = nameof(enmDocumentMaster.CreditReport))]
+        [HttpGet]
+        public IActionResult PaymentReport()
+        {
+            //mdlFlightBookingReport mdl = new mdlFlightBookingReport();
+            return View();
+        }
+
         #endregion
 
 
