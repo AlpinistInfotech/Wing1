@@ -1,0 +1,83 @@
+﻿@model B2bApplication.Models.mdlPaymentReport
+@using B2BClasses.Services.Enums
+@{
+    ViewData["Title"] = enmDocumentMaster.CreditReport.GetDocumentDetails().Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- PAGE CONTENT BEGINS -->
+        <form action="" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            @Html.AntiForgeryToken()
+        <div class="widget-box">
+            <div class="widget-header">
+                <h4 class="widget-title">@ViewData["Title"]</h4>
+                <div class="widget-toolbar">
+                    <a href="#" data-action="collapse">
+                        <i class="ace-icon fa fa-chevron-up"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="FromDt" class="col-sm-4 control-label"></label>
+                                <div class="col-sm-8">
+                                    <div class="input-daterange input-group">
+                                        <input type="text" class="input-sm form-control" id="DepartureDt" asp-for="FromDt" asp-format="{0:dd-MMM-yyyy}" autocomplete="off" />
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-exchange"></i>
+                                        </span>
+                                        <input type="text" class="input-sm form-control" asp-for="ToDt" asp-format="{0:dd-MMM-yyyy}" autocomplete="off" />
+                                    </div>
+                                    <span asp-validation-for="FromDt" class="text-danger"></span>
+                                    <span asp-validation-for="ToDt" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        @*<div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="DateFliterType" class="col-sm-4 control-label"></label>
+                                <div class="col-sm-8">
+                                    <select asp-for="DateFliterType" class="form-control select2">
+                                        <option value="1"> Booking Date</option>
+                                        <option value="2"> Travel Date</option>
+                                    </select>
+                                    <span asp-validation-for="DateFliterType" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>*@
+                        @*<div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="bookingStatus" class="col-sm-4 control-label"></label>
+                                <div class="col-sm-8">
+                                    <select asp-for="bookingStatus" class="form-control select2">
+                                        <option value="@((int)enmBookingStatus.All)">All</option>
+                                        <option value="@((int)enmBookingStatus.Pending)"> Pending</option>
+                                        <option value="@((int)enmBookingStatus.Booked)"> Booked</option>
+                                        <option value="@((int)enmBookingStatus.Refund)"> Refund</option>
+                                        <option value="@((int)enmBookingStatus.PartialBooked)"> PartialBooked</option>
+                                    </select>
+                                    <span asp-validation-for="bookingStatus" class="text-danger"></span>
+                                </div>
+
+                            </div>
+                        </div>*@
+                        <div class="col-md-2">
+                            <input type="submit" class="btn btn-info" value="Load Data" />
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+              
