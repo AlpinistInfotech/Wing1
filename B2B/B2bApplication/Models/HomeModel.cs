@@ -446,6 +446,23 @@ namespace B2bApplication.Models
         [Display(Name = "Modified Date")]
         public DateTime ModifiedDt { get; set; } 
     }
+
+
+
+    #region ***** Packages ***************
+    public class mdlPackageReports
+    {
+        [Required]
+        [Display(Name = "From Date")]
+        public DateTime FromDate { get; set; }
+        [Required]
+        [Display(Name = "To Date")]
+        public DateTime ToDate { get; set; }
+        public List<tblPackageMaster> Packagedata { get; set; }
+    }
+
+    #endregion
+
 }
 
 

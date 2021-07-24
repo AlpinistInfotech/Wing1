@@ -14,12 +14,14 @@ namespace B2BClasses
 {
     
     
+    
     public interface IBooking
     {
         int CustomerId { get; set; }
         int UserId { get; set; }
 
         Task<mdlBookingResponse> BookingAsync(mdlBookingRequest mdlRq);
+        Task BookPackage(mdlPackageBook mdl, int CustomerId, ICustomerWallet customerWallet);
         Task<mdlFlightCancellationResponse> CancelationAsync(mdlCancellationRequest mdlRq, ICustomerWallet customerWallet);
         Task<mdlFlightCancellationChargeResponse> CancelationChargeAsync(mdlCancellationRequest mdlRq);
         bool CompleteBooking(string traceIds, enmBookingStatus bookingStatus);
@@ -33,6 +35,8 @@ namespace B2BClasses
         Task<List<enmServiceProvider>> GetActiveProviderAsync();
         Task<List<tblAirline>> GetAirlinesAsync();
         Task<List<tblAirport>> GetAirportAsync();
+        string GetBookingNumber(enmWingSearvices SearvicesType);
+        Task<List<tblPackageMaster>> LoadPackage(bool OnlyActive, bool BeetweenCurrentDateRange, bool LoadUserName);
         Task<IEnumerable<mdlSearchResponse>> SearchFlight(mdlSearchRequest mdlRq);
         Task<mdlSearchResponse> SearchFlightMinPrices(mdlSearchRequest mdlRq);
     }
@@ -59,12 +63,12 @@ namespace B2BClasses
             _tbo = tBO;
         }
 
-        public  string GetBookingNumber( enmWingSearvices SearvicesType)
+        public string GetBookingNumber(enmWingSearvices SearvicesType)
         {
             bool IsUpdate = true;
             string ReturnData = "";
-            string yearMonth=DateTime.Now.ToString("YYMM");
-            tblBookingNumberMaster Data =_context.tblBookingNumberMaster.Where(p => p.ServiceId == SearvicesType).FirstOrDefault();
+            string yearMonth = DateTime.Now.ToString("YYMM");
+            tblBookingNumberMaster Data = _context.tblBookingNumberMaster.Where(p => p.ServiceId == SearvicesType).FirstOrDefault();
             if (Data == null)
             {
                 Data = new tblBookingNumberMaster()
@@ -361,12 +365,12 @@ namespace B2BClasses
 
         private async Task<bool> CancelationSaveinDb(IWingFlight wingflight, mdlCancellationRequest mdlRq, mdlFlightCancellationResponse mdlRes, ICustomerWallet customerWallet)
         {
-            
+
 
             try
             {
                 var CustomerData = _context.tblFlightBookingMaster.Where(p => p.Id == mdlRq.TraceId).FirstOrDefault();
-                
+
                 var CustomerId = CustomerData?.CustomerId ?? 0;
                 customerWallet.CustomerId = CustomerId;
                 var FlightDetails = _context.tblFlightBookingSegmentMaster.Where(p => p.TraceId == mdlRq.TraceId && p.BookingId == mdlRq.bookingId).FirstOrDefault();
@@ -403,13 +407,13 @@ namespace B2BClasses
                     CustomerData.BookingStatus = enmBookingStatus.Refund;
                     _context.tblFlightBookingMaster.Update(CustomerData);
                 }
-                await _context.SaveChangesAsync();                
+                await _context.SaveChangesAsync();
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                throw  ex;
-            }            
+                throw ex;
+            }
         }
 
         public bool CustomerPassengerDetailSave(mdlBookingRequest mdlRq, enmBookingStatus bookingStatus, enmServiceProvider sp, string ResponseMessage)
@@ -742,7 +746,7 @@ namespace B2BClasses
             mdlRs = await wingflight.CancellationAsync(mdlRq);
             if (mdlRs.ResponseStatus == 1)
             {
-               await CancelationSaveinDb(wingflight, mdlRq, mdlRs, customerWallet);
+                await CancelationSaveinDb(wingflight, mdlRq, mdlRs, customerWallet);
             }
             return mdlRs;
         }
@@ -766,7 +770,7 @@ namespace B2BClasses
             }
             var sp = traceDetails.ServiceProvider;
             IWingFlight wingflight = GetFlightObject(sp);
-            mdlRs = await wingflight.CancelationChargeAsync(mdlRq);            
+            mdlRs = await wingflight.CancelationChargeAsync(mdlRq);
             return mdlRs;
         }
 
@@ -775,25 +779,25 @@ namespace B2BClasses
 
         #region  **************************** Packages ****************************
 
-        public async Task<List<tblPackageMaster>> LoadPackage(bool OnlyActive,bool BeetweenCurrentDateRange,  bool LoadUserName)
+        public async Task<List<tblPackageMaster>> LoadPackage(bool OnlyActive, bool BeetweenCurrentDateRange, bool LoadUserName)
         {
             DateTime dateTime = DateTime.Now;
 
-            var Query=_context.tblPackageMaster.AsQueryable();
+            var Query = _context.tblPackageMaster.AsQueryable();
             if (OnlyActive)
             {
                 Query = Query.Where(p => p.IsActive);
             }
             if (BeetweenCurrentDateRange)
             {
-                Query = Query.Where(p => p.EffectiveFromDt>= dateTime && p.EffectiveToDt <= dateTime);
+                Query = Query.Where(p => p.EffectiveFromDt >= dateTime && p.EffectiveToDt <= dateTime);
             }
 
-            List<tblPackageMaster> pData =await Query.ToListAsync();
+            List<tblPackageMaster> pData = await Query.ToListAsync();
             if (LoadUserName)
             {
-               var ModifedId=pData.Select(p => p.ModifiedBy).Distinct().ToArray();
-               var Modifedname = _context.tblUserMaster.Where(p => ModifedId.Contains(p.Id)).Select(p=>new {p.UserName, p.Id }).ToList();
+                var ModifedId = pData.Select(p => p.ModifiedBy).Distinct().ToArray();
+                var Modifedname = _context.tblUserMaster.Where(p => ModifedId.Contains(p.Id)).Select(p => new { p.UserName, p.Id }).ToList();
                 pData.ForEach(p =>
                 {
                     p.ModifiedByName = Modifedname.Where(q => q.Id == p.ModifiedBy).FirstOrDefault()?.UserName;
@@ -803,7 +807,7 @@ namespace B2BClasses
             return pData;
         }
 
-        public async Task BookPackage(mdlPackageBook mdl, int CustomerId,ICustomerWallet customerWallet)
+        public async Task BookPackage(mdlPackageBook mdl, int CustomerId, ICustomerWallet customerWallet)
         {
             double MaximumDiscountpercentage = 0;
             double.TryParse(_config["TravelPackage:MaximumDiscountpercentage"], out MaximumDiscountpercentage);
@@ -817,7 +821,7 @@ namespace B2BClasses
             }
             DateTime dateTime = DateTime.Now;
             var PackageMaster = _context.tblPackageMaster.Where(p => p.PackageId == mdl.PackageId && p.IsActive).FirstOrDefault();
-            
+
 
             if (PackageMaster == null)
             {
@@ -831,24 +835,24 @@ namespace B2BClasses
                 mdl.Message = "Package Expire";
                 return;
             }
-            if ((mdl?.PassengerDetails?.Count ?? 0)==0)
+            if ((mdl?.PassengerDetails?.Count ?? 0) == 0)
             {
                 mdl.Code = 1;
                 mdl.Message = "Please enter at least a passenger";
                 return;
             }
-            
+
             //Calculate total price
             int TotalAdultCount = mdl.PassengerDetails.Where(p => p.passengerType == enmPassengerType.Adult).Count();
             int TotalChildCount = mdl.PassengerDetails.Where(p => p.passengerType == enmPassengerType.Child).Count();
-            int TotalInfantCount = mdl.PassengerDetails.Where(p => p.passengerType == enmPassengerType.Infant).Count();            
-            if(TotalAdultCount==0)
+            int TotalInfantCount = mdl.PassengerDetails.Where(p => p.passengerType == enmPassengerType.Infant).Count();
+            if (TotalAdultCount == 0)
             {
                 mdl.Code = 1;
                 mdl.Message = "Please enter at least an adult passenger";
                 return;
             }
-            double AdultFare = PackageMaster.AdultPrice* TotalAdultCount;
+            double AdultFare = PackageMaster.AdultPrice * TotalAdultCount;
             double ChildFare = PackageMaster.ChildPrice * TotalChildCount;
             double InafnFare = PackageMaster.InfantPrice * TotalInfantCount;
             double TotalPrice = AdultFare + ChildFare + InafnFare;
@@ -856,7 +860,7 @@ namespace B2BClasses
             if (Discont > (TotalPrice * MaximumDiscountpercentage))
             {
                 mdl.Code = 1;
-                mdl.Message = string.Format( "Discount amount Should not be Greater then {0}%", MaximumDiscountpercentage*100);
+                mdl.Message = string.Format("Discount amount Should not be Greater then {0}%", MaximumDiscountpercentage * 100);
                 return;
             }
             double NetPrice = TotalPrice - Discont;
@@ -869,7 +873,7 @@ namespace B2BClasses
                 return;
             }
 
-            var CustomerMpin=_context.tblCustomerBalance.Where(p => p.CustomerId == this._CustomerId).FirstOrDefault()?.MPin??"0000";
+            var CustomerMpin = _context.tblCustomerBalance.Where(p => p.CustomerId == this._CustomerId).FirstOrDefault()?.MPin ?? "0000";
             if (CustomerMpin != mdl.Mpin)
             {
                 mdl.Code = 1;
@@ -877,7 +881,7 @@ namespace B2BClasses
                 return;
             }
 
-            string BookingId  =GetBookingNumber(enmWingSearvices.Package);
+            string BookingId = GetBookingNumber(enmWingSearvices.Package);
 
             using (var transaction = _context.Database.BeginTransaction())
             {
@@ -907,16 +911,16 @@ namespace B2BClasses
                         PassportExpiryDate = p.PassportExpiryDate,
                         PassportIssueDate = p.PassportIssueDate
                     }).ToList(),
-                    tblPackageBookingDiscussionDetails= mdl.tblPackageBookingDiscussionDetails.ToList()
+                    tblPackageBookingDiscussionDetails = mdl.tblPackageBookingDiscussionDetails.ToList()
                 };
 
                 _context.tblPackageBooking.Add(tpb);
                 _context.SaveChanges();
                 transaction.Commit();
 
-                mdl.Message = string.Format(string.Format( "Package Booked Successfully, Booking Id :{0}",BookingId));
+                mdl.Message = string.Format(string.Format("Package Booked Successfully, Booking Id :{0}", BookingId));
             }
-            
+
 
         }
 

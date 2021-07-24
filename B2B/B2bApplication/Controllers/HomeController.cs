@@ -1162,7 +1162,13 @@ namespace B2bApplication.Controllers
         }
 
 
-        [Authorize(nameof())]
+        [Authorize(nameof(enmDocumentMaster.PackageReport))]
+        public async Task<IActionResult> PackageReport()
+        {
+            var data= (await _booking.LoadPackage(false, false, true)).OrderByDescending(p=>p.CreatedDt);
+            return View(data);
+        }
+        [Authorize(nameof(enmDocumentMaster.CreatePackage))]
         public IActionResult CreatePackage()
         { 
         }

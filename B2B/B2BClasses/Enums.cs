@@ -232,6 +232,10 @@ namespace B2BClasses.Services.Enums
         Credit = 1,
         [SubModule(EnmModule: enmModule.Master, DisplayOrder: 2, Name: "Customer Details Permission", Description: "Detailed Permission for Customer", Icon: "nav-icon fas fa-file", CntrlName: "")]
         CustomerDetailsPermission = 2,
+        [SubModule(EnmModule: enmModule.Setting, DisplayOrder: 3, Name: "Flight Setting", Description: "Detailed Permission for Customer", Icon: "nav-icon fas fa-file", CntrlName: "")]
+        FlightSetting = 3,
+        [SubModule(EnmModule: enmModule.Setting, DisplayOrder: 4, Name: "Package Setting", Description: "Detailed Permission for Customer", Icon: "nav-icon fas fa-file", CntrlName: "")]
+        PackageSetting = 4,
     }
 
 
@@ -277,10 +281,10 @@ namespace B2BClasses.Services.Enums
             DisplayOrder: 1, Name: "Flight Booking", Description: "Flight", Icon: "fa fa-plane", ActionName: "/Customer/FlightBookingReport", IsAdminClaim = false)]
         Flight_Booking_Report = 51,
 
-        [Document(EnmModule: enmModule.Setting, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.Report | enmDocumentType.DisplayMenu,
+        [Document(EnmSubModule: enmSubModule.FlightSetting, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.Report | enmDocumentType.DisplayMenu,
             DisplayOrder: 1, Name: "MarkUp", Description: "MarkUp", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CustomerMarkUp", IsAdminClaim = false)]
         Markup = 101,
-        [Document(EnmModule: enmModule.Setting, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
+        [Document(EnmSubModule: enmSubModule.FlightSetting, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
             DisplayOrder: 2, Name: "Convenience", Description: "Convenience", Icon: "far fa-circle nav-icon", ActionName: "/Home/Convenience", IsAdminClaim = true)]
         ConvenienceFee = 102,
         
@@ -288,21 +292,27 @@ namespace B2BClasses.Services.Enums
             DisplayOrder: 3, Name: "IP Filter", Description: "Filter The IP of Customer", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CustomerIPFilter", IsAdminClaim = false)]
         IP_Filter = 103,
         
-        [Document(EnmModule: enmModule.Setting, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.Report | enmDocumentType.DisplayMenu,
+        [Document(EnmSubModule: enmSubModule.FlightSetting, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.Report | enmDocumentType.DisplayMenu,
             DisplayOrder: 1, Name: "Wing MarkUp", Description: "Wing MarkUp", Icon: "far fa-circle nav-icon", ActionName: "/Home/WingMarkup", IsAdminClaim = true)]
         WingMarkup = 104,
 
-        [Document(EnmModule: enmModule.Setting, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
+        [Document(EnmSubModule: enmSubModule.FlightSetting, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
            DisplayOrder: 2, Name: "Discount", Description: "Discount", Icon: "far fa-circle nav-icon", ActionName: "/Home/Discount", IsAdminClaim = true)]
         Discount = 105,
 
-        [Document(EnmModule: enmModule.Setting, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
+        //[Document(EnmSubModule: enmSubModule.FlightSetting, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
+        //    DisplayOrder: 2, Name: "Customer - Flight API", Description: "Customer - Flight API", Icon: "far fa-circle nav-icon", ActionName: "/Home/CustomerFlightAPI")]
+        [Document(EnmSubModule: enmSubModule.FlightSetting, DocumentType: enmDocumentType.Create | enmDocumentType.Update ,
             DisplayOrder: 2, Name: "Customer - Flight API", Description: "Customer - Flight API", Icon: "far fa-circle nav-icon", ActionName: "/Home/CustomerFlightAPI")]
         custiomer_apis = 106,
 
-        [Document(EnmModule: enmModule.Setting, DocumentType: enmDocumentType.Create | enmDocumentType.DisplayMenu,
-        DisplayOrder: 1, Name: "ChangePassword", Description: "Change Password", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CustomerChangePassword", IsAdminClaim = true)]
+        [Document(EnmModule: enmModule.Setting, DocumentType: enmDocumentType.Create ,
+        DisplayOrder: 1, Name: "ChangePassword", Description: "Change Password", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CustomerChangePassword", IsAdminClaim = false)]
         ChangePassword = 107,
+
+        [Document(EnmModule: enmModule.Setting, DocumentType: enmDocumentType.Create,
+        DisplayOrder: 1, Name: "Package Report", Description: "View the Packages", Icon: "far fa-circle nav-icon", ActionName: "/Home/PackageReport", IsAdminClaim = true)]
+        PackageReport = 108,
 
 
         [Document(EnmModule: enmModule.Master, DocumentType: enmDocumentType.Create | enmDocumentType.DisplayMenu,
@@ -381,6 +391,14 @@ namespace B2BClasses.Services.Enums
         [Document(EnmModule: enmModule.Booking, DocumentType: enmDocumentType.Create,
         DisplayOrder: 4, Name: "Search Flight", Description: "Search Flight", Icon: "", ActionName: "")]
         Search_Flight = 10103,
+
+
+
+        [Document(EnmSubModule: enmSubModule.PackageSetting, DocumentType: enmDocumentType.Create,
+        DisplayOrder: 4, Name: "Create Package", Description: "Create Packages", Icon: "", ActionName: "/Home/CreatePackage", IsAdminClaim = true)]
+        CreatePackage = 10150,
+
+
         #endregion
 
 
