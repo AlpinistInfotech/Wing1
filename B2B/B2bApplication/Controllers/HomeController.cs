@@ -1170,7 +1170,8 @@ namespace B2bApplication.Controllers
         }
         [Authorize(nameof(enmDocumentMaster.CreatePackage))]
         public IActionResult CreatePackage()
-        { 
+        {
+            return View();
         }
     }
 }
