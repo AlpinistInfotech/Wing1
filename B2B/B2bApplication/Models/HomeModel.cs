@@ -21,6 +21,8 @@ namespace B2bApplication.Models
 
     public class mdlFlightReview
     {
+        [DataType(DataType.Password)]
+        public string Mpin { get; set; }
         public mdlFareQuotRequest FareQuoteRequest { get; set; }
         public List<mdlFareQuotResponse> FareQuotResponse { get; set; }
         public List<mdlFareRuleResponse> FareRule{ get; set; }

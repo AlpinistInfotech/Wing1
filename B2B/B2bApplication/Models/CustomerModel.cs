@@ -423,10 +423,10 @@ namespace B2bApplication.Models
             switch (bookingStatus)
             {
                 case enmBookingStatus.Pending:return "label-info";
+                case enmBookingStatus.Cancel: return "label-danger arrowed-in";
                 case enmBookingStatus.Booked: return "label-success arrowed-in";
                 case enmBookingStatus.Refund: return "label-danger";
-                case enmBookingStatus.PartialBooked: return "label-warning arrowed-in";
-                
+                case enmBookingStatus.PartialBooked: return "label-warning arrowed-in";                
             }
             return "label-inverse";
         }

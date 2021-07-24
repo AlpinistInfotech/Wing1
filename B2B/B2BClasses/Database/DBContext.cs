@@ -34,6 +34,8 @@ namespace B2BClasses.Database
             defaultData.InsertAirline();
             defaultData.InsertServiceProvider();
             defaultData.InsertBank();
+            
+
             #region ************** Remove Default Identity Columns *******************
             modelBuilder.Entity<tblCustomerBalance>().Property(et => et.CustomerId).ValueGeneratedNever();
             modelBuilder.Entity<tblCustomerGSTDetails>().Property(et => et.CustomerId).ValueGeneratedNever();
@@ -151,6 +153,15 @@ namespace B2BClasses.Database
         #region *********************  Ticketing ****************************
         public DbSet<tblTicket> tblTicket { get; set; }
         public DbSet<tblTicketDetails> tblTicketDetails { get; set; }
+        #endregion
+
+        #region ************************* Packages ***************************
+        public DbSet<tblBookingNumberMaster> tblBookingNumberMaster { get; set; }
+        public DbSet<tblPackageMaster> tblPackageMaster { get; set; }
+        public DbSet<tblPackageBooking> tblPackageBooking { get; set; }
+        public DbSet<tblPackageBookingPassengerDetails> tblPackageBookingPassengerDetails { get; set; }
+        public DbSet<tblPackageBookingDiscussionDetails> tblPackageBookingDiscussionDetails { get; set; }
+
         #endregion
 
     }

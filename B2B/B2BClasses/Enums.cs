@@ -8,6 +8,18 @@ using System.Text;
 namespace B2BClasses.Services.Enums
 {
 
+    public enum enmWingSearvices
+    {
+
+        Flight=1,
+        Hotel=2,
+        Buses=3,
+        Taxi = 4,
+        Train=5,
+        Package = 10,
+
+    }
+
     public enum enmTicketStatus
     { 
         Open  = 1,        
@@ -37,10 +49,11 @@ namespace B2BClasses.Services.Enums
     {
         Pending=0,
         Booked=1,
-        Refund=2,
-        PartialBooked=3,
-        Failed=4,
-        All=100,
+        Cancel=2,
+        Refund=3,
+        PartialBooked=4,
+        Failed=5,
+        All=100,//Only used for in Search Filter to get the All Data
     }
     public enum enmFlightBookingServiceType
     {
@@ -91,6 +104,9 @@ namespace B2BClasses.Services.Enums
         AccessDenied,
         InvalidOldPassword,
         OldPasswordNewPassordCannotbeSame,
+        MpinNotMatch,
+
+
     }
 
 
@@ -112,10 +128,15 @@ namespace B2BClasses.Services.Enums
 
     public enum enmTransactionType
     {
-        TicketBook,
-        WalletAmountUpdate,
-        PaymentGatewayAmountUpdate,
-        OnCreditUpdate,
+        FlightTicketBook = 1,
+        HotelTicketBook = 2,
+        BusesBook = 3,
+        TaxiBook = 4,
+        TrainTicketBook = 5,
+        PackageBook = 10,        
+        WalletAmountUpdate =100,
+        PaymentGatewayAmountUpdate=101,
+        OnCreditUpdate=102,
     }
 
     public enum enmJourneyType

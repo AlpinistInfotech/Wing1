@@ -255,6 +255,8 @@ namespace B2BClasses.Database
             _modelBuilder.Entity<tblBankMaster>().HasData(tbl);
         }
 
+
+
         public void InsertServiceProvider()
         {
 

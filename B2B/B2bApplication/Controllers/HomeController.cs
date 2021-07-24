@@ -465,7 +465,14 @@ namespace B2bApplication.Controllers
                     return RedirectToAction("FlightReview");
                 }
 
-
+                string CustomerMPin=_context.tblCustomerBalance.Where(p => p.CustomerId == _currentUsers.CustomerId).FirstOrDefault()?.MPin ?? "0000";
+                if (CustomerMPin != mdl.Mpin)
+                {
+                    TempData["mdl_"] = s;
+                    TempData["MessageType"] = (int)enmMessageType.Error;
+                    TempData["Message"] =_setting.GetErrorMessage(enmMessage.MpinNotMatch);
+                    return RedirectToAction("FlightReview");
+                }
 
                 await mdl.LoadFareQuotationAsync(_currentUsers.CustomerId, _booking, _markup,_context);
                 IsPriceChanged = mdl.FareQuotResponse.Any(p => p.IsPriceChanged);
@@ -489,7 +496,7 @@ namespace B2bApplication.Controllers
                 }
                 else
                 {
-                    await customerWallet.DeductBalanceAsync(DateTime.Now, mdl.NetFare, enmTransactionType.TicketBook, mdl.FareQuoteRequest.TraceId);
+                    await customerWallet.DeductBalanceAsync(DateTime.Now, mdl.NetFare, enmTransactionType.FlightTicketBook, mdl.FareQuoteRequest.TraceId);
                 }
 
                 //if Price not chnage then Book the Flight
@@ -541,7 +548,7 @@ namespace B2bApplication.Controllers
                     {
                         bookingStatus = enmBookingStatus.Failed;
                         //return the all Amount
-                        await customerWallet.AddBalanceAsync(DateTime.Now, mdl.NetFare, enmTransactionType.TicketBook, string.Concat("Booking Ids", string.Join(',', mdl.FareQuotResponse.Select(p => p.BookingId))));
+                        await customerWallet.AddBalanceAsync(DateTime.Now, mdl.NetFare, enmTransactionType.FlightTicketBook, string.Concat("Booking Ids", string.Join(',', mdl.FareQuotResponse.Select(p => p.BookingId))));
                     }                      
                 }
                 else
@@ -984,8 +991,6 @@ namespace B2bApplication.Controllers
             mdl.SetDefaultDropDown(_context);
             return View(mdl);
         }
-
-
         [Authorize]
         public IActionResult CustomerFlightAPI(string Id, [FromServices] IMarkup markup)
         {
@@ -1154,6 +1159,12 @@ namespace B2bApplication.Controllers
 
             }
             return View();
+        }
+
+
+        [Authorize(nameof())]
+        public IActionResult CreatePackage()
+        { 
         }
     }
 }
