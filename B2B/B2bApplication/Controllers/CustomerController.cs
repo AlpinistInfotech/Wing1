@@ -1062,6 +1062,16 @@ namespace B2bApplication.Controllers
             }
             return RedirectToAction("PaymentRequest");
         }
+
+
+        [Authorize(Policy = nameof(enmDocumentMaster.CreditReport))]
+        [HttpGet]
+        public IActionResult PaymentReport()
+        {
+            //mdlFlightBookingReport mdl = new mdlFlightBookingReport();
+            return View();
+        }
+
         #endregion
 
 
@@ -1076,7 +1086,7 @@ namespace B2bApplication.Controllers
                 ViewBag.SaveStatus = (int)messagetype;
                 ViewBag.Message = TempData["Message"];
             }
-     //       mdl.PaymentRequestList = GetPaymentRequest(_context, 0, 0);
+           mdl.PaymentRequestList = GetPaymentRequest(_context, 0, 0);
             return View(mdl);
         }
 
@@ -1128,7 +1138,7 @@ namespace B2bApplication.Controllers
         {
             string filePath ="wwwroot/"+ _config["FileUpload:PaymentRequestFilePath"];
                         
-            return context.tblPaymentRequest.Where(p => p.Status == status).Select(p=>new mdlPaymentRequestWraper { Id= p.Id, CreatedDt=p.CreatedDt, CustomerId=p.CustomerId, RequestedAmt =p.RequestedAmt , CreatedRemarks=p.CreatedRemarks,CustomerName=p.tblCustomerMaster.CustomerName,Code=p.tblCustomerMaster.Code ,RequestType=p.RequestType,UploadImages= filePath+"/"+ p.UploadImages }).ToList();
+            return context.tblPaymentRequest.Where(p => p.Status == status).Select(p=>new mdlPaymentRequestWraper { Id= p.Id, CreatedDt=p.CreatedDt, CustomerId=p.CustomerId, RequestedAmt =p.RequestedAmt , CreatedRemarks=p.CreatedRemarks,CustomerName=p.tblCustomerMaster.CustomerName,Code=p.tblCustomerMaster.Code ,RequestType=p.RequestType,UploadImages= filePath+"/"+ p.UploadImages,TransactionNumber=p.TransactionNumber,TransactionDate=p.TransactionDate,TransactionType=p.TransactionType }).ToList();
         }
 
         public List<tblCustomerMaster> GetCustomerMaster(DBContext context, bool OnlyActive, int customerid)

@@ -1,14 +1,17 @@
-﻿@model B2bApplication.Models.mdlPaymentRequest
+﻿@model mdlPaymentRequest
 @using B2BClasses.Services.Enums
 @{
     ViewData["Title"] = enmDocumentMaster.CreditApproval.GetDocumentDetails().Name;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<form action="@Url.Action()" method="post">
+    @Html.AntiForgeryToken();
+    <div asp-validation-summary="All" class="text-danger"></div>
 
-<div class="row">
-    <div class="col-md-12">
-        <!-- PAGE CONTENT BEGINS -->
+    <div class="row">
+        <div class="col-md-12">
+            <!-- PAGE CONTENT BEGINS -->
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="widget-box">
                 <div class="widget-header">
@@ -19,105 +22,138 @@
                         </a>
                     </div>
                 </div>
+
+
+                <div class="widget-body">
+                    <div class="widget-main">
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="Status"></label>
+                                    <select asp-for="Status" class="form-control select2">
+                                        @foreach (var data in Enum.GetValues(typeof(enmApprovalStatus)))
+                                        {
+                                            <option value="@(data)">@data.ToString() </option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="Status" class="text-danger"></span>
+
+
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="Remarks"></label>
+                                    <input asp-for="Remarks" class="form-control" />
+                                    <span asp-validation-for="Remarks" class="text-danger"></span>
+
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <div class="col-md-offset-3 col-md-9">
+                                        <button class="btn btn-success" type="submit" name="approved">
+                                            <i class="ace-icon fa fa-check bigger-110"></i>
+                                            Submit
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
                 </div>
 
             </div>
 
+        </div>
 
+
+
+        <div class="col-xs-12">
+            <div class="clearfix">
+                <div class="pull-right tableTools-container"></div>
+            </div>
+            <div class="table-header">
+                Results for "Payment Approval List"
+            </div>
+
+            <!-- div.table-responsive -->
+            <!-- div.dataTables_borderWrap -->
+            <div>
+                <table id="dynamic-table" class="table table-striped table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Customer Name - Code</th>
+                            <th>Wallet Type</th>
+                            <th>Amount</th>
+                            <th>Transaction No.</th>
+                            <th>Transaction Date</th>
+                            <th>Attachment</th>
+                            <th>Created Date</th>
+                            <th>Remarks</th>
+
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var md in Model.PaymentRequestList)
+                        {
+                            <tr>
+                                <td class="center">
+                                    <input type="checkbox" class="checkbox" value="@md.Id" />
+                                </td>
+                                <td>
+                                    @md.CustomerName - @md.Code
+                                </td>
+                                <td>
+                                    @md.TransactionType
+                                </td>
+                                <td>
+                                    @md.RequestedAmt
+                                </td>
+                                <td>
+                                    @md.TransactionNumber
+                                </td>
+                                <td>
+                                    @md.TransactionDate.ToString("dd-MMM-yyyy")
+                                </td>
+                                <td>
+                                    <a href="@md.UploadImages" class="success" data-rel="tooltip" title="View File" target="_blank">
+                                        View File
+                                    </a>
+                                </td>
+
+                                <td>
+                                    @md.CreatedDt.ToString("dd-MMM-yyyy")
+
+                                </td>
+                                <td>
+                                    @md.CreatedRemarks
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
     </div>
-@await Component.InvokeAsync("PaymentApproval")
 
-@section Scripts {
-    @(await Html.PartialAsync("_dateTableScriptPartial",6))
+    </form>
+    @section Scripts {
+        <script src="~/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                bsCustomFileInput.init();
+            });
+        </script>
+    }
 
-    <script type="text/javascript">
-        jQuery(function ($) {
-            $('.select2').select2();
-            $('.date-picker').datepicker({
-                autoclose: true,
-                todayHighlight: true
-            })
-        });
-        $(document).ready(function () {
-            $(window).load(function () {
-                //insert all your ajax callback code here.
-                //on Load Check
-                if ($("#cboxIsAllProvider").prop("checked") == true) {
-                    $('#selectIsAllProvider').next(".select2-container").hide();
-                } else {
-                    $('#selectIsAllProvider').next(".select2-container").show();
-                }
-                if ($("#cboxIsAllCustomerType").prop("checked") == true) {
-                    $('#selectIsAllCustomerType').next(".select2-container").hide();
-                } else {
-                    $('#selectIsAllCustomerType').next(".select2-container").show();
-                }
-                if ($("#cboxIsAllCustomer").prop("checked") == true) {
-                    $('#selectIsAllCustomer').next(".select2-container").hide();
-                } else {
-                    $('#selectIsAllCustomer').next(".select2-container").show();
-                }
-                if ($("#cboxIsAllPessengerType").prop("checked") == true) {
-                    $('#selectIsAllPessengerType').next(".select2-container").hide();
-                } else {
-                    $('#selectIsAllPessengerType').next(".select2-container").show();
-                }
-                if ($("#cboxIsAllFlightClass").prop("checked") == true) {
-                    $('#selectIsAllFlightClass').next(".select2-container").hide();
-                } else {
-                    $('#selectIsAllFlightClass').next(".select2-container").show();
-                }
-                if ($("#cboxIsAllAirline").prop("checked") == true) {
-                    $('#selectIsAllAirline').next(".select2-container").hide();
-                } else {
-                    $('#selectIsAllAirline').next(".select2-container").show();
-                }
-            });
-
-            $("#cboxIsAllProvider").change(function () {
-                if (this.checked) {
-                    $('#selectIsAllProvider').next(".select2-container").hide();
-                } else {
-                    $('#selectIsAllProvider').next(".select2-container").show();
-                }
-            });
-            $("#cboxIsAllCustomerType").change(function () {
-                if (this.checked) {
-                    $('#selectIsAllCustomerType').next(".select2-container").hide();
-                } else {
-                    $('#selectIsAllCustomerType').next(".select2-container").show();
-                }
-            });
-            $("#cboxIsAllCustomer").change(function () {
-                if (this.checked) {
-                    $('#selectIsAllCustomer').next(".select2-container").hide();
-                } else {
-                    $('#selectIsAllCustomer').next(".select2-container").show();
-                }
-            });
-            $("#cboxIsAllPessengerType").change(function () {
-                if (this.checked) {
-                    $('#selectIsAllPessengerType').next(".select2-container").hide();
-                } else {
-                    $('#selectIsAllPessengerType').next(".select2-container").show();
-                }
-            });
-            $("#cboxIsAllFlightClass").change(function () {
-                if (this.checked) {
-                    $('#selectIsAllFlightClass').next(".select2-container").hide();
-                } else {
-                    $('#selectIsAllFlightClass').next(".select2-container").show();
-                }
-            });
-            $("#cboxIsAllAirline").change(function () {
-                if (this.checked) {
-                    $('#selectIsAllAirline').next(".select2-container").hide();
-                } else {
-                    $('#selectIsAllAirline').next(".select2-container").show();
-                }
-            });
-
-        });
-    </script>
-}
