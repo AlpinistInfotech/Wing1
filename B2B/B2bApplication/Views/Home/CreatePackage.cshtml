@@ -9,9 +9,9 @@
 <div class="row">
     <div class="col-md-12">
         <!-- PAGE CONTENT BEGINS -->
-        <form action="@Url.Action()" method="post">
+        <form action="@Url.Action()" method="post"  enctype="multipart/form-data">
             @Html.AntiForgeryToken()
-            <div asp-validation-summary="All" class="text-danger"></div>            
+            <div asp-validation-summary="All" class="text-danger"></div>
             <div class="widget-box">
                 <div class="widget-header">
                     <h4 class="widget-title">@ViewData["Title"]</h4>
@@ -61,6 +61,7 @@
 
 
                         </div>
+                        <div class="space-10"></div>
 
                         <div class="row">
                             <div class="col-md-4">
@@ -108,6 +109,7 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="space-10"></div>
 
                         <div class="row">
                             <div class="col-md-4">
@@ -147,6 +149,7 @@
                             </div>
 
                         </div>
+                        <div class="space-10"></div>
 
                         <div class="row">
                             <div class="col-md-4">
@@ -188,22 +191,95 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="space-10"></div>
 
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label asp-for="NumberOfDay" class="col-sm-4 control-label"></label>
+                                    <label asp-for="LongDescription" class="col-sm-4 control-label"></label>
                                     <div class="col-sm-8">
                                         <div class="input-group">
-                                            <input type="number" min="1" max="100" step="1" asp-for="NumberOfDay" class="form-control" />
-                                            <span asp-validation-for="NumberOfDay" class="text-danger"></span>
+                                            <textarea name="LongDescription" id="editor" maxlength="4000">                                                
+                                            </textarea>
+                                            <span asp-validation-for="LongDescription" class="text-danger"></span>
                                         </div>
 
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="space-10"></div>
 
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="ThumbnailImage"></label>
+                                    <div class="input-group">
+                                        <div class="custom-file">
+                                            <input asp-for="UploadPackageThumbnail" class="custom-file-input" accept="image/x-png,image/jpeg" />
+                                            <label class="custom-file-label" asp-for="ThumbnailImage">Choose file</label>
+                                        </div>
+                                    </div>
+                                    <span asp-validation-for="ThumbnailImage" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="AllImage"></label>
+                                    <div class="input-group">
+                                        <div class="custom-file">
+                                            <input asp-for="UploadPackageImage" class="custom-file-input" accept="image/x-png,image/jpeg" multiple />
+                                            <label class="custom-file-label" asp-for="AllImage">Choose file</label>
+                                        </div>
+                                    </div>
+                                    <span asp-validation-for="AllImage" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-10"></div>
+
+                        @if (Model.PackageId > 0)
+                        {
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label asp-for="ThumbnailImage"></label>
+                                    <div class="input-group">
+                                        @if (Model.fileDataThumbnail != null)
+                                        {
+                                            <div class="form-group col-md-4">
+                                                <img src="@string.Format("data:image/png;base64,{0}", Convert.ToBase64String(Model.fileDataThumbnail))" height="300px" width="100%" />
+                                            </div>
+
+                                        }
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="space-10"></div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label asp-for="AllImage"></label>
+                                    <div class="input-group">
+                                        @if (Model.fileDataPackageImage != null)
+                                        {
+                                            foreach (var fileD in Model.fileDataPackageImage)
+                                            {
+                                                if (fileD != null)
+                                                {
+                                                    <div class="form-group col-md-4">
+                                                        <img src="@string.Format("data:image/png;base64,{0}", Convert.ToBase64String(fileD))" height="300px" width="100%" />
+                                                    </div>
+                                                }
+                                            }
+                                        }
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="space-10"></div>
+
+                        }
 
                         <div class="row">
                             <div class="col-md-12">
@@ -236,51 +312,19 @@
 
 
 @section Scripts {
-    <script src="~/assets/js/bootstrap-wysiwyg.min.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/29.0.0/classic/ckeditor.js"></script>
     <script type="text/javascript">
         jQuery(function ($) {
             $('.select2').select2();
             $('.date-picker').datepicker({
                 autoclose: true,
                 todayHighlight: true
-            })
-            $('#editor1').ace_wysiwyg({
-                toolbar:
-                    [
-                        'font',
-                        null,
-                        'fontSize',
-                        null,
-                        { name: 'bold', className: 'btn-info' },
-                        { name: 'italic', className: 'btn-info' },
-                        { name: 'strikethrough', className: 'btn-info' },
-                        { name: 'underline', className: 'btn-info' },
-                        null,
-                        { name: 'insertunorderedlist', className: 'btn-success' },
-                        { name: 'insertorderedlist', className: 'btn-success' },
-                        { name: 'outdent', className: 'btn-purple' },
-                        { name: 'indent', className: 'btn-purple' },
-                        null,
-                        { name: 'justifyleft', className: 'btn-primary' },
-                        { name: 'justifycenter', className: 'btn-primary' },
-                        { name: 'justifyright', className: 'btn-primary' },
-                        { name: 'justifyfull', className: 'btn-inverse' },
-                        null,
-                        { name: 'createLink', className: 'btn-pink' },
-                        { name: 'unlink', className: 'btn-pink' },
-                        null,
-                        //{ name: 'insertImage', className: 'btn-success' },
-                        null,
-                        'foreColor',
-                        null,
-                        { name: 'undo', className: 'btn-grey' },
-                        { name: 'redo', className: 'btn-grey' }
-                    ],
-                'wysiwyg': {
-                    fileUploadError: showErrorAlert
-                }
-            }).prev().addClass('wysiwyg-style2');
+            });
+            ClassicEditor.create(document.querySelector('#editor')).catch(error => {
+                console.error(error);
+            });
+
         });
-        
+
     </script>
 }
