@@ -310,7 +310,7 @@ namespace B2BClasses.Services.Enums
         DisplayOrder: 1, Name: "ChangePassword", Description: "Change Password", Icon: "far fa-circle nav-icon", ActionName: "/Customer/CustomerChangePassword", IsAdminClaim = false)]
         ChangePassword = 107,
 
-        [Document(EnmModule: enmModule.Setting, DocumentType: enmDocumentType.Create | enmDocumentType.DisplayMenu,
+        [Document(EnmSubModule: enmSubModule.PackageSetting, DocumentType: enmDocumentType.Create | enmDocumentType.DisplayMenu,
         DisplayOrder: 1, Name: "Package Report", Description: "View the Packages", Icon: "far fa-circle nav-icon", ActionName: "/Home/PackageReport", IsAdminClaim = true)]
         PackageReport = 108,
 

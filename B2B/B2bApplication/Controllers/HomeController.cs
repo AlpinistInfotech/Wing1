@@ -1248,8 +1248,8 @@ namespace B2bApplication.Controllers
                 if (mdl.UploadPackageImage == null || mdl.UploadPackageImage.Count == 0 || mdl.UploadPackageImage[0] == null || mdl.UploadPackageImage[0].Length == 0)
                 {
                     ModelState.AddModelError("UploadPackageImage", "Invalid Files");
-                    TempData["MessageType"] = enmSaveStatus.danger;
-                    TempData["Message"]= "Invalid Files";
+                    ViewBag.SaveStatus = enmSaveStatus.danger;
+                    ViewBag.Message = "Invalid Thumbnail";
                     //RedirectToAction("CreatePackage",new {Id= mdl.PackageId});
                 }
                 if (mdl.UploadPackageThumbnail == null || mdl.UploadPackageThumbnail.Length == 0)
@@ -1315,8 +1315,8 @@ namespace B2bApplication.Controllers
                         pData.IsDomestic = mdl.IsDomestic;
                         pData.ShortDescription = mdl.ShortDescription;
                         pData.LongDescription = mdl.LongDescription;
-                        pData.EffectiveFromDt = mdl.EffectiveFromDt;
-                        pData.EffectiveToDt = mdl.EffectiveToDt;
+                        pData.EffectiveFromDt = Convert.ToDateTime(mdl.EffectiveFromDt.ToString("dd-MMM-yyyy"));
+                        pData.EffectiveToDt = Convert.ToDateTime(mdl.EffectiveToDt.ToString("dd-MMM-yyyy"));
                         pData.NumberOfDay = mdl.NumberOfDay;
                         pData.NumberOfNight = mdl.NumberOfNight;
                         pData.AdultPrice = mdl.AdultPrice;
@@ -1326,8 +1326,10 @@ namespace B2bApplication.Controllers
                         pData.ModifiedDt = DateTime.Now;
                         pData.ModifiedBy = _currentUsers.UserId;
                         _context.tblPackageMaster.Update(pData);
-                        ViewBag.SaveStatus = enmSaveStatus.success;
-                        ViewBag.Message = _setting.GetErrorMessage(enmMessage.UpdateSuccessfully);
+                        await _context.SaveChangesAsync();
+                        TempData["Message"] = _setting.GetErrorMessage(enmMessage.UpdateSuccessfully);
+                        TempData["MessageType"] = enmSaveStatus.success;
+                        RedirectToAction("CreatePackage");
                     }
                 }
                 else
@@ -1346,8 +1348,8 @@ namespace B2bApplication.Controllers
                     pData.IsDomestic = mdl.IsDomestic;
                     pData.ShortDescription = mdl.ShortDescription;
                     pData.LongDescription = mdl.LongDescription;
-                    pData.EffectiveFromDt = mdl.EffectiveFromDt;
-                    pData.EffectiveToDt = mdl.EffectiveToDt;
+                    pData.EffectiveFromDt = Convert.ToDateTime( mdl.EffectiveFromDt.ToString("dd-MMM-yyyy"));
+                    pData.EffectiveToDt = Convert.ToDateTime(mdl.EffectiveToDt.ToString("dd-MMM-yyyy")) ;
                     pData.NumberOfDay = mdl.NumberOfDay;
                     pData.NumberOfNight = mdl.NumberOfNight;
                     pData.AdultPrice = mdl.AdultPrice;
@@ -1359,11 +1361,11 @@ namespace B2bApplication.Controllers
                     pData.CreatedBy = pData.ModifiedBy.Value;
                     pData.CreatedDt= pData.ModifiedDt.Value;
                     _context.tblPackageMaster.Add(pData);
-                    ViewBag.SaveStatus = enmSaveStatus.success;
-                    ViewBag.Message = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
+                    await _context.SaveChangesAsync();
+                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
+                    TempData["MessageType"] = enmSaveStatus.success;
+                    RedirectToAction("CreatePackage");
                 }
-                
-                
                 
             }
             

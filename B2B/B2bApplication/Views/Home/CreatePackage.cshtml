@@ -68,10 +68,8 @@
                                 <div class="form-group">
                                     <label asp-for="ShortDescription" class="col-sm-4 control-label"></label>
                                     <div class="col-sm-8">
-                                        <div class="input-group">
-                                            <input type="text" asp-for="ShortDescription" class="form-control" />
-                                            <span asp-validation-for="ShortDescription" class="text-danger"></span>
-                                        </div>
+                                        <input type="text" asp-for="ShortDescription" class="form-control" />
+                                        <span asp-validation-for="ShortDescription" class="text-danger"></span>
 
                                     </div>
                                 </div>
@@ -194,51 +192,21 @@
                         <div class="space-10"></div>
 
                         <div class="row">
-                            <div class="col-md-12">
+
+                            <div class="col-xs-12 col-sm-6 col-md-4">
                                 <div class="form-group">
-                                    <label asp-for="LongDescription" class="col-sm-4 control-label"></label>
-                                    <div class="col-sm-8">
-                                        <div class="input-group">
-                                            <textarea name="LongDescription" id="editor" maxlength="4000">                                                
-                                            </textarea>
-                                            <span asp-validation-for="LongDescription" class="text-danger"></span>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="space-10"></div>
-
-                        <div class="row">
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label asp-for="ThumbnailImage"></label>
-                                    <div class="input-group">
-                                        <div class="custom-file">
-                                            <input asp-for="UploadPackageThumbnail" class="custom-file-input" accept="image/x-png,image/jpeg" />
-                                            <label class="custom-file-label" asp-for="ThumbnailImage">Choose file</label>
-                                        </div>
-                                    </div>
+                                    <input id="id-input-file-1" asp-for="UploadPackageThumbnail" type="file" accept="image/x-png,image/jpeg" />
                                     <span asp-validation-for="ThumbnailImage" class="text-danger"></span>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-xs-12 col-sm-6 col-md-4">
                                 <div class="form-group">
-                                    <label asp-for="AllImage"></label>
-                                    <div class="input-group">
-                                        <div class="custom-file">
-                                            <input asp-for="UploadPackageImage" class="custom-file-input" accept="image/x-png,image/jpeg" multiple />
-                                            <label class="custom-file-label" asp-for="AllImage">Choose file</label>
-                                        </div>
-                                    </div>
-                                    <span asp-validation-for="AllImage" class="text-danger"></span>
+                                    <input id="id-input-file-2" asp-for="UploadPackageImage" type="file"  accept="image/x-png,image/jpeg" multiple />
+                                    <span asp-validation-for="UploadPackageImage" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
                         <div class="space-10"></div>
-
                         @if (Model.PackageId > 0)
                         {
                             <div class="col-md-12">
@@ -282,6 +250,26 @@
                         }
 
                         <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label asp-for="LongDescription" class="col-sm-4 control-label"></label>
+                                    <div class="col-sm-10">
+                                        <div class="input-group">
+                                            <textarea name="LongDescription" id="editor" maxlength="4000" cols="10">                                                
+                                            </textarea>
+                                            <span asp-validation-for="LongDescription" class="text-danger"></span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-10"></div>
+
+
+
+
+                        <div class="row">
                             <div class="col-md-12">
                                 <div class="clearfix form-actions">
                                     <div class="col-md-offset-3 col-md-9">
@@ -320,6 +308,36 @@
                 autoclose: true,
                 todayHighlight: true
             });
+
+
+            $('#id-input-file-2').ace_file_input({
+                style: 'well',
+                btn_choose: 'Drop files here or click to choose ',
+                btn_change: null,
+                no_icon: 'ace-icon fa fa-cloud-upload',
+                droppable: false,
+                onchange: null,
+                thumbnail: true, //| true | large
+                whitelist: 'gif|png|jpg|jpeg',
+                blacklist: 'exe|php'
+                ,
+                
+
+            });
+
+            $('#id-input-file-1').ace_file_input({
+                no_file: 'No File ...',
+                btn_choose: 'Choose Thumbail',
+                btn_change: 'Change',
+                droppable: false,
+                onchange: null,
+                thumbnail: true, //| true | large
+                whitelist:'gif|png|jpg|jpeg',
+                blacklist:'exe|php'
+                //onchange:''
+                //
+            });
+            
             ClassicEditor.create(document.querySelector('#editor')).catch(error => {
                 console.error(error);
             });

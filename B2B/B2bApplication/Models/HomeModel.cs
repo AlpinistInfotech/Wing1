@@ -455,10 +455,10 @@ namespace B2bApplication.Models
     {
         [Required]
         [Display(Name = "From Date")]
-        public DateTime FromDate { get; set; }
+        public DateTime FromDate { get; set; } = Convert.ToDateTime(DateTime.Now.ToString("dd-MMM-yyyy"));
         [Required]
         [Display(Name = "To Date")]
-        public DateTime ToDate { get; set; }
+        public DateTime ToDate { get; set; } = Convert.ToDateTime(DateTime.Now.ToString("dd-MMM-yyyy"));
         public List<tblPackageMaster> Packagedata { get; set; }
     }
 
@@ -477,7 +477,7 @@ namespace B2bApplication.Models
         [Display(Name = "Location")]
         public string LocationName { get; set; }
         [Display(Name = "Is Domestic")]
-        public bool IsDomestic { get; set; }
+        public bool IsDomestic { get; set; } = true;
         [Required]
         [StringLength(500, ErrorMessage = "The {0} must be {1} characters long.", MinimumLength = 0)]
         [RegularExpression("[a-zA-Z/.\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
@@ -493,8 +493,10 @@ namespace B2bApplication.Models
         [Display(Name = "Image")]
         public string AllImage { get; set; }
 
-        public DateTime EffectiveFromDt { get; set; }
-        public DateTime EffectiveToDt { get; set; }
+        [DataType(DataType.Date)]
+        public DateTime EffectiveFromDt { get; set; } =  DateTime.Now;
+        [DataType(DataType.Date)]
+        public DateTime EffectiveToDt { get; set; } = DateTime.Now.AddMonths(1);
         [Required]
         [Display(Name = "Adult Price")]
         [Range(0, 1000000)]
@@ -505,7 +507,7 @@ namespace B2bApplication.Models
         [Range(0, 100)]
         public int NumberOfDay { get; set; }
         [Required]
-        [Display(Name = "No of Day")]
+        [Display(Name = "No of Night")]
         [Range(0, 100)]
         public int NumberOfNight { get; set; }
 
@@ -521,7 +523,7 @@ namespace B2bApplication.Models
         public double InfantPrice { get; set; }
         [Required]
         [Display(Name = "Is Active")]
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
         [Required]
         [Display(Name = "Upload Package Image")]
         public List<IFormFile> UploadPackageImage { get; set; }

@@ -21,7 +21,7 @@
             //Date range picker
            $('.reservation').daterangepicker()
 
-        var ViewBagSaveStatus = parseInt(@ViewBag.SaveStatus);
+        var ViewBagSaveStatus = parseInt(@ViewBag.SaveStatus??0);
             switch (ViewBagSaveStatus) {
                 case 1:
                     toastr.success("@ViewBag.Message","Success", {timeOut: 2500});
