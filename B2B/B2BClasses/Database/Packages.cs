@@ -46,8 +46,9 @@ namespace B2BClasses.Database
         public string ThumbnailImage { get; set; }
         [Required]
         [MaxLength(200)]
-        public string AllImage { get; set; }        
-        
+        public string AllImage { get; set; }      
+        public int NumberOfDay { get; set; }
+        public int NumberOfNight { get; set; }
         public DateTime EffectiveFromDt { get; set; }
         public DateTime EffectiveToDt { get; set; }
         public double AdultPrice { get; set; }

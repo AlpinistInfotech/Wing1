@@ -15,7 +15,7 @@ using B2BClasses.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
-
+using System.IO;
 
 namespace B2bApplication.Controllers
 {
@@ -1163,15 +1163,211 @@ namespace B2bApplication.Controllers
 
 
         [Authorize(nameof(enmDocumentMaster.PackageReport))]
-        public async Task<IActionResult> PackageReport()
+        public IActionResult PackageReport()
         {
-            var data= (await _booking.LoadPackage(false, false, true)).OrderByDescending(p=>p.CreatedDt);
-            return View(data);
+            mdlPackageReports mdl = new mdlPackageReports();
+            mdl.Packagedata = new List<tblPackageMaster>();
+            return View(mdl);
         }
-        [Authorize(nameof(enmDocumentMaster.CreatePackage))]
-        public IActionResult CreatePackage()
+        [HttpPost]
+        [Authorize(nameof(enmDocumentMaster.PackageReport))]
+        public async Task<IActionResult> PackageReport(mdlPackageReports mdl)
         {
-            return View();
+            _booking.FromDate =Convert.ToDateTime( mdl.FromDate.ToString("dd-MMM-yyyy"));
+            _booking.ToDate = Convert.ToDateTime(mdl.ToDate.AddDays(1).AddSeconds(-1).ToString("dd-MMM-yyyy"));
+            mdl.Packagedata = (await _booking.LoadPackage(0,false, false, true,true)).OrderByDescending(p => p.CreatedDt).ToList();
+            return View(mdl);
+        }
+
+        [Authorize(nameof(enmDocumentMaster.CreatePackage))]
+        public async Task<IActionResult> CreatePackage(string Id,[FromServices]IConfiguration configuration)
+        {
+            ViewBag.Message = TempData["Message"];
+            if (ViewBag.Message != null)
+            {
+                ViewBag.SaveStatus = (int)TempData["MessageType"];
+            }
+
+            string filePath = configuration["FileUpload:PackageFilePath"];
+
+            var path = Path.Combine(
+                     Directory.GetCurrentDirectory(),
+                     "wwwroot/" + filePath);
+            mdlPackageMaster mdl = new mdlPackageMaster();
+            if (Id != null)
+            {
+                int PackageId = 0;
+                int.TryParse(Id, out PackageId);
+                if (PackageId > 0)
+                {
+
+
+                    var pdata= (await _booking.LoadPackage(PackageId, false, false, false, false)).FirstOrDefault();
+                    if (pdata != null)
+                    {
+                        mdl.PackageId = pdata.PackageId;
+                        mdl.PackageName = pdata.PackageName;
+                        mdl.LocationName = pdata.LocationName;
+                        mdl.IsDomestic = pdata.IsDomestic;
+                        mdl.ShortDescription = pdata.ShortDescription;
+                        mdl.LongDescription = pdata.LongDescription;
+                        mdl.ThumbnailImage = pdata.ThumbnailImage;
+                        mdl.AllImage = pdata.AllImage;
+                        mdl.EffectiveFromDt = pdata.EffectiveFromDt;
+                        mdl.EffectiveToDt = pdata.EffectiveToDt;
+                        mdl.AdultPrice = pdata.AdultPrice;
+                        mdl.ChildPrice = pdata.ChildPrice;
+                        mdl.InfantPrice = pdata.InfantPrice;
+                        mdl.IsActive = pdata.IsActive;
+                        mdl.fileDataPackageImage = new List<byte[]>();
+                        var files = pdata.AllImage.Split(",");
+                        foreach (var file in files)
+                        {
+                            mdl.fileDataPackageImage.Add(System.IO.File.ReadAllBytes(string.Concat(path, file)));
+                        }
+                        mdl.fileDataThumbnail = System.IO.File.ReadAllBytes(string.Concat(path, pdata.ThumbnailImage));
+
+                    }
+                }
+            }
+            return View(mdl);
+        }
+
+        [HttpPost]
+        [Authorize(nameof(enmDocumentMaster.CreatePackage))]
+        public async Task<IActionResult> CreatePackage(mdlPackageMaster mdl, [FromServices] IConfiguration configuration)
+        {
+            
+            string filePath = configuration["FileUpload:PackageFilePath"];
+
+            var path = Path.Combine(
+                     Directory.GetCurrentDirectory(),
+                     "wwwroot/" + filePath);
+            if (mdl.PackageId == 0)
+            {
+                if (mdl.UploadPackageImage == null || mdl.UploadPackageImage.Count == 0 || mdl.UploadPackageImage[0] == null || mdl.UploadPackageImage[0].Length == 0)
+                {
+                    ModelState.AddModelError("UploadPackageImage", "Invalid Files");
+                    TempData["MessageType"] = enmSaveStatus.danger;
+                    TempData["Message"]= "Invalid Files";
+                    //RedirectToAction("CreatePackage",new {Id= mdl.PackageId});
+                }
+                if (mdl.UploadPackageThumbnail == null || mdl.UploadPackageThumbnail.Length == 0)
+                {
+                    ModelState.AddModelError("UploadPackageThumbnail", "Invalid Files");
+                    ViewBag.SaveStatus = enmSaveStatus.danger;
+                    ViewBag.Message = "Invalid Thumbnail";
+                    //RedirectToAction("CreatePackage", new { Id = mdl.PackageId });
+                }
+
+            }
+            
+
+            if (ModelState.IsValid)
+            {
+                List<string> AllFileName = new List<string>();
+                string thumbnail = string.Empty;
+                bool exists = System.IO.Directory.Exists(path);
+                if (!exists)
+                    System.IO.Directory.CreateDirectory(path);
+                foreach (var file in mdl.UploadPackageImage)
+                {
+                    if (file == null || file.Length==0)
+                    {
+                        continue;
+                    }
+                    var filename = Guid.NewGuid().ToString() + ".jpeg";
+                    using (var stream = new FileStream(string.Concat(path, filename), FileMode.Create))
+                    {
+                        AllFileName.Add(filename);
+                        await file.CopyToAsync(stream);
+                    }
+                }
+                if (mdl.UploadPackageThumbnail != null || mdl.UploadPackageThumbnail.Length == 0)
+                {
+                    thumbnail = Guid.NewGuid().ToString() + ".jpeg";
+                    using (var stream = new FileStream(string.Concat(path, thumbnail), FileMode.Create))
+                    {
+                        await mdl.UploadPackageThumbnail.CopyToAsync(stream);
+                    }
+                }
+                if (mdl.PackageId > 0)
+                {
+                    var pData = _context.tblPackageMaster.Where(p => p.PackageId == mdl.PackageId).FirstOrDefault();
+                    if (pData == null)
+                    {
+                        ViewBag.SaveStatus = enmSaveStatus.danger;
+                        ViewBag.Message = "Invalid Thumbnail";
+                    }
+                    else
+                    {
+
+                        if (AllFileName.Count > 0)
+                        {
+                            pData.AllImage = string.Join(",", AllFileName);
+                        }
+                        if (thumbnail != string.Empty)
+                        {
+                            pData.ThumbnailImage = thumbnail;
+                        }
+                        pData.PackageName = mdl.PackageName;
+                        pData.LocationName = mdl.LocationName;
+                        pData.IsDomestic = mdl.IsDomestic;
+                        pData.ShortDescription = mdl.ShortDescription;
+                        pData.LongDescription = mdl.LongDescription;
+                        pData.EffectiveFromDt = mdl.EffectiveFromDt;
+                        pData.EffectiveToDt = mdl.EffectiveToDt;
+                        pData.NumberOfDay = mdl.NumberOfDay;
+                        pData.NumberOfNight = mdl.NumberOfNight;
+                        pData.AdultPrice = mdl.AdultPrice;
+                        pData.ChildPrice = mdl.ChildPrice;
+                        pData.InfantPrice = mdl.InfantPrice;
+                        pData.IsActive = mdl.IsActive;
+                        pData.ModifiedDt = DateTime.Now;
+                        pData.ModifiedBy = _currentUsers.UserId;
+                        _context.tblPackageMaster.Update(pData);
+                        ViewBag.SaveStatus = enmSaveStatus.success;
+                        ViewBag.Message = _setting.GetErrorMessage(enmMessage.UpdateSuccessfully);
+                    }
+                }
+                else
+                {
+                    var pData = new tblPackageMaster();
+                    if (AllFileName.Count > 0)
+                    {
+                        pData.AllImage = string.Join(",", AllFileName);
+                    }
+                    if (thumbnail != string.Empty)
+                    {
+                        pData.ThumbnailImage = thumbnail;
+                    }
+                    pData.PackageName = mdl.PackageName;
+                    pData.LocationName = mdl.LocationName;
+                    pData.IsDomestic = mdl.IsDomestic;
+                    pData.ShortDescription = mdl.ShortDescription;
+                    pData.LongDescription = mdl.LongDescription;
+                    pData.EffectiveFromDt = mdl.EffectiveFromDt;
+                    pData.EffectiveToDt = mdl.EffectiveToDt;
+                    pData.NumberOfDay = mdl.NumberOfDay;
+                    pData.NumberOfNight = mdl.NumberOfNight;
+                    pData.AdultPrice = mdl.AdultPrice;
+                    pData.ChildPrice = mdl.ChildPrice;
+                    pData.InfantPrice = mdl.InfantPrice;
+                    pData.IsActive = mdl.IsActive;
+                    pData.ModifiedDt = DateTime.Now;
+                    pData.ModifiedBy = _currentUsers.UserId;
+                    pData.CreatedBy = pData.ModifiedBy.Value;
+                    pData.CreatedDt= pData.ModifiedDt.Value;
+                    _context.tblPackageMaster.Add(pData);
+                    ViewBag.SaveStatus = enmSaveStatus.success;
+                    ViewBag.Message = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
+                }
+                
+                
+                
+            }
+            
+            return View(mdl);
         }
     }
 }

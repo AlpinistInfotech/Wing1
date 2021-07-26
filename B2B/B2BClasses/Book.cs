@@ -14,10 +14,11 @@ namespace B2BClasses
 {
     
     
-    
     public interface IBooking
     {
         int CustomerId { get; set; }
+        DateTime FromDate { get; set; }
+        DateTime ToDate { get; set; }
         int UserId { get; set; }
 
         Task<mdlBookingResponse> BookingAsync(mdlBookingRequest mdlRq);
@@ -36,7 +37,7 @@ namespace B2BClasses
         Task<List<tblAirline>> GetAirlinesAsync();
         Task<List<tblAirport>> GetAirportAsync();
         string GetBookingNumber(enmWingSearvices SearvicesType);
-        Task<List<tblPackageMaster>> LoadPackage(bool OnlyActive, bool BeetweenCurrentDateRange, bool LoadUserName);
+        Task<List<tblPackageMaster>> LoadPackage(int PackageId, bool OnlyActive, bool BeetweenCurrent, bool LoadUserName, bool BeetweenDateRange);
         Task<IEnumerable<mdlSearchResponse>> SearchFlight(mdlSearchRequest mdlRq);
         Task<mdlSearchResponse> SearchFlightMinPrices(mdlSearchRequest mdlRq);
     }
@@ -48,11 +49,14 @@ namespace B2BClasses
         private readonly IWingFlight _tripJack;
         private readonly IWingFlight _tbo;
 
-        private int _CustomerId;
-        private int _userId;
+        private int _CustomerId, _userId;
+        private DateTime _FromDate, _ToDate;
 
         public int CustomerId { get { return _CustomerId; } set { _CustomerId = value; } }
         public int UserId { get { return _userId; } set { _userId = value; } }
+
+        public DateTime FromDate { get { return _FromDate; } set { _FromDate = value; } }
+        public DateTime ToDate { get { return _ToDate; } set { _ToDate = value; } }
 
 
         public Booking(DBContext context, IConfiguration config, ITripJack tripJack, ITBO tBO)
@@ -779,20 +783,35 @@ namespace B2BClasses
 
         #region  **************************** Packages ****************************
 
-        public async Task<List<tblPackageMaster>> LoadPackage(bool OnlyActive, bool BeetweenCurrentDateRange, bool LoadUserName)
+        public async Task<List<tblPackageMaster>> LoadPackage(int PackageId,bool OnlyActive, bool BeetweenCurrent, bool LoadUserName, bool BeetweenDateRange)
         {
             DateTime dateTime = DateTime.Now;
 
-            var Query = _context.tblPackageMaster.AsQueryable();
-            if (OnlyActive)
-            {
-                Query = Query.Where(p => p.IsActive);
-            }
-            if (BeetweenCurrentDateRange)
-            {
-                Query = Query.Where(p => p.EffectiveFromDt >= dateTime && p.EffectiveToDt <= dateTime);
-            }
 
+            var Query = _context.tblPackageMaster.AsQueryable();
+
+            if (PackageId > 0)
+            {
+                Query = Query.Where(p => p.PackageId== PackageId);
+            }
+            else
+            {
+                if (OnlyActive)
+                {
+                    Query = Query.Where(p => p.IsActive);
+                }
+                if (BeetweenCurrent)
+                {
+                    Query = Query.Where(p => p.EffectiveFromDt <= dateTime && p.EffectiveToDt >= dateTime);
+                }
+                else if (BeetweenDateRange)
+                {
+                    Query = Query.Where(p => (p.EffectiveFromDt <= _FromDate && p.EffectiveToDt >= _FromDate) ||
+                    (p.EffectiveFromDt <= _ToDate && p.EffectiveToDt >= _ToDate) ||
+                    (_FromDate <= p.EffectiveFromDt && p.EffectiveToDt <= _ToDate)
+                    );
+                }
+            }
             List<tblPackageMaster> pData = await Query.ToListAsync();
             if (LoadUserName)
             {

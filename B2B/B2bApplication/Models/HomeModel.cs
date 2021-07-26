@@ -9,6 +9,7 @@ using B2BClasses.Services.Enums;
 using System.ComponentModel.DataAnnotations;
 using B2BClasses.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Http;
 
 namespace B2bApplication.Models
 {
@@ -460,6 +461,77 @@ namespace B2bApplication.Models
         public DateTime ToDate { get; set; }
         public List<tblPackageMaster> Packagedata { get; set; }
     }
+
+
+    public class mdlPackageMaster
+    {
+        public int PackageId { get; set; }
+        [Required]
+        [StringLength(50, ErrorMessage = "The {0} must be {1} characters long.", MinimumLength = 4)]
+        [RegularExpression("[a-zA-Z/.\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
+        [Display(Name = "Package name")]
+        public string PackageName { get; set; }
+        [Required]
+        [StringLength(200, ErrorMessage = "The {0} must be {1} characters long.", MinimumLength = 0)]
+        [RegularExpression("[a-zA-Z/.\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
+        [Display(Name = "Location")]
+        public string LocationName { get; set; }
+        [Display(Name = "Is Domestic")]
+        public bool IsDomestic { get; set; }
+        [Required]
+        [StringLength(500, ErrorMessage = "The {0} must be {1} characters long.", MinimumLength = 0)]
+        [RegularExpression("[a-zA-Z/.\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
+        [Display(Name = "Short Description")]
+        public string ShortDescription { get; set; }
+        [Required]
+        [StringLength(4000, ErrorMessage = "The {0} must be {1} characters long.", MinimumLength = 0)]
+        [Display(Name = "Long Description")]
+        public string LongDescription { get; set; }
+        
+        [Display(Name = "Thumbnail")]
+        public string ThumbnailImage { get; set; }
+        [Display(Name = "Image")]
+        public string AllImage { get; set; }
+
+        public DateTime EffectiveFromDt { get; set; }
+        public DateTime EffectiveToDt { get; set; }
+        [Required]
+        [Display(Name = "Adult Price")]
+        [Range(0, 1000000)]
+        public double AdultPrice { get; set; }
+        
+        [Required]
+        [Display(Name = "No of Day")]
+        [Range(0, 100)]
+        public int NumberOfDay { get; set; }
+        [Required]
+        [Display(Name = "No of Day")]
+        [Range(0, 100)]
+        public int NumberOfNight { get; set; }
+
+
+        
+        [Required]
+        [Display(Name = "Child Price")]
+        [Range(0, 1000000)]
+        public double ChildPrice { get; set; }
+        [Required]
+        [Display(Name = "Infant Price")]
+        [Range(0, 1000000)]
+        public double InfantPrice { get; set; }
+        [Required]
+        [Display(Name = "Is Active")]
+        public bool IsActive { get; set; }
+        [Required]
+        [Display(Name = "Upload Package Image")]
+        public List<IFormFile> UploadPackageImage { get; set; }
+        [Required]
+        [Display(Name = "Upload Thumbnail")]
+        public IFormFile UploadPackageThumbnail { get; set; }
+        public List<byte[]> fileDataPackageImage { set; get; } = null;
+        public byte[] fileDataThumbnail { set; get; } = null;
+    }
+
 
     #endregion
 
