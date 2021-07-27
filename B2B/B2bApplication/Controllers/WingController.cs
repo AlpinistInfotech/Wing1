@@ -1,4 +1,6 @@
-﻿using B2BClasses.Database;
+﻿using B2bApplication.Models;
+using B2BClasses;
+using B2BClasses.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -29,6 +31,28 @@ namespace B2bApplication.Controllers
 
         public IActionResult FlightSearch()
         {
+            return View();
+        }
+        private async Task GetPackageData(mdlPackageSearch mdl, IBooking booking)
+        {
+            if (mdl == null)
+            {
+                mdl = new mdlPackageSearch();
+            }
+            
+
+            var PackageData =await booking.LoadPackage(0, true, true, false, false);
+            if ((mdl.SelectedLocation?.Count()??0) > 0)
+            {
+               // PackageData = PackageData.Where(p=> mdl.SelectedLocation.Contains( p.LocationName));
+            }
+
+        }
+
+        [HttpGet]
+        public IActionResult PackageSearch([FromServices]IBooking booking)
+        {
+            
             return View();
         }
 
