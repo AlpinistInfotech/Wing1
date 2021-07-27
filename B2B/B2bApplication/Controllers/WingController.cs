@@ -39,20 +39,39 @@ namespace B2bApplication.Controllers
             {
                 mdl = new mdlPackageSearch();
             }
-            
+            var PackageData = await booking.LoadPackage(0, true, true, false, false);
 
-            var PackageData =await booking.LoadPackage(0, true, true, false, false);
+            mdl.AllLocatioin = PackageData.Select(p => p.LocationName).Distinct().ToList();
             if ((mdl.SelectedLocation?.Count()??0) > 0)
             {
-               // PackageData = PackageData.Where(p=> mdl.SelectedLocation.Contains( p.LocationName));
+                PackageData =  PackageData.Where(p=> mdl.SelectedLocation.Contains( p.LocationName)).ToList();
             }
+
+            if (mdl.MaxPriceRange == 0)
+            {
+                mdl.MaxPriceRange = PackageData.Select(p => p.AdultPrice).Max();
+            }
+            if (mdl.MaxDays == 0)
+            {
+                mdl.MaxDays = PackageData.Select(p => p.NumberOfDay).Max();
+            }
+
+            if (mdl.MinPriceRange > 0)
+            {
+                PackageData = PackageData.Where(p =>p.AdultPrice>= mdl.MinPriceRange && p.AdultPrice<= mdl.MaxPriceRange).ToList();
+            }
+            if (mdl.MinDays > 0 )
+            {
+                PackageData = PackageData.Where(p => p.AdultPrice >= mdl.MinPriceRange && p.AdultPrice <= mdl.MaxPriceRange).ToList();
+            }
+
+            mdl.PackageData = PackageData;
 
         }
 
         [HttpGet]
         public IActionResult PackageSearch([FromServices]IBooking booking)
-        {
-            
+        {   
             return View();
         }
 

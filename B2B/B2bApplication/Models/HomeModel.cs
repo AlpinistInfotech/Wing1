@@ -466,10 +466,10 @@ namespace B2bApplication.Models
     {
         public List<string> AllLocatioin { get; set; }
         public List<string> SelectedLocation { get; set; }
-        public List<int> MinPriceRange { get; set; }
-        public List<int> MaxPriceRange { get; set; }
-        public List<int> MinDays { get; set; }
-        public List<int> MaxDays { get; set; }
+        public double MinPriceRange { get; set; }
+        public double MaxPriceRange { get; set; }
+        public int MinDays { get; set; }
+        public int MaxDays { get; set; }
         public List<tblPackageMaster> PackageData{ get; set; }
         public int OrderBy { get; set; }//1 Order by price Asc,2 order by Price Dsc
     }
