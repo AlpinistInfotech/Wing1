@@ -3,7 +3,7 @@
 @using B2BClasses.Services.Enums
 
 @{
-    ViewData["Title"] = enmDocumentMaster.UserMaster.GetDocumentDetails().Name;
+    ViewData["Title"] = enmDocumentMaster.Statement.GetDocumentDetails().Name;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -98,7 +98,7 @@
                                 <th>Debit</th>
                                 <th>Balance</th>
                                 <td>Remarks</td>
-                                <td>PaymentRequestId </td>
+                                <td style="display:none">PaymentRequestId </td>
                             </tr>
                         </thead>
                         <tbody>
@@ -109,12 +109,12 @@
                                 <td style="display:none"><a href="javascript:DoPost(@Model.CustomerID)" data-toggle="tooltip" title="Edit Record !"><i class="nav-icon fas fa-edit"></i></a></td>
                                 <td>@Model.mdlTcWalletWraper[i].TransactionDt.ToString("dd-MMM-yyyy HH:mm:ss")</td>
                                 <td>@Model.mdlTcWalletWraper[i].TransactionDetails</td>
-                                <td>@Model.mdlTcWalletWraper[i].TransactionType</td>
+                                <td>@Model.mdlTcWalletWraper[i].TransactionType.ToString()</td>
                                 <td>@Model.mdlTcWalletWraper[i].Credit.ToString("C", _currentUser.cultureInfo) </td>
                                 <td>@Model.mdlTcWalletWraper[i].Debit.ToString("C", _currentUser.cultureInfo)</td>
                                 <td>@Model.mdlTcWalletWraper[i].Balance.ToString("C", _currentUser.cultureInfo)</td>
                                 <td>@Model.mdlTcWalletWraper[i].Remarks</td>
-                                <td>@Model.mdlTcWalletWraper[i].PaymentRequestId </td>
+                                <td style="display:none">@Model.mdlTcWalletWraper[i].PaymentRequestId </td>
                             </tr>
                             }
                         </tbody>

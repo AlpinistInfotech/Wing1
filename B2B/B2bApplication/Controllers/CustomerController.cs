@@ -768,7 +768,8 @@ namespace B2bApplication.Controllers
                 //}
 
                 //await _context.SaveChangesAsync();
-                if (mdl.creditDebit == 0)
+                customerWallet.CustomerId = Convert.ToInt32(mdl.CustomerID);
+                if (mdl.creditDebit == enmCreditDebit.Credit)
                 await  customerWallet.AddBalanceAsync(DateTime.Now, mdl.WalletAmt, enmTransactionType.WalletAmountUpdate, mdl.TransactionDetails, mdl.Remarks, 0);
                 else
                 await customerWallet.DeductBalanceAsync(DateTime.Now, mdl.WalletAmt, enmTransactionType.WalletAmountUpdate, mdl.TransactionDetails, mdl.Remarks, 0);
@@ -1014,15 +1015,15 @@ namespace B2bApplication.Controllers
                     var path = Path.Combine(
                              Directory.GetCurrentDirectory(),
                              "wwwroot/" + filePath);
-                    //if (mdl.UploadImages == null || mdl.UploadImages.Count == 0 || mdl.UploadImages[0] == null || mdl.UploadImages[0].Length == 0)
-                    //{
+                    if (mdl.UploadImages == null || mdl.UploadImages.Count == 0 || mdl.UploadImages[0] == null || mdl.UploadImages[0].Length == 0)
+                    {
 
-                    //    TempData["MessageType"] = (int)enmSaveStatus.danger;
-                    //    TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidDocument);
-                    //    return RedirectToAction("PaymentRequest");
-                    //}
+                        TempData["MessageType"] = (int)enmSaveStatus.danger;
+                        TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidDocument);
+                        return RedirectToAction("PaymentRequest");
+                    }
 
-                    
+
                     List<string> AllFileName = new List<string>();
                     if (mdl.UploadImages != null)
                     {
@@ -1136,7 +1137,7 @@ namespace B2bApplication.Controllers
 
         public List<mdlPaymentRequestWraper> GetPaymentRequest(DBContext context, enmApprovalStatus status, int customerid)
         {
-            string filePath ="wwwroot/"+ _config["FileUpload:PaymentRequestFilePath"];
+            string filePath = _config["FileUpload:PaymentRequestFilePath"];
                         
             return context.tblPaymentRequest.Where(p => p.Status == status).Select(p=>new mdlPaymentRequestWraper { Id= p.Id, CreatedDt=p.CreatedDt, CustomerId=p.CustomerId, RequestedAmt =p.RequestedAmt , CreatedRemarks=p.CreatedRemarks,CustomerName=p.tblCustomerMaster.CustomerName,Code=p.tblCustomerMaster.Code ,RequestType=p.RequestType,UploadImages= filePath+"/"+ p.UploadImages,TransactionNumber=p.TransactionNumber,TransactionDate=p.TransactionDate,TransactionType=p.TransactionType }).ToList();
         }

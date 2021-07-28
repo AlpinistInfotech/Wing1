@@ -158,7 +158,7 @@ namespace B2BClasses
             toDate= Convert.ToDateTime(toDate.AddDays(1).ToString("dd-MMM-yyyy")).AddSeconds(-1);
             var Openingbalance = _context.tblWalletDetailLedger.Where(p => p.CustomerId == _CustomerId && p.TransactionDt < fromDt).Select(p => new {Balance= p.Credit - p.Debit })
                 .Sum(p=>p.Balance);
-            var transdetails =await _context.tblWalletDetailLedger.Where(p => p.CustomerId == _CustomerId && p.TransactionDt >= fromDt && p.TransactionDt <= toDate).ToListAsync();
+            var transdetails =await _context.tblWalletDetailLedger.Where(p => p.CustomerId == _CustomerId && p.TransactionDt >= fromDt && p.TransactionDt <= toDate && p.Credit+p.Debit>0).ToListAsync();
             transdetails.ForEach(p => {
                 Openingbalance = Openingbalance + p.Credit - p.Debit;
                 p.Balance = Openingbalance;
