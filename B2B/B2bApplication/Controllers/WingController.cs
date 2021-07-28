@@ -41,7 +41,7 @@ namespace B2bApplication.Controllers
             }
             var PackageData = await booking.LoadPackage(0, true, true, false, false);
 
-            mdl.AllLocatioin = PackageData.Select(p => p.LocationName).Distinct().ToList();
+            mdl.AllLocatioin = PackageData.Select(p => p.LocationName).Distinct().OrderBy(p=>p).ToList();
             if ((mdl.SelectedLocation?.Count()??0) > 0)
             {
                 PackageData =  PackageData.Where(p=> mdl.SelectedLocation.Contains( p.LocationName)).ToList();
@@ -70,11 +70,20 @@ namespace B2bApplication.Controllers
         }
 
         [HttpGet]
-        public IActionResult PackageSearch([FromServices]IBooking booking)
-        {   
-            return View();
+        public async Task<IActionResult> PackageSearchAsync([FromServices]IBooking booking)
+        {
+            mdlPackageSearch mdl=null;
+            await GetPackageData(mdl, booking);
+            return View(mdl);
         }
 
+
+        [HttpPost]
+        public async Task<IActionResult> PackageSearchAsync(mdlPackageSearch mdl, [FromServices] IBooking booking)
+        {   
+            await GetPackageData(mdl, booking);
+            return View(mdl);
+        }
 
     }
 }
