@@ -63,6 +63,24 @@ namespace B2BClasses.Database
         public string ModifiedByName { get; set; }
     }
 
+
+    public class tblPackageRating
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Pid { get; set; }
+        [ForeignKey("tblPackageMaster")] // Foreign Key here
+        public int? PackageId { get; set; }
+        public tblPackageMaster tblPackageMaster { get; set; }
+        [MaxLength(200)]
+        public string Email { get; set; }
+        [MaxLength(20)]
+        public string ContactNo { get; set; }
+        public byte Rating { get; set; }
+        [MaxLength(2000)]
+        public string Remarks { get; set; }
+    }
+
     public class tblPackageBooking
     {
         [Key]
@@ -79,6 +97,9 @@ namespace B2BClasses.Database
         public double TotalPrice { get; set; }
         public double Discount { get; set; }
         public double NetPrice { get; set; }
+        public string Email { get; set; }
+        public string ContactNo{ get; set; }
+
         public enmBookingStatus BookingStatus { get; set; }
         public DateTime BookingDate { get; set; }
         [InverseProperty("tblPackageBooking")]

@@ -462,6 +462,18 @@ namespace B2bApplication.Models
         public List<tblPackageMaster> Packagedata { get; set; }
     }
 
+    public class mdlPackageSearch
+    {
+        public List<string> AllLocatioin { get; set; }
+        public List<string> SelectedLocation { get; set; }
+        public double MinPriceRange { get; set; }
+        public double MaxPriceRange { get; set; }
+        public int MinDays { get; set; }
+        public int MaxDays { get; set; }
+        public List<tblPackageMaster> PackageData{ get; set; }
+        public int OrderBy { get; set; }//1 Order by price Asc,2 order by Price Dsc
+    }
+
 
     public class mdlPackageMaster
     {
@@ -533,6 +545,8 @@ namespace B2bApplication.Models
         public List<byte[]> fileDataPackageImage { set; get; } = null;
         public byte[] fileDataThumbnail { set; get; } = null;
     }
+
+
 
 
     #endregion

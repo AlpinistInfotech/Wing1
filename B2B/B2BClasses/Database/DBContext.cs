@@ -158,6 +158,8 @@ namespace B2BClasses.Database
         #region ************************* Packages ***************************
         public DbSet<tblBookingNumberMaster> tblBookingNumberMaster { get; set; }
         public DbSet<tblPackageMaster> tblPackageMaster { get; set; }
+        public DbSet<tblPackageRating> tblPackageRating { get; set; }
+        
         public DbSet<tblPackageBooking> tblPackageBooking { get; set; }
         public DbSet<tblPackageBookingPassengerDetails> tblPackageBookingPassengerDetails { get; set; }
         public DbSet<tblPackageBookingDiscussionDetails> tblPackageBookingDiscussionDetails { get; set; }
