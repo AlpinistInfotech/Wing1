@@ -1,6 +1,7 @@
 ﻿using B2bApplication.Models;
 using B2BClasses;
 using B2BClasses.Database;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -83,6 +84,7 @@ namespace B2bApplication.Controllers
             return mdl;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> PackageSearchAsync([FromServices]IBooking booking)
         {
@@ -93,6 +95,8 @@ namespace B2bApplication.Controllers
 
 
         [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> PackageSearchAsync(mdlPackageSearch mdl, [FromServices] IBooking booking)
         {
             mdl = await GetPackageData(mdl, booking);
