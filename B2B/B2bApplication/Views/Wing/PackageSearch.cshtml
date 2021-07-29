@@ -1,5 +1,6 @@
 ﻿@model mdlPackageSearch
 @inject ICurrentUsers _CurrentUsers
+@inject Microsoft.Extensions.Configuration.IConfiguration _config
 @{
     ViewData["Title"] = "Package Search";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -19,7 +20,7 @@
 
                         <div class="space-10"></div>
 
-                        <form method="post" action="@Url.Action()">
+                        <form  action="@Url.Action()" method="post">
 
                             <div class="hr hr-dotted"></div>
 
@@ -29,7 +30,7 @@
                             </h4>
 
                             <div>
-                                <select multiple asp-for="OrderBy" name="state" class="select2 tag-input-style" data-placeholder="Click to Choose...">
+                                <select multiple asp-for="OrderBy" name="state" class="select2 tag-input-style form-control" data-placeholder="Click to Choose...">
                                     <option value="1">Price Asc</option>
                                     <option value="2">Price Dsc</option>
                                 </select>
@@ -43,7 +44,7 @@
                             </h4>
 
                             <div>
-                                <select multiple asp-for="SelectedLocation" name="state" class="select2 tag-input-style" data-placeholder="Click to Choose...">
+                                <select multiple asp-for="SelectedLocation" name="state" class="select2 tag-input-style form-control" data-placeholder="Click to Choose...">
                                     <option value="">&nbsp;</option>
                                     @foreach (var data in Model.AllLocatioin)
                                     {
@@ -77,33 +78,37 @@
                             </h4>
 
                             <div>
-                                <input type="text" asp-for="MinDays" class="input-sm form-control" />
-                                <span class="input-group-addon">
-                                    <i class="fa fa-arrow-left"></i>
-                                </span>
-                                <input type="text" asp-for="MaxDays" class="input-sm form-control" />
-                            </div>
-                            <div class="space-4"></div>
+                                <div class="col-xs-5">
+                                    <input type="text" asp-for="MinDays" class="input-sm form-control" />
+                                </div>
+                                <div class="col-xs-2">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-arrow-left"></i>
+                                    </span>
+                                </div>
+                                    <div class="col-xs-5">
+                                        <input type="text" asp-for="MaxDays" class="input-sm form-control" />
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
 
-                            <div class="hr hr-dotted hr-24"></div>
+                                <div class="hr hr-dotted hr-24"></div>
 
-                            <div class="text-center">
-                                <a href="/Wing/PackageSearch" class="btn btn-danger">
-                                    <i class="ace-icon fa fa-remove red2"></i>
-                                    Reset
-                                </a>
-
-
-                                <button type="submit" class="btn btn-default btn-round btn-white">
-                                    <i class="ace-icon fa fa-refresh green"></i>
-                                    Update
-                                </button>
-                            </div>
+                                <div class="text-center">
+                                    <a href="/Wing/PackageSearch" class="btn btn-danger">
+                                        <i class="ace-icon fa fa-remove red2"></i>
+                                        Reset
+                                    </a>
 
 
-                        </form>
+                                    <button type="submit" class="btn btn-default btn-round btn-white">
+                                        <i class="ace-icon fa fa-refresh green"></i>
+                                        Update
+                                    </button>
+                                </div>
+</form>
 
-                      
+
 
 
 
@@ -111,85 +116,34 @@
                 </div>
 
                 <div class="col-xs-12 col-sm-9">
-                    
+
                     <div class="row">
-                        <div class="col-xs-6 col-sm-4 col-md-3">
-                            <div class="thumbnail search-thumbnail">
-                                <span class="search-promotion label label-success arrowed-in arrowed-in-right">Sponsored</span>
 
-                                <img class="media-object" data-src="holder.js/100px200?theme=gray" />
-                                <div class="caption">
-                                    <div class="clearfix">
-                                        <span class="pull-right label label-grey info-label">London</span>
+                        @foreach (var data in Model.PackageData)
+                        {
+                            <div class="col-xs-6 col-sm-4 col-md-3">
+                                <div class="thumbnail search-thumbnail">
+                                    <span class="search-promotion label label-success arrowed-in arrowed-in-right">@string.Concat(data.NumberOfDay, " Days ", data.NumberOfNight, " Night") </span>
 
-                                        <div class="pull-left bigger-110">
-                                            <i class="ace-icon fa fa-star orange2"></i>
+                                    <img class="media-object" src="/@string.Concat(_config["FileUpload:PackageFilePath"],"/",data.ThumbnailImage)" />
+                                    <div class="caption">
+                                        <div class="clearfix">
+                                            <span class="pull-right label label-grey info-label">@data.LocationName</span>
 
-                                            <i class="ace-icon fa fa-star orange2"></i>
-
-                                            <i class="ace-icon fa fa-star orange2"></i>
-
-                                            <i class="ace-icon fa fa-star-half-o orange2"></i>
-
-                                            <i class="ace-icon fa fa-star light-grey"></i>
+                                            <div class="pull-left bigger-110 bolder">
+                                                @data.AdultPrice.ToString("C", _CurrentUsers.cultureInfo)
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <h3 class="search-title">
-                                        <a href="#" class="blue">Thumbnail label</a>
-                                    </h3>
-                                    <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam ...</p>
+                                        <h3 class="search-title">
+                                            <a href="/Wing/PackageDetails/@data.PackageId" class="blue">@data.PackageName</a>
+                                        </h3>
+                                        <p>@data.ShortDescription</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        }
 
-                        <div class="col-xs-6 col-sm-4 col-md-3">
-                            <div class="thumbnail search-thumbnail">
-                                <img class="media-object" data-src="holder.js/100px200?theme=gray" />
-                                <div class="caption">
-                                    <div class="clearfix">
-                                        <span class="pull-right label label-grey info-label">Tokyo</span>
-                                    </div>
-
-                                    <h3 class="search-title">
-                                        <a href="#" class="blue">Thumbnail label</a>
-                                    </h3>
-                                    <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam ...</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-xs-6 col-sm-4 col-md-3">
-                            <div class="thumbnail search-thumbnail">
-                                <img class="media-object" data-src="holder.js/100px200?theme=gray" />
-                                <div class="caption">
-                                    <div class="clearfix">
-                                        <span class="pull-right label label-grey info-label">Istanbul</span>
-                                    </div>
-
-                                    <h3 class="search-title">
-                                        <a href="#" class="blue">Thumbnail label</a>
-                                    </h3>
-                                    <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam ...</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-xs-6 col-sm-4 col-md-3">
-                            <div class="thumbnail search-thumbnail">
-                                <img class="media-object" data-src="holder.js/100px200?theme=social" />
-                                <div class="caption">
-                                    <div class="clearfix">
-                                        <span class="pull-right label label-grey info-label">Chicago</span>
-                                    </div>
-
-                                    <h3 class="search-title">
-                                        <a href="#" class="blue">Thumbnail label</a>
-                                    </h3>
-                                    <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam ...</p>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <div class="space-12"></div>
@@ -202,6 +156,7 @@
 
 @section Scripts {
     <script src="~/js/FlightSeacrh.js"></script>
+    <script src="~/assets/js/holder.min.js"></script>
     <script>
         jQuery(function ($) {
             $('.select2').select2({ allowClear: true });

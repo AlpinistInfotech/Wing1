@@ -253,7 +253,7 @@ namespace B2BClasses.Services.Enums
             DisplayOrder: 1, Name: "Buses Train", Description: "Buses", Icon: "fa fa-bus", ActionName: "/Home/TrainBuses", IsAdminClaim = false)]
         BusesTrain = 12,
         [Document(EnmModule: enmModule.Booking, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "HolidayPackage", Description: "Train", Icon: "fa fa-train", ActionName: "/Home/HolidayPackage", IsAdminClaim = false)]
+            DisplayOrder: 1, Name: "HolidayPackage", Description: "Train", Icon: "fa fa-train", ActionName: "/Wing/PackageSearch", IsAdminClaim = false)]
         HolidayPackage = 13,
 
         [Document(EnmModule: enmModule.Wallet, DocumentType: enmDocumentType.Report | enmDocumentType.DisplayMenu,
