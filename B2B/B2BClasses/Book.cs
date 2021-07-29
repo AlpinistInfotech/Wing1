@@ -919,6 +919,8 @@ namespace B2BClasses
                     NetPrice = NetPrice,
                     BookingDate = dateTime,
                     BookingStatus = enmBookingStatus.Booked,
+                    Email= mdl.Email,
+                    ContactNo= mdl.PhoneNumber,
                     tblPackageBookingPassengerDetails = mdl.PassengerDetails.Select(p => new tblPackageBookingPassengerDetails
                     {
                         Title = p.Title,

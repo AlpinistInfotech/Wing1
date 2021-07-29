@@ -1,6 +1,8 @@
 ﻿using B2bApplication.Models;
 using B2BClasses;
 using B2BClasses.Database;
+using B2BClasses.Models;
+using B2BClasses.Services.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -88,6 +90,11 @@ namespace B2bApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> PackageSearchAsync([FromServices]IBooking booking)
         {
+            ViewBag.Message = TempData["Message"];
+            if (ViewBag.Message != null)
+            {
+                ViewBag.SaveStatus = (int)TempData["MessageType"];
+            }
             mdlPackageSearch mdl=null;
             mdl = await GetPackageData(mdl, booking);
             return View(mdl);
@@ -103,5 +110,55 @@ namespace B2bApplication.Controllers
             return View(mdl);
         }
 
-    }
+
+        [HttpGet]
+        public async Task<IActionResult> BookPackage(string Id,[FromServices] IBooking booking)
+        {
+            int PackageId = 0;
+            int.TryParse(Id, out PackageId);
+            if (PackageId == 0)
+            {
+                TempData["Message"] = "Invalid Holiday Package";
+                TempData["MessageType"] = (int)enmMessageType.Error;
+                return RedirectToAction("PackageSearch");
+            }
+            mdlPackageBook mdl = new mdlPackageBook();
+            var packagedata=(await booking.LoadPackage(PackageId, true, false, false, false)).FirstOrDefault();
+            if (packagedata == null)
+            {
+                TempData["Message"] = "Invalid Holiday Package";
+                TempData["MessageType"] = (int)enmMessageType.Error;
+                return RedirectToAction("PackageSearch");
+            }
+            if (!(packagedata.EffectiveFromDt <= DateTime.Now && packagedata.EffectiveToDt >= DateTime.Now))
+            {
+                TempData["Message"] = "Holiday Package Expired";
+                TempData["MessageType"] = (int)enmMessageType.Warning;
+                return RedirectToAction("PackageSearch");
+            }
+            if (!(packagedata.IsActive ))
+            {
+                TempData["Message"] = "Deactive package";
+                TempData["MessageType"] = (int)enmMessageType.Warning;
+                return RedirectToAction("PackageSearch");
+            }
+            mdl.packageData = packagedata;
+            mdl.AdultPrice = packagedata.AdultPrice;
+            mdl.ChildPrice = packagedata.ChildPrice;
+            mdl.InfantPrice = packagedata.InfantPrice;
+            mdl.Discount = 0;
+            mdl.NetPrice = packagedata.AdultPrice;
+            mdl.PassengerDetails = new List<mdlPackageBookingPassengerDetails>();
+
+            return View(mdl);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> BookPackage(mdlPackageBook mdl, [FromServices] IBooking booking)
+        {
+            return RedirectToAction("BookPackage");
+            return View();
+        }
+
+     }
 }
