@@ -157,7 +157,7 @@ namespace B2bApplication.Controllers
         public async Task<IActionResult> BookPackage(mdlPackageBook mdl, [FromServices] IBooking booking)
         {
             return RedirectToAction("BookPackage");
-            return View();
+            
         }
 
      }
