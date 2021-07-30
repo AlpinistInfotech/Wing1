@@ -618,6 +618,7 @@ namespace B2BClasses
                                     IsAllSegmentAreEqual = false;
                                     break;
                                 }
+                                SegmentId = SegmentId-1;
                             }
                             if (IsAllSegmentAreEqual)
                             {
