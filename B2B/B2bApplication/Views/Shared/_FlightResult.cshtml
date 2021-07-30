@@ -41,8 +41,7 @@
                                 <i class="fa fa-long-arrow-right"><span></span><span></span><span></span></i>
                                 @for (int i = 1; i < Model.Segment.Count; i++)
                                 {
-                                    <i class="fa fa-long-arrow-left"></i>
-                                }
+                    <i class="fa fa-long-arrow-left"></i>}
                             </div>
                             <div class="row">
                                 @(TimeSpan.FromMinutes( Model.Segment.Sum(p=>p.Duration)).Hours) : @(TimeSpan.FromMinutes( Model.Segment.Sum(p=>p.Duration)).Minutes)
@@ -63,36 +62,36 @@
                     </div>
                     @if (Model.TotalPriceList.Any(p => p.Discount > 0))
                     {
-                        <div class="row red2">
-                            Discount Applied on Cabin Class : @string.Join("," ,Model.TotalPriceList.Where(p=>p.Discount>0).Select(p=>p.ADULT.CabinClass))
-                         </div>
-                    }
-                        </div>
-                    </div>
+        <div class="row red2">
+            Discount Applied on Cabin Class : @string.Join(",", Model.TotalPriceList.Where(p => p.Discount > 0).Select(p => p.ADULT.CabinClass))
+        </div>}
+                </div>
+            </div>
             <div class="col-sm-5">
                 <div class="col-sm-12 seg-btnbx">
                     @foreach (var totalpricelist in Model.TotalPriceList)
                     {
-                        <div class="row">
+        <div class="row">
 
-                            <label>
-                                <input type="radio" name="@ViewBag.JourneyType1" value="@totalpricelist.ResultIndex" data-price="@totalpricelist.TotalPrice" class="ace ace-switch ace-switch-4">
-                                <span class="lbl middle"></span>
-                                @if (totalpricelist.Discount > 0)
-                                {
-                                    <s> <b class="red">@(totalpricelist.TotalPrice.ToString("C", _currentuser.cultureInfo))</b></s>                                     
-                                    <b class="green"> @((totalpricelist.TotalPrice- totalpricelist.Discount).ToString("C", _currentuser.cultureInfo))</b>
-                                }
-                                else
-                                {
-                                    <b>@(totalpricelist.TotalPrice.ToString("C", _currentuser.cultureInfo))</b>
-                                }
+            <label>
+                <input type="radio" name="@ViewBag.JourneyType1" value="@totalpricelist.ResultIndex" data-price="@totalpricelist.TotalPrice" class="ace ace-switch ace-switch-4">
+                <span class="lbl middle"></span>
+                @if (totalpricelist.Discount > 0)
+                {
+<s> <b class="red">@(totalpricelist.TotalPrice.ToString("C", _currentuser.cultureInfo))</b></s>
+                    <b class="green"> @((totalpricelist.TotalPrice- totalpricelist.Discount).ToString("C", _currentuser.cultureInfo))</b> }
+                else
+                {
+<b>@(totalpricelist.TotalPrice.ToString("C", _currentuser.cultureInfo))</b>}
 
-                            </label>
-                            <span class="label label-danger arrowed-in">@totalpricelist.ADULT.CabinClass -@totalpricelist.ADULT.ClassOfBooking</span>
-                        </div>
-
-                    }
+            </label>
+            @if (Model.ServiceProvider == B2BClasses.Services.Enums.enmServiceProvider.TripJack)
+            {
+<span class="label label-danger arrowed-in">@totalpricelist.ADULT.CabinClass -@totalpricelist.ADULT.ClassOfBooking</span>}
+else if (Model.ServiceProvider == B2BClasses.Services.Enums.enmServiceProvider.TBO)
+{
+<span class="label label-danger arrowed-in">@(Model.Segment.FirstOrDefault()?.CabinClass) -@(Model.Segment.FirstOrDefault()?.ClassOfBooking)</span>}
+        </div>}
 
                 </div>
             </div>

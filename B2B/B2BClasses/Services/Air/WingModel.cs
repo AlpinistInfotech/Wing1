@@ -21,6 +21,10 @@ namespace B2BClasses.Services.Air
         [Required]
         public List<mdlSegmentRequest> Segments { get; set; }
 
+        public string TokenId { get; set; }
+        public string EndUserIp { get; set; }
+        public string[] Sources { get; set; }
+
     }
 
     public class mdlSegmentRequest
@@ -58,6 +62,7 @@ namespace B2BClasses.Services.Air
 
     public class mdlSearchResult
     {
+        public enmServiceProvider ServiceProvider { get; set; }
         public List<mdlSegment> Segment { get; set; }
         public List<mdlTotalpricelist> TotalPriceList { get; set; }
     }
@@ -73,6 +78,16 @@ namespace B2BClasses.Services.Air
         public DateTime ArrivalTime { get; set; }
         public int Mile { get; set; }
         public int Duration { get; set; }
+
+        //extra for tbo
+        public int SeatRemaing { get; set; }
+        public mdlBaggageInformation BaggageInformation { get; set; }
+        public int RefundableType { get; set; }//0 Non Refundable,1 - Refundable,2 - Partial Refundable
+        public enmCabinClass CabinClass { get; set; }//ECONOMY,PREMIUM_ECONOMY, BUSINESS,FIRST
+        public string ClassOfBooking { get; set; }
+        public string FareBasis { get; set; }
+        public bool IsFreeMeel { get; set; }
+        public double Convenience { get; set; }
     }
     public class mdlAirline
     {
@@ -248,6 +263,7 @@ namespace B2BClasses.Services.Air
         public mdlError Error { get; set; }
         public int ResponseStatus { get; set; }
         public mdlFareRule FareRule { get; set; }
+        public mdlFareRule[] tboFareRule { get; set; }
     }
 
 
@@ -259,6 +275,18 @@ namespace B2BClasses.Services.Air
         public mdlPassengerBagege cB { get; set; }
         public mdlPassengerBagege hB { get; set; }
         public mdlFarePolicy fr { get; set; }
+
+        public string Airline { get; set; }
+        public string FlightId { get; set; }
+        public string Origin { get; set; }
+        public string Destination { get; set; }
+        public string FareBasisCode { get; set; }
+        public string FareRuleDetail { get; set; }
+        public string FareRestriction { get; set; }
+        public string FareFamilyCode { get; set; }
+        public string FareRuleIndex { get; set; }
+        public string DepartureTime { get; set; }
+        public string ReturnDate { get; set; }
     }
 
     public class mdlPassengerBagege
