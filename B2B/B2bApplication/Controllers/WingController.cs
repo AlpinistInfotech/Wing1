@@ -158,15 +158,14 @@ namespace B2bApplication.Controllers
             mdl.Discount = 0;
             mdl.NetPrice = packagedata.AdultPrice;
             mdl.PassengerDetails = new List<mdlPackageBookingPassengerDetails>();
-
+            mdl.PassengerDetails.Add(new mdlPackageBookingPassengerDetails() { dob = null, FirstName = string.Empty, LastName = string.Empty, passengerType = enmPassengerType.Adult, PassportExpiryDate = null, PassportIssueDate = null, Pid = 0, pNum = null, Title = "Mr" });            
             return View(mdl);
         }
 
         [HttpPost]
         public async Task<IActionResult> BookPackage(mdlPackageBook mdl, [FromServices] IBooking booking)
         {
-            return RedirectToAction("BookPackage");
-            
+            return View(mdl);
         }
 
      }
