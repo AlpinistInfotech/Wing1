@@ -58,8 +58,8 @@
                                         @foreach (var ImageData in @Model.packageData?.AllImage?.Split(","))
                                         {
                                             <li>
-                                                <a href="/@string.Concat(_config["FileUpload:PackageFilePath"],"/",ImageData)" data-rel="colorbox">
-                                                    <img width="150" height="150" alt="150x150" src="/@string.Concat(_config["FileUpload:PackageFilePath"],"/",ImageData)" />
+                                                <a href="@string.Concat(_config["FileUpload:PackageFilePath"],"/",ImageData)" data-rel="colorbox">
+                                                    <img width="150" height="150" alt="150x150" src="@string.Concat(_config["FileUpload:PackageFilePath"],"/",ImageData)" />
                                                     <div class="text">
                                                         <div class="inner"></div>
                                                     </div>

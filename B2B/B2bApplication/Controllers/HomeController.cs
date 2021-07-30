@@ -1219,6 +1219,8 @@ namespace B2bApplication.Controllers
                         mdl.ChildPrice = pdata.ChildPrice;
                         mdl.InfantPrice = pdata.InfantPrice;
                         mdl.IsActive = pdata.IsActive;
+                        mdl.NumberOfDay = pdata.NumberOfDay;
+                        mdl.NumberOfNight = pdata.NumberOfNight;
                         mdl.fileDataPackageImage = new List<byte[]>();
                         var files = pdata.AllImage.Split(",");
                         foreach (var file in files)
@@ -1234,6 +1236,7 @@ namespace B2bApplication.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Authorize(nameof(enmDocumentMaster.CreatePackage))]
         public async Task<IActionResult> CreatePackage(mdlPackageMaster mdl, [FromServices] IConfiguration configuration)
         {
@@ -1270,20 +1273,23 @@ namespace B2bApplication.Controllers
                 bool exists = System.IO.Directory.Exists(path);
                 if (!exists)
                     System.IO.Directory.CreateDirectory(path);
-                foreach (var file in mdl.UploadPackageImage)
+                if (mdl.UploadPackageImage != null)
                 {
-                    if (file == null || file.Length==0)
+                    foreach (var file in mdl.UploadPackageImage)
                     {
-                        continue;
-                    }
-                    var filename = Guid.NewGuid().ToString() + ".jpeg";
-                    using (var stream = new FileStream(string.Concat(path, filename), FileMode.Create))
-                    {
-                        AllFileName.Add(filename);
-                        await file.CopyToAsync(stream);
+                        if (file == null || file.Length == 0)
+                        {
+                            continue;
+                        }
+                        var filename = Guid.NewGuid().ToString() + ".jpeg";
+                        using (var stream = new FileStream(string.Concat(path, filename), FileMode.Create))
+                        {
+                            AllFileName.Add(filename);
+                            await file.CopyToAsync(stream);
+                        }
                     }
                 }
-                if (mdl.UploadPackageThumbnail != null || mdl.UploadPackageThumbnail.Length == 0)
+                if  (!(mdl.UploadPackageThumbnail == null || mdl.UploadPackageThumbnail.Length == 0))
                 {
                     thumbnail = Guid.NewGuid().ToString() + ".jpeg";
                     using (var stream = new FileStream(string.Concat(path, thumbnail), FileMode.Create))
@@ -1318,7 +1324,7 @@ namespace B2bApplication.Controllers
                         pData.EffectiveFromDt = Convert.ToDateTime(mdl.EffectiveFromDt.ToString("dd-MMM-yyyy"));
                         pData.EffectiveToDt = Convert.ToDateTime(mdl.EffectiveToDt.ToString("dd-MMM-yyyy"));
                         pData.NumberOfDay = mdl.NumberOfDay;
-                        pData.NumberOfNight = mdl.NumberOfNight;
+                        pData.NumberOfNight = mdl.NumberOfNight==0? mdl.NumberOfDay-1: mdl.NumberOfNight;
                         pData.AdultPrice = mdl.AdultPrice;
                         pData.ChildPrice = mdl.ChildPrice;
                         pData.InfantPrice = mdl.InfantPrice;
@@ -1328,8 +1334,8 @@ namespace B2bApplication.Controllers
                         _context.tblPackageMaster.Update(pData);
                         await _context.SaveChangesAsync();
                         TempData["Message"] = _setting.GetErrorMessage(enmMessage.UpdateSuccessfully);
-                        TempData["MessageType"] = enmSaveStatus.success;
-                        RedirectToAction("CreatePackage");
+                        TempData["MessageType"] =(int) enmSaveStatus.success;
+                        return RedirectToAction("CreatePackage");
                     }
                 }
                 else
@@ -1363,8 +1369,8 @@ namespace B2bApplication.Controllers
                     _context.tblPackageMaster.Add(pData);
                     await _context.SaveChangesAsync();
                     TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
-                    TempData["MessageType"] = enmSaveStatus.success;
-                    RedirectToAction("CreatePackage");
+                    TempData["MessageType"] = (int)enmSaveStatus.success;
+                    return RedirectToAction("CreatePackage");
                 }
                 
             }

@@ -57,13 +57,13 @@ namespace B2bApplication.Controllers
 
             var PackageData = await booking.LoadPackage(0, true, true, false, false);
 
+            mdl.AllLocatioin = PackageData.Select(p => p.LocationName).Distinct().OrderBy(p => p).ToList();
 
-            mdl.AllLocatioin = PackageData.Select(p => p.LocationName).Distinct().OrderBy(p=>p).ToList();
             if ((mdl.SelectedLocation?.Count()??0) > 0)
             {
                 PackageData =  PackageData.Where(p=> mdl.SelectedLocation.Contains( p.LocationName)).ToList();
             }
-
+            
             if (mdl.MaxPriceRange == 0)
             {
                 mdl.MaxPriceRange = PackageData.Select(p => p.AdultPrice).Max();
@@ -73,16 +73,25 @@ namespace B2bApplication.Controllers
                 mdl.MaxDays = PackageData.Select(p => p.NumberOfDay).Max();
             }
 
-            if (mdl.MinPriceRange > 0)
-            {
+            
                 PackageData = PackageData.Where(p =>p.AdultPrice>= mdl.MinPriceRange && p.AdultPrice<= mdl.MaxPriceRange).ToList();
-            }
-            if (mdl.MinDays > 0 )
-            {
                 PackageData = PackageData.Where(p => p.AdultPrice >= mdl.MinPriceRange && p.AdultPrice <= mdl.MaxPriceRange).ToList();
+
+            if (mdl.OrderBy == 1)
+            {
+                mdl.PackageData = PackageData.OrderBy(p=>p.AdultPrice).ToList();
+                
+            }
+            else if (mdl.OrderBy == 2)
+            {
+                mdl.PackageData = PackageData.OrderByDescending(p => p.AdultPrice).ToList();
+            }
+            else
+            {
+                mdl.PackageData = PackageData;
             }
 
-            mdl.PackageData = PackageData;
+          
             return mdl;
         }
 
