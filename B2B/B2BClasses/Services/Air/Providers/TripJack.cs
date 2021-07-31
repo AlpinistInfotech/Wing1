@@ -404,7 +404,7 @@ namespace B2BClasses.Services.Air
 
         private SearchqueryWraper SearchRequestMap(mdlSearchRequest request)
         {
-            enmCabinClass enmCabin = request.Segments[0].FlightCabinClass== enmCabinClass.ALL? enmCabinClass.ECONOMY: request.Segments[0].FlightCabinClass;
+            enmCabinClass enmCabin = request.Segments[0].FlightCabinClass == enmCabinClass.ALL ? enmCabinClass.ECONOMY : request.Segments[0].FlightCabinClass;
             List<Routeinfo> routeinfos = new List<Routeinfo>();
             for (int i = 0; i < request.Segments.Count(); i++)
             {
@@ -465,9 +465,11 @@ namespace B2BClasses.Services.Air
 
         private List<mdlSearchResult> SearchResultMap(ONWARD_RETURN_COMBO[] sr)
         {
+
             List<mdlSearchResult> mdls = new List<mdlSearchResult>();
             mdls.AddRange(sr.Select(p => new mdlSearchResult
             {
+                ServiceProvider = enmServiceProvider.TripJack,
                 Segment = p.sI.Select(q => new mdlSegment
                 {
                     Airline = new mdlAirline()
@@ -1305,8 +1307,6 @@ namespace B2BClasses.Services.Air
 
         private async Task<mdlFareRuleResponse> FareRuleFromTripJackAsync(mdlFareRuleRequest request)
         {
-
-
             mdlFareRuleResponse mdlS = null;
             FareRuleResponse mdl = null;
             string tboUrl = _config["TripJack:API:FareRule"];
@@ -1700,7 +1700,7 @@ namespace B2BClasses.Services.Air
             {
                 bookingId = request.bookingId,
                 remarks = request.remarks,
-                type= request.type,
+                type = request.type,
                 trips = request?.trips.Select(p => new Trip
                 {
                     src = p.srcAirport,
@@ -2030,7 +2030,7 @@ namespace B2BClasses.Services.Air
             public Error[] errors { get; set; }
         }
 
-        
+
         public class CancelTrip
         {
             public string src { get; set; }

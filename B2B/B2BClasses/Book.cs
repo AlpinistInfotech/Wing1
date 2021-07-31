@@ -498,7 +498,7 @@ namespace B2BClasses
             switch (serviceProvider)
             {
                 case enmServiceProvider.TBO:
-                    return null;
+                    return _tbo;
                 case enmServiceProvider.TripJack:
                     return _tripJack;
             }
@@ -618,7 +618,9 @@ namespace B2BClasses
                                     IsAllSegmentAreEqual = false;
                                     break;
                                 }
-                                SegmentId = SegmentId-1;
+
+                                SegmentId = SegmentId - 1;
+
                             }
                             if (IsAllSegmentAreEqual)
                             {
@@ -658,8 +660,7 @@ namespace B2BClasses
 
         }
 
-        public async Task<List<mdlFareQuotResponse>> FareQuoteAsync(
-             mdlFareQuotRequest mdlRq)
+        public async Task<List<mdlFareQuotResponse>> FareQuoteAsync(mdlFareQuotRequest mdlRq)
         {
             List<mdlFareQuotResponse> mdlRs = new List<mdlFareQuotResponse>();
             for (int i = 0; i < mdlRq.ResultIndex.Count(); i++)
