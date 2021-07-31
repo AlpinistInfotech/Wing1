@@ -434,11 +434,15 @@ namespace B2bApplication.Models
     }
     public class mdlPaymentReport
     {
-        [Display(Name = "From Dt")]
+        [Display(Name = "Date From")]
         public DateTime FromDt { get; set; } = DateTime.Now.AddDays(-2);
-        [Display(Name = "To Dt")]
+
+        [Display(Name = "Date To")]
         public DateTime ToDt { get; set; } = DateTime.Now;
-        //[Display(Name = "Status")]
+
+        public string RequestType { get; set; }
+        public string Status { get; set; }
+        
     }
 
 }

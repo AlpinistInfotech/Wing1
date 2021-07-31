@@ -92,7 +92,6 @@
                         <th>IsDomestic</th>
                         <th>ShortDescription</th>
                         <th>ThumbnailImage</th>
-                        <th>Flight Class</th>
                         <th>EffectiveFromDt </th>
                         <th>EffectiveToDt </th>
                         <th>AdultPrice </th>
@@ -197,7 +196,7 @@
                                 @(md.ModifiedDt.HasValue? md.ModifiedDt.Value.ToString("dd-MMM-yyyy HH:MM"):"")
                             </td>
                             <td>
-                                @md.ModifiedBy
+                                @md.ModifiedByName
                             </td>
 
                         </tr>

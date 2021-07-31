@@ -179,7 +179,7 @@ namespace B2BClasses.Services.Air
 			request.ClientId = _config["TBO:Credential:ClientId"];
 			request.UserName = _config["TBO:Credential:UserName"];
 			request.Password = _config["TBO:Credential:Password"];
-			request.EndUserIp = "103.95.80.112";
+			request.EndUserIp = "::1";
 			string tboUrl = _config["TBO:API:Login"];
 			string jsonString = JsonConvert.SerializeObject(request);
 			var HaveResponse = GetResponse(jsonString, tboUrl);
@@ -309,7 +309,7 @@ namespace B2BClasses.Services.Air
 		{
 			FareQuotRequest mdl = new FareQuotRequest()
 			{
-				EndUserIp = "157.37.219.253",
+				EndUserIp = "::1",
 				TokenId = TokenId,
 				TraceId = request.TraceId,
 				ResultIndex = request.ResultIndex.FirstOrDefault()
@@ -873,7 +873,7 @@ namespace B2BClasses.Services.Air
 			SearchResponse mdl = null;
 			SearchResponseWraper mdlTemp = null;
 			string tboUrl = _config["TBO:API:Search"];
-			request.EndUserIp = "103.95.80.112";
+			request.EndUserIp = "::1";
 		StartSendRequest:
 			//Load tokken ID 
 			var TokenDetails = _context.tblTboTokenDetails.OrderByDescending(p => p.GenrationDt).FirstOrDefault();

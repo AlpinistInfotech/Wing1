@@ -500,7 +500,7 @@ namespace B2BClasses
                 case enmServiceProvider.TBO:
                     return _tbo;
                 case enmServiceProvider.TripJack:
-                    return null;
+                    return _tripJack;
             }
             return null;
         }
@@ -618,7 +618,9 @@ namespace B2BClasses
                                     IsAllSegmentAreEqual = false;
                                     break;
                                 }
+
                                 SegmentId = SegmentId - 1;
+
                             }
                             if (IsAllSegmentAreEqual)
                             {

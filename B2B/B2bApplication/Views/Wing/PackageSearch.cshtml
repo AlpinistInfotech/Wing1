@@ -31,7 +31,7 @@
                             </h4>
 
                             <div>
-                                <select multiple asp-for="OrderBy" name="state" class="select2 tag-input-style form-control" data-placeholder="Click to Choose...">
+                                <select asp-for="OrderBy" class="select2 form-control" data-placeholder="Click to Choose...">
                                     <option value="1">Price Asc</option>
                                     <option value="2">Price Dsc</option>
                                 </select>
@@ -45,11 +45,11 @@
                             </h4>
 
                             <div>
-                                <select multiple asp-for="SelectedLocation" name="state" class="select2 tag-input-style form-control" data-placeholder="Click to Choose...">
+                                <select multiple asp-for="SelectedLocation" class="select2 tag-input-style form-control" data-placeholder="Click to Choose...">
                                     <option value="">&nbsp;</option>
                                     @foreach (var data in Model.AllLocatioin)
                                     {
-                                        <option value="data">data</option>
+                                        <option value="@data">@data</option>
                                     }
                                 </select>
                             </div>
@@ -108,7 +108,7 @@
                                 </a>
 
 
-                                <button class="btn btn-default btn-round btn-white">
+                                <button class="btn btn-default btn-round btn-white" onclick="SubmitPackageSearchData()">
                                     <i class="ace-icon fa fa-refresh green"></i>
                                     Update
                                 </button>
@@ -132,7 +132,7 @@
                                 <div class="thumbnail search-thumbnail">
                                     <span class="search-promotion label label-success arrowed-in arrowed-in-right">@string.Concat(data.NumberOfDay, " Days ", data.NumberOfNight, " Night") </span>
 
-                                    <img class="media-object" src="/@string.Concat(_config["FileUpload:PackageFilePath"],"/",data.ThumbnailImage)" />
+                                    <img  src="@string.Concat(_config["FileUpload:PackageFilePath"],"/",data.ThumbnailImage)" />
                                     <div class="caption">
                                         <div class="clearfix">
                                             <span class="pull-right label label-grey info-label">@data.LocationName</span>

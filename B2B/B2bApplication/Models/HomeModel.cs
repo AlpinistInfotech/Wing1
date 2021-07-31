@@ -535,11 +535,9 @@ namespace B2bApplication.Models
         public double InfantPrice { get; set; }
         [Required]
         [Display(Name = "Is Active")]
-        public bool IsActive { get; set; } = true;
-        [Required]
+        public bool IsActive { get; set; } = true;        
         [Display(Name = "Upload Package Image")]
-        public List<IFormFile> UploadPackageImage { get; set; }
-        [Required]
+        public List<IFormFile> UploadPackageImage { get; set; }        
         [Display(Name = "Upload Thumbnail")]
         public IFormFile UploadPackageThumbnail { get; set; }
         public List<byte[]> fileDataPackageImage { set; get; } = null;

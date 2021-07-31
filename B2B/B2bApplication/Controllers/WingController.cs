@@ -57,13 +57,13 @@ namespace B2bApplication.Controllers
 
             var PackageData = await booking.LoadPackage(0, true, true, false, false);
 
+            mdl.AllLocatioin = PackageData.Select(p => p.LocationName).Distinct().OrderBy(p => p).ToList();
 
-            mdl.AllLocatioin = PackageData.Select(p => p.LocationName).Distinct().OrderBy(p=>p).ToList();
             if ((mdl.SelectedLocation?.Count()??0) > 0)
             {
                 PackageData =  PackageData.Where(p=> mdl.SelectedLocation.Contains( p.LocationName)).ToList();
             }
-
+            
             if (mdl.MaxPriceRange == 0)
             {
                 mdl.MaxPriceRange = PackageData.Select(p => p.AdultPrice).Max();
@@ -73,16 +73,25 @@ namespace B2bApplication.Controllers
                 mdl.MaxDays = PackageData.Select(p => p.NumberOfDay).Max();
             }
 
-            if (mdl.MinPriceRange > 0)
-            {
+            
                 PackageData = PackageData.Where(p =>p.AdultPrice>= mdl.MinPriceRange && p.AdultPrice<= mdl.MaxPriceRange).ToList();
-            }
-            if (mdl.MinDays > 0 )
-            {
                 PackageData = PackageData.Where(p => p.AdultPrice >= mdl.MinPriceRange && p.AdultPrice <= mdl.MaxPriceRange).ToList();
+
+            if (mdl.OrderBy == 1)
+            {
+                mdl.PackageData = PackageData.OrderBy(p=>p.AdultPrice).ToList();
+                
+            }
+            else if (mdl.OrderBy == 2)
+            {
+                mdl.PackageData = PackageData.OrderByDescending(p => p.AdultPrice).ToList();
+            }
+            else
+            {
+                mdl.PackageData = PackageData;
             }
 
-            mdl.PackageData = PackageData;
+          
             return mdl;
         }
 
@@ -149,15 +158,14 @@ namespace B2bApplication.Controllers
             mdl.Discount = 0;
             mdl.NetPrice = packagedata.AdultPrice;
             mdl.PassengerDetails = new List<mdlPackageBookingPassengerDetails>();
-
+            mdl.PassengerDetails.Add(new mdlPackageBookingPassengerDetails() { dob = null, FirstName = string.Empty, LastName = string.Empty, passengerType = enmPassengerType.Adult, PassportExpiryDate = null, PassportIssueDate = null, Pid = 0, pNum = null, Title = "Mr" });            
             return View(mdl);
         }
 
         [HttpPost]
         public async Task<IActionResult> BookPackage(mdlPackageBook mdl, [FromServices] IBooking booking)
         {
-            return RedirectToAction("BookPackage");
-            
+            return View(mdl);
         }
 
      }
