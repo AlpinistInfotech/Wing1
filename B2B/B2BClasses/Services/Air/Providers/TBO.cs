@@ -282,7 +282,8 @@ namespace B2BClasses.Services.Air
 			public string TraceId { get; set; }
 			public string Origin { get; set; }
 			public string Destination { get; set; }
-			public SearchResult[][] Results { get; set; }
+			public SearchResult Results { get; set; }
+			public string bookingId { get; set; }
 		}
 
 		#endregion
@@ -323,6 +324,9 @@ namespace B2BClasses.Services.Air
 			mdlFareQuotResponse mdlS = null;
 			FareQuotResponse mdl = null;
 			FareQuotResponseWraper mdlTemp = null;
+
+			
+
 			string tboUrl = _config["TBO:API:FareQuote"];
 		StartSendRequest:
 			//Load tokken ID 
@@ -352,42 +356,85 @@ namespace B2BClasses.Services.Air
 			{
 				if (mdl.ResponseStatus == 1)//success
 				{
-					var tempdata = mdl.Results.SelectMany(p => p).ToArray();
+					var tempdata = mdl.Results;
 					List<List<mdlSearchResult>> AllResults = new List<List<mdlSearchResult>>();
 					List<mdlSearchResult> ResultOB = new List<mdlSearchResult>();
 					List<mdlSearchResult> ResultIB = new List<mdlSearchResult>();
-					foreach (var dt in tempdata)
+					int ServiceProvider = (int)enmServiceProvider.TripJack;
+					
 					{
-						if (dt.ResultIndex.Contains("OB"))
+						if (tempdata.ResultIndex.Contains("OB"))
 						{
-							ResultOB.Add(SearchResultMap(dt, "OB"));
+							ResultOB.Add(SearchResultMap(tempdata, "OB"));
 						}
-						else if (dt.ResultIndex.Contains("IB"))
+						else if (tempdata.ResultIndex.Contains("IB"))
 						{
-							ResultIB.Add(SearchResultMap(dt, "IB"));
+							ResultIB.Add(SearchResultMap(tempdata, "IB"));
 						}
 						else
 						{
-							ResultOB.Add(SearchResultMap(dt, "OB"));
+							ResultOB.Add(SearchResultMap(tempdata, "OB"));
 						}
 					}
 					AllResults.Add(ResultOB);
 					AllResults.Add(ResultIB);
-
+					DateTime DepartureDt = DateTime.Now, ArrivalDt = DateTime.Now;
+					DateTime.TryParse(mdl.Results?.LastTicketDate, out DepartureDt);
 					mdlS = new mdlFareQuotResponse()
 					{
 						ServiceProvider = enmServiceProvider.TBO,
 						TraceId = mdl.TraceId,
+						BookingId = ServiceProvider + "_" + mdl.bookingId,
 						ResponseStatus = 1,
 						Error = new mdlError()
 						{
 							Code = 0,
 							Message = "-"
 						},
-						Origin = mdl.Origin,
-						Destination = mdl.Destination,
-						Results = AllResults
-					};
+						Origin = mdl.Results?.FareRules?.FirstOrDefault()?.Origin ?? string.Empty,
+						Destination = mdl.Results?.FareRules?.FirstOrDefault()?.Destination ?? string.Empty,
+						Results = AllResults,
+
+                        TotalPriceInfo = new mdlTotalPriceInfo()
+                        {
+                            BaseFare = mdl.Results?.Fare?.BaseFare ?? 0,
+                            TaxAndFees = mdl.Results?.Fare?.Tax ?? 0,
+                            TotalFare = mdl.Results?.Fare?.PublishedFare ?? 0,
+                        },
+                        SearchQuery = new Models.mdlFlightSearchWraper()
+                        {
+                            AdultCount = mdl.Results.FareBreakdown.Where(x=>x.PassengerType==enmPassengerType.Adult).Select(x=>x.PassengerCount).FirstOrDefault(),
+                            ChildCount = mdl.Results.FareBreakdown.Where(x => x.PassengerType == enmPassengerType.Child).Select(x => x.PassengerCount).FirstOrDefault(),
+                            InfantCount = mdl.Results.FareBreakdown.Where(x => x.PassengerType == enmPassengerType.Infant).Select(x => x.PassengerCount).FirstOrDefault(),
+							CabinClass = (enmCabinClass)Enum.Parse(typeof(enmCabinClass), mdl.Results?.Segments[0][0]?.CabinClass.ToString() ?? (nameof(enmCabinClass.ECONOMY)), true),
+                            JourneyType = enmJourneyType.OneWay,
+                            DepartureDt = DepartureDt,
+                            From = mdl.Results?.FareRules?.FirstOrDefault()?.Origin??string.Empty,
+                            To = mdl.Results?.FareRules?.FirstOrDefault()?.Destination ?? string.Empty,
+						},
+                        FareQuoteCondition = new mdlFareQuoteCondition()
+                        {
+                            dob = new mdlDobCondition()
+                            {
+                                adobr = false,
+                                cdobr =  false,
+                                idobr =false,
+                            },
+                            GstCondition = new mdlGstCondition()
+                            {
+                                IsGstMandatory = mdl.Results?.IsGSTMandatory ?? false,
+                                IsGstApplicable = mdl.Results?.GSTAllowed ?? true,
+                            },
+                            IsHoldApplicable = mdl.Results?.IsHoldAllowed ?? false,
+                            PassportCondition = new mdlPassportCondition()
+                            {
+                                IsPassportExpiryDate =  false,
+                                isPassportIssueDate = false,
+                                isPassportRequired = mdl.Results?.IsPassportRequiredAtBook?? false,
+                            }
+
+                        }
+                    };
 				}
 				else
 				{
@@ -1343,6 +1390,7 @@ namespace B2BClasses.Services.Air
 			public bool GSTAllowed { get; set; }
 			public bool IsCouponAppilcable { get; set; }
 			public bool IsGSTMandatory { get; set; }
+			public bool IsHoldAllowed { get; set; }
 			public string AirlineRemark { get; set; }
 			public string ResultFareType { get; set; }
 			public Fare Fare { get; set; }
@@ -1355,6 +1403,7 @@ namespace B2BClasses.Services.Air
 			public string ValidatingAirline { get; set; }
 			public bool IsUpsellAllowed { get; set; }
 			public Penaltycharges PenaltyCharges { get; set; }
+			public string LastTicketDate { get; set; }
 		}
 
 		public class Fare
