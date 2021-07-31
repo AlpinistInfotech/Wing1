@@ -11,6 +11,7 @@ namespace B2BClasses.Models
     public class mdlPackageBook : mdlError
     {
         public int currentStep { get; set; }
+        public string stepDirection { get; set; }
         public string BookingId { get; set; }        
         public int PackageId { get; set; }        
         public int? CustomerId { get; set; }
@@ -41,13 +42,14 @@ namespace B2BClasses.Models
         public tblPackageMaster packageData { get; set; }
         public List<mdlPackageBookingPassengerDetails> PassengerDetails { get; set; }
         public List<tblPackageBookingDiscussionDetails> tblPackageBookingDiscussionDetails { get; set; }
+
     }
     public class mdlPackageBookingPassengerDetails
     {
         public int Pid { get; set; }
         [Required]
         [Display(Name = "Title")]
-        [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 3)]
+        [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.")]
         public string Title { get; set; }
         [Required]
         [Display(Name = "First Name")]

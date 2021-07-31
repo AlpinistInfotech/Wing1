@@ -9,10 +9,13 @@
 
 <div class="row">
     <div class="col-xs-12">
-        <form id="frmBookPackage" action="@Url.Action()" method="post">
+        <form id="frmBookPackage" action="@Url.Action()" method="post" class="form-horizontal">
+
             @Html.AntiForgeryToken()
             <div asp-validation-summary="All" class="text-danger"></div>
-            <input type="hidden" asp-for="currentStep" />
+            <input type="hidden" asp-for="currentStep" id="hdnCurrentStep" />
+            <input type="hidden" asp-for="stepDirection" id="hdnStepDirection" />
+            <input type="hidden" asp-for="PackageId" />
             <div class="widget-box">
                 <div class="widget-header widget-header-blue widget-header-flat">
                     <h4 class="widget-title lighter">Book Package</h4>
@@ -52,7 +55,7 @@
 
                             <div class="step-content pos-rel">
                                 <div class="step-pane active" data-step="1">
-                                    <input type="hidden" asp-for="PackageId" />
+
                                     <h3 class="lighter block green">@Model.packageData?.PackageName</h3>
                                     <ul class="ace-thumbnails clearfix">
                                         @foreach (var ImageData in @Model.packageData?.AllImage?.Split(","))
@@ -109,7 +112,7 @@
 
                                         <div class="col-xs-12 col-sm-9">
                                             <div class="clearfix">
-                                                <input type="email" asp-for="Email" id="email" class="col-xs-12 col-sm-6" />
+                                                <input type="email" asp-for="Email" id="email" class="col-xs-12 col-sm-6" autocomplete="off" />
                                                 <span asp-validation-for="Email" class="text-danger"></span>
                                             </div>
                                             <span></span>
@@ -142,7 +145,7 @@
 
                                         <div class="col-xs-12 col-sm-9">
                                             <div class="clearfix">
-                                                <input type="number" id="name" asp-for="AdultCount" class="col-xs-12 col-sm-5" />
+                                                <input type="number" asp-for="AdultCount" class="col-xs-12 col-sm-5" />
                                             </div>
                                             <span asp-validation-for="AdultCount" class="text-danger"></span>
                                         </div>
@@ -153,7 +156,7 @@
 
                                         <div class="col-xs-12 col-sm-9">
                                             <div class="clearfix">
-                                                <input type="number" id="name" asp-for="ChildCount" class="col-xs-12 col-sm-5" />
+                                                <input type="number" asp-for="ChildCount" class="col-xs-12 col-sm-5" />
                                             </div>
                                             <span asp-validation-for="ChildCount" class="text-danger"></span>
                                         </div>
@@ -164,7 +167,7 @@
 
                                         <div class="col-xs-12 col-sm-9">
                                             <div class="clearfix">
-                                                <input type="number" id="name" asp-for="InfantCount" class="col-xs-12 col-sm-5" />
+                                                <input type="number" asp-for="InfantCount" class="col-xs-12 col-sm-5" />
                                             </div>
                                             <span asp-validation-for="InfantCount" class="text-danger"></span>
                                         </div>
@@ -190,9 +193,12 @@
                                                     <th>First Name</th>
                                                     <th>Last Name</th>
                                                     <th>Dob</th>
-                                                    <th>Passport No.</th>
-                                                    <th>Issue Date</th>
-                                                    <th>Expiry Date </th>
+                                                    @if (!(Model.packageData?.IsDomestic ?? false))
+                                                    {
+                                                        <th>Passport No.</th>
+                                                        <th>Issue Date</th>
+                                                        <th>Expiry Date </th>
+                                                    }
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -242,15 +248,15 @@
 
                                                         <td><input type="text" placeholder="First Name" class="form-control" asp-for="PassengerDetails[i].FirstName"></td>
                                                         <td><input type="text" placeholder="Last Name" class="form-control" asp-for="PassengerDetails[i].LastName"></td>
-                                                        <td><input class="form-control date-picker" asp-for="PassengerDetails[i].dob" type="text" data-date-format="dd-MMM-yyyy"></td>
-                                                        @if (Model.packageData?.IsDomestic ?? false)
+                                                        <td><input class="form-control date-picker" asp-for="PassengerDetails[i].dob" type="text" asp-format="{0:dd-MMM-yyyy}" data-date-format="d-M-yyyy"></td>
+                                                        @if (!(Model.packageData?.IsDomestic ?? false))
                                                         {
-                                                            <td><input type="text" placeholder="First Name" class="form-control" asp-for="PassengerDetails[i].pNum"></td>
+                                                            <td><input type="text" placeholder="Passport Number" class="form-control" asp-for="PassengerDetails[i].pNum"></td>
                                                             <td>
-                                                                <input class="form-control date-picker" asp-for="PassengerDetails[i].PassportIssueDate" type="text" data-date-format="dd-MMM-yyyy">
+                                                                <input class="form-control date-picker" asp-for="PassengerDetails[i].PassportIssueDate" type="text" asp-format="{0:dd-MMM-yyyy}" data-date-format="d-M-yyyy">
                                                             </td>
                                                             <td>
-                                                                <input class="form-control date-picker" asp-for="PassengerDetails[i].PassportExpiryDate" type="text" data-date-format="dd-MMM-yyyy">
+                                                                <input class="form-control date-picker" asp-for="PassengerDetails[i].PassportExpiryDate" type="text" asp-format="{0:dd-MMM-yyyy}" data-date-format="d-M-yyyy">
                                                             </td>
                                                         }
 
@@ -396,7 +402,7 @@
                                 Prev
                             </button>
 
-                            <button class="btn btn-success btn-next" data-last="Finish">
+                            <button class="btn btn-success btn-next" type="button" data-last="Finish">
                                 Next
                                 <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
                             </button>
@@ -404,7 +410,6 @@
                     </div><!-- /.widget-main -->
                 </div><!-- /.widget-body -->
             </div>
-
             <div id="modal-wizard" class="modal">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -413,25 +418,26 @@
                                 <ul class="steps">
                                     <li data-step="1" class="active">
                                         <span class="step">1</span>
-                                        <span class="title">Package Details</span>
+                                        <span class="title">Validation states</span>
                                     </li>
+
                                     <li data-step="2">
                                         <span class="step">2</span>
-                                        <span class="title">Booking Details</span>
+                                        <span class="title">Alerts</span>
                                     </li>
+
                                     <li data-step="3">
                                         <span class="step">3</span>
-                                        <span class="title">Passenger</span>
+                                        <span class="title">Payment Info</span>
                                     </li>
 
                                     <li data-step="4">
                                         <span class="step">4</span>
-                                        <span class="title">Payment</span>
+                                        <span class="title">Other Info</span>
                                     </li>
-
                                     <li data-step="5">
-                                        <span class="step">5</span>
-                                        <span class="title">Status</span>
+                                        <span class="step">4</span>
+                                        <span class="title">Other Info</span>
                                     </li>
                                 </ul>
                             </div>
@@ -460,7 +466,7 @@
                                         <h4 class="blue">Step 4</h4>
                                     </div>
                                 </div>
-                                <div class="step-pane" data-step="5">
+                                <div class="step-pane" data-step="4">
                                     <div class="center">
                                         <h4 class="blue">Step 5</h4>
                                     </div>
@@ -486,7 +492,8 @@
                         </div>
                     </div>
                 </div>
-            </div><!-- PAGE CONTENT ENDS -->
+            </div><
+            <!-- PAGE CONTENT ENDS -->
         </form>
     </div>
 </div>
@@ -500,7 +507,10 @@
     <script>
         jQuery(function ($) {
             $('.select2').select2({ allowClear: true });
-            $('.input-daterange').datepicker({ autoclose: true, format: 'd-M-yyyy', startDate: '3d' });
+            $('.date-picker').datepicker({
+                autoclose: true,
+                todayHighlight: true
+            })
             var $overflow = '';
             var colorbox_params = {
                 rel: 'colorbox',
@@ -528,23 +538,12 @@
             $('.ace-thumbnails [data-rel="colorbox"]').colorbox(colorbox_params);
 
             $('#fuelux-wizard-container')
-                .ace_wizard({
-                    //step: 2 //optional argument. wizard will jump to step "2" at first
-                    //buttons: '.wizard-actions:eq(0)'
-                })
+                .ace_wizard()
                 .on('actionclicked.fu.wizard', function (e, info) {
-                    if (info.step == 3) {
-                        e.preventDefault();
-                        $('#frmBookPackage').submit();
-                    }
-                    else if (info.step == 4) {
-                        e.preventDefault();
-                        $('#frmBookPackage').submit();
-                    } else if (info.step == 5) {
-                        e.preventDefault();
-                        $('#frmBookPackage').submit();
-                    }
-
+                    
+                    document.getElementById("hdnCurrentStep").value = info.step;
+                    document.getElementById("hdnStepDirection").value = info.direction;
+                    $('#frmBookPackage').submit();                    
                 })
                 //.on('changed.fu.wizard', function() {
                 //})
@@ -559,7 +558,7 @@
                         }
                     });
                 }).on('stepclick.fu.wizard', function (e) {
-                    //e.preventDefault();//this will prevent clicking and selecting steps
+                   //e.preventDefault();//this will prevent clicking and selecting steps
                 });
 
             var wizard = $('#fuelux-wizard-container').data('fu.wizard');

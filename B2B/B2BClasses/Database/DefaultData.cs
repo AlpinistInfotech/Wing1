@@ -96,7 +96,7 @@ namespace B2BClasses.Database
                 {
                     CreditBalance = 1000000,
                     CustomerId = i,
-                    MPin = "123456",
+                    MPin = Settings.Encrypt("0000"),
                     WalletBalance = 1000000,
                     ModifiedDt = _CurrentDt
                 };
