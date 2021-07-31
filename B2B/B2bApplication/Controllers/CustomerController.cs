@@ -971,7 +971,6 @@ namespace B2bApplication.Controllers
         [Authorize(policy: nameof(enmDocumentMaster.CreditRequest))]
         public IActionResult PaymentRequest()
         {
-
             dynamic messagetype = TempData["MessageType"];
             mdlPaymentRequest mdl = new mdlPaymentRequest();
             if (messagetype != null)
@@ -1064,13 +1063,25 @@ namespace B2bApplication.Controllers
             return RedirectToAction("PaymentRequest");
         }
 
-
+        
         [Authorize(Policy = nameof(enmDocumentMaster.CreditReport))]
         [HttpGet]
         public IActionResult PaymentReport()
         {
             //mdlFlightBookingReport mdl = new mdlFlightBookingReport();
-            return View();
+            mdlPaymentReport mdl = new mdlPaymentReport();
+            return View(mdl);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Policy = nameof(enmDocumentMaster.CreditReport))]
+        public IActionResult PaymentReport(mdlPaymentReport mdl, [FromServices] IBooking _booking)
+        {
+            if (ModelState.IsValid)
+            {
+               // mdl.loadBookingData(_booking, _customerId, _currentUsers);
+            }
+            return View(mdl);
         }
 
         #endregion

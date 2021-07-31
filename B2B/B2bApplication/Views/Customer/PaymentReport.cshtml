@@ -48,8 +48,10 @@
                                         <label asp-for="RequestType"></label>
                                         <select asp-for="RequestType" class="form-control select2">
                                             <option>All</option>
-                                            <option>Wallet Recharge</option>
-                                            <option>Credit Request</option>
+                                            @foreach (var data in Enum.GetValues(typeof(enmRequestType)))
+                                            {
+                                                <option value="@(data)">@data.ToString() </option>
+                                            }
                                         </select>
                                         <span asp-validation-for="RequestType" class="text-danger"></span>
                                     </div>
@@ -59,11 +61,14 @@
                                         <label asp-for="Status"></label>
                                         <select asp-for="Status" class="form-control select2">
                                             <option>All</option>
-                                            <option>Pending</option>
-                                            <option>Approved</option>
-                                            <option>Rejected</option>
+                                            @foreach (var data in Enum.GetValues(typeof(enmApprovalStatus)))
+                                            {
+                                                <option value="@(data)">@data.ToString() </option>
+                                            }
                                         </select>
                                         <span asp-validation-for="Status" class="text-danger"></span>
+
+
                                     </div>
                                 </div>
 
@@ -93,7 +98,7 @@
                                 <th>Debit</th>
                                 <th>Balance</th>
                                 <td>Remarks</td>
-                                <td style="display:none">PaymentRequestId </td>
+                                <td style="display:none">PaymentRequestId</td>
                             </tr>
                         </thead>
                         <tbody>
