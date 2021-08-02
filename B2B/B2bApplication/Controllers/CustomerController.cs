@@ -1068,18 +1068,20 @@ namespace B2bApplication.Controllers
         [HttpGet]
         public IActionResult PaymentReport()
         {
-            //mdlFlightBookingReport mdl = new mdlFlightBookingReport();
             mdlPaymentReport mdl = new mdlPaymentReport();
+            mdl.PaymentRequestList = GetPaymentRequest(_context, mdl.Status, _customerId, mdl.FromDt, mdl.ToDt, mdl.RequestType, 2);
             return View(mdl);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = nameof(enmDocumentMaster.CreditReport))]
-        public IActionResult PaymentReport(mdlPaymentReport mdl, [FromServices] IBooking _booking)
+        public IActionResult PaymentReport(mdlPaymentReport mdl)
         {
             if (ModelState.IsValid)
             {
-               // mdl.loadBookingData(_booking, _customerId, _currentUsers);
+                mdl.PaymentRequestList= GetPaymentRequest(_context, mdl.Status, _customerId, mdl.FromDt, mdl.ToDt, mdl.RequestType, 2);
+                return View(mdl);
+
             }
             return View(mdl);
         }
@@ -1098,7 +1100,7 @@ namespace B2bApplication.Controllers
                 ViewBag.SaveStatus = (int)messagetype;
                 ViewBag.Message = TempData["Message"];
             }
-           mdl.PaymentRequestList = GetPaymentRequest(_context, 0, 0);
+            mdl.PaymentRequestList = GetPaymentRequest(_context, 0, _customerId, DateTime.Now, DateTime.Now, 0, 1);
             return View(mdl);
         }
 
@@ -1139,19 +1141,29 @@ namespace B2bApplication.Controllers
                     transaction.Rollback();
                 }
             }
-            mdl.PaymentRequestList = GetPaymentRequest(_context, 0, 0);
+            mdl.PaymentRequestList = GetPaymentRequest(_context, 0, _customerId,DateTime.Now, DateTime.Now, 0,1);
             return View(mdl);
         }
 
         #endregion
 
 
-        public List<mdlPaymentRequestWraper> GetPaymentRequest(DBContext context, enmApprovalStatus status, int customerid)
+        public List<mdlPaymentRequestWraper> GetPaymentRequest(DBContext context, enmApprovalStatus status, int customerid,DateTime datefrom, DateTime dateto,enmRequestType requestType,int spmode)
         {
             string filePath = _config["FileUpload:PaymentRequestFilePath"];
-                        
-            return context.tblPaymentRequest.Where(p => p.Status == status).Select(p=>new mdlPaymentRequestWraper { Id= p.Id, CreatedDt=p.CreatedDt, CustomerId=p.CustomerId, RequestedAmt =p.RequestedAmt , CreatedRemarks=p.CreatedRemarks,CustomerName=p.tblCustomerMaster.CustomerName,Code=p.tblCustomerMaster.Code ,RequestType=p.RequestType,UploadImages= filePath+"/"+ p.UploadImages,TransactionNumber=p.TransactionNumber,TransactionDate=p.TransactionDate,TransactionType=p.TransactionType }).ToList();
+
+            if (spmode == 1)
+                return context.tblPaymentRequest.Where(p => p.Status == status).Select(p => new mdlPaymentRequestWraper { Id = p.Id, CreatedDt = p.CreatedDt, CustomerId = p.CustomerId, RequestedAmt = p.RequestedAmt, CreatedRemarks = p.CreatedRemarks, CustomerName = p.tblCustomerMaster.CustomerName, Code = p.tblCustomerMaster.Code, RequestType = p.RequestType, UploadImages = filePath + "/" + p.UploadImages, TransactionNumber = p.TransactionNumber, TransactionDate = p.TransactionDate, TransactionType = p.TransactionType }).ToList();
+
+            else if (spmode == 2)
+            {
+                return context.tblPaymentRequest.Where(p => p.Status == status && p.CreatedDt >= datefrom && p.CreatedDt <= dateto && p.RequestType == requestType).Select(p => new mdlPaymentRequestWraper { Id = p.Id, CreatedDt = p.CreatedDt, CustomerId = p.CustomerId, RequestedAmt = p.RequestedAmt, CreatedRemarks = p.CreatedRemarks, CustomerName = p.tblCustomerMaster.CustomerName, Code = p.tblCustomerMaster.Code, RequestType = p.RequestType, UploadImages = filePath + "/" + p.UploadImages, TransactionNumber = p.TransactionNumber, TransactionDate = p.TransactionDate, TransactionType = p.TransactionType }).ToList();
+            }
+
+            else return null;
         }
+
+
 
         public List<tblCustomerMaster> GetCustomerMaster(DBContext context, bool OnlyActive, int customerid)
         {
