@@ -505,18 +505,17 @@ namespace B2BClasses
             return null;
         }
 
-        public async Task<IEnumerable<mdlSearchResponse>> SearchFlight(
-          mdlSearchRequest mdlRq)
+        public async Task<IEnumerable<mdlSearchResponse>> SearchFlight(mdlSearchRequest mdlRq)
         {
-
             List<mdlSearchResponse> mdlRs = new List<mdlSearchResponse>();
             List<enmServiceProvider> serviceProviders = await GetActiveProviderAsync();
             List<tblFlightBookingProviderTraceId> traceIds = new List<tblFlightBookingProviderTraceId>();
 
             enmJourneyType actualJourneyType = mdlRq.JourneyType;
-
+            var lst = mdlRq.Segments.ToList();
             foreach (var sp in serviceProviders)
             {
+                mdlRq.JourneyType = actualJourneyType;
                 mdlSearchResponse mdlR = null;
                 IWingFlight wingflight = GetFlightObject(sp);
                 if (wingflight == null)
@@ -543,7 +542,7 @@ namespace B2BClasses
                 {
 
                     mdlRq.JourneyType = enmJourneyType.OneWay;
-                    var lst = mdlRq.Segments.ToList();
+                   
                     for (int i = 0; i < lst.Count; i++)
                     {
                         mdlRq.Segments = new List<mdlSegmentRequest>();
@@ -654,6 +653,11 @@ namespace B2BClasses
 
                 }
             }
+            searchResponse.Error = res[0].Error;
+            searchResponse.Destination = res[0].Destination;
+            searchResponse.Origin = res[0].Origin;
+            searchResponse.ServiceProvider = res[0].ServiceProvider;          
+            searchResponse.TraceId = res[0].TraceId;
             searchResponse.Results = Results;
             searchResponse.ResponseStatus = 1;
             return searchResponse;

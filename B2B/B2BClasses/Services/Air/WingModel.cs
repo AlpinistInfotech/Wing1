@@ -63,6 +63,7 @@ namespace B2BClasses.Services.Air
     public class mdlSearchResult
     {
         public enmServiceProvider ServiceProvider { get; set; }
+        public string traceid { get; set; }
         public List<mdlSegment> Segment { get; set; }
         public List<mdlTotalpricelist> TotalPriceList { get; set; }
     }

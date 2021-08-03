@@ -456,6 +456,7 @@ namespace B2BClasses.Services.Air
                 mdl.preferredAirline = request.PreferredAirlines.Select(p => new cityorairport { code = p }).ToArray();
             }
 
+
             SearchqueryWraper mdlW = new SearchqueryWraper()
             {
                 searchQuery = mdl
@@ -463,13 +464,14 @@ namespace B2BClasses.Services.Air
             return mdlW;
         }
 
-        private List<mdlSearchResult> SearchResultMap(ONWARD_RETURN_COMBO[] sr)
+        private List<mdlSearchResult> SearchResultMap(ONWARD_RETURN_COMBO[] sr,string Traceid)
         {
 
             List<mdlSearchResult> mdls = new List<mdlSearchResult>();
             mdls.AddRange(sr.Select(p => new mdlSearchResult
             {
                 ServiceProvider = enmServiceProvider.TripJack,
+                traceid= Traceid,
                 Segment = p.sI.Select(q => new mdlSegment
                 {
                     Airline = new mdlAirline()
@@ -631,39 +633,39 @@ namespace B2BClasses.Services.Air
                         {
                             if (mdl.searchResult.tripInfos.ONWARD != null)
                             {
-                                Result1.AddRange(SearchResultMap(mdl.searchResult.tripInfos.ONWARD));
+                                Result1.AddRange(SearchResultMap(mdl.searchResult.tripInfos.ONWARD, TraceId));
                             }
                             if (mdl.searchResult.tripInfos.RETURN != null)
                             {
-                                Result2.AddRange(SearchResultMap(mdl.searchResult.tripInfos.RETURN));
+                                Result2.AddRange(SearchResultMap(mdl.searchResult.tripInfos.RETURN, TraceId));
                             }
                             if (mdl.searchResult.tripInfos.COMBO != null)
                             {
-                                Result1.AddRange(SearchResultMap(mdl.searchResult.tripInfos.COMBO));
+                                Result1.AddRange(SearchResultMap(mdl.searchResult.tripInfos.COMBO, TraceId));
                             }
                             if (mdl.searchResult.tripInfos._0 != null)
                             {
-                                Result1.AddRange(SearchResultMap(mdl.searchResult.tripInfos._0));
+                                Result1.AddRange(SearchResultMap(mdl.searchResult.tripInfos._0, TraceId));
                             }
                             if (mdl.searchResult.tripInfos._1 != null)
                             {
-                                Result2.AddRange(SearchResultMap(mdl.searchResult.tripInfos._1));
+                                Result2.AddRange(SearchResultMap(mdl.searchResult.tripInfos._1, TraceId));
                             }
                             if (mdl.searchResult.tripInfos._2 != null)
                             {
-                                Result3.AddRange(SearchResultMap(mdl.searchResult.tripInfos._2));
+                                Result3.AddRange(SearchResultMap(mdl.searchResult.tripInfos._2, TraceId));
                             }
                             if (mdl.searchResult.tripInfos._3 != null)
                             {
-                                Result4.AddRange(SearchResultMap(mdl.searchResult.tripInfos._3));
+                                Result4.AddRange(SearchResultMap(mdl.searchResult.tripInfos._3, TraceId));
                             }
                             if (mdl.searchResult.tripInfos._4 != null)
                             {
-                                Result5.AddRange(SearchResultMap(mdl.searchResult.tripInfos._4));
+                                Result5.AddRange(SearchResultMap(mdl.searchResult.tripInfos._4, TraceId));
                             }
                             if (mdl.searchResult.tripInfos._5 != null)
                             {
-                                Result6.AddRange(SearchResultMap(mdl.searchResult.tripInfos._5));
+                                Result6.AddRange(SearchResultMap(mdl.searchResult.tripInfos._5, TraceId));
                             }
 
 
@@ -763,7 +765,7 @@ namespace B2BClasses.Services.Air
                     foreach (var d in disSegIds)
                     {
                         AllResults.Add(
-                           SearchResultMap(Data.tblTripJackTravelDetailResult.Where(p => p.segmentId == d).Select(p => JsonConvert.DeserializeObject<ONWARD_RETURN_COMBO>(p.JsonData)).ToArray()));
+                           SearchResultMap(Data.tblTripJackTravelDetailResult.Where(p => p.segmentId == d).Select(p => JsonConvert.DeserializeObject<ONWARD_RETURN_COMBO>(p.JsonData)).ToArray(),Data.TraceId));
                     }
 
                     mdlSearchResponse = new mdlSearchResponse()
@@ -1175,7 +1177,7 @@ namespace B2BClasses.Services.Air
                     int ServiceProvider = (int)enmServiceProvider.TripJack;
                     if (mdl.tripInfos != null)
                     {
-                        Result1.AddRange(SearchResultMap(mdl.tripInfos));
+                        Result1.AddRange(SearchResultMap(mdl.tripInfos,request.TraceId));
                     }
                     if (Result1.Count() > 0)
                     {
