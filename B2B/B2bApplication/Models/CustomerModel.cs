@@ -388,6 +388,8 @@ namespace B2bApplication.Models
         public DateTime TransactionDate { get; set; }
         public List<mdlPaymentWraper> PaymentWraper { get; set; }
 
+        [Display(Name = "Please Scan QR Code for Direct Payment")] 
+        public byte[] qrcode { get; set; }
     }
 
     public class mdlPaymentRequestWraper : tblPaymentRequest

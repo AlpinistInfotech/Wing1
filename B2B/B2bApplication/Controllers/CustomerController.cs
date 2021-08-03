@@ -22,6 +22,8 @@ using System.Data;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
 using System.Net.Mail;
+using QRCoder;
+using System.Drawing;
 
 namespace B2bApplication.Controllers
 {
@@ -987,8 +989,24 @@ namespace B2bApplication.Controllers
             {
                 ViewBag.CustomerCodeList = new SelectList(GetCustomerMaster(_context, true, _currentUsers.CustomerId ).Select(p => new { Code = p.Id, CustomerName = p.CustomerName + "(" + p.Code + ")" }), "Code", "CustomerName");
             }
-            
+
+
+            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(_config["FileUpload:PaymentQRCode"],QRCodeGenerator.ECCLevel.Q);
+            QRCode qrCode = new QRCode(qrCodeData);
+            Bitmap qrCodeImage = qrCode.GetGraphic(20);
+            mdl.qrcode= BitmapToBytes(qrCodeImage);
+
             return View(mdl);
+        }
+
+        private static Byte[] BitmapToBytes(Bitmap img)
+        {
+            using (MemoryStream stream = new MemoryStream())
+            {
+                img.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                return stream.ToArray();
+            }
         }
 
         [HttpPost]
