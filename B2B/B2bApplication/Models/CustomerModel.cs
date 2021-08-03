@@ -440,9 +440,11 @@ namespace B2bApplication.Models
         [Display(Name = "Date To")]
         public DateTime ToDt { get; set; } = DateTime.Now;
 
-        public string RequestType { get; set; }
-        public string Status { get; set; }
-        
+        public enmRequestType RequestType { get; set; }
+        public enmApprovalStatus Status { get; set; }
+
+        public List<mdlPaymentRequestWraper> PaymentRequestList { get; set; }
+
     }
 
 }

@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using B2BClasses.Services.Enums;
 using System.Globalization;
+using B2BClasses;
 
 namespace B2bApplication
 {
@@ -23,13 +24,15 @@ namespace B2bApplication
         public double WalletBalance { get; set; }
         public double CreditBalance { get; set; }
         CultureInfo cultureInfo { get;}
+        public string MPin { get; }
+
     }
     public class CurrentUsers : ICurrentUsers
     {
-
+        
         private CultureInfo _cultureInfo= new CultureInfo("en-IN",false);
         IHttpContextAccessor _httpContext;
-        private string _Name ;
+        private string _Name , _MPin;
         private int _UserId, _CustomerId;
         private  List<int> _RoleId;        
         private readonly DBContext _context;
@@ -40,6 +43,7 @@ namespace B2bApplication
 
         public CurrentUsers(IHttpContextAccessor httpContext, DBContext context)
         {
+           
             _httpContext = httpContext;
             _context = context;
             string tempUserId = httpContext.HttpContext.User.FindFirst("_UserId")?.Value;
@@ -62,18 +66,22 @@ namespace B2bApplication
 
         private void SetWalletBalance()
         {
+            string MPin = Settings.Encrypt("0000");
             var defaultBalance=_context.tblCustomerBalance.Where(p => p.CustomerId == _CustomerId).FirstOrDefault();
             if (defaultBalance == null)
             {
-                _context.tblCustomerBalance.Add(new tblCustomerBalance() { CustomerId = _CustomerId, CreditBalance = 0, ModifiedDt = DateTime.Now, MPin = "0000", WalletBalance = 0 });
+                _context.tblCustomerBalance.Add(new tblCustomerBalance() { CustomerId = _CustomerId, CreditBalance = 0, ModifiedDt = DateTime.Now, MPin = MPin, WalletBalance = 0 });
                 _context.SaveChanges();
                 this._WalletBalance = 0;
                 this._CreditBalance = 0;
+                this._MPin = MPin;
             }
             else
             {
                 this._WalletBalance = defaultBalance.WalletBalance;
                 this._CreditBalance = defaultBalance.CreditBalance;
+                this._MPin = Settings.Decrypt( defaultBalance.MPin);
+
             }
 
         }
@@ -86,7 +94,7 @@ namespace B2bApplication
         public double WalletBalance { get { if (_WalletBalance == null) { SetWalletBalance(); } return _WalletBalance.Value; } set { _WalletBalance = value; } }
         public double CreditBalance { get { if (_CreditBalance == null) { SetWalletBalance(); } return _CreditBalance.Value; } set { _CreditBalance = value; } }
         public enmCustomerType CustomerType { get { return _CustomerType; } }
-
+        public string MPin { get { if (_MPin == null) { SetWalletBalance(); } return _MPin; } }
         public List<int> RoleId
         {
             get

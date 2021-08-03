@@ -151,20 +151,87 @@ namespace B2bApplication.Controllers
                 TempData["MessageType"] = (int)enmMessageType.Warning;
                 return RedirectToAction("PackageSearch");
             }
+            mdl.PackageId = packagedata.PackageId;
             mdl.packageData = packagedata;
             mdl.AdultPrice = packagedata.AdultPrice;
             mdl.ChildPrice = packagedata.ChildPrice;
             mdl.InfantPrice = packagedata.InfantPrice;
+            mdl.Email = null;
+            mdl.PhoneNumber = null;
             mdl.Discount = 0;
             mdl.NetPrice = packagedata.AdultPrice;
+            mdl.AdultCount = 1;
+            mdl.currentStep =1;
             mdl.PassengerDetails = new List<mdlPackageBookingPassengerDetails>();
             mdl.PassengerDetails.Add(new mdlPackageBookingPassengerDetails() { dob = null, FirstName = string.Empty, LastName = string.Empty, passengerType = enmPassengerType.Adult, PassportExpiryDate = null, PassportIssueDate = null, Pid = 0, pNum = null, Title = "Mr" });            
             return View(mdl);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> BookPackage(mdlPackageBook mdl, [FromServices] IBooking booking)
+        async Task<mdlPackageBook> CalculateTotalPrice(mdlPackageBook mdl, IBooking booking)
         {
+            var packagedata = (await booking.LoadPackage(mdl.PackageId, true, false, false, false)).FirstOrDefault();
+            if (packagedata != null)
+            {
+                mdl.packageData = packagedata;
+                mdl.TotalAdultPrice = mdl.AdultCount * mdl.AdultPrice;
+                mdl.TotalChildPrice = mdl.ChildCount * mdl.ChildPrice;
+                mdl.TotalInfantPrice = mdl.InfantCount * mdl.InfantPrice;
+                mdl.TotalPrice = mdl.TotalAdultPrice + mdl.TotalChildPrice + mdl.TotalInfantPrice;
+                mdl.NetPrice = mdl.TotalPrice - mdl.Discount;
+            }
+            return mdl;
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> BookPackage(mdlPackageBook mdl, [FromServices] IBooking booking, [FromServices] ICurrentUsers currentUsers, [FromServices] ICustomerWallet customerWallet)
+        {
+            if (mdl.PackageId == 0)
+            {
+                TempData["Message"] = "Invalid Package";
+                TempData["MessageType"] = (int)enmMessageType.Warning;
+                return RedirectToAction("PackageSearch");
+            }
+            if (mdl.currentStep == 2)
+            {
+                mdl.PassengerDetails = new List<mdlPackageBookingPassengerDetails>();
+                for (int i = 0; i < mdl.AdultCount; i++)
+                {
+                    mdl.PassengerDetails.Add(new mdlPackageBookingPassengerDetails() { dob = null, FirstName = string.Empty, LastName = string.Empty, passengerType = enmPassengerType.Adult, PassportExpiryDate = null, PassportIssueDate = null, Pid = 0, pNum = null, Title = "Mr" });
+                }
+                for (int i = 0; i < mdl.ChildCount; i++)
+                {
+                    mdl.PassengerDetails.Add(new mdlPackageBookingPassengerDetails() { dob = null, FirstName = string.Empty, LastName = string.Empty, passengerType = enmPassengerType.Child, PassportExpiryDate = null, PassportIssueDate = null, Pid = 0, pNum = null, Title = "Master" });
+                }
+                for (int i = 0; i < mdl.InfantCount; i++)
+                {
+                    mdl.PassengerDetails.Add(new mdlPackageBookingPassengerDetails() { dob = null, FirstName = string.Empty, LastName = string.Empty, passengerType = enmPassengerType.Infant, PassportExpiryDate = null, PassportIssueDate = null, Pid = 0, pNum = null, Title = "Master" });
+                }
+            }
+            mdl=await CalculateTotalPrice(mdl,booking);
+            if (mdl.currentStep == 4 && mdl.stepDirection == "next")
+            {
+                if (currentUsers.MPin == mdl.Mpin)
+                {
+                    await booking.BookPackage(mdl, currentUsers.CustomerId, customerWallet);
+                }
+                else
+                {
+                    ViewBag.Message = "Invalid MPin";
+                    ViewBag.SaveStatus = (int)enmSaveStatus.danger;
+                }
+                
+            }
+
+            if (mdl.stepDirection == "next")
+            {
+                mdl.currentStep = mdl.currentStep + 1;
+            }
+            else
+            {
+                mdl.currentStep = mdl.currentStep - 1;
+            }
+            
             return View(mdl);
         }
 
