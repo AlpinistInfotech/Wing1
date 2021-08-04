@@ -328,7 +328,7 @@ namespace B2BClasses.Services.Air
             FareQuotResponseWraper mdlTemp = null;
 
             string tboUrl = _config["TBO:API:FareQuote"];
-        StartSendRequest:
+            StartSendRequest:
             //Load tokken ID 
             var TokenDetails = _context.tblTboTokenDetails.OrderByDescending(p => p.GenrationDt).FirstOrDefault();
             if (TokenDetails == null)
@@ -376,8 +376,14 @@ namespace B2BClasses.Services.Air
                             ResultOB.Add(SearchResultMap(tempdata, "OB", request.TraceId, ResultOB));
                         }
                     }
-                    AllResults.Add(ResultOB);
-                    AllResults.Add(ResultIB);
+                    if (ResultOB.Count() > 0)
+                    {
+                        AllResults.Add(ResultOB);
+                    }
+                    if (ResultIB.Count() > 0)
+                    {
+                        AllResults.Add(ResultIB);
+                    }
                     DateTime DepartureDt = DateTime.Now, ArrivalDt = DateTime.Now;
                     DateTime.TryParse(mdl.Results?.LastTicketDate, out DepartureDt);
                     mdlS = new mdlFareQuotResponse()
@@ -729,6 +735,10 @@ namespace B2BClasses.Services.Air
 
                                 }
                             }
+                            TotalPriceList.ResultIndex = sr.ResultIndex;
+                            TotalPriceList.fareIdentifier = string.Empty;
+                            TotalPriceList.sri = string.Empty;
+                            TotalPriceList.msri = null;
                             tplist.Add(TotalPriceList);
                             srr[j].TotalPriceList.AddRange(tplist);
                             break;
@@ -975,8 +985,14 @@ namespace B2BClasses.Services.Air
                             }
                         }
                     }
-                    AllResults.Add(ResultOB);
-                    AllResults.Add(ResultIB);
+                    if (ResultOB.Count() > 0)
+                    {
+                        AllResults.Add(ResultOB);
+                    }
+                    if (ResultIB.Count() > 0)
+                    {
+                        AllResults.Add(ResultIB);
+                    }
                     mdlSearchResponse = new mdlSearchResponse()
                     {
                         ServiceProvider = enmServiceProvider.TBO,

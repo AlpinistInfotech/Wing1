@@ -263,8 +263,6 @@ namespace B2bApplication.Controllers
             return View(mdl);
         }
 
-
-
         [AcceptVerbs("Post")]
         [ValidateAntiForgeryToken]
         

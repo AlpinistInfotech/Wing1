@@ -83,7 +83,7 @@ namespace B2bApplication.Models
                 InfantTotalBaseFare = InfantBaseFare * InfantCount;
             }
             TotalBaseFare = AdultTotalBaseFare+ ChildTotalBaseFare+ InfantTotalBaseFare;
-            TotalFare = FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.TotalPrice?? 0).Sum();
+            TotalFare = FareQuotResponse.Select(p => p.TotalPriceInfo?.TotalFare ?? 0).Sum();
             FeeSurcharge = TotalFare - TotalBaseFare;
             OtherCharge = 0;
             Convenience= FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.Convenience ?? 0).Sum();
@@ -233,9 +233,6 @@ namespace B2bApplication.Models
         public List<bool> IsSucess { get; set; }
         public List<string> BookingId { get; set; }
     }
-
-
-
 
     public class mdlWingMarkupWraper
     { 

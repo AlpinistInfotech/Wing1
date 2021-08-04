@@ -562,6 +562,7 @@ namespace B2BClasses
                         {
                             mdlR.Results.Add(md.Results.FirstOrDefault());
                         }
+                        
                     }
                     mdlRs.Add(mdlR);
                 }
