@@ -380,7 +380,7 @@ namespace B2BClasses
                 var FlightDetails = _context.tblFlightBookingSegmentMaster.Where(p => p.TraceId == mdlRq.TraceId && p.BookingId == mdlRq.bookingId).FirstOrDefault();
                 if (FlightDetails != null)
                 {
-                    FlightDetails.BookingStatus = enmBookingStatus.Refund;
+                    FlightDetails.BookingStatus = enmBookingStatus.Cancel;
                     FlightDetails.CancelationId = mdlRes.amendmentId;
                     FlightDetails.CancelationRemarks = mdlRq.remarks;
                     _context.tblFlightBookingSegmentMaster.Update(FlightDetails);
@@ -408,7 +408,7 @@ namespace B2BClasses
                             SegmentDisplayOrder = FlightDetails.SegmentDisplayOrder
                         }));
                     }
-                    CustomerData.BookingStatus = enmBookingStatus.Refund;
+                    CustomerData.BookingStatus = enmBookingStatus.Cancel;
                     _context.tblFlightBookingMaster.Update(CustomerData);
                 }
                 await _context.SaveChangesAsync();
@@ -507,6 +507,7 @@ namespace B2BClasses
 
         public async Task<IEnumerable<mdlSearchResponse>> SearchFlight(mdlSearchRequest mdlRq)
         {
+
             List<mdlSearchResponse> mdlRs = new List<mdlSearchResponse>();
             List<enmServiceProvider> serviceProviders = await GetActiveProviderAsync();
             List<tblFlightBookingProviderTraceId> traceIds = new List<tblFlightBookingProviderTraceId>();
@@ -515,6 +516,7 @@ namespace B2BClasses
             var lst = mdlRq.Segments.ToList();
             foreach (var sp in serviceProviders)
             {
+
                 mdlRq.JourneyType = actualJourneyType;
                 mdlSearchResponse mdlR = null;
                 IWingFlight wingflight = GetFlightObject(sp);
@@ -542,7 +544,7 @@ namespace B2BClasses
                 {
 
                     mdlRq.JourneyType = enmJourneyType.OneWay;
-                   
+
                     for (int i = 0; i < lst.Count; i++)
                     {
                         mdlRq.Segments = new List<mdlSegmentRequest>();
@@ -562,10 +564,13 @@ namespace B2BClasses
                         {
                             mdlR.Results.Add(md.Results.FirstOrDefault());
                         }
-                        
+
                     }
                     mdlRs.Add(mdlR);
                 }
+
+
+
             }
             string NewTraceID = await CustomerDataSave(mdlRq, traceIds, actualJourneyType);
             ChangeNewTraceIds(mdlRs, NewTraceID);
@@ -574,9 +579,9 @@ namespace B2BClasses
 
         private void ChangeNewTraceIds(List<mdlSearchResponse> mdls, string newTraceId)
         {
-            foreach (var md in mdls)
+            foreach (var mds in mdls)
             {
-                md.TraceId = newTraceId;
+                mds.TraceId = newTraceId;
             }
         }
 
@@ -591,75 +596,123 @@ namespace B2BClasses
             }
             if (res.Count() == 1)
             {
+
                 res[0].ResponseStatus = 1;
                 return res[0];
             }
 
             //Convert into Single
-            int SegmentId = 0;
-            bool IsAllSegmentAreEqual = false;
-            List<List<mdlSearchResult>> Results = res.SelectMany(p => p.Results).ToList();
-            for (int i = 0; i < Results.Count - 1; i++)
+            for (int providerIndex = 1; providerIndex < res.Count(); providerIndex++)
             {
-                for (int j = Results[i].Count - 1; j > 0; j--)
+                for (int journeyIndex = 0; journeyIndex < res[providerIndex].Results.Count; journeyIndex++)
                 {
-
-                    for (int k = j - 1; k >= 0; k--)
+                    res[0].Results[journeyIndex].AddRange(res[providerIndex].Results[journeyIndex]);
+                }
+            }
+            //Remove the Other List
+            for (int providerIndex = res.Count() - 1; providerIndex > 0; providerIndex--)
+            {
+                res.RemoveAt(providerIndex);
+            }
+            //Now Remove the Duplicate Result
+            bool IsAllSegmentAreEqual = false;
+            for (int i = 0; i < res[0].Results.Count; i++)
+            {
+                for (int j = 0; j < res[0].Results[i].Count; j++)
+                {
+                    for (int k = res[0].Results[i].Count-1; k > j; k--)
                     {
-                        if (Results[i][j].Segment.Count == Results[i][k].Segment.Count)
+
+                        //First Check Wetaher the segement Count is equivaelnt or not
+                        if (res[0].Results[i][j].Segment.Count != res[0].Results[i][k].Segment.Count)
                         {
-                            IsAllSegmentAreEqual = true;
-                            SegmentId = Results[i][j].Segment.Count - 1;
-                            while (SegmentId >= 0)//check Wheather the Flight and segment are same or not
+                            continue;
+                        }
+                        IsAllSegmentAreEqual = true;
+                        for (int segmentIndex = 0; segmentIndex < res[0].Results[i][j].Segment.Count; segmentIndex++)
+                        {
+                            //Check orign airpor
+                            if (!string.Equals(res[0].Results[i][j].Segment[segmentIndex].Origin.AirportCode, res[0].Results[i][k].Segment[segmentIndex].Origin.AirportCode, StringComparison.OrdinalIgnoreCase))
                             {
-                                if (!(Results[i][j].Segment[SegmentId].Airline.Code == Results[i][k].Segment[SegmentId].Airline.Code
-                                    && Results[i][j].Segment[SegmentId].Airline.FlightNumber == Results[i][k].Segment[SegmentId].Airline.FlightNumber))
-                                {
-                                    IsAllSegmentAreEqual = false;
-                                    break;
-                                }
-
-                                SegmentId = SegmentId - 1;
-
+                                IsAllSegmentAreEqual = false;
+                                break;
                             }
-                            if (IsAllSegmentAreEqual)
+                            //Check orign airpor
+                            if (!string.Equals(res[0].Results[i][j].Segment[segmentIndex].Destination.AirportCode, res[0].Results[i][k].Segment[segmentIndex].Destination.AirportCode, StringComparison.OrdinalIgnoreCase))
                             {
-                                for (int PriceListCount1 = Results[i][j].TotalPriceList.Count - 1; PriceListCount1 >= 0; PriceListCount1--)
-                                {
-
-                                    for (int PriceListCount2 = Results[i][k].TotalPriceList.Count - 1; PriceListCount2 >= 0; PriceListCount2--)
-                                    {
-                                        if (Results[i][j].TotalPriceList[PriceListCount1].ADULT.CabinClass == Results[i][k].TotalPriceList[PriceListCount2].ADULT.CabinClass
-                                            && Results[i][j].TotalPriceList[PriceListCount1].ADULT.ClassOfBooking == Results[i][k].TotalPriceList[PriceListCount2].ADULT.ClassOfBooking)
-                                        {
-                                            if (Results[i][j].TotalPriceList[PriceListCount1].ADULT.FareComponent.TotalFare > Results[i][k].TotalPriceList[PriceListCount2].ADULT.FareComponent.TotalFare)
-                                            {
-                                                Results[i][j].TotalPriceList.RemoveAt(PriceListCount1);
-                                                goto PriceListCount1_;
-                                            }
-                                        }
-
-                                    }
-                                PriceListCount1_:;
-                                }
-                                Results[i][k].TotalPriceList.AddRange(Results[i][j].TotalPriceList);
-                                Results[i].RemoveAt(j);
-                                goto outerLoop;
+                                IsAllSegmentAreEqual = false;
+                                break;
+                            }
+                            //Check Airline
+                            if (!string.Equals(res[0].Results[i][j].Segment[segmentIndex].Airline.Code, res[0].Results[i][k].Segment[segmentIndex].Airline.Code, StringComparison.OrdinalIgnoreCase))
+                            {
+                                IsAllSegmentAreEqual = false;
+                                break;
+                            }
+                            if (!string.Equals(res[0].Results[i][j].Segment[segmentIndex].Airline.FlightNumber, res[0].Results[i][k].Segment[segmentIndex].Airline.FlightNumber, StringComparison.OrdinalIgnoreCase))
+                            {
+                                IsAllSegmentAreEqual = false;
+                                break;
+                            }
+                            if (!string.Equals(res[0].Results[i][j].Segment[segmentIndex].Airline.Name, res[0].Results[i][k].Segment[segmentIndex].Airline.Name, StringComparison.OrdinalIgnoreCase))
+                            {
+                                IsAllSegmentAreEqual = false;
+                                break;
                             }
 
                         }
-
+                        if (!IsAllSegmentAreEqual)
+                        {
+                            continue;
+                        }
+                        //Join the all fair
+                        res[0].Results[i][j].TotalPriceList.AddRange(res[0].Results[i][k].TotalPriceList);
+                        res[0].Results[i].RemoveAt(k);
                     }
-                outerLoop:;
-
                 }
             }
+
+            for (int i = 0; i < res[0].Results.Count; i++)
+            {
+                for (int j = 0; j < res[0].Results[i].Count; j++)
+                {
+                    for (int k = 0; k < res[0].Results[i][j].TotalPriceList.Count; k++)
+                    {
+                        for (int l = res[0].Results[i][j].TotalPriceList.Count-1; l > k; l--)
+                        {
+                            if (res[0].Results[i][j].TotalPriceList[k].ADULT.CabinClass != res[0].Results[i][j].TotalPriceList[l].ADULT.CabinClass)
+                            {
+                                continue;
+                            }
+                            if (!string.Equals( res[0].Results[i][j].TotalPriceList[k].ADULT.ClassOfBooking ,res[0].Results[i][j].TotalPriceList[l].ADULT.ClassOfBooking, StringComparison.OrdinalIgnoreCase))
+                            {
+                                continue;
+                            }
+
+                            if (res[0].Results[i][j].TotalPriceList[k].ADULT.FareComponent.NetFare > res[0].Results[i][j].TotalPriceList[l].ADULT.FareComponent.NetFare)
+                            {
+                                res[0].Results[i][j].TotalPriceList[k] = res[0].Results[i][j].TotalPriceList[l];
+                                res[0].Results[i][j].TotalPriceList.RemoveAt(l);
+                                continue;
+                            }
+                            else
+                            {   
+                                res[0].Results[i][j].TotalPriceList.RemoveAt(l);
+                                continue;
+                            }
+                        }
+                    }
+                 }
+            }
+
+
+
             searchResponse.Error = res[0].Error;
             searchResponse.Destination = res[0].Destination;
             searchResponse.Origin = res[0].Origin;
             searchResponse.ServiceProvider = res[0].ServiceProvider;          
             searchResponse.TraceId = res[0].TraceId;
-            searchResponse.Results = Results;
+            searchResponse.Results = res[0].Results;
             searchResponse.ResponseStatus = 1;
             return searchResponse;
 
@@ -785,10 +838,10 @@ namespace B2BClasses
             return mdlRs;
         }
 
-        #endregion
+#endregion
 
 
-        #region  **************************** Packages ****************************
+#region  **************************** Packages ****************************
 
         public async Task<List<tblPackageMaster>> LoadPackage(int PackageId,bool OnlyActive, bool BeetweenCurrent, bool LoadUserName, bool BeetweenDateRange)
         {
@@ -953,7 +1006,7 @@ namespace B2BClasses
         }
 
 
-        #endregion
+#endregion
 
 
     }
