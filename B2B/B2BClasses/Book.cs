@@ -908,7 +908,7 @@ namespace B2BClasses
                 mdl.Message = "Invalid Package";
                 return;
             }
-            if (PackageMaster.EffectiveFromDt <= dateTime && dateTime < PackageMaster.EffectiveToDt)
+            if (!(PackageMaster.EffectiveFromDt <= dateTime && dateTime < PackageMaster.EffectiveToDt))
             {
                 mdl.Code = 1;
                 mdl.Message = "Package Expire";
@@ -949,14 +949,6 @@ namespace B2BClasses
             {
                 mdl.Code = 1;
                 mdl.Message = _config["ErrorMessages:InsufficientWalletBalance"];
-                return;
-            }
-
-            var CustomerMpin = _context.tblCustomerBalance.Where(p => p.CustomerId == this._CustomerId).FirstOrDefault()?.MPin ?? "0000";
-            if (CustomerMpin != mdl.Mpin)
-            {
-                mdl.Code = 1;
-                mdl.Message = _config["ErrorMessages:MpinNotMatch"];
                 return;
             }
 
