@@ -76,11 +76,11 @@
                         <thead>
                             <tr>
                                 <th>Edit</th>
-                                <th>Customer Name</th>
+                                @*<th>Customer Name</th>*@
                                 <th>MarkUp Value</th>
-                                <th>Created By</th>
+                                @*<th>Created By</th>*@
                                 <th>Created DateTime</th>
-                                <th>Last Modified By</th>
+                                @*<th>Last Modified By</th>*@
                                 <th>Last Modified DateTime</th>
                             </tr>
                         </thead>
@@ -98,9 +98,9 @@
 
                                     @*<td>@Model.MarkupData[i].tblCustomerMaster.CustomerName (@Model.MarkupData[i].tblCustomerMaster.Code)</td>*@
                                     <td>@Model.MarkupData[i].MarkupAmt</td>
-                                    <td>@Model.MarkupData[i].CreatedBy</td>
+                                    @*<td>@Model.MarkupData[i].CreatedBy</td>*@
                                     <td>@(Model.MarkupData[i].CreatedDt.ToString("dd-MMM-yyyy hh:mm tt"))</td>
-                                    <td>@Model.MarkupData[i].ModifiedBy</td>
+                                    @*<td>@Model.MarkupData[i].ModifiedBy</td>*@
                                     <td>@(Model.MarkupData[i].ModifiedDt?.ToString("dd-MMM-yyyy hh:mm tt"))</td>
 
                                 </tr>

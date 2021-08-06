@@ -924,7 +924,7 @@ namespace B2bApplication.Controllers
                                         AllowedAllIp = mdl.allipapplicable,
                                         CreatedBy = _userid,
                                         CreatedDt = DateTime.Now,
-                                        tblCustomerIPFilterDetails = mdl.IPAddess.Split(",").Select(p => new tblCustomerIPFilterDetails { IPAddress = p }).ToList()
+                                        tblCustomerIPFilterDetails = mdl.IPAddess.Split(",").Select(p => new tblCustomerIPFilterDetails {CustomerId=mdl.CustomerID, IPAddress = p }).ToList()
                                     };
                                     _context.tblCustomerIPFilter.Add(ipfilter_);
                                 }
@@ -946,9 +946,13 @@ namespace B2bApplication.Controllers
                                 await _context.SaveChangesAsync();
                                 transaction.Commit();
                             }
-                            catch
+                            catch (Exception exx)
                             {
                                 transaction.Rollback();
+                                TempData["MessageType"] = (int)enmMessageType.Error;
+                                TempData["Message"] = exx.Message.ToString();
+                                return RedirectToAction("CustomerIPFilter");
+
                             }
                         }
                     }
