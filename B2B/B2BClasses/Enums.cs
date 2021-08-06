@@ -591,15 +591,19 @@ namespace B2BClasses.Services.Enums
 
     public enum enmRequestType
     {
+        AllRequest = -1,
         WalletRecharge = 0,
         CreditRequest = 1,
+        
     }
 
     public enum enmApprovalStatus
     {
+        AllStatus = -1,
         Pending = 0,
         Approved = 1,
         Reject=2,
+        
     }
     public enum enmDocumentPartitionType : byte
     {
