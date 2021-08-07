@@ -209,7 +209,13 @@
                                     <div class="profile-info-name"> Have GST</div>
 
                                     <div class="profile-info-value">
-                                        <span>@Model.customerMaster.HaveGST</span>
+                                        <span>
+                                            @if (Model.customerMaster.HaveGST == true)
+                                            { <div>Yes</div> }
+
+                                            else
+                                            {<div>No</div> }
+                                        </span>
                                     </div>
                                 </div>
 
