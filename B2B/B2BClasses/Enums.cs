@@ -187,12 +187,13 @@ namespace B2BClasses.Services.Enums
 
     public enum enmCabinClass
     {
-        ALL=1,
+
         ECONOMY = 2,
         PREMIUM_ECONOMY = 3,
         BUSINESS = 4,
-        PremiumBusiness=5,
-        FIRST = 6
+        PremiumBusiness = 5,
+        FIRST = 6,
+        ALLClasses = 1
     }
 
     public enum enmPreferredDepartureTime
