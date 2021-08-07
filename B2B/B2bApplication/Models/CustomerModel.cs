@@ -358,7 +358,6 @@ namespace B2bApplication.Models
         [Required]
         [Range(1,1000000)]
         [Display(Name = "Requested Amount")]
-        
         public double CreditAmt { set; get; }
 
         [System.ComponentModel.DefaultValue("")]

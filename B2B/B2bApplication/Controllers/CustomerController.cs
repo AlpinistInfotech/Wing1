@@ -1176,8 +1176,9 @@ namespace B2bApplication.Controllers
             string filePath = _config["FileUpload:PaymentRequestFilePath"];
 
             if (spmode == 1)
+            { 
                 return context.tblPaymentRequest.Where(p => p.Status == status).Select(p => new mdlPaymentRequestWraper { Id = p.Id, CreatedDt = p.CreatedDt, CustomerId = p.CustomerId, RequestedAmt = p.RequestedAmt, CreatedRemarks = p.CreatedRemarks, CustomerName = p.tblCustomerMaster.CustomerName, Code = p.tblCustomerMaster.Code, RequestType = p.RequestType, UploadImages = filePath + "/" + p.UploadImages, TransactionNumber = p.TransactionNumber, TransactionDate = p.TransactionDate, TransactionType = p.TransactionType }).ToList();
-
+            }
             else if (spmode == 2 && Convert.ToString(requestType) != "AllRequest" && Convert.ToString(status) != "AllStatus")
             {
                 return context.tblPaymentRequest.Where(p => p.Status == status && p.CreatedDt >= datefrom && p.CreatedDt <= dateto && p.RequestType == requestType).Select(p => new mdlPaymentRequestWraper { Id = p.Id, CreatedDt = p.CreatedDt, CustomerId = p.CustomerId, RequestedAmt = p.RequestedAmt, CreatedRemarks = p.CreatedRemarks, CustomerName = p.tblCustomerMaster.CustomerName, Code = p.tblCustomerMaster.Code, RequestType = p.RequestType, UploadImages = filePath + "/" + p.UploadImages, TransactionNumber = p.TransactionNumber, TransactionDate = p.TransactionDate, TransactionType = p.TransactionType }).ToList();
