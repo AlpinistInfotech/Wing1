@@ -475,7 +475,7 @@ namespace B2BClasses
                         _logDbContext.tblCustomerGSTDetailsLog.Add(new tblCustomerGSTDetailsLog()
                         {
 
-                            CustomerId = saveData.CustomerId,
+                            CustomerId = _CustomerId,
                             RegisteredName = saveData.RegisteredName,
                             GstNumber = saveData.GstNumber,
                             Email = saveData.Email,

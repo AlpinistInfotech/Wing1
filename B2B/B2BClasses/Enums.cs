@@ -335,12 +335,15 @@ namespace B2BClasses.Services.Enums
         [Document( EnmSubModule: enmSubModule.CustomerDetailsPermission, DocumentType: enmDocumentType.Report,
         DisplayOrder: 1, Name: "BasicDetail Read", Description: "Read Basic Detail ", Icon: "", ActionName: "")]
         CustomerDetailsPermission_BasicDetail_Read = 10001,
+
         [Document(EnmSubModule: enmSubModule.CustomerDetailsPermission, DocumentType: enmDocumentType.Report,
         DisplayOrder: 2, Name: "BasicDetail Write", Description: "Write Basic Details", Icon: "", ActionName: "")]
         CustomerDetailsPermission_BasicDetail_Write = 10002,
+
         [Document(EnmSubModule: enmSubModule.CustomerDetailsPermission, DocumentType: enmDocumentType.Report,
         DisplayOrder: 3, Name: "GSTDetail Read", Description: "Read GST Detail ", Icon: "", ActionName: "")]
         CustomerDetailsPermission_GSTDetail_Read = 10003,
+
         [Document(EnmSubModule: enmSubModule.CustomerDetailsPermission, DocumentType: enmDocumentType.Report,
         DisplayOrder: 4, Name: "GSTDetail Write", Description: "Write GST Details", Icon: "", ActionName: "")]
         CustomerDetailsPermission_GSTDetail_Write = 10004,

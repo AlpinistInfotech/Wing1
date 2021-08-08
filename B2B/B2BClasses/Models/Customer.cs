@@ -204,6 +204,8 @@ namespace B2BClasses.Models
 
         [StringLength(200, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.")]
         [RegularExpression("[a-zA-Z0-9\\@]*$", ErrorMessage = "Invalid {0}, no special charcter")]
+
+        [Display(Name = "UPI ID")]
         public string UpiId { get; set; }
         [Display(Name = "Is Approved")]
         public enmApprovalStatus IsApproved { get; set; }
@@ -257,11 +259,13 @@ namespace B2BClasses.Models
         [Display(Name = "Markup Amount")]
         public double MarkupAmount { get; set; }
         [Display(Name = "Allowed All IP")]
-        public bool AllowedAllIp { get; set; } = true;        
-        [RegularExpression("[a-zA-Z0-9/.,\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
+        
+        public bool AllowedAllIp { get; set; } = true;
+        [RegularExpression("[a-zA-Z0-9/.,\\s-]*$", ErrorMessage = "Invalid {0}, no special character")]
         public string IPAddess { get; set; }
-        [StringLength(4, ErrorMessage = "The {0} must be {1} characters long.",MinimumLength = 4)]
-        [RegularExpression("[a-zA-Z0-9/.,\\s-]*$", ErrorMessage = "Invalid {0}, no special charcter")]
+
+        [StringLength(4, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 4)]
+        [Range(0, 9999)]
         [Display(Name = "MPin")]
         public string MPin { get; set; } = "0000";
     }

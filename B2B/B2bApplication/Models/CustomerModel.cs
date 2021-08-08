@@ -34,10 +34,12 @@ namespace B2bApplication.Models
         public List<enmDocumentMaster> DocumentPermission { get; set; }
         public double WalletBalance { get; set; }
         public double CreditBalace { get; set; }
+       
         [StringLength(4, ErrorMessage = "The {0} must be {1} characters long.", MinimumLength = 4)]
-        [RegularExpression("[a-zA-Z0-9]*$", ErrorMessage = "Invalid {0}, no special charcter")]
+        [RegularExpression("[a-zA-Z0-9]*$", ErrorMessage = "Invalid {0}, no special character")]
         [Display(Name = "MPin")]
         [DataType(DataType.Password)]
+       
         public string NewMpin { get; set; }
         [DataType(DataType.Password)]
         [Display(Name = "Confirm MPin")]

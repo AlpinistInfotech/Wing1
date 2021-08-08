@@ -117,14 +117,18 @@ namespace B2bApplication.Controllers
         [Authorize(Policy =nameof(enmDocumentMaster.CustomerDetail))]
         public IActionResult CustomerDetail(string Id)
         {
+
             int CustomerId = _currentUsers.CustomerId;
             mdlCustomerMasterWraper mdl = new mdlCustomerMasterWraper();
-            mdl.LoadData(CustomerId, _customerMaster, _config);
-            mdl.SetWalletBalance(_context);
+
             if (_currentUsers.CustomerType == enmCustomerType.Admin)
             {
                 mdl.LoadCustomer(_customerMaster);
             }
+            //mdl.LoadData(CustomerId, _customerMaster, _config);
+            //mdl.SetWalletBalance(_context);
+
+            mdl.CustomerId = CustomerId;
             return View(mdl);
         }
 
