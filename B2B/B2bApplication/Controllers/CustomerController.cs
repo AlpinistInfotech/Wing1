@@ -140,8 +140,7 @@ namespace B2bApplication.Controllers
             int CustomerId = 0;
             if (mdl == null)
             {
-                mdl = new mdlCustomerMasterWraper();
-               
+                mdl = new mdlCustomerMasterWraper();       
             }
             CustomerId = mdl.CustomerId;
             mdl.LoadData(CustomerId, _customerMaster,_config);
@@ -171,6 +170,7 @@ namespace B2bApplication.Controllers
             mdl.LoadData(CustomerId, _customerMaster, _config);
             mdl.SetWalletBalance(_context);            
             mdl.SetCountryState(ViewBag, _context);
+            mdl.CustomerId = CustomerId;
             return View(mdl);
         }
 
