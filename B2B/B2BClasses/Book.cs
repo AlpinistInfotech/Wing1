@@ -594,9 +594,23 @@ namespace B2BClasses
                 searchResponse.Error.Message = "No data found";
                 return searchResponse;
             }
+
+            for (int i = res.Count; i >= 0; i--)
+            {
+                if (res[i] == null)
+                {
+                    res.RemoveAt(i);
+                }
+            }
+
+            if (res.Count == 0)
+            {
+                searchResponse.Error.Message = "No data found";
+                return searchResponse;
+            }
+
             if (res.Count() == 1)
             {
-
                 res[0].ResponseStatus = 1;
                 return res[0];
             }
@@ -606,7 +620,11 @@ namespace B2BClasses
             {
                 for (int journeyIndex = 0; journeyIndex < res[providerIndex].Results.Count; journeyIndex++)
                 {
-                    res[0].Results[journeyIndex].AddRange(res[providerIndex].Results[journeyIndex]);
+                    if (res[0].Results != null)
+                    {
+                        res[0].Results[journeyIndex].AddRange(res[providerIndex].Results[journeyIndex]);
+                    }
+                    
                 }
             }
             //Remove the Other List
@@ -616,8 +634,12 @@ namespace B2BClasses
             }
             //Now Remove the Duplicate Result
             bool IsAllSegmentAreEqual = false;
-            for (int i = 0; i < res[0].Results.Count; i++)
-            {
+            for (int i = 0; i < (res[0]?.Results?.Count??0); i++)
+            {if (res[0]?.Results[i] == null)
+                {
+                    continue;
+                }
+
                 for (int j = 0; j < res[0].Results[i].Count; j++)
                 {
                     for (int k = res[0].Results[i].Count-1; k > j; k--)
@@ -672,7 +694,7 @@ namespace B2BClasses
                 }
             }
 
-            for (int i = 0; i < res[0].Results.Count; i++)
+            for (int i = 0; i < (res[0]?.Results?.Count??0); i++)
             {
                 for (int j = 0; j < res[0].Results[i].Count; j++)
                 {
