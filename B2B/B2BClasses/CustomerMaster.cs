@@ -475,7 +475,7 @@ namespace B2BClasses
                         _logDbContext.tblCustomerGSTDetailsLog.Add(new tblCustomerGSTDetailsLog()
                         {
 
-                            CustomerId = _CustomerId,
+                            CustomerId = saveData.CustomerId,
                             RegisteredName = saveData.RegisteredName,
                             GstNumber = saveData.GstNumber,
                             Email = saveData.Email,
@@ -505,6 +505,7 @@ namespace B2BClasses
                         saveData.Mobile = mdl.Mobile;
                         saveData.ModifiedBy = _UserId;
                         saveData.ModifiedDt = DateTime.Now;
+                        saveData.CustomerId = _CustomerId;
 
                     }
                     if (!IsUpdate)

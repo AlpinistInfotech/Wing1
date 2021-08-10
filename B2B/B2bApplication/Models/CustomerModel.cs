@@ -401,6 +401,9 @@ namespace B2bApplication.Models
 
     }
 
+    
+
+
     public class mdlPaymentWraper : tblPaymentRequest
     {
     }

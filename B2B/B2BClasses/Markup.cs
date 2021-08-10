@@ -869,11 +869,15 @@ namespace B2BClasses
 
         public void CustomerMarkup(List<List<mdlSearchResult>> mdl)
         {
+            if (mdl == null)
+            {
+                return;
+            }
             double MarkupAmount = 0;
             MarkupAmount = _context.tblCustomerMarkup.Where(p => !p.IsDeleted).Sum(p => p.MarkupAmt);
             for (int i = 0; i < ((mdl?.Count) ?? 0); i++)
             {
-                for (int j = 0; j < mdl[i].Count; j++)
+                for (int j = 0; j < (mdl[i]?.Count??0); j++)
                 {
                     for (int j1 = 0; j1 < mdl[i][j].TotalPriceList.Count; j1++)
                     {
