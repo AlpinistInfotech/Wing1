@@ -272,7 +272,14 @@ namespace B2BClasses
             {
                 if (mdl.BookingId?.Split("_").Length >= 2)
                 {
-                    BookingId = mdl.BookingId?.Split("_")[1];
+                    if (mdl.ServiceProvider == enmServiceProvider.TripJack)
+                    {
+                        BookingId = mdl.BookingId?.Split("_")[1];
+                    }
+                    else
+                    {
+                        BookingId = mdl.BookingId?.Split("_")[0];
+                    }
                 }
                 else
                 {
@@ -498,7 +505,7 @@ namespace B2BClasses
             switch (serviceProvider)
             {
                 case enmServiceProvider.TBO:
-                    return _tbo;
+                    return null;
                 case enmServiceProvider.TripJack:
                     return _tripJack;
             }
@@ -589,11 +596,19 @@ namespace B2BClasses
         {
             mdlSearchResponse searchResponse = new mdlSearchResponse() { ResponseStatus = 0, Error = new mdlError() { Code = 0, Message = "" } };
             var res = (await SearchFlight(mdlRq)).ToList();
+            for (int r = 0; r < res.Count(); r++)
+            {
+                if (res[r].Results == null)
+                {
+                    res.RemoveAt(r);
+                }
+            }
             if (res == null || res.Count == 0)
             {
                 searchResponse.Error.Message = "No data found";
                 return searchResponse;
             }
+          
             if (res.Count() == 1)
             {
 

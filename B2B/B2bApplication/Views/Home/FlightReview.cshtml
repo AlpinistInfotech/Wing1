@@ -131,7 +131,7 @@
 
                     </div>
                     <div class="form-actions no-padding align-center">
-                        <button type="button" name="btnBookFlight" class="btn btn-success">Book</button>
+                        <button type="button" name="btnbook" class="btn btn-success">Book</button>
                         @if (Model.FareQuoteCondition?.IsHoldApplicable ?? false)
                         {
                             <button type="button" name="btnHoldFlight" class="btn btn-danger">Hold</button>
@@ -531,6 +531,37 @@
             </div>
 
         </div>
+
+        <!--MPIN Popup-->
+        <div class="modal" id="popmpin" role="dialog" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header bg-light">
+                        <h4 class="modal-title">Enter MPIN</h4>
+                        <input type="hidden" id="hid_serid" name="hid_serid" />
+                        <button type="button" class="close f-s-30" data-dismiss="modal">&times;</button>
+                    </div>
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <div class="col-md-12">
+
+                            <div class="row">
+
+                                @Html.EditorFor(m => m.Mpin, new { htmlAttributes = new { @class = "form-control" } })
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" name="btnBookFlight" class="btn btn-secondary" data-dismiss="modal">Book Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </form>
 </div>
 @section Scripts {
@@ -571,7 +602,10 @@
         });
 
         $(document).ready(function () {
-            $("button[name='btnBookFlight']").click(function () { 
+            $("button[name='btnbook']").click(function () {
+                $('#popmpin').modal("show");
+            });
+            $("button[name='btnBookFlight']").click(function () {
                 $('#frmFlightBook').attr('action', '/Home/FlightBook');
                 $("#frmFlightBook").submit();
             });

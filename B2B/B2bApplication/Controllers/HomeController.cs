@@ -506,11 +506,11 @@ namespace B2bApplication.Controllers
                     eml.Add(mdl.emails);
                     List<mdlPaymentInfos> pi = new List<mdlPaymentInfos>();
                     pi.Add(new mdlPaymentInfos() { amount = mdl.FareQuotResponse[i].TotalPriceInfo.TotalFare });
-
+                    string bookid = mdl.FareQuotResponse[i].BookingId;
                     mdlBookingRequest mdlReq = new mdlBookingRequest()
                     {
                         TraceId = mdl.FareQuoteRequest.TraceId,
-                        BookingId = mdl.FareQuotResponse[i].BookingId,
+                        BookingId = bookid,
                         travellerInfo = mdl.travellerInfo,
                         deliveryInfo = new mdlDeliveryinfo() { contacts = cont, emails = eml },
                         gstInfo = mdl.gstInfo,
