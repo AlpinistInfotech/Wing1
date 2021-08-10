@@ -250,8 +250,10 @@ namespace B2bApplication.Controllers
                         }
 
                     }
+                    
                     if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_GSTDetail_Write) && mdl.GSTDetails != null && mdl.customerMaster.HaveGST)
                     {
+
                         mdl.GSTDetails.CustomerId = mdl.CustomerId;
                         if (await _customerMaster.SaveGSTDetailsAsync(mdl.GSTDetails))
                         {
@@ -1137,6 +1139,7 @@ namespace B2bApplication.Controllers
             List<int> creditpending_checkedlist = mdl.PaymentRequestList.Where(p => p.paymentrequestid).Select(p => p.Id).ToList();
             var TobeUpdated = _context.tblPaymentRequest.Where(p => creditpending_checkedlist.Contains(p.Id) && p.Status == enmApprovalStatus.Pending).ToList();
 
+
             using (var transaction = _context.Database.BeginTransaction())
             {
                 try
@@ -1153,21 +1156,26 @@ namespace B2bApplication.Controllers
                     customerWallet.AddBalanceAsync(DateTime.Now, p.RequestedAmt, enmTransactionType.OnCreditUpdate, p.CreatedRemarks, mdl.Remarks,p.Id);
                 }
             });
-                    TempData["MessageType"] = (int)enmMessageType.Success;
-                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
+
+                    
+                    ViewBag.SaveStatus = (int)enmMessageType.Success;
+                    ViewBag.Message = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
 
                     await _context.SaveChangesAsync();
                     transaction.Commit();
-
+                    
                 }
                 catch
                 {
-                    TempData["MessageType"] = (int)enmMessageType.Error;
-                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidData);
+                    ViewBag.SaveStatus = (int)enmMessageType.Error;
+                    ViewBag.Message = _setting.GetErrorMessage(enmMessage.InvalidData);
 
                     transaction.Rollback();
                 }
+                ModelState.Clear();
             }
+
+
             mdl.PaymentRequestList = GetPaymentRequest(_context, 0, _customerId,DateTime.Now, DateTime.Now, 0,1);
             return View(mdl);
         }
