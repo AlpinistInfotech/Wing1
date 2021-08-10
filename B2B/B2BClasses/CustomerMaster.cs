@@ -505,6 +505,7 @@ namespace B2BClasses
                         saveData.Mobile = mdl.Mobile;
                         saveData.ModifiedBy = _UserId;
                         saveData.ModifiedDt = DateTime.Now;
+                        saveData.CustomerId = _CustomerId;
 
                     }
                     if (!IsUpdate)

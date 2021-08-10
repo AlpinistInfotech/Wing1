@@ -67,7 +67,7 @@ namespace B2bApplication.Controllers
 
         [AcceptVerbs("Get", "Post")]
         public IActionResult CustomerCodeValidate(mdlCustomerMasterWraper mdl)
-        {
+          {
             
             if (mdl != null && mdl.customerMaster != null)
             {   
@@ -171,6 +171,7 @@ namespace B2bApplication.Controllers
             mdl.SetWalletBalance(_context);            
             mdl.SetCountryState(ViewBag, _context);
             mdl.CustomerId = CustomerId;
+            mdl.customerMaster.CustomerId = CustomerId;
             return View(mdl);
         }
 
@@ -235,7 +236,7 @@ namespace B2bApplication.Controllers
                     }
                     if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Pan_Write) && mdl.pan != null)
                     {
-                        mdl.pan.CustomerId = mdl.CustomerId;
+                        mdl.pan.CustomerId = _customerMaster.CustomerId;
                         if (await _customerMaster.SavePanDetailsAsync(mdl.pan))
                         {
                             HaveWriteData = true;                            
@@ -243,7 +244,7 @@ namespace B2bApplication.Controllers
                     }
                     if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Bank_Write) && mdl.banks != null)
                     {
-                        mdl.banks.CustomerId = mdl.CustomerId;
+                        mdl.banks.CustomerId = _customerMaster.CustomerId;
                         if (await _customerMaster.SaveBankDetailsAsync(mdl.banks))
                         {
                             HaveWriteData = true;
@@ -254,7 +255,7 @@ namespace B2bApplication.Controllers
                     if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_GSTDetail_Write) && mdl.GSTDetails != null && mdl.customerMaster.HaveGST)
                     {
 
-                        mdl.GSTDetails.CustomerId = mdl.CustomerId;
+                        mdl.GSTDetails.CustomerId = _customerMaster.CustomerId;
                         if (await _customerMaster.SaveGSTDetailsAsync(mdl.GSTDetails))
                         {
                             HaveWriteData = true;
@@ -263,7 +264,7 @@ namespace B2bApplication.Controllers
                     }
                     if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Setting_Write) && mdl.customerSetting != null)
                     {
-                        mdl.customerSetting.CustomerId = mdl.CustomerId;
+                        mdl.customerSetting.CustomerId = _customerMaster.CustomerId;
                         if (await _customerMaster.SaveSettingDetailsAsync(mdl.customerSetting))
                         {
                             HaveWriteData = true;
