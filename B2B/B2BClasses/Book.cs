@@ -498,7 +498,7 @@ namespace B2BClasses
             switch (serviceProvider)
             {
                 case enmServiceProvider.TBO:
-                    return _tbo;
+                    return null;//_tbo;
                 case enmServiceProvider.TripJack:
                     return _tripJack;
             }
@@ -595,7 +595,7 @@ namespace B2BClasses
                 return searchResponse;
             }
 
-            for (int i = res.Count; i >= 0; i--)
+            for (int i = res.Count-1; i >= 0; i--)
             {
                 if (res[i] == null)
                 {
