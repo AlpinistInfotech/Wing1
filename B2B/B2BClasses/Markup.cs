@@ -24,8 +24,8 @@ namespace B2BClasses
         bool AddCustomerFlightAPI(mdlWingMarkup mdl, int UserId);
         bool AddDiscount(mdlWingMarkup mdl, int UserId);
         bool AddMarkup(mdlWingMarkup mdl, int UserId);
-        bool CalculateTotalPriceAfterMarkup(List<List<mdlSearchResult>> mdls, int AdultCount, int ChildCount, int InfantCount);
-        void CustomerMarkup(List<List<mdlSearchResult>> mdl);
+        bool CalculateTotalPriceAfterMarkup(List<List<mdlSearchResult>> mdls, int AdultCount, int ChildCount, int InfantCount,string mode);
+        void CustomerMarkup(List<List<mdlSearchResult>> mdl,int custid);
         List<mdlWingMarkup> LoadConvenience(int Id = 0, bool FromEffectiveDt = false, bool IsForCustomer = false);
         List<mdlWingMarkup> LoadCustomerFlightAPI(int Id = 0, bool FromEffectiveDt = false, bool IsForCustomer = false);
         List<mdlWingMarkup> LoadDiscount(int Id = 0, bool FromEffectiveDt = false, bool IsForCustomer = false);
@@ -867,14 +867,14 @@ namespace B2BClasses
         }
 
 
-        public void CustomerMarkup(List<List<mdlSearchResult>> mdl)
+        public void CustomerMarkup(List<List<mdlSearchResult>> mdl,int custid)
         {
             if (mdl == null)
             {
                 return;
             }
             double MarkupAmount = 0;
-            MarkupAmount = _context.tblCustomerMarkup.Where(p => !p.IsDeleted).Sum(p => p.MarkupAmt);
+            MarkupAmount = _context.tblCustomerMarkup.Where(p => !p.IsDeleted && p.CustomerId==custid).Sum(p => p.MarkupAmt);
             for (int i = 0; i < ((mdl?.Count) ?? 0); i++)
             {
                 for (int j = 0; j < (mdl[i]?.Count??0); j++)
@@ -1485,7 +1485,7 @@ namespace B2BClasses
         }
 
 
-        public bool CalculateTotalPriceAfterMarkup(List<List<mdlSearchResult>> mdls, int AdultCount, int ChildCount, int InfantCount)
+        public bool CalculateTotalPriceAfterMarkup(List<List<mdlSearchResult>> mdls, int AdultCount, int ChildCount, int InfantCount,string mode)
         {
             if (mdls == null)
             {
@@ -1502,24 +1502,50 @@ namespace B2BClasses
                     {
                         //We need to Show Only Adult Fare
                         WingbaseFare = 0;
-                        if (tp?.ADULT?.FareComponent?.TotalFare != null)
+                        if (mode == "search")
                         {
-                            tp.ADULT.FareComponent.NewTotalFare = (tp?.ADULT?.FareComponent?.TotalFare ?? 0) + (tp?.ADULT?.FareComponent?.WingMarkup ?? 0);
-                            WingbaseFare = WingbaseFare + (tp.ADULT.FareComponent.NewTotalFare);
-                            tp.Discount = tp.Discount + (tp.ADULT?.FareComponent?.WingDiscount??0);
+                            if (tp?.ADULT?.FareComponent?.TotalFare != null)
+                            {
+                                tp.ADULT.FareComponent.NewTotalFare = (tp?.ADULT?.FareComponent?.TotalFare ?? 0) + (tp?.ADULT?.FareComponent?.WingMarkup ?? 0);
+                                WingbaseFare = WingbaseFare + (tp.ADULT.FareComponent.NewTotalFare);
+                                tp.Discount = tp.Discount + (tp.ADULT?.FareComponent?.WingDiscount ?? 0);
 
+                            }
+                            else if (tp?.CHILD?.FareComponent?.TotalFare != null)
+                            {
+                                tp.CHILD.FareComponent.NewTotalFare = (tp?.CHILD?.FareComponent?.TotalFare ?? 0) + (tp?.CHILD?.FareComponent?.WingMarkup ?? 0);
+                                WingbaseFare = WingbaseFare + (tp.CHILD.FareComponent.NewTotalFare);
+                                tp.Discount = tp.Discount + (tp.CHILD?.FareComponent?.WingDiscount ?? 0);
+                            }
+                            else if (tp?.INFANT?.FareComponent?.TotalFare != null)
+                            {
+                                tp.INFANT.FareComponent.NewTotalFare = (tp?.INFANT?.FareComponent?.TotalFare ?? 0) + (tp?.INFANT?.FareComponent?.WingMarkup ?? 0);
+                                WingbaseFare = WingbaseFare + (tp.INFANT.FareComponent.NewTotalFare);
+                                tp.Discount = tp.Discount + (tp.INFANT?.FareComponent?.WingDiscount ?? 0);
+                            }
                         }
-                        else if (tp?.CHILD?.FareComponent?.TotalFare != null)
+                        else
                         {
-                            tp.CHILD.FareComponent.NewTotalFare = (tp?.CHILD?.FareComponent?.TotalFare ?? 0) + (tp?.CHILD?.FareComponent?.WingMarkup ?? 0);
-                            WingbaseFare = WingbaseFare + (tp.CHILD.FareComponent.NewTotalFare);
-                            tp.Discount = tp.Discount + (tp.ADULT?.FareComponent?.WingDiscount ?? 0);
+                            if (tp?.ADULT?.FareComponent?.TotalFare != null)
+                            {
+                                tp.ADULT.FareComponent.NewTotalFare = (tp?.ADULT?.FareComponent?.TotalFare ?? 0) + (tp?.ADULT?.FareComponent?.WingMarkup ?? 0);
+                                WingbaseFare = WingbaseFare + (tp.ADULT.FareComponent.NewTotalFare);
+                                tp.Discount = tp.Discount + (tp.ADULT?.FareComponent?.WingDiscount ?? 0);
+
+                            }
+                            if (tp?.CHILD?.FareComponent?.TotalFare != null)
+                            {
+                                tp.CHILD.FareComponent.NewTotalFare = (tp?.CHILD?.FareComponent?.TotalFare ?? 0) + (tp?.CHILD?.FareComponent?.WingMarkup ?? 0);
+                                WingbaseFare = WingbaseFare + (tp.CHILD.FareComponent.NewTotalFare);
+                                tp.Discount = tp.Discount + (tp.CHILD?.FareComponent?.WingDiscount ?? 0);
+                            }
+                            if (tp?.INFANT?.FareComponent?.TotalFare != null)
+                            {
+                                tp.INFANT.FareComponent.NewTotalFare = (tp?.INFANT?.FareComponent?.TotalFare ?? 0) + (tp?.INFANT?.FareComponent?.WingMarkup ?? 0);
+                                WingbaseFare = WingbaseFare + (tp.INFANT.FareComponent.NewTotalFare);
+                                tp.Discount = tp.Discount + (tp.INFANT?.FareComponent?.WingDiscount ?? 0);
+                            }
                         }
-                        //if (tp?.INFANT?.FareComponent?.TotalFare != null)
-                        //{
-                        //    tp.INFANT.FareComponent.NewTotalFare = (tp?.INFANT?.FareComponent?.TotalFare ?? 0) + (tp?.INFANT?.FareComponent?.WingMarkup ?? 0);
-                        //    WingbaseFare = WingbaseFare + (tp.INFANT.FareComponent.NewTotalFare );
-                        //}
                         tp.BaseFare = WingbaseFare;
                         tp.TotalPrice = tp.BaseFare + tp.WingMarkup + tp.CustomerMarkup;
                         tp.NetPrice = tp.TotalPrice + tp.Convenience;
