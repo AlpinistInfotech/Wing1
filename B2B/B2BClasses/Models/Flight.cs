@@ -27,6 +27,8 @@ namespace B2BClasses.Models
         public mdlSearchRequest searchRequest { get; set; }
         public mdlSearchResponse searchResponse { get; set; }
         public List<tblAirport> Airports { get; set; }
+        public enmCabinClass CabinClass { get; set; }
+        public enmJourneyType JourneyType { get; set; }
         public async Task LoadAirportAsync(IBooking booking)
         {
             this.Airports = (await booking.GetAirportAsync());

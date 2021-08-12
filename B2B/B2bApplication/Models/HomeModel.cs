@@ -181,47 +181,50 @@ namespace B2bApplication.Models
             this.FareQuotResponse.AddRange(await _booking.FareQuoteAsync(FareQuoteRequest));
             foreach (var md in FareQuotResponse)
             {
-                _markup.CustomerId = CustomerId;
-                _markup.CustomerMarkup(md.Results, CustomerId);
-                _markup.WingMarkupAmount(md.Results, md.SearchQuery.AdultCount, md.SearchQuery.ChildCount, md.SearchQuery.InfantCount);
-                if (this.travellerInfo == null)
+                if (md.Results != null)
                 {
-                    this.travellerInfo = new List<mdlTravellerinfo>();
-                    for (int i = 0; i < md.SearchQuery.AdultCount; i++)
+                    _markup.CustomerId = CustomerId;
+                    _markup.CustomerMarkup(md.Results, CustomerId);
+                    _markup.WingMarkupAmount(md.Results, md.SearchQuery.AdultCount, md.SearchQuery.ChildCount, md.SearchQuery.InfantCount);
+                    if (this.travellerInfo == null)
                     {
-                        this.travellerInfo.Add(new mdlTravellerinfo()
+                        this.travellerInfo = new List<mdlTravellerinfo>();
+                        for (int i = 0; i < md.SearchQuery.AdultCount; i++)
                         {
-                            Title = "MR",
-                            passengerType = enmPassengerType.Adult,
-                            FirstName = string.Empty,
-                            LastName = string.Empty,
-                        });
-                    }
-                    for (int i = 0; i < md.SearchQuery.ChildCount; i++)
-                    {
-                        this.travellerInfo.Add(new mdlTravellerinfo()
+                            this.travellerInfo.Add(new mdlTravellerinfo()
+                            {
+                                Title = "MR",
+                                passengerType = enmPassengerType.Adult,
+                                FirstName = string.Empty,
+                                LastName = string.Empty,
+                            });
+                        }
+                        for (int i = 0; i < md.SearchQuery.ChildCount; i++)
                         {
-                            Title = "MASTER",
-                            passengerType = enmPassengerType.Child,
-                            FirstName = string.Empty,
-                            LastName = string.Empty,
-                        });
-                    }
-                    for (int i = 0; i < md.SearchQuery.InfantCount; i++)
-                    {
-                        this.travellerInfo.Add(new mdlTravellerinfo()
+                            this.travellerInfo.Add(new mdlTravellerinfo()
+                            {
+                                Title = "MASTER",
+                                passengerType = enmPassengerType.Child,
+                                FirstName = string.Empty,
+                                LastName = string.Empty,
+                            });
+                        }
+                        for (int i = 0; i < md.SearchQuery.InfantCount; i++)
                         {
-                            Title = "MASTER",
-                            passengerType = enmPassengerType.Infant,
-                            FirstName = string.Empty,
-                            LastName = string.Empty,
-                        });
-                    }
+                            this.travellerInfo.Add(new mdlTravellerinfo()
+                            {
+                                Title = "MASTER",
+                                passengerType = enmPassengerType.Infant,
+                                FirstName = string.Empty,
+                                LastName = string.Empty,
+                            });
+                        }
 
+                    }
+                    _markup.WingConvenienceAmount(md, this.travellerInfo);
+                    _markup.CalculateTotalPriceAfterMarkup(md.Results, md.SearchQuery.AdultCount, md.SearchQuery.ChildCount, md.SearchQuery.InfantCount, "review");
                 }
-                _markup.WingConvenienceAmount(md, this.travellerInfo);
-                _markup.CalculateTotalPriceAfterMarkup(md.Results, md.SearchQuery.AdultCount, md.SearchQuery.ChildCount, md.SearchQuery.InfantCount,"review");
-            }
+                }
             await _booking.CustomerFlightDetailSave(FareQuoteRequest.TraceId, FareQuotResponse);
         }
 

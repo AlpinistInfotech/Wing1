@@ -20,11 +20,21 @@ namespace B2bApplication.Controllers
         private readonly DBContext _context;
         private readonly IConfiguration _config;
 
-        public WingController(ILogger<WingController> logger, DBContext context, IConfiguration config)
+        private readonly IBooking _booking;
+        private readonly ISettings _setting;
+        private readonly IMarkup _markup;
+        private readonly ICurrentUsers _currentUsers;
+        public WingController(ILogger<WingController> logger, DBContext context, IBooking booking,
+             ISettings setting, IMarkup markup, ICurrentUsers currentUsers,IConfiguration config
+             )
         {
-            _logger = logger;
             _context = context;
+            _logger = logger;
+            _setting = setting;
             _config = config;
+            _booking = booking;
+            _markup = markup;
+            _currentUsers = currentUsers;
         }
 
         public string GetUserDetail([FromServices] ICurrentUsers currentUsers )
@@ -36,6 +46,72 @@ namespace B2bApplication.Controllers
         {
             return View();
         }
+        [Authorize(policy: nameof(enmDocumentMaster.Flight))]
+        public async Task<IActionResult> NewFlightSearch()
+        {
+            mdlFlightSearch flightSearch = new mdlFlightSearch()
+            {
+                FlightSearchWraper = new mdlFlightSearchWraper()
+                {
+                    AdultCount = 1,
+                    ChildCount = 0,
+                    InfantCount = 0,
+                    CabinClass = enmCabinClass.ECONOMY,
+                    DepartureDt = DateTime.Now,
+                    ReturnDt = null,
+                    From = "DEL",
+                    To = "BOM",
+                    JourneyType = enmJourneyType.OneWay,
+
+                }
+            };
+            await flightSearch.LoadAirportAsync(_booking);
+            return View(flightSearch);
+        }
+       
+            [HttpPost]
+        [Authorize(policy: nameof(enmDocumentMaster.Flight))]
+       // [ValidateAntiForgeryToken]
+        public async Task<IActionResult> NewFlightSearch(mdlFlightSearchWraper mdlsearch)
+        {
+            mdlFlightSearch mdl = new mdlFlightSearch();
+            mdl.FlightSearchWraper= mdlsearch;
+           
+            int CustomerId = 1;
+            int PassengerMaxLimit = 5;
+            int.TryParse(_config["PassengerMaxLimit"], out PassengerMaxLimit);
+            await mdl.LoadAirportAsync(_booking);
+            if (mdl.FlightSearchWraper.AdultCount + mdl.FlightSearchWraper.ChildCount + mdl.FlightSearchWraper.InfantCount > PassengerMaxLimit)
+            {
+                ViewBag.SaveStatus = (int)enmSaveStatus.danger;
+                ViewBag.Message = _setting.GetErrorMessage(enmMessage.PassengerLimitExceed);
+                ModelState.AddModelError(nameof(mdl.FlightSearchWraper.AdultCount), ViewBag.Message);
+                return View(mdl);
+            }
+            if (ModelState.IsValid)
+            {
+                mdl.LoadDefaultSearchRequestAsync(_booking);
+                _booking.CustomerId = CustomerId;
+                mdl.searchResponse = (await _booking.SearchFlightMinPrices(mdl.searchRequest));
+                if (mdl.searchResponse.Results != null)
+                {
+                    _markup.CustomerMarkup(mdl.searchResponse.Results, CustomerId);
+                    _markup.WingMarkupAmount(mdl.searchResponse.Results, mdl.FlightSearchWraper.AdultCount, mdl.FlightSearchWraper.ChildCount, mdl.FlightSearchWraper.InfantCount);
+                    _markup.WingDiscountAmount(mdl.searchResponse.Results, mdl.FlightSearchWraper.AdultCount, mdl.FlightSearchWraper.ChildCount, mdl.FlightSearchWraper.InfantCount);
+
+                    _markup.CalculateTotalPriceAfterMarkup(mdl.searchResponse.Results, mdl.FlightSearchWraper.AdultCount, mdl.FlightSearchWraper.ChildCount, mdl.FlightSearchWraper.InfantCount, "search");
+                }
+                if ((mdl?.searchResponse?.Results?.Count() ?? 0) == 0)
+                {
+                    ViewBag.SaveStatus = (int)enmSaveStatus.danger;
+                    ViewBag.Message = _setting.GetErrorMessage(enmMessage.NoFlightDataFound);
+                }
+            }
+
+            return View(mdl);
+        }
+
+
         private async Task<mdlPackageSearch> GetPackageData(mdlPackageSearch mdl, IBooking booking)
         {
             if (mdl == null)

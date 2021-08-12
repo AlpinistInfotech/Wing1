@@ -215,6 +215,8 @@ namespace B2bApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> FlightSearch(mdlFlightSearch mdl, [FromServices] IConfiguration configuration)
         {
+            //mdl.FlightSearchWraper.CabinClass = mdl.CabinClass;
+           // mdl.FlightSearchWraper.JourneyType = mdl.JourneyType;
             int CustomerId = 1;
             int PassengerMaxLimit = 5;
             int.TryParse(configuration["PassengerMaxLimit"], out PassengerMaxLimit);
