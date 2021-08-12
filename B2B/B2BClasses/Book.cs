@@ -272,7 +272,14 @@ namespace B2BClasses
             {
                 if (mdl.BookingId?.Split("_").Length >= 2)
                 {
-                    BookingId = mdl.BookingId?.Split("_")[1];
+                    if (mdl.ServiceProvider == enmServiceProvider.TripJack)
+                    {
+                        BookingId = mdl.BookingId?.Split("_")[1];
+                    }
+                    else
+                    {
+                        BookingId = mdl.BookingId?.Split("_")[0];
+                    }
                 }
                 else
                 {
@@ -498,7 +505,7 @@ namespace B2BClasses
             switch (serviceProvider)
             {
                 case enmServiceProvider.TBO:
-                    return null;//_tbo;
+                    return null;
                 case enmServiceProvider.TripJack:
                     return _tripJack;
             }
@@ -589,28 +596,22 @@ namespace B2BClasses
         {
             mdlSearchResponse searchResponse = new mdlSearchResponse() { ResponseStatus = 0, Error = new mdlError() { Code = 0, Message = "" } };
             var res = (await SearchFlight(mdlRq)).ToList();
+            for (int r = 0; r < res.Count(); r++)
+            {
+                if (res[r].Results == null)
+                {
+                    res.RemoveAt(r);
+                }
+            }
             if (res == null || res.Count == 0)
             {
                 searchResponse.Error.Message = "No data found";
                 return searchResponse;
             }
-
-            for (int i = res.Count-1; i >= 0; i--)
-            {
-                if (res[i] == null)
-                {
-                    res.RemoveAt(i);
-                }
-            }
-
-            if (res.Count == 0)
-            {
-                searchResponse.Error.Message = "No data found";
-                return searchResponse;
-            }
-
+          
             if (res.Count() == 1)
             {
+
                 res[0].ResponseStatus = 1;
                 return res[0];
             }
@@ -620,11 +621,7 @@ namespace B2BClasses
             {
                 for (int journeyIndex = 0; journeyIndex < res[providerIndex].Results.Count; journeyIndex++)
                 {
-                    if (res[0].Results != null)
-                    {
-                        res[0].Results[journeyIndex].AddRange(res[providerIndex].Results[journeyIndex]);
-                    }
-                    
+                    res[0].Results[journeyIndex].AddRange(res[providerIndex].Results[journeyIndex]);
                 }
             }
             //Remove the Other List
@@ -634,12 +631,8 @@ namespace B2BClasses
             }
             //Now Remove the Duplicate Result
             bool IsAllSegmentAreEqual = false;
-            for (int i = 0; i < (res[0]?.Results?.Count??0); i++)
-            {if (res[0]?.Results[i] == null)
-                {
-                    continue;
-                }
-
+            for (int i = 0; i < res[0].Results.Count; i++)
+            {
                 for (int j = 0; j < res[0].Results[i].Count; j++)
                 {
                     for (int k = res[0].Results[i].Count-1; k > j; k--)
@@ -694,7 +687,7 @@ namespace B2BClasses
                 }
             }
 
-            for (int i = 0; i < (res[0]?.Results?.Count??0); i++)
+            for (int i = 0; i < res[0].Results.Count; i++)
             {
                 for (int j = 0; j < res[0].Results[i].Count; j++)
                 {

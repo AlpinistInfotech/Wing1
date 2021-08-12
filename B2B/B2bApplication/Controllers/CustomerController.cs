@@ -67,7 +67,7 @@ namespace B2bApplication.Controllers
 
         [AcceptVerbs("Get", "Post")]
         public IActionResult CustomerCodeValidate(mdlCustomerMasterWraper mdl)
-        {
+          {
             
             if (mdl != null && mdl.customerMaster != null)
             {   
@@ -140,8 +140,7 @@ namespace B2bApplication.Controllers
             int CustomerId = 0;
             if (mdl == null)
             {
-                mdl = new mdlCustomerMasterWraper();
-               
+                mdl = new mdlCustomerMasterWraper();       
             }
             CustomerId = mdl.CustomerId;
             mdl.LoadData(CustomerId, _customerMaster,_config);
@@ -171,6 +170,8 @@ namespace B2bApplication.Controllers
             mdl.LoadData(CustomerId, _customerMaster, _config);
             mdl.SetWalletBalance(_context);            
             mdl.SetCountryState(ViewBag, _context);
+            mdl.CustomerId = CustomerId;
+            mdl.customerMaster.CustomerId = CustomerId;
             return View(mdl);
         }
 
@@ -235,7 +236,7 @@ namespace B2bApplication.Controllers
                     }
                     if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Pan_Write) && mdl.pan != null)
                     {
-                        mdl.pan.CustomerId = mdl.CustomerId;
+                        mdl.pan.CustomerId = _customerMaster.CustomerId;
                         if (await _customerMaster.SavePanDetailsAsync(mdl.pan))
                         {
                             HaveWriteData = true;                            
@@ -243,16 +244,18 @@ namespace B2bApplication.Controllers
                     }
                     if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Bank_Write) && mdl.banks != null)
                     {
-                        mdl.banks.CustomerId = mdl.CustomerId;
+                        mdl.banks.CustomerId = _customerMaster.CustomerId;
                         if (await _customerMaster.SaveBankDetailsAsync(mdl.banks))
                         {
                             HaveWriteData = true;
                         }
 
                     }
+                    
                     if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_GSTDetail_Write) && mdl.GSTDetails != null && mdl.customerMaster.HaveGST)
                     {
-                        mdl.GSTDetails.CustomerId = mdl.CustomerId;
+
+                        mdl.GSTDetails.CustomerId = _customerMaster.CustomerId;
                         if (await _customerMaster.SaveGSTDetailsAsync(mdl.GSTDetails))
                         {
                             HaveWriteData = true;
@@ -261,7 +264,7 @@ namespace B2bApplication.Controllers
                     }
                     if (mdl.DocumentPermission.Any(p => p == enmDocumentMaster.CustomerDetailsPermission_Setting_Write) && mdl.customerSetting != null)
                     {
-                        mdl.customerSetting.CustomerId = mdl.CustomerId;
+                        mdl.customerSetting.CustomerId = _customerMaster.CustomerId;
                         if (await _customerMaster.SaveSettingDetailsAsync(mdl.customerSetting))
                         {
                             HaveWriteData = true;
@@ -1137,6 +1140,7 @@ namespace B2bApplication.Controllers
             List<int> creditpending_checkedlist = mdl.PaymentRequestList.Where(p => p.paymentrequestid).Select(p => p.Id).ToList();
             var TobeUpdated = _context.tblPaymentRequest.Where(p => creditpending_checkedlist.Contains(p.Id) && p.Status == enmApprovalStatus.Pending).ToList();
 
+
             using (var transaction = _context.Database.BeginTransaction())
             {
                 try
@@ -1153,21 +1157,26 @@ namespace B2bApplication.Controllers
                     customerWallet.AddBalanceAsync(DateTime.Now, p.RequestedAmt, enmTransactionType.OnCreditUpdate, p.CreatedRemarks, mdl.Remarks,p.Id);
                 }
             });
-                    TempData["MessageType"] = (int)enmMessageType.Success;
-                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
+
+                    
+                    ViewBag.SaveStatus = (int)enmMessageType.Success;
+                    ViewBag.Message = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
 
                     await _context.SaveChangesAsync();
                     transaction.Commit();
-
+                    
                 }
                 catch
                 {
-                    TempData["MessageType"] = (int)enmMessageType.Error;
-                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.InvalidData);
+                    ViewBag.SaveStatus = (int)enmMessageType.Error;
+                    ViewBag.Message = _setting.GetErrorMessage(enmMessage.InvalidData);
 
                     transaction.Rollback();
                 }
+                ModelState.Clear();
             }
+
+
             mdl.PaymentRequestList = GetPaymentRequest(_context, 0, _customerId,DateTime.Now, DateTime.Now, 0,1);
             return View(mdl);
         }

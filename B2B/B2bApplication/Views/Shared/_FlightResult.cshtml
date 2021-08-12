@@ -38,28 +38,37 @@
                         </div>
                         <div class="col-sm-4  col-xs-4 center stop-arrow">
                             <div class="row">
-                                <i class="fa fa-long-arrow-right"><span></span><span></span><span></span></i>
-                                @for (int i = 1; i < Model.Segment.Count; i++)
-                                {
-                    <i class="fa fa-long-arrow-left"></i>}
-                            </div>
-                            <div class="row">
-                                @(TimeSpan.FromMinutes( Model.Segment.Sum(p=>p.Duration)).Hours) : @(TimeSpan.FromMinutes( Model.Segment.Sum(p=>p.Duration)).Minutes)
-                            </div>
-                        </div>
-                        <div class="col-sm-4  col-xs-4">
-                            <div class="row">
-                                @(Model.Segment.FirstOrDefault()?.Destination?.CityName)
-                            </div>
-                            <div class="row">
-                                <b> @Model.Segment.LastOrDefault()?.ArrivalTime.ToString("HH:mm")</b>
-                            </div>
-                            <div class="row">
-                                @Model.Segment.LastOrDefault()?.ArrivalTime.ToString("dd-MMM")
-                            </div>
-                        </div>
+                                @{ TimeSpan? t1 = (Model.Segment.LastOrDefault()?.ArrivalTime - Model.Segment.FirstOrDefault()?.DepartureTime);
+                                    int hour = t1.Value.Hours;
+                                    int mins = t1.Value.Minutes;
+                        <label>@hour.ToString("00") : @mins.ToString("00")</label> }
+                                </div>
+                                <div class="row">
+                                    <i class="fa fa-long-arrow-right"></i>
 
-                    </div>
+                                </div>
+                                <div class="row">
+
+                                    @if (Model.Segment.Count > 1)
+                                    {@(Model.Segment.Count-1) <label>Stop</label> }
+                                    else
+                                    {
+                        <label>Non Stop</label>}
+                                </div>
+                            </div>
+                            <div class="col-sm-4  col-xs-4">
+                                <div class="row">
+                                    @(Model.Segment.LastOrDefault()?.Destination?.CityName)
+                                </div>
+                                <div class="row">
+                                    <b> @Model.Segment.LastOrDefault()?.ArrivalTime.ToString("HH:mm")</b>
+                                </div>
+                                <div class="row">
+                                    @Model.Segment.LastOrDefault()?.ArrivalTime.ToString("dd-MMM")
+                                </div>
+                            </div>
+
+                        </div>
                     @if (Model.TotalPriceList.Any(p => p.Discount > 0))
                     {
         <div class="row red2">
@@ -85,9 +94,9 @@
 <b>@(totalpricelist.TotalPrice.ToString("C", _currentuser.cultureInfo))</b>}
 
             </label>
-            
-<span class="label label-danger arrowed-in">@totalpricelist.ADULT.CabinClass -@totalpricelist.ADULT.ClassOfBooking</span>
-            </div>}
+
+            <span class="label label-danger arrowed-in">@totalpricelist.ADULT.CabinClass -@totalpricelist.ADULT.ClassOfBooking</span>
+        </div>}
 
                 </div>
             </div>

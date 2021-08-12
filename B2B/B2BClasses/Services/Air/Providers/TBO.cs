@@ -360,7 +360,7 @@ namespace B2BClasses.Services.Air
                     List<List<mdlSearchResult>> AllResults = new List<List<mdlSearchResult>>();
                     List<mdlSearchResult> ResultOB = new List<mdlSearchResult>();
                     List<mdlSearchResult> ResultIB = new List<mdlSearchResult>();
-                    int ServiceProvider = (int)enmServiceProvider.TripJack;
+                    int ServiceProvider = (int)enmServiceProvider.TBO;
 
                     {
                         if (tempdata.ResultIndex.Contains("OB"))

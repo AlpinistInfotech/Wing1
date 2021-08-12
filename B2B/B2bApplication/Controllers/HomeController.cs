@@ -46,9 +46,9 @@ namespace B2bApplication.Controllers
             DateTime TodayFromDt = Convert.ToDateTime(DateTime.Now.ToString("dd-MMM-yyyy"));
             DateTime TodayToDt = TodayFromDt.AddDays(1);
             ViewBag.FlightSearch = _context.tblFlightBookingMaster.Where(p => p.CustomerId == _currentUsers.CustomerId && p.CreatedDt >= TodayFromDt && p.CreatedDt < TodayToDt).Count();
-            ViewBag.FlightBook = _context.tblFlightBookingMaster.Where(p => p.CustomerId == _currentUsers.CustomerId && p.BookingStatus== enmBookingStatus.Booked && p.CreatedDt >= TodayFromDt && p.CreatedDt < TodayToDt).Count();
+            ViewBag.FlightBook = _context.tblFlightBookingMaster.Where(p => p.CustomerId == _currentUsers.CustomerId && p.BookingStatus == enmBookingStatus.Booked && p.CreatedDt >= TodayFromDt && p.CreatedDt < TodayToDt).Count();
 
-            DateTime WeekFromDt = TodayFromDt.AddDays(0- TodayFromDt.DayOfWeek);
+            DateTime WeekFromDt = TodayFromDt.AddDays(0 - TodayFromDt.DayOfWeek);
             DateTime WeekToDt = TodayToDt;
             ViewBag.FlightSearchWeek = _context.tblFlightBookingMaster.Where(p => p.CustomerId == _currentUsers.CustomerId && p.CreatedDt >= WeekFromDt && p.CreatedDt < WeekToDt).Count();
             ViewBag.FlightBookWeek = _context.tblFlightBookingMaster.Where(p => p.CustomerId == _currentUsers.CustomerId && p.BookingStatus == enmBookingStatus.Booked && p.CreatedDt >= WeekFromDt && p.CreatedDt < WeekToDt).Count();
@@ -115,7 +115,7 @@ namespace B2bApplication.Controllers
                             alldocument.Add(DD);
                         }
                     }
-                    
+
                 }
             }
 
@@ -127,19 +127,19 @@ namespace B2bApplication.Controllers
 
 
         [Authorize]
-        public async Task<dynamic> GetMenuAsync([FromServices]ICurrentUsers currentUsers,[FromServices] IAccount account)
-        {   
+        public async Task<dynamic> GetMenuAsync([FromServices] ICurrentUsers currentUsers, [FromServices] IAccount account)
+        {
             List<Document> alldocument = new List<Document>();
             List<Module> allModule = new List<Module>();
             List<SubModule> allSubModule = new List<SubModule>();
-            var eDms = (await account.GetEnmDocumentsAsync(currentUsers.UserId));            
+            var eDms = (await account.GetEnmDocumentsAsync(currentUsers.UserId));
             foreach (var doc in eDms)
             {
-                var DD=doc.GetDocumentDetails();
+                var DD = doc.GetDocumentDetails();
                 if (DD.DocumentType.HasFlag(enmDocumentType.DisplayMenu))
                 {
                     alldocument.Add(DD);
-                }                
+                }
             }
             var eMods = Enum.GetValues(typeof(enmModule)).Cast<enmModule>().ToList();
             foreach (var doc in eMods)
@@ -153,7 +153,8 @@ namespace B2bApplication.Controllers
             }
 
 
-            var _document = alldocument.Select(p => new {
+            var _document = alldocument.Select(p => new
+            {
                 id = p.Id,
                 name = p.Name,
                 subModuleId = p.EnmSubModule.HasValue ? p.EnmSubModule.Value : 0,
@@ -162,7 +163,8 @@ namespace B2bApplication.Controllers
                 actionName = p.ActionName,
                 icon = p.Icon
             }).OrderBy(p => p.displayOrder);
-            var _subModule = allSubModule.Select(p => new {
+            var _subModule = allSubModule.Select(p => new
+            {
                 id = p.Id,
                 name = p.Name,
                 moduleId = p.EnmModule,
@@ -170,7 +172,8 @@ namespace B2bApplication.Controllers
                 cntrlName = p.CntrlName,
                 icon = p.Icon
             });
-            var _module = allModule.Select(p => new {
+            var _module = allModule.Select(p => new
+            {
                 id = p.Id,
                 name = p.Name,
                 displayOrder = p.DisplayOrder,
@@ -184,31 +187,33 @@ namespace B2bApplication.Controllers
         }
 
 
-        [Authorize(policy: nameof(enmDocumentMaster.Flight))]        
+        [Authorize(policy: nameof(enmDocumentMaster.Flight))]
         public async Task<IActionResult> FlightSearch()
         {
-            mdlFlightSearch flightSearch = new mdlFlightSearch() { 
-                FlightSearchWraper= new mdlFlightSearchWraper() { 
-                    AdultCount=1,
-                    ChildCount=0,
-                    InfantCount=0,
-                    CabinClass= enmCabinClass.ECONOMY,
-                    DepartureDt= DateTime.Now,
-                    ReturnDt=null,
-                    From ="DEL",
-                    To="BOM",
-                    JourneyType=enmJourneyType.OneWay,
-                    
+            mdlFlightSearch flightSearch = new mdlFlightSearch()
+            {
+                FlightSearchWraper = new mdlFlightSearchWraper()
+                {
+                    AdultCount = 1,
+                    ChildCount = 0,
+                    InfantCount = 0,
+                    CabinClass = enmCabinClass.ECONOMY,
+                    DepartureDt = DateTime.Now,
+                    ReturnDt = null,
+                    From = "DEL",
+                    To = "BOM",
+                    JourneyType = enmJourneyType.OneWay,
+
                 }
             };
-            await flightSearch.LoadAirportAsync(_booking);            
+            await flightSearch.LoadAirportAsync(_booking);
             return View(flightSearch);
         }
 
         [HttpPost]
         [Authorize(policy: nameof(enmDocumentMaster.Flight))]
-        [ValidateAntiForgeryToken]        
-        public async Task<IActionResult> FlightSearch(mdlFlightSearch mdl, [FromServices]IConfiguration configuration)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> FlightSearch(mdlFlightSearch mdl, [FromServices] IConfiguration configuration)
         {
             int CustomerId = 1;
             int PassengerMaxLimit = 5;
@@ -226,18 +231,21 @@ namespace B2bApplication.Controllers
                 mdl.LoadDefaultSearchRequestAsync(_booking);
                 _booking.CustomerId = CustomerId;
                 mdl.searchResponse = (await _booking.SearchFlightMinPrices(mdl.searchRequest));
-                _markup.CustomerMarkup(mdl.searchResponse.Results);
-                _markup.WingMarkupAmount(mdl.searchResponse.Results, mdl.FlightSearchWraper.AdultCount, mdl.FlightSearchWraper.ChildCount, mdl.FlightSearchWraper.InfantCount);
-                _markup.WingDiscountAmount(mdl.searchResponse.Results, mdl.FlightSearchWraper.AdultCount, mdl.FlightSearchWraper.ChildCount, mdl.FlightSearchWraper.InfantCount);
+                if (mdl.searchResponse.Results != null)
+                {
+                    _markup.CustomerMarkup(mdl.searchResponse.Results, CustomerId);
+                    _markup.WingMarkupAmount(mdl.searchResponse.Results, mdl.FlightSearchWraper.AdultCount, mdl.FlightSearchWraper.ChildCount, mdl.FlightSearchWraper.InfantCount);
+                    _markup.WingDiscountAmount(mdl.searchResponse.Results, mdl.FlightSearchWraper.AdultCount, mdl.FlightSearchWraper.ChildCount, mdl.FlightSearchWraper.InfantCount);
 
-                _markup.CalculateTotalPriceAfterMarkup(mdl.searchResponse.Results, mdl.FlightSearchWraper.AdultCount, mdl.FlightSearchWraper.ChildCount, mdl.FlightSearchWraper.InfantCount);
+                    _markup.CalculateTotalPriceAfterMarkup(mdl.searchResponse.Results, mdl.FlightSearchWraper.AdultCount, mdl.FlightSearchWraper.ChildCount, mdl.FlightSearchWraper.InfantCount, "search");
+                }
                 if ((mdl?.searchResponse?.Results?.Count() ?? 0) == 0)
                 {
                     ViewBag.SaveStatus = (int)enmSaveStatus.danger;
                     ViewBag.Message = _setting.GetErrorMessage(enmMessage.NoFlightDataFound);
                 }
             }
-           
+
             return View(mdl);
         }
 
@@ -265,34 +273,34 @@ namespace B2bApplication.Controllers
 
         [AcceptVerbs("Post")]
         [ValidateAntiForgeryToken]
-        
+
         [Authorize(policy: nameof(enmDocumentMaster.Flight))]
         public async Task<IActionResult> FlightReview(mdlFlightReview mdl)
         {
-            
+
             if (mdl == null)
             {
                 mdl = new mdlFlightReview();
             }
-            await mdl.LoadFareQuotationAsync(_currentUsers.CustomerId, _booking, _markup, _context);            
+            await mdl.LoadFareQuotationAsync(_currentUsers.CustomerId, _booking, _markup, _context);
             mdl.BookingRequestDefaultData();
             return View(mdl);
         }
 
         [HttpPost]
         [Authorize]
-        [ValidateAntiForgeryToken]     
+        [ValidateAntiForgeryToken]
         [Route("/Home/FlightCancel")]
-        public async Task<mdlStatus> FlightCancelAsync(mdlFlightCancel mdl,  [FromServices] ICurrentUsers currentUsers,[FromServices] ICustomerWallet customerWallet)
+        public async Task<mdlStatus> FlightCancelAsync(mdlFlightCancel mdl, [FromServices] ICurrentUsers currentUsers, [FromServices] ICustomerWallet customerWallet)
         {
-            mdlStatus returnData= new mdlStatus()
+            mdlStatus returnData = new mdlStatus()
             {
                 httpStatus = 200,
                 message = null,
                 success = false
             };
 
-            if (mdl.passengers== null || mdl.passengers.Count==0 || mdl.passengers.All(p=>p.check==false))
+            if (mdl.passengers == null || mdl.passengers.Count == 0 || mdl.passengers.All(p => p.check == false))
             {
                 returnData.message = "Please select a Passenger";
                 return returnData;
@@ -301,7 +309,7 @@ namespace B2bApplication.Controllers
             if (currentUsers.HaveClaim(enmDocumentMaster.Booking_Flight_Cancel))
             {
 
-                var flightDetails=_context.tblFlightBookingMaster.Where(p => p.Id == mdl.traceId).FirstOrDefault();
+                var flightDetails = _context.tblFlightBookingMaster.Where(p => p.Id == mdl.traceId).FirstOrDefault();
                 if (flightDetails == null)
                 {
                     returnData.message = "Invalid Request";
@@ -312,7 +320,7 @@ namespace B2bApplication.Controllers
                     returnData.message = "Unauthorize Request";
                     return returnData;
                 }
-                var SegmentData=  _context.tblFlightBookingSegmentMaster.Where(p => p.TraceId == mdl.traceId && p.SegmentDisplayOrder == mdl.segementDisplayOrder).FirstOrDefault();
+                var SegmentData = _context.tblFlightBookingSegmentMaster.Where(p => p.TraceId == mdl.traceId && p.SegmentDisplayOrder == mdl.segementDisplayOrder).FirstOrDefault();
                 if (SegmentData == null)
                 {
                     returnData.message = "Invalid Request";
@@ -330,7 +338,7 @@ namespace B2bApplication.Controllers
                 }
 
                 List<int> PasengerId = mdl.passengers.Where(p => p.check).Select(p => p.pid).ToList();
-                var passengerList=_context.tblFlightBookingPassengerDetails.Where(p => PasengerId.Contains(p.Id));
+                var passengerList = _context.tblFlightBookingPassengerDetails.Where(p => PasengerId.Contains(p.Id));
 
                 mdlCancellationTripDetail _mdlCancellationTripDetail = new mdlCancellationTripDetail()
                 {
@@ -382,7 +390,7 @@ namespace B2bApplication.Controllers
         }
 
 
-        
+
         [Authorize]
         [HttpPost]
         [Route("/Home/FlightCancelDetails")]
@@ -434,16 +442,16 @@ namespace B2bApplication.Controllers
                 type = "CANCELLATION",
                 trips = _mdlCancellationTripDetails,
             };
-            var mdlRes=await _booking.CancelationChargeAsync(mdlRq);
+            var mdlRes = await _booking.CancelationChargeAsync(mdlRq);
             return PartialView("_FlightCancelDetail", mdlRes);
         }
 
         [AcceptVerbs("Get", "Post")]
         [ValidateAntiForgeryToken]
         [Authorize(policy: nameof(enmDocumentMaster.Flight))]
-        public async Task<IActionResult> FlightBook(mdlFlightReview mdl, [FromServices]ICustomerWallet customerWallet )
+        public async Task<IActionResult> FlightBook(mdlFlightReview mdl, [FromServices] ICustomerWallet customerWallet)
         {
-            mdlFlighBook mdlres = new mdlFlighBook() {FareQuotResponse= new List<mdlFareQuotResponse>(), IsSucess=new List<bool>() , BookingId= new List<string>()};
+            mdlFlighBook mdlres = new mdlFlighBook() { FareQuotResponse = new List<mdlFareQuotResponse>(), IsSucess = new List<bool>(), BookingId = new List<string>() };
             bool IsPriceChanged = false;
             if (!(mdl == null || mdl.FareQuoteRequest == null))
             {
@@ -463,34 +471,34 @@ namespace B2bApplication.Controllers
                     return RedirectToAction("FlightReview");
                 }
 
-                string CustomerMPin=_context.tblCustomerBalance.Where(p => p.CustomerId == _currentUsers.CustomerId).FirstOrDefault()?.MPin ?? "0000";
+                string CustomerMPin = _context.tblCustomerBalance.Where(p => p.CustomerId == _currentUsers.CustomerId).FirstOrDefault()?.MPin ?? "0000";
                 if (CustomerMPin != mdl.Mpin)
                 {
                     TempData["mdl_"] = s;
                     TempData["MessageType"] = (int)enmMessageType.Error;
-                    TempData["Message"] =_setting.GetErrorMessage(enmMessage.MpinNotMatch);
+                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.MpinNotMatch);
                     return RedirectToAction("FlightReview");
                 }
 
-                await mdl.LoadFareQuotationAsync(_currentUsers.CustomerId, _booking, _markup,_context);
+                await mdl.LoadFareQuotationAsync(_currentUsers.CustomerId, _booking, _markup, _context);
                 IsPriceChanged = mdl.FareQuotResponse.Any(p => p.IsPriceChanged);
                 if (IsPriceChanged)
                 {
-                    
+
                     TempData["mdl_"] = s;
                     TempData["MessageType"] = (int)enmMessageType.Warning;
                     TempData["Message"] = _setting.GetErrorMessage(enmMessage.FlightPriceChanged);
-                    return RedirectToAction("FlightReview");                    
+                    return RedirectToAction("FlightReview");
                 }
-                
+
                 customerWallet.CustomerId = _currentUsers.CustomerId;
-                double WalletBalance=await customerWallet.GetBalanceAsync();
+                double WalletBalance = await customerWallet.GetBalanceAsync();
                 if (WalletBalance < mdl.NetFare)
-                {                    
+                {
                     TempData["mdl_"] = s;
                     TempData["MessageType"] = (int)enmMessageType.Warning;
                     TempData["Message"] = _setting.GetErrorMessage(enmMessage.InsufficientWalletBalance);
-                    return RedirectToAction("FlightReview");                    
+                    return RedirectToAction("FlightReview");
                 }
                 else
                 {
@@ -506,26 +514,26 @@ namespace B2bApplication.Controllers
                     eml.Add(mdl.emails);
                     List<mdlPaymentInfos> pi = new List<mdlPaymentInfos>();
                     pi.Add(new mdlPaymentInfos() { amount = mdl.FareQuotResponse[i].TotalPriceInfo.TotalFare });
-
+                    string bookid = mdl.FareQuotResponse[i].BookingId;
                     mdlBookingRequest mdlReq = new mdlBookingRequest()
                     {
                         TraceId = mdl.FareQuoteRequest.TraceId,
-                        BookingId = mdl.FareQuotResponse[i].BookingId,
+                        BookingId = bookid,
                         travellerInfo = mdl.travellerInfo,
                         deliveryInfo = new mdlDeliveryinfo() { contacts = cont, emails = eml },
                         gstInfo = mdl.gstInfo,
                         paymentInfos = pi
                     };
-                    var Result=  await _booking.BookingAsync(mdlReq);
+                    var Result = await _booking.BookingAsync(mdlReq);
                     mdlres.FareQuotResponse.Add(mdl.FareQuotResponse[i]);
                     mdlres.IsSucess.Add(Result.ResponseStatus == 1 ? true : false);
-                    mdlres.BookingId.Add(Result.ResponseStatus == 1 ?Result.bookingId: Result.Error.Message);
+                    mdlres.BookingId.Add(Result.ResponseStatus == 1 ? Result.bookingId : Result.Error.Message);
                     if (!(Result.ResponseStatus == 1))
                     {
                         ViewBag.SaveStatus = (int)enmMessageType.Warning;
                         ViewBag.Message = Result.Error.Message;
                     }
-                    
+
                 }
             }
             else
@@ -547,7 +555,7 @@ namespace B2bApplication.Controllers
                         bookingStatus = enmBookingStatus.Failed;
                         //return the all Amount
                         await customerWallet.AddBalanceAsync(DateTime.Now, mdl.NetFare, enmTransactionType.FlightTicketBook, string.Concat("Booking Ids", string.Join(',', mdl.FareQuotResponse.Select(p => p.BookingId))));
-                    }                      
+                    }
                 }
                 else
                 {
@@ -562,8 +570,8 @@ namespace B2bApplication.Controllers
 
         [HttpGet]
         [Authorize(policy: nameof(enmDocumentMaster.Markup))]
-        public IActionResult WingMarkup(string Id,[FromServices] IMarkup markup)
-        {   
+        public IActionResult WingMarkup(string Id, [FromServices] IMarkup markup)
+        {
             ViewBag.Message = TempData["Message"];
             if (ViewBag.Message != null)
             {
@@ -578,23 +586,23 @@ namespace B2bApplication.Controllers
                 {
                     mdl.WingMarkup = markup.LoadMarkup(ID).FirstOrDefault();
                 }
-                
+
             }
             if (mdl.WingMarkup == null)
             {
                 mdl.WingMarkup = new mdlWingMarkup();
             }
-            
+
             mdl.SetDefaultDropDown(_context);
             return View(mdl);
         }
 
         [Authorize(policy: nameof(enmDocumentMaster.Markup))]
         [HttpPost]
-        public IActionResult WingMarkup(mdlWingMarkupWraper mdl,string submitData, [FromServices]IMarkup markup)
+        public IActionResult WingMarkup(mdlWingMarkupWraper mdl, string submitData, [FromServices] IMarkup markup)
         {
             bool IsUpdated = false;
-            if (mdl.WingMarkup.Id>0)
+            if (mdl.WingMarkup.Id > 0)
             {
                 IsUpdated = true;
             }
@@ -653,7 +661,7 @@ namespace B2bApplication.Controllers
                         ModelState.AddModelError("WingMarkup.EffectiveFromDt", "Effective FromDate should be greater then Today");
                     }
                 }
-                
+
                 if (mdl.WingMarkup.Amount <= 0)
                 {
                     ModelState.AddModelError("WingMarkup.Amount", "Amount Should be Greater then 0");
@@ -663,7 +671,7 @@ namespace B2bApplication.Controllers
             {
                 if (submitData == "deleteData")
                 {
-                    if (markup.RemoveMarkup(mdl.WingMarkup.Id, _currentUsers.UserId ))
+                    if (markup.RemoveMarkup(mdl.WingMarkup.Id, _currentUsers.UserId))
                     {
                         TempData["MessageType"] = (int)enmMessageType.Success;
                         TempData["Message"] = _setting.GetErrorMessage(enmMessage.DeleteSuccessfully);
@@ -692,11 +700,11 @@ namespace B2bApplication.Controllers
                     }
                 }
 
-                
+
             }
-            else 
+            else
             {
-                ViewBag.MessageType =(int) enmMessageType.Warning;
+                ViewBag.MessageType = (int)enmMessageType.Warning;
                 ViewBag.Message = "Data not valid";
             }
             mdl.SetDefaultDropDown(_context);
@@ -1046,7 +1054,7 @@ namespace B2bApplication.Controllers
                         ModelState.AddModelError("Discount.IsAllCustomer", "Select Customer");
                     }
                 }
-                
+
                 if (!mdl.WingMarkup.IsAllProvider)
                 {
                     if (mdl.WingMarkup.MarkupServiceProvider == null || mdl.WingMarkup.MarkupServiceProvider.Count == 0)
@@ -1076,7 +1084,7 @@ namespace B2bApplication.Controllers
                     }
                 }
 
-                 
+
             }
             if (ModelState.IsValid)
             {
@@ -1122,14 +1130,14 @@ namespace B2bApplication.Controllers
 
         public IActionResult ProviderSettings()
         {
-           
+
             return View();
         }
         [HttpPost]
-        public IActionResult ProviderSettings(mdlProviderSettings mdl,tblActiveSerivceProvider provider)
+        public IActionResult ProviderSettings(mdlProviderSettings mdl, tblActiveSerivceProvider provider)
         {
 
-            
+
             mdl.ModifiedDt = System.DateTime.Now;
             mdl.ModifiedBy = _currentUsers.Name;
             //tblActiveSerivceProvider provider = new tblActiveSerivceProvider();
@@ -1137,7 +1145,7 @@ namespace B2bApplication.Controllers
             if (ModelState.IsValid)
             {
 
-                var dbdata = _context.tblActiveSerivceProvider.Where(x => x.ServiceProvider == mdl.ServiceProvider ).FirstOrDefault();
+                var dbdata = _context.tblActiveSerivceProvider.Where(x => x.ServiceProvider == mdl.ServiceProvider).FirstOrDefault();
                 if (dbdata != null)
                 {
                     dbdata.IsEnabled = provider.IsEnabled;
@@ -1171,14 +1179,14 @@ namespace B2bApplication.Controllers
         [Authorize(nameof(enmDocumentMaster.PackageReport))]
         public async Task<IActionResult> PackageReport(mdlPackageReports mdl)
         {
-            _booking.FromDate =Convert.ToDateTime( mdl.FromDate.ToString("dd-MMM-yyyy"));
+            _booking.FromDate = Convert.ToDateTime(mdl.FromDate.ToString("dd-MMM-yyyy"));
             _booking.ToDate = Convert.ToDateTime(mdl.ToDate.AddDays(1).AddSeconds(-1).ToString("dd-MMM-yyyy"));
-            mdl.Packagedata = (await _booking.LoadPackage(0,false, false, true,true)).OrderByDescending(p => p.CreatedDt).ToList();
+            mdl.Packagedata = (await _booking.LoadPackage(0, false, false, true, true)).OrderByDescending(p => p.CreatedDt).ToList();
             return View(mdl);
         }
 
         [Authorize(nameof(enmDocumentMaster.CreatePackage))]
-        public async Task<IActionResult> CreatePackage(string Id,[FromServices]IConfiguration configuration)
+        public async Task<IActionResult> CreatePackage(string Id, [FromServices] IConfiguration configuration)
         {
             ViewBag.Message = TempData["Message"];
             if (ViewBag.Message != null)
@@ -1200,7 +1208,7 @@ namespace B2bApplication.Controllers
                 {
 
 
-                    var pdata= (await _booking.LoadPackage(PackageId, false, false, false, false)).FirstOrDefault();
+                    var pdata = (await _booking.LoadPackage(PackageId, false, false, false, false)).FirstOrDefault();
                     if (pdata != null)
                     {
                         mdl.PackageId = pdata.PackageId;
@@ -1238,7 +1246,7 @@ namespace B2bApplication.Controllers
         [Authorize(nameof(enmDocumentMaster.CreatePackage))]
         public async Task<IActionResult> CreatePackage(mdlPackageMaster mdl, [FromServices] IConfiguration configuration)
         {
-            
+
             string filePath = configuration["FileUpload:PackageFilePath"];
 
             var path = Path.Combine(
@@ -1262,7 +1270,7 @@ namespace B2bApplication.Controllers
                 }
 
             }
-            
+
 
             if (ModelState.IsValid)
             {
@@ -1287,7 +1295,7 @@ namespace B2bApplication.Controllers
                         }
                     }
                 }
-                if  (!(mdl.UploadPackageThumbnail == null || mdl.UploadPackageThumbnail.Length == 0))
+                if (!(mdl.UploadPackageThumbnail == null || mdl.UploadPackageThumbnail.Length == 0))
                 {
                     thumbnail = Guid.NewGuid().ToString() + ".jpeg";
                     using (var stream = new FileStream(string.Concat(path, thumbnail), FileMode.Create))
@@ -1322,7 +1330,7 @@ namespace B2bApplication.Controllers
                         pData.EffectiveFromDt = Convert.ToDateTime(mdl.EffectiveFromDt.ToString("dd-MMM-yyyy"));
                         pData.EffectiveToDt = Convert.ToDateTime(mdl.EffectiveToDt.ToString("dd-MMM-yyyy"));
                         pData.NumberOfDay = mdl.NumberOfDay;
-                        pData.NumberOfNight = mdl.NumberOfNight==0? mdl.NumberOfDay-1: mdl.NumberOfNight;
+                        pData.NumberOfNight = mdl.NumberOfNight == 0 ? mdl.NumberOfDay - 1 : mdl.NumberOfNight;
                         pData.AdultPrice = mdl.AdultPrice;
                         pData.ChildPrice = mdl.ChildPrice;
                         pData.InfantPrice = mdl.InfantPrice;
@@ -1332,7 +1340,7 @@ namespace B2bApplication.Controllers
                         _context.tblPackageMaster.Update(pData);
                         await _context.SaveChangesAsync();
                         TempData["Message"] = _setting.GetErrorMessage(enmMessage.UpdateSuccessfully);
-                        TempData["MessageType"] =(int) enmSaveStatus.success;
+                        TempData["MessageType"] = (int)enmSaveStatus.success;
                         return RedirectToAction("CreatePackage");
                     }
                 }
@@ -1352,8 +1360,8 @@ namespace B2bApplication.Controllers
                     pData.IsDomestic = mdl.IsDomestic;
                     pData.ShortDescription = mdl.ShortDescription;
                     pData.LongDescription = mdl.LongDescription;
-                    pData.EffectiveFromDt = Convert.ToDateTime( mdl.EffectiveFromDt.ToString("dd-MMM-yyyy"));
-                    pData.EffectiveToDt = Convert.ToDateTime(mdl.EffectiveToDt.ToString("dd-MMM-yyyy")) ;
+                    pData.EffectiveFromDt = Convert.ToDateTime(mdl.EffectiveFromDt.ToString("dd-MMM-yyyy"));
+                    pData.EffectiveToDt = Convert.ToDateTime(mdl.EffectiveToDt.ToString("dd-MMM-yyyy"));
                     pData.NumberOfDay = mdl.NumberOfDay;
                     pData.NumberOfNight = mdl.NumberOfNight;
                     pData.AdultPrice = mdl.AdultPrice;
@@ -1363,16 +1371,16 @@ namespace B2bApplication.Controllers
                     pData.ModifiedDt = DateTime.Now;
                     pData.ModifiedBy = _currentUsers.UserId;
                     pData.CreatedBy = pData.ModifiedBy.Value;
-                    pData.CreatedDt= pData.ModifiedDt.Value;
+                    pData.CreatedDt = pData.ModifiedDt.Value;
                     _context.tblPackageMaster.Add(pData);
                     await _context.SaveChangesAsync();
                     TempData["Message"] = _setting.GetErrorMessage(enmMessage.SaveSuccessfully);
                     TempData["MessageType"] = (int)enmSaveStatus.success;
                     return RedirectToAction("CreatePackage");
                 }
-                
+
             }
-            
+
             return View(mdl);
         }
     }

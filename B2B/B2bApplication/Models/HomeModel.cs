@@ -83,7 +83,7 @@ namespace B2bApplication.Models
                 InfantTotalBaseFare = InfantBaseFare * InfantCount;
             }
             TotalBaseFare = AdultTotalBaseFare+ ChildTotalBaseFare+ InfantTotalBaseFare;
-            TotalFare = FareQuotResponse.Select(p => p.TotalPriceInfo?.TotalFare ?? 0).Sum();
+            TotalFare = FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.TotalPrice ?? 0).Sum();
             FeeSurcharge = TotalFare - TotalBaseFare;
             OtherCharge = 0;
             Convenience= FareQuotResponse.Select(p => p.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.Convenience ?? 0).Sum();
@@ -182,7 +182,7 @@ namespace B2bApplication.Models
             foreach (var md in FareQuotResponse)
             {
                 _markup.CustomerId = CustomerId;
-                _markup.CustomerMarkup(md.Results);
+                _markup.CustomerMarkup(md.Results, CustomerId);
                 _markup.WingMarkupAmount(md.Results, md.SearchQuery.AdultCount, md.SearchQuery.ChildCount, md.SearchQuery.InfantCount);
                 if (this.travellerInfo == null)
                 {
@@ -220,7 +220,7 @@ namespace B2bApplication.Models
 
                 }
                 _markup.WingConvenienceAmount(md, this.travellerInfo);
-                _markup.CalculateTotalPriceAfterMarkup(md.Results, md.SearchQuery.AdultCount, md.SearchQuery.ChildCount, md.SearchQuery.InfantCount);
+                _markup.CalculateTotalPriceAfterMarkup(md.Results, md.SearchQuery.AdultCount, md.SearchQuery.ChildCount, md.SearchQuery.InfantCount,"review");
             }
             await _booking.CustomerFlightDetailSave(FareQuoteRequest.TraceId, FareQuotResponse);
         }

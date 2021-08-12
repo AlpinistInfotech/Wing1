@@ -6,7 +6,7 @@
 }
 
 <form action="@Url.Action()" method="post">
-    @Html.AntiForgeryToken();
+    @Html.AntiForgeryToken()
     <div asp-validation-summary="All" class="text-danger"></div>
 
     <div class="row">
@@ -90,7 +90,12 @@
                 <table id="dynamic-table" class="table table-striped table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th>Action</th>
+                            <th>
+                                @*<label class="pos-rel">
+                                    <input type="checkbox" class="ace" />
+                                    <span class="lbl"></span>
+                                </label>*@
+                            </th>
                             <th>Customer Name - Code</th>
                             <th>Wallet Type</th>
                             <th>Amount</th>
@@ -104,39 +109,41 @@
                     </thead>
 
                     <tbody>
-                        @foreach (var md in Model.PaymentRequestList)
+                        @for (int i=0;i< Model.PaymentRequestList.Count;i++) 
                         {
                             <tr>
                                 <td class="center">
-                                    <input type="checkbox" class="checkbox" value="@md.Id" />
+                                    <input type="checkbox" class="ace" asp-for="@Model.PaymentRequestList[i].paymentrequestid"  />
+                                    <span class="lbl"></span>
                                 </td>
                                 <td>
-                                    @md.CustomerName - @md.Code
+                                    @Model.PaymentRequestList[i].CustomerName - @Model.PaymentRequestList[i].Code
+                                    <input type="hidden" asp-for="@Model.PaymentRequestList[i].Id" />
                                 </td>
                                 <td>
-                                    @md.RequestType.ToString()
+                                    @Model.PaymentRequestList[i].RequestType.ToString()
                                 </td>
                                 <td>
-                                    @md.RequestedAmt
+                                    @Model.PaymentRequestList[i].RequestedAmt
                                 </td>
                                 <td>
-                                    @md.TransactionNumber
+                                    @Model.PaymentRequestList[i].TransactionNumber
                                 </td>
                                 <td>
-                                    @md.TransactionDate.ToString("dd-MMM-yyyy")
+                                    @Model.PaymentRequestList[i].TransactionDate.ToString("dd-MMM-yyyy")
                                 </td>
                                 <td>
-                                    <a href="@md.UploadImages" class="success" data-rel="tooltip" title="View File" target="_blank">
+                                    <a href="@Model.PaymentRequestList[i].UploadImages" class="success" data-rel="tooltip" title="View File" target="_blank">
                                         View File
                                     </a>
                                 </td>
 
                                 <td>
-                                    @md.CreatedDt.ToString("dd-MMM-yyyy hh:mm tt")
+                                    @Model.PaymentRequestList[i].CreatedDt.ToString("dd-MMM-yyyy hh:mm tt")
 
                                 </td>
                                 <td>
-                                    @md.CreatedRemarks
+                                    @Model.PaymentRequestList[i].CreatedRemarks
                                 </td>
                             </tr>
                         }
@@ -147,13 +154,9 @@
 
     </div>
 
-    </form>
-    @section Scripts {
-        <script src="~/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
-        <script>
-            $(document).ready(function () {
-                bsCustomFileInput.init();
-            });
-        </script>
-    }
+</form>
+@section Scripts {
+    @(await Html.PartialAsync("_dateTableScriptPartial",9))
+
+}
 
