@@ -473,7 +473,7 @@ namespace B2bApplication.Controllers
                     return RedirectToAction("FlightReview");
                 }
 
-                string CustomerMPin = _context.tblCustomerBalance.Where(p => p.CustomerId == _currentUsers.CustomerId).FirstOrDefault()?.MPin ?? "0000";
+                string CustomerMPin = _currentUsers.MPin??"0000";
                 if (CustomerMPin != mdl.Mpin)
                 {
                     TempData["mdl_"] = s;
