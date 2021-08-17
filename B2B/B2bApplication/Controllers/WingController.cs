@@ -57,7 +57,7 @@ namespace B2bApplication.Controllers
                     ChildCount = 0,
                     InfantCount = 0,
                     CabinClass = enmCabinClass.ECONOMY,
-                    DepartureDt = DateTime.Now,
+                    DepartureDt = null,
                     ReturnDt = null,
                     From = "DEL",
                     To = "BOM",
@@ -68,14 +68,37 @@ namespace B2bApplication.Controllers
             await flightSearch.LoadAirportAsync(_booking);
             return View(flightSearch);
         }
-       
-            [HttpPost]
+
         [Authorize(policy: nameof(enmDocumentMaster.Flight))]
-       // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> NewFlightSearch(mdlFlightSearchWraper mdlsearch)
+        public async Task<IActionResult> NewFlightSearchFilter(int type, string condition, List<B2BClasses.Services.Air.mdlSearchResult> model)
         {
-            mdlFlightSearch mdl = new mdlFlightSearch();
-            mdl.FlightSearchWraper= mdlsearch;
+            mdlFlightSearch flightSearch = new mdlFlightSearch()
+            {
+                FlightSearchWraper = new mdlFlightSearchWraper()
+                {
+                    AdultCount = 1,
+                    ChildCount = 0,
+                    InfantCount = 0,
+                    CabinClass = enmCabinClass.ECONOMY,
+                    DepartureDt = null,
+                    ReturnDt = null,
+                    From = "DEL",
+                    To = "BOM",
+                    JourneyType = enmJourneyType.OneWay,
+
+                }
+            };
+            await flightSearch.LoadAirportAsync(_booking);
+            return View(flightSearch);
+        }
+
+        [HttpPost]
+       [Authorize(policy: nameof(enmDocumentMaster.Flight))]
+       [ValidateAntiForgeryToken]
+        public async Task<IActionResult> NewFlightSearch(mdlFlightSearch mdl, [FromServices] IConfiguration configuration)
+        {
+            //mdlFlightSearch mdl = new mdlFlightSearch();
+           //mdl.FlightSearchWraper= mdlsearch;
            
             int CustomerId = 1;
             int PassengerMaxLimit = 5;
@@ -107,7 +130,11 @@ namespace B2bApplication.Controllers
                     ViewBag.Message = _setting.GetErrorMessage(enmMessage.NoFlightDataFound);
                 }
             }
-
+            if(mdl.searchResponse.Results!=null)
+            {
+                var res = mdl.searchResponse?.Results.FirstOrDefault();
+                return PartialView("_NewFlightResult", res);
+            }
             return View(mdl);
         }
 

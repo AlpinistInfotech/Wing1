@@ -154,7 +154,7 @@ namespace B2BClasses.Services.Air
             else if (request.JourneyType == enmJourneyType.Return ||
                 request.JourneyType == enmJourneyType.MultiStop)
             {
-                request.JourneyType = enmJourneyType.OneWay;
+                //request.JourneyType = enmJourneyType.OneWay;
                 var lst = request.Segments.ToList();
                 for (int i = 0; i < lst.Count; i++)
                 {
@@ -463,15 +463,14 @@ namespace B2BClasses.Services.Air
             };
             return mdlW;
         }
-
+        
         private List<mdlSearchResult> SearchResultMap(ONWARD_RETURN_COMBO[] sr,string Traceid)
         {
-
-            List<mdlSearchResult> mdls = new List<mdlSearchResult>();
+              List<mdlSearchResult> mdls = new List<mdlSearchResult>();
             mdls.AddRange(sr.Select(p => new mdlSearchResult
             {
                 ServiceProvider = enmServiceProvider.TripJack,
-                traceid= Traceid,
+                traceid = Traceid,
                 Segment = p.sI.Select(q => new mdlSegment
                 {
                     Airline = new mdlAirline()
@@ -581,6 +580,10 @@ namespace B2BClasses.Services.Air
                         RefundableType = q.fd?.INFANT?.rT ?? 0,
                         SeatRemaing = q.fd?.INFANT?.sR ?? 0,
                     },
+                   FareRule=new mdlFareRuleResponse()
+                   {
+                       FareRule=q.farerule                       
+                   }
                 }
                    ).ToList()
             }));
@@ -619,6 +622,8 @@ namespace B2BClasses.Services.Air
                             };
                         }
 
+                       
+
                         string TraceId = Guid.NewGuid().ToString();
                         var result = Search_SaveAsync(request, TraceId, mdl.searchResult.tripInfos);
                         List<List<mdlSearchResult>> AllResults = new List<List<mdlSearchResult>>();
@@ -633,14 +638,41 @@ namespace B2BClasses.Services.Air
                         {
                             if (mdl.searchResult.tripInfos.ONWARD != null)
                             {
+                                for (int f = 0; f < mdl.searchResult.tripInfos.ONWARD.Count(); f++)
+                                {
+                                   
+                                    mdlFareRuleRequest mfr = new mdlFareRuleRequest();
+                                    mfr.id = mdl.searchResult.tripInfos.ONWARD[f].totalPriceList?.FirstOrDefault()?.id;
+                                    mfr.flowType = "SEARCH";
+                                    var mfs = FareRuleAsync(mfr);
+                                    mdl.searchResult.tripInfos.ONWARD[f].totalPriceList.FirstOrDefault().farerule = mfs.Result.FareRule;
+                                }
                                 Result1.AddRange(SearchResultMap(mdl.searchResult.tripInfos.ONWARD, TraceId));
                             }
                             if (mdl.searchResult.tripInfos.RETURN != null)
                             {
+                                for (int f = 0; f < mdl.searchResult.tripInfos.RETURN.Count(); f++)
+                                {
+
+                                    mdlFareRuleRequest mfr = new mdlFareRuleRequest();
+                                    mfr.id = mdl.searchResult.tripInfos.RETURN[f].totalPriceList?.FirstOrDefault()?.id;
+                                    mfr.flowType = "SEARCH";
+                                    var mfs = FareRuleAsync(mfr);
+                                    mdl.searchResult.tripInfos.RETURN[f].totalPriceList.FirstOrDefault().farerule = mfs.Result.FareRule;
+                                }
                                 Result2.AddRange(SearchResultMap(mdl.searchResult.tripInfos.RETURN, TraceId));
                             }
                             if (mdl.searchResult.tripInfos.COMBO != null)
                             {
+                                for (int f = 0; f < mdl.searchResult.tripInfos.COMBO.Count(); f++)
+                                {
+
+                                    mdlFareRuleRequest mfr = new mdlFareRuleRequest();
+                                    mfr.id = mdl.searchResult.tripInfos.COMBO[f].totalPriceList?.FirstOrDefault()?.id;
+                                    mfr.flowType = "SEARCH";
+                                    var mfs = FareRuleAsync(mfr);
+                                    mdl.searchResult.tripInfos.COMBO[f].totalPriceList.FirstOrDefault().farerule = mfs.Result.FareRule;
+                                }
                                 Result1.AddRange(SearchResultMap(mdl.searchResult.tripInfos.COMBO, TraceId));
                             }
                             if (mdl.searchResult.tripInfos._0 != null)
@@ -898,6 +930,7 @@ namespace B2BClasses.Services.Air
         {
             public Si[] sI { get; set; }
             public Totalpricelist[] totalPriceList { get; set; }
+           
         }
 
         public class Si
@@ -978,6 +1011,7 @@ namespace B2BClasses.Services.Air
             public string[] messages { get; set; }
             public string[] msri { get; set; }
             public string sri { get; set; }
+            public mdlFareRule farerule { get; set; }
         }
 
         public class Fd1
@@ -1299,8 +1333,8 @@ namespace B2BClasses.Services.Air
         {
             FareRuleRequest mdl = new FareRuleRequest()
             {
-                flowType = "SEARCH",
-                id = request.ResultIndex.FirstOrDefault()
+                flowType = request.flowType,
+                id = request.id
             };
             return mdl;
         }

@@ -46,7 +46,7 @@ namespace B2bApplication
             services.AddScoped<ISettings>(ctx => new B2BClasses.Settings(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
             services.AddScoped<IMasters>(ctx => new B2BClasses.Masters(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
             services.AddScoped<IMarkup>(ctx => new B2BClasses.Markup(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
-            
+           
             #region **************** Flight *********************************
             services.AddScoped<ITripJack> (ctx => new TripJack(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
             services.AddScoped<ITBO>(ctx => new TBO(ctx.GetRequiredService<DBContext>(), ctx.GetRequiredService<IConfiguration>()));
@@ -55,12 +55,13 @@ namespace B2bApplication
 
 
             #endregion
-
+           
+            services.AddRazorPages().AddNewtonsoftJson();
 
 
             services.AddRazorPages(options => { options.Conventions.AuthorizeFolder("/Admin"); })
             .AddCookieTempDataProvider(options => { options.Cookie.IsEssential = true; });
-
+           
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                  .AddCookie(config =>
                  {

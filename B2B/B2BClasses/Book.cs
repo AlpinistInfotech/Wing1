@@ -550,7 +550,7 @@ namespace B2BClasses
                 else if (mdlRq.JourneyType == enmJourneyType.Return || mdlRq.JourneyType == enmJourneyType.MultiStop)
                 {
 
-                    mdlRq.JourneyType = enmJourneyType.OneWay;
+                   // mdlRq.JourneyType = enmJourneyType.OneWay;
 
                     for (int i = 0; i < lst.Count; i++)
                     {
