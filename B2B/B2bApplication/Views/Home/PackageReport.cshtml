@@ -208,15 +208,16 @@
 </div>
 @section Scripts {
 
-    @(await Html.PartialAsync("_dateTableScriptPartial", HaveCreatepermission? 15:14))
+    @*@(await Html.PartialAsync("_dateTableScriptPartial", HaveCreatepermission? 15:14))*@
+    @(await Html.PartialAsync("_dateTableScriptPartial", 14))
 
-<script type="text/javascript">
-    jQuery(function ($) {        
-        $('.date-picker').datepicker({
-            autoclose: true,
-            todayHighlight: true
-        })
-    });
-</script>
+    <script type="text/javascript">
+        jQuery(function ($) {
+            $('.date-picker').datepicker({
+                autoclose: true,
+                todayHighlight: true
+            })
+        });
+    </script>
 
 }
