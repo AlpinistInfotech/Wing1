@@ -125,6 +125,8 @@ namespace B2BClasses.Services.Air
         public mdlPassenger ADULT { get; set; }
         public mdlPassenger CHILD { get; set; }
         public mdlPassenger INFANT { get; set; }
+
+        public mdlFareRuleResponse FareRule { get; set; }
         public string ResultIndex { get; set; }
         public string sri { get; set; }
         public List<string> msri { get; set; }
@@ -252,7 +254,8 @@ namespace B2BClasses.Services.Air
     #region ***************** Fare Rule ***************************
     public class mdlFareRuleRequest : mdlFareQuotRequest
     {
-
+        public string id { get; set; }
+        public string flowType { get; set;}
     }
     public class mdlFareRuleResponseWraper
     {

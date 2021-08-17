@@ -451,40 +451,7 @@
                     </div>
                 </div>
             </section>
-            <div class="container mt-4">
-                <div class="row">
-                    <div class="col-md-4 mb-3 mb-md-0">
-                        <p>Payment</p>
-                        <ul class="payments-types">
-                            <li><a href="#" target="_blank"> <img data-toggle="tooltip" src="images/payment/visa.png" alt="visa" title="Visa"></a></li>
-                            <li><a href="#" target="_blank"> <img data-toggle="tooltip" src="images/payment/discover.png" alt="discover" title="Discover"></a></li>
-                            <li><a href="#" target="_blank"> <img data-toggle="tooltip" src="images/payment/paypal.png" alt="paypal" title="PayPal"></a></li>
-                            <li><a href="#" target="_blank"> <img data-toggle="tooltip" src="images/payment/american.png" alt="american express" title="American Express"></a></li>
-                            <li><a href="#" target="_blank"> <img data-toggle="tooltip" src="images/payment/mastercard.png" alt="discover" title="Discover"></a></li>
-                        </ul>
-                    </div>
-                    <div class="col-md-4 mb-3 mb-md-0">
-                        <p>Subscribe</p>
-                        <div class="input-group newsletter">
-                            <input class="form-control" placeholder="Your Email Address" name="newsletterEmail" id="newsletterEmail" type="text">
-                            <span class="input-group-append">
-                                <button class="btn btn-secondary" type="submit">Subscribe</button>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="col-md-4 d-flex align-items-md-end flex-column">
-                        <p>Keep in touch</p>
-                        <ul class="social-icons">
-                            <li class="social-icons-facebook"><a data-toggle="tooltip" href="http://www.facebook.com/" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a></li>
-                            <li class="social-icons-twitter"><a data-toggle="tooltip" href="http://www.twitter.com/" target="_blank" title="Twitter"><i class="fab fa-twitter"></i></a></li>
-                            <li class="social-icons-google"><a data-toggle="tooltip" href="http://www.google.com/" target="_blank" title="Google"><i class="fab fa-google"></i></a></li>
-                            <li class="social-icons-linkedin"><a data-toggle="tooltip" href="http://www.linkedin.com/" target="_blank" title="Linkedin"><i class="fab fa-linkedin-in"></i></a></li>
-                            <li class="social-icons-youtube"><a data-toggle="tooltip" href="http://www.youtube.com/" target="_blank" title="Youtube"><i class="fab fa-youtube"></i></a></li>
-                            <li class="social-icons-instagram"><a data-toggle="tooltip" href="http://www.instagram.com/" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+
             <div class="container">
                 <div class="footer-copyright">
                     <ul class="nav justify-content-center">
@@ -495,7 +462,7 @@
                         <li class="nav-item"> <a class="nav-link" href="#">Terms of Use</a> </li>
                         <li class="nav-item"> <a class="nav-link" href="#">Privacy Policy</a> </li>
                     </ul>
-                    <p class="copyright-text">Copyright © 2020 <a href="#">Quickai</a>. All Rights Reserved.</p>
+                    <p class="copyright-text">Copyright © 2021 <a href="#">Wing Travel</a>. All Rights Reserved.</p>
                 </div>
             </div>
         </footer><!-- Footer end -->
@@ -505,18 +472,13 @@
     <!-- Back to Top
     ============================================= -->
     <a id="back-to-top" data-toggle="tooltip" title="Back to Top" href="javascript:void(0)"><i class="fa fa-chevron-up"></i></a>
-    <div id="loading" class="overlay">
-        <div class="fa-load">
-            <!--<i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>-->
-            <img src="/images/loading.gif" alt="load" />
-        </div>
-    </div>
+
 
     <script src="/js/owl.carousel.min.js"></script>
     <script src="/js/bootstrap-spinner.js"></script>
     <script src="/js/moment.min.js"></script>
     <script src="/js/daterangepicker.js"></script>
-
+    @await Html.PartialAsync("_ValidationScriptsPartial")
     <script>
         $(function () {
             'use strict';
@@ -524,6 +486,7 @@
             // Depart Date
             $('#DepartureDt').daterangepicker({
                 singleDatePicker: true,
+
                 autoApply: true,
                 minDate: moment(),
                 autoUpdateInput: false,
