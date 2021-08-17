@@ -112,6 +112,11 @@
                         <th>Attachment</th>
                         <th>Created Date</th>
                         <th>Remarks</th>
+                        @*New Field Added*@
+                        <th>Status</th>
+                        <th>Approval Remarks</th>
+                        <th>Approval DateTime</th>
+                        <th>Approved By</th>
 
                     </tr>
                 </thead>
@@ -148,6 +153,19 @@
                             <td>
                                 @md.CreatedRemarks
                             </td>
+                            <td>
+                                @md.Status
+                            </td>
+                            <td>
+                                @md.ApprovalRemarks
+                            </td>
+                            <td>
+                                @md.ApprovalDateTime
+                            </td>
+                            <td>
+                                @md.ApprovedBy
+                            </td>
+
                         </tr>
                     }
                 </tbody>

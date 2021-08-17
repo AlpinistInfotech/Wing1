@@ -398,6 +398,9 @@ namespace B2bApplication.Models
         public bool paymentrequestid { get; set; }
         public string CustomerName { get; set; }
         public string Code { get; set; }
+        public string ApprovalRemarks { get; set; }
+        public DateTime ApprovalDateTime { get; set; }
+        public string ApprovedBy { get; set; }
 
     }
 
@@ -450,6 +453,7 @@ namespace B2bApplication.Models
         public enmApprovalStatus Status { get; set; }
 
         public List<mdlPaymentRequestWraper> PaymentRequestList { get; set; }
+        
 
     }
 
