@@ -1504,20 +1504,20 @@ namespace B2BClasses
                         WingbaseFare = 0;
                         if (mode == "search")
                         {
-                            if (tp?.ADULT?.FareComponent?.TotalFare != null)
+                            if (tp?.ADULT?.FareComponent?.TotalFare != null && AdultCount>0)
                             {
                                 tp.ADULT.FareComponent.NewTotalFare = (tp?.ADULT?.FareComponent?.TotalFare ?? 0) + (tp?.ADULT?.FareComponent?.WingMarkup ?? 0);
                                 WingbaseFare = WingbaseFare + (tp.ADULT.FareComponent.NewTotalFare);
                                 tp.Discount = tp.Discount + (tp.ADULT?.FareComponent?.WingDiscount ?? 0);
 
                             }
-                            else if (tp?.CHILD?.FareComponent?.TotalFare != null)
+                            else if (tp?.CHILD?.FareComponent?.TotalFare != null && ChildCount>0)
                             {
                                 tp.CHILD.FareComponent.NewTotalFare = (tp?.CHILD?.FareComponent?.TotalFare ?? 0) + (tp?.CHILD?.FareComponent?.WingMarkup ?? 0);
                                 WingbaseFare = WingbaseFare + (tp.CHILD.FareComponent.NewTotalFare);
                                 tp.Discount = tp.Discount + (tp.CHILD?.FareComponent?.WingDiscount ?? 0);
                             }
-                            else if (tp?.INFANT?.FareComponent?.TotalFare != null)
+                            else if (tp?.INFANT?.FareComponent?.TotalFare != null && InfantCount>0)
                             {
                                 tp.INFANT.FareComponent.NewTotalFare = (tp?.INFANT?.FareComponent?.TotalFare ?? 0) + (tp?.INFANT?.FareComponent?.WingMarkup ?? 0);
                                 WingbaseFare = WingbaseFare + (tp.INFANT.FareComponent.NewTotalFare);
@@ -1526,20 +1526,20 @@ namespace B2BClasses
                         }
                         else
                         {
-                            if (tp?.ADULT?.FareComponent?.TotalFare != null)
+                            if (tp?.ADULT?.FareComponent?.TotalFare != null && AdultCount>0)
                             {
                                 tp.ADULT.FareComponent.NewTotalFare = (tp?.ADULT?.FareComponent?.TotalFare ?? 0) + (tp?.ADULT?.FareComponent?.WingMarkup ?? 0);
                                 WingbaseFare = WingbaseFare + (tp.ADULT.FareComponent.NewTotalFare);
                                 tp.Discount = tp.Discount + (tp.ADULT?.FareComponent?.WingDiscount ?? 0);
 
                             }
-                            if (tp?.CHILD?.FareComponent?.TotalFare != null)
+                            if (tp?.CHILD?.FareComponent?.TotalFare != null && ChildCount > 0)
                             {
                                 tp.CHILD.FareComponent.NewTotalFare = (tp?.CHILD?.FareComponent?.TotalFare ?? 0) + (tp?.CHILD?.FareComponent?.WingMarkup ?? 0);
                                 WingbaseFare = WingbaseFare + (tp.CHILD.FareComponent.NewTotalFare);
                                 tp.Discount = tp.Discount + (tp.CHILD?.FareComponent?.WingDiscount ?? 0);
                             }
-                            if (tp?.INFANT?.FareComponent?.TotalFare != null)
+                            if (tp?.INFANT?.FareComponent?.TotalFare != null && InfantCount > 0)
                             {
                                 tp.INFANT.FareComponent.NewTotalFare = (tp?.INFANT?.FareComponent?.TotalFare ?? 0) + (tp?.INFANT?.FareComponent?.WingMarkup ?? 0);
                                 WingbaseFare = WingbaseFare + (tp.INFANT.FareComponent.NewTotalFare);
