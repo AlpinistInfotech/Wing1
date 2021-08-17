@@ -68,7 +68,7 @@
                                     <label asp-for="AdultPrice" class="col-sm-4 control-label"></label>
                                     <div class="col-sm-8">
                                         <div class="input-group">
-                                            <input type="number" min="0" max="1000" step="any" asp-for="AdultPrice" class="form-control" />
+                                            <input type="number" min="0" max="1000000" step="any" asp-for="AdultPrice" class="form-control" />
                                             <span asp-validation-for="AdultPrice" class="text-danger"></span>
                                         </div>
 
@@ -80,7 +80,7 @@
                                     <label asp-for="ChildPrice" class="col-sm-4 control-label"></label>
                                     <div class="col-sm-8">
                                         <div class="input-group">
-                                            <input type="number" min="0" max="1000" step="any" asp-for="ChildPrice" class="form-control" />
+                                            <input type="number" min="0" max="1000000" step="any" asp-for="ChildPrice" class="form-control" />
                                             <span asp-validation-for="ChildPrice" class="text-danger"></span>
                                         </div>
 
@@ -92,7 +92,7 @@
                                     <label asp-for="InfantPrice" class="col-sm-4 control-label"></label>
                                     <div class="col-sm-8">
                                         <div class="input-group">
-                                            <input type="number" min="0" max="1000" step="any" asp-for="InfantPrice" class="form-control" />
+                                            <input type="number" min="0" max="1000000" step="any" asp-for="InfantPrice" class="form-control" />
                                             <span asp-validation-for="InfantPrice" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -299,11 +299,7 @@
                         </div>
                     </div>
                 </div>
-
             </div>
-
-
-
         </form>
     </div>
 </div>
@@ -329,8 +325,7 @@
                 onchange: null,
                 thumbnail: true, //| true | large
                 whitelist: 'gif|png|jpg|jpeg',
-                blacklist: 'exe|php'
-                ,
+                blacklist: 'exe|php',
                 
 
             });
