@@ -178,7 +178,9 @@ namespace B2bApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> CustomerMaster(mdlCustomerMasterWraper mdl, [FromServices] IMasters masters)
         {
-            _customerMaster.CustomerId = mdl.CustomerId;
+            _customerMaster.CustomerId = mdl.customerMaster.CustomerId;
+            mdl.CustomerId= mdl.customerMaster.CustomerId;
+            //mdl.customerMaster.CustomerId = mdl.CustomerId;
             mdl.DocumentPermission=_customerMaster.DocumentPermission;
             bool IsUpdate = mdl.CustomerId==0?false:true;
             bool HaveWriteData = false;
@@ -222,7 +224,7 @@ namespace B2bApplication.Controllers
 
                         
 
-                        mdl.customerMaster.CustomerId = mdl.CustomerId;
+                        mdl.customerMaster.CustomerId = _customerMaster.CustomerId;
                         if (await _customerMaster.SaveBasicDetailsAsync(mdl.customerMaster))
                         {   
                             HaveWriteData = true;

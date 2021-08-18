@@ -790,6 +790,7 @@ namespace B2BClasses
                                 CreatedDt = saveDataMarkup.ModifiedDt ?? DateTime.Now,
                                 CustomerId = _CustomerId,
                                 MarkupAmt = mdl.MarkupAmount,
+                                //MinBalance=mdl.MinBalance,
                                 ModifiedBy = _UserId,
                                 ModifiedDt = DateTime.Now
 
@@ -850,7 +851,7 @@ namespace B2BClasses
 
                         if ((!IsUpdate) || (IsUpdate && IsFoundUpdate))
                         {
-                            saveDataWalletAlert.MinBalance = mdl.MarkupAmount;
+                            saveDataWalletAlert.MinBalance = mdl.MinBalance;
                             saveDataWalletAlert.CustomerId = _CustomerId;
                             saveDataWalletAlert.ModifiedBy = _UserId;
                             saveDataWalletAlert.ModifiedDt = DateTime.Now;

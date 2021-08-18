@@ -202,7 +202,7 @@
                                             @if (Model.LogoData != null)
                                             {
                                                 <div class="form-group col-md-4">
-                                                    <img src="@string.Format("data:image/ico;base64,{0}", Convert.ToBase64String(Model.LogoData))" />
+                                                    <img width="100px" height="100px" src="@string.Format("data:image/ico;base64,{0}", Convert.ToBase64String(Model.LogoData))" />
                                                 </div>
                                             }
                                         </div>
@@ -450,10 +450,10 @@
                                         <div class="col-sm-8">
                                             <div class="input-group">
                                                 <label class="input-group-addon input-group-addon-custom">
-                                                    <input id="cboxIsAllProvider" class="ace ace-switch" type="checkbox" asp-for="customerSetting.AllowedAllIp">
-                                                    <span class="lbl" data-lbl="ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT"></span>
+                                                    <input id="cboxIsAllApplicable" class="ace ace-switch" type="checkbox" asp-for="customerSetting.AllowedAllIp">
+                                                    <span class="lbl" data-lbl="Yes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No"></span>
                                                 </label>
-                                                <input type="text" asp-for="customerSetting.IPAddess" class="form-control" />
+                                                <input id="txtIPAddess" type="text" asp-for="customerSetting.IPAddess" class="form-control" />
                                             </div>
                                             <span asp-validation-for="customerSetting.AllowedAllIp" class="text-danger"></span>
                                         </div>
@@ -607,7 +607,12 @@
                 }
             });
 
-            
+            $("#ddl_state_id").change(function () {
+                if ($("#ddl_gst_state_id").val() == "" || $("#ddl_gst_state_id").val() == null) {
+                    $("#ddl_gst_state_id").val($("#ddl_state_id").val());
+                }
+            });
+
 
             
             function removeOptions(selectElement) {
@@ -667,5 +672,32 @@
                 
             }
         });
-     </script>
+
+
+
+
+
+
+        $(document).ready(function () {
+            $(window).load(function () {
+                if ($("#cboxIsAllApplicable").prop("checked") == true) {
+                    $('#txtIPAddess').hide();
+                } else {
+                    $('#txtIPAddess').show();
+                }
+            })
+            $("#cboxIsAllApplicable").change(function () {
+                if (this.checked) {
+                    $('#txtIPAddess').hide();
+                } else {
+                    $('#txtIPAddess').show();
+                }
+            });
+
+
+        });
+
+
+
+    </script>
 }

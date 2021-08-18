@@ -55,13 +55,13 @@ namespace B2BClasses.Models
         public int? StateId { get; set; }
         [DataType(DataType.PostalCode)]
         [Display(Name = "Pincode")]
-        [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 3)]
+        [StringLength(6, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 6)]
         public string PinCode { get; set; }
 
         [RegularExpression("[0-9]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         [DataType(DataType.PhoneNumber)]
         [Display(Name = "Contact No")]
-        [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 10)]
+        [StringLength(10, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 10)]
         [Required]
         public string ContactNo { get; set; }
 
@@ -69,7 +69,7 @@ namespace B2BClasses.Models
         [RegularExpression("[0-9]*$", ErrorMessage = "Invalid {0}, no special charcter")]
         [DataType(DataType.PhoneNumber)]
         [Display(Name = "Alternate No")]
-        [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 10)]
+        [StringLength(10, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 10)]
         public string AlternateNo { get; set; }
 
         [Display(Name = "Customer Type")]
@@ -235,7 +235,7 @@ namespace B2BClasses.Models
         [Required]
         [Display(Name = "Pan No")]
         [RegularExpression("[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}", ErrorMessage = "Invalid {0}")]
-        [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 10)]
+        [StringLength(10, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 10)]
         public string PANNo { get; set; }
         [Display(Name = "Is Approved")]
         public enmApprovalStatus IsApproved { get; set; }
@@ -253,11 +253,14 @@ namespace B2BClasses.Models
     public class mdlCustomerSetting 
     {
         public int? CustomerId { get; set; }
+
         [Display(Name = "Min Balance Alert")]
         [Range(0,1000000)]
         public double MinBalance { get; set; }
+        
         [Display(Name = "Markup Amount")]
         public double MarkupAmount { get; set; }
+        
         [Display(Name = "Allowed All IP")]
         
         public bool AllowedAllIp { get; set; } = true;
