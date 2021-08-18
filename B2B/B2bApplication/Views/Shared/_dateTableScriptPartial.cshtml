@@ -1,16 +1,16 @@
-﻿
-@*@{
-    int TableColumsCount = 1;
-    TableColumsCount = (ViewBag.TableColumsCount ?? 1);
-}*@
-<script src="~/assets/js/jquery.dataTables.min.js"></script>
-<script src="~/assets/js/jquery.dataTables.bootstrap.min.js"></script>
-<script src="~/assets/js/dataTables.buttons.min.js"></script>
+﻿@*@{
+        int TableColumsCount = 1;
+        TableColumsCount = (ViewBag.TableColumsCount ?? 1);
+    }*@
 <script src="~/assets/js/buttons.flash.min.js"></script>
 <script src="~/assets/js/buttons.html5.min.js"></script>
 <script src="~/assets/js/buttons.print.min.js"></script>
 <script src="~/assets/js/buttons.colVis.min.js"></script>
 <script src="~/assets/js/dataTables.select.min.js"></script>
+<script src="~/assets/js/jquery.dataTables.min.js"></script>
+<script src="~/assets/js/jquery.dataTables.bootstrap.min.js"></script>
+<script src="~/assets/js/dataTables.buttons.min.js"></script>
+
 
 <script>
     jQuery(function ($) {
@@ -26,7 +26,7 @@
                             {
                               @Html.Raw(  ", null");
                             }
-                            
+
                         ],
                         "aaSorting": [],
 
@@ -94,6 +94,7 @@
                     }
                 ]
             });
+       
             myTable.buttons().container().appendTo($('.tableTools-container'));
 
             //style the message box
@@ -160,7 +161,7 @@
                     else myTable.row(row).deselect();
                 });
             });
-
+       
             //select/deselect a row when the checkbox is checked/unchecked
             $('#dynamic-table').on('click', 'td input[type=checkbox]', function () {
                 var row = $(this).closest('tr').get(0);
