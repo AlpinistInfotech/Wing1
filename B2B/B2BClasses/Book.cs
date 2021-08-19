@@ -860,11 +860,32 @@ namespace B2BClasses
 
         public async Task<List<tblPackageMaster>> LoadPackage(int PackageId,bool OnlyActive, bool BeetweenCurrent, bool LoadUserName, bool BeetweenDateRange)
         {
-            
 
             var Query = _context.tblPackageMaster.AsQueryable();
-            DateTime dateTime = DateTime.Now;//Query.Where(p =>  p.EffectiveToDt); // query top 1 effectetofrom desc
+            //var MaxDate = (from d in _context.tblPackageMaster.AsQueryable() select d.EffectiveFromDt).Max();
+            //DateTime dateTime = MaxDate;
 
+
+            DateTime dateTime = DateTime.Now;
+
+            //Query.Where(p =>  p.EffectiveToDt); // query top 1 effectetofrom desc
+
+            // DateTime dateTime = ;
+            //var rs = (from ps in _context.tblPackageMaster.AsQueryable()
+            //          select new tblPackageMaster
+            //          {
+            //              EffectiveFromDt = ps.EffectiveFromDt
+            //          }).Max();
+
+
+
+
+            //var rs = (from ps in _context.tblPackageMaster.AsQueryable()                      
+            //          select new tblPackageMaster
+            //          {
+            //              EffectiveFromDt = ps.EffectiveFromDt
+
+            //          }).Take(1);
             if (PackageId > 0)
             {
                 Query = Query.Where(p => p.PackageId== PackageId);
