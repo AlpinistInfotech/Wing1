@@ -1591,7 +1591,18 @@ h1, h2, h3, h4, h5, h6 {
 .flight-list.round-trip .flight-item .company-info span, .flight-list.round-trip .flight-item .time-info small {
     line-height: 15px;
 }
+.flight-list .flight-item2, .train-list .train-item, .bus-list .bus-item {
+    position: relative;
+    border-bottom: 1px solid #e9e9e9;
+}
 
+    .flight-list .flight-item2 .flight-details .time-info small {
+        line-height: 15px;
+    }
+
+.flight-list.round-trip .flight-item2 .company-info span, .flight-list.round-trip .flight-item2 .time-info small {
+    line-height: 15px;
+}
 .round-trip-fare small {
     line-height: 14px;
 }

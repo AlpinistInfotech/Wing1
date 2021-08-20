@@ -132,8 +132,16 @@ namespace B2bApplication.Controllers
             }
             if(mdl.searchResponse.Results!=null)
             {
-                var res = mdl.searchResponse?.Results.FirstOrDefault();
-                return PartialView("_NewFlightResult", res);
+                if (mdl.FlightSearchWraper.JourneyType == enmJourneyType.OneWay)
+                {
+                    var res = mdl.searchResponse?.Results.FirstOrDefault();
+                    return PartialView("_NewFlightResult", res);
+                }
+                else
+                {
+                    var res = mdl.searchResponse;
+                    return PartialView("_NewReturnFlightResult", res);
+                }
             }
             return View(mdl);
         }

@@ -1,0 +1,944 @@
+﻿@model B2BClasses.Services.Air.mdlSearchResponse
+@inject ICurrentUsers _currentuser
+@using Newtonsoft.Json
+<!-- Content============================================= -->
+
+<div id="content">
+    <section class="container">
+
+        <div class="row">
+
+            <!-- Side Panel
+            ============================================= -->
+            <aside class="col-md-3">
+                <div class="bg-white shadow-md rounded p-3">
+                    <h3 class="text-5">Filter</h3>
+                    <hr class="mx-n3">
+                    <div class="accordion accordion-alternate style-2 mt-n3" id="toggleAlternate">
+                        <div class="card">
+                            <div class="card-header" id="stops">
+                                <h5 class="mb-0"> <a href="#" data-toggle="collapse" data-target="#togglestops" aria-expanded="true" aria-controls="togglestops">No. of Stops</a> </h5>
+                            </div>
+                            <div id="togglestops" class="collapse show" aria-labelledby="stops">
+                                <div class="card-body">
+                                    @{int nonstop = 0, nonstop1 = 0, nonstop2 = 0;
+                                        nonstop1 = Model.Results.FirstOrDefault().Where(x => x.Segment.Count() == 1).Count();
+                                        nonstop2 = Model.Results.LastOrDefault().Where(x => x.Segment.Count() == 1).Count();
+                                        nonstop = nonstop1 + nonstop2;
+                                        int onestop = 0, onestop1 = 0, onestop2 = 0;
+                                        onestop1 = Model.Results.FirstOrDefault().Where(x => x.Segment.Count() == 2).Count();
+                                        onestop2 = Model.Results.LastOrDefault().Where(x => x.Segment.Count() == 2).Count();
+                                        onestop = onestop1 + onestop2;
+                                        int multistop = 0, multistop1 = 0, multistop2 = 0;
+                                        multistop2 = Model.Results.LastOrDefault().Where(x => x.Segment.Count() > 2).Count();
+                                        multistop1 = Model.Results.FirstOrDefault().Where(x => x.Segment.Count() > 2).Count();
+                                        multistop = multistop1 + multistop2;}
+
+                                    @if (nonstop > 0)
+                                    {
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" id="nonstop" name="stop" value="Non Stop" onclick="checkfilter()" class="custom-control-input">
+                                            <label class="custom-control-label" for="nonstop">
+                                                Non Stop (@nonstop)
+                                            </label>
+                                        </div>}
+                                    @if (onestop > 0)
+                                    {
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" id="1stop" value="1 Stop" name="stop" onclick="checkfilter()" class="custom-control-input">
+                                            <label class="custom-control-label" for="1stop">1 Stop (@onestop)</label>
+                                        </div>}
+                                    @if (multistop > 0)
+                                    {
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" id="2stop" value="Many Stop" name="stop" onclick="checkfilter()" class="custom-control-input">
+                                            <label class="custom-control-label" for="2stop">2+ Stop (@multistop)</label>
+                                        </div>}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header" id="departureTime">
+                                <h5 class="mb-0"> <a href="#" class="collapse" data-toggle="collapse" data-target="#toggleDepartureTime" aria-expanded="true" aria-controls="toggleDepartureTime">Departure Time</a> </h5>
+                            </div>
+                            <div id="toggleDepartureTime" class="collapse show" aria-labelledby="departureTime">
+                                <div class="card-body">
+                                    <div class="custom-control custom-checkbox clearfix">
+                                        <input type="checkbox" id="earlyMorning" name="departureTime" class="custom-control-input">
+                                        <label class="custom-control-label" for="earlyMorning">Early Morning</label>
+                                        <small class="text-muted float-right">12am - 8am</small>
+                                    </div>
+                                    <div class="custom-control custom-checkbox clearfix">
+                                        <input type="checkbox" id="morning" name="departureTime" class="custom-control-input">
+                                        <label class="custom-control-label" for="morning">Morning</label>
+                                        <small class="text-muted float-right">8am - 12pm</small>
+                                    </div>
+                                    <div class="custom-control custom-checkbox clearfix">
+                                        <input type="checkbox" id="midDay" name="departureTime" class="custom-control-input">
+                                        <label class="custom-control-label" for="midDay">Mid-Day</label>
+                                        <small class="text-muted float-right">12pm - 4pm</small>
+                                    </div>
+                                    <div class="custom-control custom-checkbox clearfix">
+                                        <input type="checkbox" id="evening" name="departureTime" class="custom-control-input">
+                                        <label class="custom-control-label" for="evening">Evening</label>
+                                        <small class="text-muted float-right">4pm - 8pm</small>
+                                    </div>
+                                    <div class="custom-control custom-checkbox clearfix">
+                                        <input type="checkbox" id="night" name="departureTime" class="custom-control-input">
+                                        <label class="custom-control-label" for="night">Night</label>
+                                        <small class="text-muted float-right">8pm - 12am</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header" id="price">
+                                <h5 class="mb-0"> <a href="#" class="collapse" data-toggle="collapse" data-target="#togglePrice" aria-expanded="true" aria-controls="togglePrice">Price</a> </h5>
+                            </div>
+                            <div id="togglePrice" class="collapse show" aria-labelledby="price">
+                                <div class="card-body">
+                                    <p>
+                                        <input id="amount" type="text" readonly class="form-control border-0 bg-transparent p-0">
+                                    </p>
+                                    <div id="slider-range"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header" id="airlines">
+                                <h5 class="mb-0"> <a href="#" class="collapse" data-toggle="collapse" data-target="#toggleAirlines" aria-expanded="true" aria-controls="toggleAirlines">Airlines</a> </h5>
+                            </div>
+                            <div id="toggleAirlines" class="collapse show" aria-labelledby="airlines">
+                                <div class="card-body">
+                                    @foreach (var item in Model.Results[0].Select(x => x.Segment.FirstOrDefault()?.Airline?.Name).Distinct())
+                                    {
+
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" id="@item" name="airlines" class="custom-control-input">
+                                            <label class="custom-control-label" for="asianaAir">@item</label>
+                                        </div>
+
+
+                                    }
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside><!-- Side Panel end -->
+
+            <div class="col-md-9 mt-4 mt-md-0">
+                <div class="bg-white shadow-md rounded py-4">
+                    <div class="row no-gutters">
+
+                        <!-- Departure Flights
+                        ============================================= -->
+                        <div class="col-6">
+                            <div class="px-3">
+                                <h2 class="text-5 mb-4">
+                                    <span id="dflightfrom">@Model.Results[0].FirstOrDefault().Segment?.FirstOrDefault()?.Origin?.CityName</span>
+                                    <small class="mx-2">to</small>
+                                    <span id="dflightto">@Model.Results[0].FirstOrDefault().Segment?.LastOrDefault()?.Destination?.CityName</span>
+                                </h2>
+                            </div>
+                            <div class="text-1 bg-light-3 border border-left-0 py-2 px-3">
+                                <div class="form-row">
+                                    <div class="col col-sm col-lg-3 text-center d-none d-sm-block">Airline</div>
+                                    <div class="col-6 col-sm col-lg-3 text-center">Departure</div>
+                                    <div class="col-6 col-sm col-lg-3 text-center">Arrival</div>
+                                    <div class="col col-sm col-lg-3 text-right d-none d-sm-block">Price</div>
+                                </div>
+                            </div>
+                            <div class="flight-list round-trip border-right">
+
+                                @{int cnt = 0;}
+                                @foreach (var item in Model?.Results[0])
+                                {
+                                    { ViewBag.JourneyType1 = "OnwardRadio"; }
+                                    cnt++;
+                                    <input type="hidden" value="@item.traceid" name="hid_traceid" id="hid_traceid" />
+                                    <div class="flight-item">
+                                        <div class="form-row align-items-center flex-row pt-4 pb-2 px-3">
+                                            <div class="col-12 col-sm col-lg-3 d-flex align-items-center text-center mb-2 mb-sm-0 company-info">
+                                                <div class="custom-control custom-radio custom-control-inline mr-1">
+                                                    @if (cnt == 1)
+                                                    {
+                                                        <input id="departure-flight-@cnt" name="departure-flight" onclick="onwardflightdetails(@cnt)" checked class="custom-control-input" type="radio">
+                                                    }
+                                                    else
+                                                    {
+                                                        <input id="departure-flight-@cnt" name="departure-flight" onclick="onwardflightdetails(@cnt)" class="custom-control-input" type="radio">
+                                                    }
+                                                    <label class="custom-control-label" for="departure-flight-@cnt"></label>
+                                                </div>
+                                                <div class="d-block">
+                                                    <img class="img-fluid" id="img-@cnt" alt="" src="~/AirlinesLogo/@(item.Segment.FirstOrDefault()?.Airline?.Code).png">
+                                                    <span class="d-block text-1 text-dark" id="flight-name-@cnt">@(item.Segment.FirstOrDefault()?.Airline?.Name)</span>
+                                                    <small class="text-muted d-block" id="flight-no-@cnt">@(item.Segment.FirstOrDefault()?.Airline?.FlightNumber)</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 col-sm col-lg-3 text-center time-info">
+                                                <span id="flight-dtime-@cnt">@item.Segment.FirstOrDefault()?.DepartureTime.ToString("HH:mm")</span>
+
+                                                @if (item.Segment.Count > 1)
+                                                {<small class="text-muted d-none d-sm-block spnstop" id="flight-stop-@cnt">@(item.Segment.Count - 1) Stop</small> }
+                                                else
+                                                {
+                                                    <small class="text-muted d-none d-sm-block spnstop" id="flight-stop-@cnt">Non Stop</small>}
+                                            </div>
+                                            <div class="col-6 col-sm col-lg-3 text-center time-info">
+
+                                                <span id="flight-atime-@cnt">@item.Segment.LastOrDefault()?.ArrivalTime.ToString("HH:mm")</span>
+                                                @{ TimeSpan? t1 = (item.Segment.LastOrDefault()?.ArrivalTime - item.Segment.FirstOrDefault()?.DepartureTime);
+                                                    int hour = t1.Value.Hours;
+                                                    int mins = t1.Value.Minutes;
+                                                    <small class="text-muted d-none d-sm-block" id="flight-ttime-@cnt">@hour.ToString("00")h : @mins.ToString("00")m</small> }
+                                            </div>
+                                            <div class="col-12 col-sm col-lg-3 text-center text-sm-right text-dark text-3 price">
+                                                @(item.TotalPriceList?.FirstOrDefault().TotalPrice.ToString("C", _currentuser.cultureInfo))
+                                                <input type="hidden" value=" @item.TotalPriceList?.FirstOrDefault().TotalPrice" id="flight-price-@cnt" />
+                                            </div>
+                                            <div class="col col-sm-auto col-lg-3 ml-auto text-0 text-center text-sm-right">
+                                                <a data-toggle="modal" data-target="#flight-@cnt" href="">Flight Details</a>
+                                            </div>
+                                        </div>
+                                        <!-- Flight Details Modal Dialog ============================================= -->
+                                        <div id="flight-@cnt" class="modal fade" role="dialog" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Flight Details</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="flight-details">
+                                                            <div class="row mb-4">
+                                                                <div class="col-12 col-sm-9 col-lg-8">
+                                                                    <div class="row align-items-center trip-title mb-3">
+                                                                        <div class="col col-sm-auto text-center text-sm-left">
+                                                                            <h5 class="m-0 trip-place">@item.Segment?.FirstOrDefault()?.Origin?.CityName</h5>
+                                                                        </div>
+                                                                        <div class="col-auto text-10 text-black-50 text-center trip-arrow">➝</div>
+                                                                        <div class="col col-sm-auto text-center text-sm-left">
+                                                                            <h5 class="m-0 trip-place">@item.Segment?.LastOrDefault()?.Destination?.CityName</h5>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row align-items-center">
+                                                                        <div class="col col-sm-auto"><span class="text-4"> @item.Segment.FirstOrDefault()?.DepartureTime.ToString("dd-MMM")</span></div>
+                                                                        <div class="col-auto">
+                                                                            @if (item.TotalPriceList?.FirstOrDefault()?.ADULT?.RefundableType == 0)
+                                                                            {
+                                                                                <span class="badge badge-danger py-1 px-2 font-weight-normal text-1">Non Refundable</span> }
+                                                                            else if (item.TotalPriceList?.FirstOrDefault()?.ADULT?.RefundableType == 1)
+                                                                            {
+                                                                                <span class="badge badge-success py-1 px-2 font-weight-normal text-1">Refundable</span> }
+                                                                            else
+                                                                            {
+                                                                                <span class="badge badge-info py-1 px-2 font-weight-normal text-1">Partial Refundable</span>}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 col-sm-3 col-lg-2 text-center text-sm-right mt-3 mt-sm-0">
+                                                                    <span class="text-dark text-7">@(item.TotalPriceList?.FirstOrDefault().TotalPrice.ToString("C", _currentuser.cultureInfo)) </span>
+                                                                    <span class="text-1 text-muted d-block">(Per Adult)</span>
+                                                                    <span class="text-1 text-danger d-block">@(item.TotalPriceList?.FirstOrDefault()?.ADULT?.SeatRemaing) seat(s) left</span>
+                                                                </div>
+
+                                                            </div>
+                                                            <ul class="nav nav-tabs" id="myTab-@cnt" role="tablist">
+                                                                <li class="nav-item"> <a class="nav-link active" id="first-tab-@cnt" data-toggle="tab" href="#first-@cnt" role="tab" aria-controls="first-@cnt" aria-selected="true">Itinerary</a> </li>
+                                                                <li class="nav-item"> <a class="nav-link" id="second-tab-@cnt" data-toggle="tab" href="#second-@cnt" role="tab" aria-controls="second-@cnt" aria-selected="false">Fare Details</a> </li>
+                                                                <li class="nav-item"> <a class="nav-link" id="third-tab-@cnt" data-toggle="tab" href="#third-@cnt" role="tab" aria-controls="third-@cnt" aria-selected="false">Baggage Details</a> </li>
+                                                                <li class="nav-item"> <a class="nav-link" id="fourth-tab-@cnt" data-toggle="tab" href="#fourth-@cnt" role="tab" aria-controls="fourth-@cnt" aria-selected="false">Cancellation</a> </li>
+                                                                <li class="nav-item"> <a class="nav-link" id="fifth-tab-@cnt" data-toggle="tab" href="#fifth-@cnt" role="tab" aria-controls="fifth-@cnt" aria-selected="false">Date Change</a> </li>
+                                                            </ul>
+                                                            <div class="tab-content my-3" id="myTabContent-@cnt">
+                                                                <div class="tab-pane fade show active" id="first-@cnt" role="tabpanel" aria-labelledby="first-tab-@cnt">
+                                                                    <div class="row flex-row pt-4 px-md-4">
+                                                                        <div class="col-12 col-sm-3 text-center d-lg-flex company-info">
+                                                                            <span class="align-middle">
+                                                                                <img class="img-fluid" alt="" src="~/AirlinesLogo/@(item.Segment.FirstOrDefault()?.Airline?.Code).png">
+                                                                            </span> <span class="align-middle ml-lg-2">
+                                                                                <span class="d-block text-1 text-dark">@(item.Segment.FirstOrDefault()?.Airline?.Name)</span>
+                                                                                <small class="text-muted d-block"> @(item.Segment.FirstOrDefault()?.Airline?.FlightNumber)</small>
+                                                                            </span>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
+                                                                            <span class="text-5 text-dark">@item.Segment.FirstOrDefault()?.DepartureTime.ToString("HH:mm")</span>
+                                                                            <small class="text-muted d-block">@(item.Segment.LastOrDefault()?.Origin?.AirportName), @(item.Segment.FirstOrDefault()?.Origin?.CityName)</small>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
+
+                                                                            <span class="text-3 text-dark">@hour.ToString("00") : @mins.ToString("00")</span>
+
+                                                                            <small class="text-muted d-block">Duration</small>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
+                                                                            <span class="text-5 text-dark">@item.Segment.FirstOrDefault()?.ArrivalTime.ToString("HH:mm")</span>
+                                                                            <small class="text-muted d-block">@(item.Segment.LastOrDefault()?.Destination?.AirportName), @(item.Segment.LastOrDefault()?.Destination?.CityName)</small>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="tab-pane fade" id="second-@cnt" role="tabpanel" aria-labelledby="second-tab-@cnt">
+                                                                    <div class="table-responsive-md">
+                                                                        <table class="table table-hover table-bordered">
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td>Base Fare</td>
+                                                                                    <td class="text-right">@item.TotalPriceList?.FirstOrDefault()?.BaseFare</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>Fees &amp; Surcharge</td>
+                                                                                    <td class="text-right">
+                                                                                        @{double? totfees = 0;
+                                                                                            totfees = item.TotalPriceList?.FirstOrDefault()?.TotalPrice - item.TotalPriceList?.FirstOrDefault()?.BaseFare; }
+                                                                                        @totfees
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>Total</td>
+                                                                                    <td class="text-right">@item.TotalPriceList?.FirstOrDefault()?.TotalPrice</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="tab-pane fade" id="third-@cnt" role="tabpanel" aria-labelledby="third-tab-@cnt">
+                                                                    <div class="table-responsive-md">
+                                                                        <table class="table table-hover table-bordered">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>&nbsp;</th>
+                                                                                    <td class="text-center">Cabin</td>
+                                                                                    <td class="text-center">Check-In</td>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td>Adult</td>
+                                                                                    <td class="text-center">@item.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CabinBaggage Kg</td>
+                                                                                    <td class="text-center">@item.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CheckingBaggage Kg</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>Child</td>
+                                                                                    <td class="text-center">@item.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CabinBaggage Kg</td>
+                                                                                    <td class="text-center">@item.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CheckingBaggage Kg</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>Infant</td>
+                                                                                    <td class="text-center">0 Kg</td>
+                                                                                    <td class="text-center">0 Kg</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="tab-pane fade" id="fourth-@cnt" role="tabpanel" aria-labelledby="fourth-tab-@cnt">
+                                                                    <table class="table table-hover table-bordered">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>&nbsp;</th>
+                                                                                <td class="text-center">Per Passenger Fee</td>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td>24 hrs - 365 days</td>
+                                                                                <td class="text-center">$960</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>2-24 hours</td>
+                                                                                <td class="text-center">$350 + $50</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>0-2 hours</td>
+                                                                                <td class="text-center">$550 + $50</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                    <p class="font-weight-bold">Terms & Conditions</p>
+                                                                    <ul>
+                                                                        <li>The penalty is subject to 4 hrs before departure. No Changes are allowed after that.</li>
+                                                                        <li>The charges are per passenger per sector.</li>
+                                                                        <li>Partial cancellation is not allowed on tickets booked under special discounted fares.</li>
+                                                                        <li>In case of no-show or ticket not cancelled within the stipulated time, only statutory taxes are refundable subject to Service Fee.</li>
+                                                                        <li>No Baggage Allowance for Infants</li>
+                                                                        <li>Airline penalty needs to be reconfirmed prior to any amendments or cancellation.</li>
+                                                                    </ul>
+                                                                </div>
+                                                                <div class="tab-pane fade" id="fifth-@cnt" role="tabpanel" aria-labelledby="fifth-tab-@cnt">
+                                                                    <table class="table table-hover table-bordered">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>&nbsp;</th>
+                                                                                <td class="text-center">Per Passenger Fee</td>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td>24 hrs - 365 days</td>
+                                                                                <td class="text-center">$960</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>2-24 hours</td>
+                                                                                <td class="text-center">$350 + $50</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>0-2 hours</td>
+                                                                                <td class="text-center">$550 + $50</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                    <p class="font-weight-bold">Terms & Conditions</p>
+                                                                    <ul>
+                                                                        <li>The penalty is subject to 4 hrs before departure. No Changes are allowed after that.</li>
+                                                                        <li>The charges are per passenger per sector.</li>
+                                                                        <li>Partial cancellation is not allowed on tickets booked under special discounted fares.</li>
+                                                                        <li>In case of no-show or ticket not cancelled within the stipulated time, only statutory taxes are refundable subject to Service Fee.</li>
+                                                                        <li>No Baggage Allowance for Infants</li>
+                                                                        <li>Airline penalty needs to be reconfirmed prior to any amendments or cancellation.</li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Flight Details Modal Dialog end -->
+                                    </div>
+
+                                }
+
+                            </div>
+                        </div>
+                        <!-- Departure Flights end -->
+                        <!-- Returns Flights
+                        ============================================= -->
+                        <div class="col-6">
+                            <div class="px-3">
+                                <div class="px-3">
+                                    <h2 class="text-5 mb-4">
+                                        <span id="rflightfrom">@Model.Results[1].FirstOrDefault().Segment?.FirstOrDefault()?.Origin?.CityName</span>
+                                        <small class="mx-2">to</small>
+                                        <span id="rflightto">@Model.Results[1].FirstOrDefault().Segment?.LastOrDefault()?.Destination?.CityName</span>
+                                    </h2>
+                                </div>
+                            </div>
+                            <div class="text-1 bg-light-3 border border-right-0 border-left-0 py-2 px-3">
+                                <div class="form-row">
+                                    <div class="col col-sm col-lg-3 text-center d-none d-sm-block">Airline</div>
+                                    <div class="col-6 col-sm col-lg-3 text-center">Departure</div>
+                                    <div class="col-6 col-sm col-lg-3 text-center">Arrival</div>
+                                    <div class="col col-sm col-lg-3 text-right d-none d-sm-block">Price</div>
+                                </div>
+                            </div>
+                            <div class="flight-list round-trip border-left">
+
+                                @{int rcnt = 0;}
+                                @foreach (var item in Model?.Results[1])
+                                {
+                                    { ViewBag.JourneyType1 = "ReturnRadio"; }
+                                    cnt++;
+                                    rcnt++;
+                                    <input type="hidden" value="@item.traceid" name="hid_traceid" id="hid_traceid" />
+                                    <div class="flight-item2">
+                                        <div class="form-row align-items-center flex-row pt-4 pb-2 px-3">
+                                            <div class="col-12 col-sm col-lg-3 d-flex align-items-center text-center mb-2 mb-sm-0 company-info">
+                                                <div class="custom-control custom-radio custom-control-inline mr-1">
+                                                    @if (rcnt == 1)
+                                                    {
+                                                        <input id="return-flight-@cnt" name="return-flight" onclick="returnflightdetails(@cnt)" class="custom-control-input" checked type="radio">
+                                                    }
+                                                    else
+                                                    {
+                                                        <input id="return-flight-@cnt" name="return-flight" onclick="returnflightdetails(@cnt)" class="custom-control-input" type="radio">
+                                                    }
+                                                    <label class="custom-control-label" for="return-flight-@cnt"></label>
+                                                </div>
+                                                <div class="d-block">
+                                                    <img class="img-fluid" id="img-@cnt" alt="" src="~/AirlinesLogo/@(item.Segment.FirstOrDefault()?.Airline?.Code).png">
+                                                    <span class="d-block text-1 text-dark" id="flight-name-@cnt">@(item.Segment.FirstOrDefault()?.Airline?.Name)</span>
+                                                    <small class="text-muted d-block" id="flight-no-@cnt">@(item.Segment.FirstOrDefault()?.Airline?.FlightNumber)</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 col-sm col-lg-3 text-center time-info">
+                                                <span id="flight-dtime-@cnt">@item.Segment.FirstOrDefault()?.DepartureTime.ToString("HH:mm")</span>
+
+                                                @if (item.Segment.Count > 1)
+                                                {<small class="text-muted d-none d-sm-block spnstop2" id="flight-stop-@cnt">@(item.Segment.Count - 1) Stop</small> }
+                                                else
+                                                {
+                                                    <small class="text-muted d-none d-sm-block spnstop2" id="flight-stop-@cnt">Non Stop</small>}
+                                            </div>
+                                            <div class="col-6 col-sm col-lg-3 text-center time-info">
+
+                                                <span id="flight-atime-@cnt">@item.Segment.LastOrDefault()?.ArrivalTime.ToString("HH:mm")</span>
+                                                @{ TimeSpan? t1 = (item.Segment.LastOrDefault()?.ArrivalTime - item.Segment.FirstOrDefault()?.DepartureTime);
+                                                    int hour = t1.Value.Hours;
+                                                    int mins = t1.Value.Minutes;
+                                                    <small class="text-muted d-none d-sm-block" id="flight-ttime-@cnt">@hour.ToString("00")h : @mins.ToString("00")m</small> }
+                                            </div>
+                                            <div class="col-12 col-sm col-lg-3 text-center text-sm-right text-dark text-3 price">
+                                                @(item.TotalPriceList?.FirstOrDefault().TotalPrice.ToString("C", _currentuser.cultureInfo))
+                                                <input type="hidden" value=" @item.TotalPriceList?.FirstOrDefault().TotalPrice" id="flight-price-@cnt" />
+                                            </div>
+                                            <div class="col col-sm-auto col-lg-3 ml-auto text-0 text-center text-sm-right">
+                                                <a data-toggle="modal" data-target="#flight-@cnt" href="">Flight Details</a>
+                                            </div>
+                                        </div>
+                                        <!-- Flight Details Modal Dialog ============================================= -->
+                                        <div id="flight-@cnt" class="modal fade" role="dialog" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Flight Details</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="flight-details">
+                                                            <div class="row mb-4">
+                                                                <div class="col-12 col-sm-9 col-lg-8">
+                                                                    <div class="row align-items-center trip-title mb-3">
+                                                                        <div class="col col-sm-auto text-center text-sm-left">
+                                                                            <h5 class="m-0 trip-place">@item.Segment?.FirstOrDefault()?.Origin?.CityName</h5>
+                                                                        </div>
+                                                                        <div class="col-auto text-10 text-black-50 text-center trip-arrow">➝</div>
+                                                                        <div class="col col-sm-auto text-center text-sm-left">
+                                                                            <h5 class="m-0 trip-place">@item.Segment?.LastOrDefault()?.Destination?.CityName</h5>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row align-items-center">
+                                                                        <div class="col col-sm-auto"><span class="text-4"> @item.Segment.FirstOrDefault()?.DepartureTime.ToString("dd-MMM")</span></div>
+                                                                        <div class="col-auto">
+                                                                            @if (item.TotalPriceList?.FirstOrDefault()?.ADULT?.RefundableType == 0)
+                                                                            {
+                                                                                <span class="badge badge-danger py-1 px-2 font-weight-normal text-1">Non Refundable</span> }
+                                                                            else if (item.TotalPriceList?.FirstOrDefault()?.ADULT?.RefundableType == 1)
+                                                                            {
+                                                                                <span class="badge badge-success py-1 px-2 font-weight-normal text-1">Refundable</span> }
+                                                                            else
+                                                                            {
+                                                                                <span class="badge badge-info py-1 px-2 font-weight-normal text-1">Partial Refundable</span>}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 col-sm-3 col-lg-2 text-center text-sm-right mt-3 mt-sm-0">
+                                                                    <span class="text-dark text-7">@(item.TotalPriceList?.FirstOrDefault().TotalPrice.ToString("C", _currentuser.cultureInfo)) </span>
+                                                                    <span class="text-1 text-muted d-block">(Per Adult)</span>
+                                                                    <span class="text-1 text-danger d-block">@(item.TotalPriceList?.FirstOrDefault()?.ADULT?.SeatRemaing) seat(s) left</span>
+                                                                </div>
+
+                                                            </div>
+                                                            <ul class="nav nav-tabs" id="myTab-@cnt" role="tablist">
+                                                                <li class="nav-item"> <a class="nav-link active" id="first-tab-@cnt" data-toggle="tab" href="#first-@cnt" role="tab" aria-controls="first-@cnt" aria-selected="true">Itinerary</a> </li>
+                                                                <li class="nav-item"> <a class="nav-link" id="second-tab-@cnt" data-toggle="tab" href="#second-@cnt" role="tab" aria-controls="second-@cnt" aria-selected="false">Fare Details</a> </li>
+                                                                <li class="nav-item"> <a class="nav-link" id="third-tab-@cnt" data-toggle="tab" href="#third-@cnt" role="tab" aria-controls="third-@cnt" aria-selected="false">Baggage Details</a> </li>
+                                                                <li class="nav-item"> <a class="nav-link" id="fourth-tab-@cnt" data-toggle="tab" href="#fourth-@cnt" role="tab" aria-controls="fourth-@cnt" aria-selected="false">Cancellation</a> </li>
+                                                                <li class="nav-item"> <a class="nav-link" id="fifth-tab-@cnt" data-toggle="tab" href="#fifth-@cnt" role="tab" aria-controls="fifth-@cnt" aria-selected="false">Date Change</a> </li>
+                                                            </ul>
+                                                            <div class="tab-content my-3" id="myTabContent-@cnt">
+                                                                <div class="tab-pane fade show active" id="first-@cnt" role="tabpanel" aria-labelledby="first-tab-@cnt">
+                                                                    <div class="row flex-row pt-4 px-md-4">
+                                                                        <div class="col-12 col-sm-3 text-center d-lg-flex company-info">
+                                                                            <span class="align-middle">
+                                                                                <img class="img-fluid" alt="" src="~/AirlinesLogo/@(item.Segment.FirstOrDefault()?.Airline?.Code).png">
+                                                                            </span> <span class="align-middle ml-lg-2">
+                                                                                <span class="d-block text-1 text-dark">@(item.Segment.FirstOrDefault()?.Airline?.Name)</span>
+                                                                                <small class="text-muted d-block"> @(item.Segment.FirstOrDefault()?.Airline?.FlightNumber)</small>
+                                                                            </span>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
+                                                                            <span class="text-5 text-dark">@item.Segment.FirstOrDefault()?.DepartureTime.ToString("HH:mm")</span>
+                                                                            <small class="text-muted d-block">@(item.Segment.LastOrDefault()?.Origin?.AirportName), @(item.Segment.FirstOrDefault()?.Origin?.CityName)</small>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
+
+                                                                            <span class="text-3 text-dark">@hour.ToString("00") : @mins.ToString("00")</span>
+
+                                                                            <small class="text-muted d-block">Duration</small>
+                                                                        </div>
+                                                                        <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
+                                                                            <span class="text-5 text-dark">@item.Segment.FirstOrDefault()?.ArrivalTime.ToString("HH:mm")</span>
+                                                                            <small class="text-muted d-block">@(item.Segment.LastOrDefault()?.Destination?.AirportName), @(item.Segment.LastOrDefault()?.Destination?.CityName)</small>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="tab-pane fade" id="second-@cnt" role="tabpanel" aria-labelledby="second-tab-@cnt">
+                                                                    <div class="table-responsive-md">
+                                                                        <table class="table table-hover table-bordered">
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td>Base Fare</td>
+                                                                                    <td class="text-right">@item.TotalPriceList?.FirstOrDefault()?.BaseFare</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>Fees &amp; Surcharge</td>
+                                                                                    <td class="text-right">
+                                                                                        @{double? totfees = 0;
+                                                                                            totfees = item.TotalPriceList?.FirstOrDefault()?.TotalPrice - item.TotalPriceList?.FirstOrDefault()?.BaseFare; }
+                                                                                        @totfees
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>Total</td>
+                                                                                    <td class="text-right">@item.TotalPriceList?.FirstOrDefault()?.TotalPrice</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="tab-pane fade" id="third-@cnt" role="tabpanel" aria-labelledby="third-tab-@cnt">
+                                                                    <div class="table-responsive-md">
+                                                                        <table class="table table-hover table-bordered">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>&nbsp;</th>
+                                                                                    <td class="text-center">Cabin</td>
+                                                                                    <td class="text-center">Check-In</td>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td>Adult</td>
+                                                                                    <td class="text-center">@item.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CabinBaggage Kg</td>
+                                                                                    <td class="text-center">@item.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CheckingBaggage Kg</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>Child</td>
+                                                                                    <td class="text-center">@item.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CabinBaggage Kg</td>
+                                                                                    <td class="text-center">@item.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CheckingBaggage Kg</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>Infant</td>
+                                                                                    <td class="text-center">0 Kg</td>
+                                                                                    <td class="text-center">0 Kg</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="tab-pane fade" id="fourth-@cnt" role="tabpanel" aria-labelledby="fourth-tab-@cnt">
+                                                                    <table class="table table-hover table-bordered">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>&nbsp;</th>
+                                                                                <td class="text-center">Per Passenger Fee</td>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td>24 hrs - 365 days</td>
+                                                                                <td class="text-center">$960</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>2-24 hours</td>
+                                                                                <td class="text-center">$350 + $50</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>0-2 hours</td>
+                                                                                <td class="text-center">$550 + $50</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                    <p class="font-weight-bold">Terms & Conditions</p>
+                                                                    <ul>
+                                                                        <li>The penalty is subject to 4 hrs before departure. No Changes are allowed after that.</li>
+                                                                        <li>The charges are per passenger per sector.</li>
+                                                                        <li>Partial cancellation is not allowed on tickets booked under special discounted fares.</li>
+                                                                        <li>In case of no-show or ticket not cancelled within the stipulated time, only statutory taxes are refundable subject to Service Fee.</li>
+                                                                        <li>No Baggage Allowance for Infants</li>
+                                                                        <li>Airline penalty needs to be reconfirmed prior to any amendments or cancellation.</li>
+                                                                    </ul>
+                                                                </div>
+                                                                <div class="tab-pane fade" id="fifth-@cnt" role="tabpanel" aria-labelledby="fifth-tab-@cnt">
+                                                                    <table class="table table-hover table-bordered">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>&nbsp;</th>
+                                                                                <td class="text-center">Per Passenger Fee</td>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td>24 hrs - 365 days</td>
+                                                                                <td class="text-center">$960</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>2-24 hours</td>
+                                                                                <td class="text-center">$350 + $50</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>0-2 hours</td>
+                                                                                <td class="text-center">$550 + $50</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                    <p class="font-weight-bold">Terms & Conditions</p>
+                                                                    <ul>
+                                                                        <li>The penalty is subject to 4 hrs before departure. No Changes are allowed after that.</li>
+                                                                        <li>The charges are per passenger per sector.</li>
+                                                                        <li>Partial cancellation is not allowed on tickets booked under special discounted fares.</li>
+                                                                        <li>In case of no-show or ticket not cancelled within the stipulated time, only statutory taxes are refundable subject to Service Fee.</li>
+                                                                        <li>No Baggage Allowance for Infants</li>
+                                                                        <li>Airline penalty needs to be reconfirmed prior to any amendments or cancellation.</li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Flight Details Modal Dialog end -->
+                                    </div>
+
+                                }
+
+                            </div>
+                        </div><!-- Returns Flights end -->
+
+                    </div>
+
+
+
+                </div>
+            </div>
+
+            <!-- Selected Flight Fare
+            ============================================= -->
+            <div class="round-trip-fare fixed-bottom bg-dark shadow-md text-light">
+                <div class="container p-2 p-sm-4">
+                    <div class="row align-items-center">
+                        <div class="col-9">
+                            <div class="row">
+                                <div class="col-12 col-sm-6 border-right border-dark">
+                                    <div class="row align-items-center flex-row">
+                                        <div class="col col-sm-4 col-md-3 text-center d-lg-flex company-info">
+                                            <span class="align-middle d-none d-sm-block">
+                                                <img class="img-fluid" alt="" id="dflight-img" src="~/AirlinesLogo/@(Model.Results[0]?.FirstOrDefault()?.Segment.FirstOrDefault()?.Airline?.Code).png">
+                                            </span>
+                                            <span class="align-middle ml-lg-2">
+                                                <span class="d-block text-1" id="dflight-name">@(Model.Results[0]?.FirstOrDefault()?.Segment.FirstOrDefault()?.Airline?.Name)</span>
+                                                <small class="text-white-50 d-block" id="dflight-no">@(Model.Results[0]?.FirstOrDefault()?.Segment.FirstOrDefault()?.Airline?.FlightNumber)</small>
+                                            </span>
+                                        </div>
+                                        <div class="col col-sm-4 col-md-3 text-center time-info">
+                                            <span class="text-4" id="dflight-dtime">@Model.Results[0]?.FirstOrDefault()?.Segment.FirstOrDefault()?.DepartureTime.ToString("HH:mm")</span>
+                                            <small class="text-white-50 d-none d-lg-block" id="dflight-from">@Model.Results[0].FirstOrDefault().Segment?.FirstOrDefault()?.Origin?.CityName</small>
+                                        </div>
+                                        <div class="col col-sm-4 col-md-3 text-center time-info">
+                                            <span class="text-4" id="dflight-atime">@Model.Results[0]?.FirstOrDefault()?.Segment.FirstOrDefault()?.ArrivalTime.ToString("HH:mm")</span>
+                                            <small class="text-white-50 d-none d-lg-block" id="dflight-to">@Model.Results[0].FirstOrDefault().Segment?.FirstOrDefault()?.Destination?.CityName</small>
+                                        </div>
+                                        <div class="col-md-3 text-center d-none d-md-block time-info">
+
+                                            @{ TimeSpan? ft1 = (Model.Results[0]?.FirstOrDefault()?.Segment.LastOrDefault()?.ArrivalTime - Model.Results[0]?.FirstOrDefault()?.Segment.FirstOrDefault()?.DepartureTime);
+                                                int fhour = ft1.Value.Hours;
+                                                int fmins = ft1.Value.Minutes;
+                                                <span class="text-1" id="dflight-ttime">
+                                                    @fhour.ToString("00")h : @fmins.ToString("00")m
+                                                </span> }
+                                            @if (Model.Results[0]?.FirstOrDefault()?.Segment.Count > 1)
+                                            {
+                                                <small class="text-white-50 d-block" id="dflight-stop">@(Model.Results[0]?.FirstOrDefault()?.Segment.Count - 1) Stop</small> 
+                                            }
+                                            else
+                                            {
+                                                <small class="text-white-50 d-block" id="dflight-stop">Non Stop</small>
+                                            }
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 d-block d-sm-none">
+                                    <hr class="my-1 border-dark">
+                                </div>
+                                <div class="col-12 col-sm-6 border-right border-dark">
+                                    <div class="row align-items-center flex-row">
+                                        <div class="col col-sm-4 col-md-3 text-center d-lg-flex company-info">
+                                            <span class="align-middle d-none d-sm-block">
+                                                <img class="img-fluid" alt="" id="rflight-img" src="~/AirlinesLogo/@(Model.Results[0]?.FirstOrDefault()?.Segment.FirstOrDefault()?.Airline?.Code).png">
+                                            </span>
+                                            <span class="align-middle ml-lg-2">
+                                                <span class="d-block text-1" id="rflight-name">@(Model.Results[0]?.FirstOrDefault()?.Segment.FirstOrDefault()?.Airline?.Name)</span>
+                                                <small class="text-white-50 d-block" id="rflight-no">@(Model.Results[0]?.FirstOrDefault()?.Segment.FirstOrDefault()?.Airline?.FlightNumber)</small>
+                                            </span>
+                                        </div>
+                                        <div class="col col-sm-4 col-md-3 text-center time-info">
+                                            <span class="text-4" id="rflight-dtime">@Model.Results[0]?.FirstOrDefault()?.Segment.FirstOrDefault()?.DepartureTime.ToString("HH:mm")</span>
+                                            <small class="text-white-50 d-none d-lg-block" id="rflight-from">@Model.Results[0].FirstOrDefault().Segment?.FirstOrDefault()?.Origin?.CityName</small>
+                                        </div>
+                                        <div class="col col-sm-4 col-md-3 text-center time-info">
+                                            <span class="text-4" id="rflight-atime">@Model.Results[0]?.FirstOrDefault()?.Segment.FirstOrDefault()?.ArrivalTime.ToString("HH:mm")</span>
+                                            <small class="text-white-50 d-none d-lg-block" id="rflight-to">@Model.Results[0].FirstOrDefault().Segment?.FirstOrDefault()?.Destination?.CityName</small>
+                                        </div>
+                                        <div class="col-md-3 text-center d-none d-md-block time-info">
+
+                                            @{ TimeSpan? rt1 = (Model.Results[0]?.FirstOrDefault()?.Segment.LastOrDefault()?.ArrivalTime - Model.Results[0]?.FirstOrDefault()?.Segment.FirstOrDefault()?.DepartureTime);
+                                                int rhour = ft1.Value.Hours;
+                                                int rmins = ft1.Value.Minutes;
+                                                <span class="text-1" id="rflight-ttime">
+                                                    @rhour.ToString("00")h : @rmins.ToString("00")m
+                                                </span> }
+                                            @if (Model.Results[0]?.FirstOrDefault()?.Segment.Count > 1)
+                                            {
+                                                <small class="text-white-50 d-block" id="rflight-stop">@(Model.Results[0]?.FirstOrDefault()?.Segment.Count - 1) Stop</small>
+                                            }
+                                            else
+                                            {
+                                                <small class="text-white-50 d-block" id="rflight-stop">Non Stop</small>
+                                            }
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="row align-items-center">
+                                <div class="col-12 col-md-6 text-light text-center text-6 price">
+                                    <span class="text-1 text-white-50 d-none d-lg-block">Total Fare: </span>
+                                    @_currentuser.cultureInfo.NumberFormat.CurrencySymbol
+                                    @{
+                                        double totfprice = 0;
+                                        totfprice = Convert.ToDouble(Model.Results[0]?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault().TotalPrice ?? 0) + Convert.ToDouble(Model.Results[1]?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault().TotalPrice ?? 0);
+                                    }
+                                    <small id="flight-tprice">
+                                        @totfprice
+                                    </small>
+                                </div>
+                                <div class="col-12 col-md-6 text-center mt-2 mt-md-0 btn-book"> 
+                                <a href="booking-flights-confirm-details.html" class="btn btn-sm btn-primary px-sm-2 px-lg-3">
+                                    <i class="fas fa-shopping-cart d-block d-lg-none"></i> 
+                                    <span class="d-none d-lg-block">Book Now</span></a> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Selected Flight Fare end -->
+
+        </div>
+    </section>
+</div>
+
+
+<!-- Content end -->
+<script>
+    function checkfilter() {
+        var chknonstop = $("#nonstop").prop('checked');
+        var chkstop = $("#1stop").prop('checked');
+        var chkmultistop = $("#2stop").prop('checked');
+        var nonstop = "", onestop = "", multistop = "";
+        if (chknonstop == true || chkstop == true || chkmultistop == true) {
+            if (chknonstop == true) {
+                nonstop = 'Non Stop';
+            }
+            if (chkstop == true) {
+                onestop = '1 Stop';
+            }
+            if (chkmultistop == true) {
+                multistop = 'Multi Stop';
+            }
+            $('.flight-item').each(function () {
+                debugger;
+                let val = $(this).find(".spnstop").text();
+
+                if (val == nonstop || val == onestop) {
+                    $(this).show();
+                }
+                else if (chkmultistop == true) {
+                    if (val != "Non Stop" && val != "1 Stop") {
+                        $(this).show();
+                    }
+                    else {
+                        $(this).hide();
+                    }
+                }
+                else {
+                    $(this).hide();
+                }
+            });
+
+            $('.flight-item2').each(function () {
+                debugger;
+                let val2 = $(this).find(".spnstop2").text();
+
+                if (val2 == nonstop || val2 == onestop) {
+                    $(this).show();
+                }
+                else if (chkmultistop == true) {
+                    if (val2 != "Non Stop" && val2 != "1 Stop") {
+                        $(this).show();
+                    }
+                    else {
+                        $(this).hide();
+                    }
+                }
+                else {
+                    $(this).hide();
+                }
+            });
+        }
+        else {
+            $('.flight-item').each(function () {
+
+                $(this).show();
+
+            });
+            $('.flight-item2').each(function () {
+
+                $(this).show();
+
+            });
+        }
+    }
+    function returnflightdetails(obj) {
+
+        $('#rflight-name').html($('#flight-name-' + obj).html());
+        $('#rflight-no').html($('#flight-no-' + obj).html());
+        $('#rflight-dtime').html($('#flight-dtime-' + obj).html());
+        $('#rflight-atime').html($('#flight-atime-' + obj).html());
+        $('#rflight-ttime').html($('#flight-ttime-' + obj).html());
+        $('#rflight-stop').html($('#flight-stop-' + obj).html());
+
+        $("#rflight-img").attr("src", $('#img-' + obj).attr('src'));
+        $("#rflight-from").html($('#rflightfrom').html());
+        $("#rflight-to").html($('#rflightto').html());
+        var price = $('#flight-price-' + obj).val();
+        let onwardradio = $('input[type=radio][name=departure-flight]:checked').attr('id')
+        const myArr = onwardradio.split("-");
+        if (myArr.length > 0) {
+            var totprice = parseFloat(price) + parseFloat($('#flight-price-' + myArr[2]).val());
+
+            $('#flight-tprice').html(totprice.toFixed(2));
+        }
+    }
+    function onwardflightdetails(obj) {
+
+        $('#dflight-name').html($('#flight-name-' + obj).html());
+        $('#dflight-no').html($('#flight-no-' + obj).html());
+        $('#dflight-dtime').html($('#flight-dtime-' + obj).html());
+        $('#dflight-atime').html($('#flight-atime-' + obj).html());
+        $('#dflight-ttime').html($('#flight-ttime-' + obj).html());
+        $('#dflight-stop').html($('#flight-stop-' + obj).html());
+        $("#dflight-img").attr("src", $('#img-' + obj).attr('src'));
+        $("#dflight-from").html($('#dflightfrom').html());
+        $("#dflight-to").html($('#dflightto').html());
+        var price = $('#flight-price-' + obj).val();
+        let returnradio = $('input[type=radio][name=return-flight]:checked').attr('id')
+        const myArr = returnradio.split("-");
+        if (myArr.length > 0) {
+            var totprice = parseFloat(price) + parseFloat($('#flight-price-' + myArr[2]).val());
+
+            $('#flight-tprice').html(totprice.toFixed(2));
+        }
+    }
+
+</script>
