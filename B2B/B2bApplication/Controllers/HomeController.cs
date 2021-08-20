@@ -1231,11 +1231,18 @@ namespace B2bApplication.Controllers
                         mdl.NumberOfNight = pdata.NumberOfNight;
                         mdl.fileDataPackageImage = new List<byte[]>();
                         var files = pdata.AllImage.Split(",");
-                        foreach (var file in files)
+
+                        string file_name = pdata.AllImage;
+                        string paths = path + file_name;
+                        FileInfo filename = new FileInfo(paths);
+                        if (filename.Exists)//check file exsit or not  
                         {
-                            mdl.fileDataPackageImage.Add(System.IO.File.ReadAllBytes(string.Concat(path, file)));
-                        }
-                        mdl.fileDataThumbnail = System.IO.File.ReadAllBytes(string.Concat(path, pdata.ThumbnailImage));
+                            foreach (var file in files)
+                            {
+                                mdl.fileDataPackageImage.Add(System.IO.File.ReadAllBytes(string.Concat(path, file)));
+                            }
+                            mdl.fileDataThumbnail = System.IO.File.ReadAllBytes(string.Concat(path, pdata.ThumbnailImage));
+                        }                       
 
                     }
                 }
