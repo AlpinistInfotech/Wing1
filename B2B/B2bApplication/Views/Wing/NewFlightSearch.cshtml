@@ -187,9 +187,13 @@
                     $("#ajaxloading").hide();
                 },
                 success: function (data) {
-
-                    $('#lstflight').empty();
-                    $('#lstflight').html(data); // data came back ok, so display it
+                    if (data != "no record") {
+                        $('#lstflight').empty();
+                        $('#lstflight').html(data); // data came back ok, so display it
+                    }
+                    else {
+                        toastr.warning("No data found");
+                    }
                 }
             });
         }

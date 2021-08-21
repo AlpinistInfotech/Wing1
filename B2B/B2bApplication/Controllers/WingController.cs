@@ -130,7 +130,7 @@ namespace B2bApplication.Controllers
                     ViewBag.Message = _setting.GetErrorMessage(enmMessage.NoFlightDataFound);
                 }
             }
-            if(mdl.searchResponse.Results!=null)
+            if (mdl.searchResponse.Results != null)
             {
                 if (mdl.FlightSearchWraper.JourneyType == enmJourneyType.OneWay)
                 {
@@ -143,7 +143,10 @@ namespace B2bApplication.Controllers
                     return PartialView("_NewReturnFlightResult", res);
                 }
             }
-            return View(mdl);
+            else
+            {
+                return Json("no record");
+            }
         }
 
 
