@@ -129,7 +129,7 @@
                         @foreach (var data in Model.PackageData)
                         {
                             <div class="col-xs-6 col-sm-4 col-md-3">
-                                <div class="thumbnail search-thumbnail">
+                                <div class="thumbnail package-bx search-thumbnail">
                                     <span class="search-promotion label label-success arrowed-in arrowed-in-right">@string.Concat(data.NumberOfDay, " Days ", data.NumberOfNight, " Night") </span>
 
                                     <img  src="@string.Concat(_config["FileUpload:PackageFilePath"],"/",data.ThumbnailImage)" />
