@@ -561,8 +561,8 @@ namespace B2BClasses
                     (!saveData.IFSC.Trim().Equals(mdl.IFSC?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
                     saveData.BankId != mdl.BankId ||
                     (!saveData.BranchAddress.Trim().Equals(mdl.BranchAddress?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
-                    (!saveData.Remarks.Trim().Equals(mdl.Remarks?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
-                    (!saveData.ApprovalRemarks.Trim().Equals(mdl.ApprovalRemarks?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
+                    //(!saveData.Remarks.Trim().Equals(mdl.Remarks?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
+                   // (!saveData.ApprovalRemarks.Trim().Equals(mdl.ApprovalRemarks?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
                     saveData.IsApproved != mdl.IsApproved)
                     )
                     {
@@ -660,8 +660,8 @@ namespace B2BClasses
 
                     if (IsUpdate && ((!saveData.PANName.Trim().Equals(mdl.PANName?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
                     (!saveData.PANNo.Trim().Equals(mdl.PANNo?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
-                    (!saveData.Remarks.Trim().Equals(mdl.Remarks?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
-                    (!saveData.ApprovalRemarks.Trim().Equals(mdl.ApprovalRemarks?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
+                 //   (!saveData.Remarks.Trim().Equals(mdl.Remarks?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
+                 //   (!saveData.ApprovalRemarks.Trim().Equals(mdl.ApprovalRemarks?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
                     saveData.IsApproved != mdl.IsApproved)
                     )
                     {
@@ -870,17 +870,18 @@ namespace B2BClasses
 
                         IsUpdate = false;
                         var ExistingMpin = _context.tblCustomerBalance.Where(p => p.CustomerId == _CustomerId).FirstOrDefault();
+                        string encryptpin = Settings.Encrypt(mdl.MPin);
                         if (ExistingMpin == null)
                         {
-                            ExistingMpin = new tblCustomerBalance() { CustomerId = _CustomerId, CreditBalance = 0, WalletBalance = 0, MPin = Settings.Encrypt(mdl.MPin), ModifiedDt = DateTime.Now };
+                            ExistingMpin = new tblCustomerBalance() { CustomerId = _CustomerId, CreditBalance = 0, WalletBalance = 0, MPin = encryptpin, ModifiedDt = DateTime.Now };
                             _context.tblCustomerBalance.Add(ExistingMpin);
                             _context.SaveChanges();
                         }
                         else
                         {
-                            if (ExistingMpin.MPin != Settings.Encrypt(mdl.MPin))
+                            if (ExistingMpin.MPin != encryptpin)
                             {
-                                ExistingMpin.MPin = Settings.Encrypt(mdl.MPin);
+                                ExistingMpin.MPin = encryptpin;
                                 ExistingMpin.ModifiedDt = DateTime.Now;
                                 _context.tblCustomerBalance.Update(ExistingMpin);
                                 _context.SaveChanges();
