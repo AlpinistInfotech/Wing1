@@ -320,7 +320,16 @@ namespace B2BClasses
                     mdl.IPAddess = string.Join(", ", IPFilter.tblCustomerIPFilterDetails.Select(p => p.IPAddress).ToList());
 
                 }
-                mdl.MPin = _context.tblCustomerBalance.Where(p => p.CustomerId == _CustomerId).FirstOrDefault()?.MPin ?? Settings.Decrypt("0000");
+                var temmpMpin = _context.tblCustomerBalance.Where(p => p.CustomerId == _CustomerId).FirstOrDefault()?.MPin;
+                if (temmpMpin == null)
+                {
+                    mdl.MPin = "0000";
+                }
+                else
+                {
+                    mdl.MPin = Settings.Decrypt(temmpMpin);
+                }
+                
 
             }
             return mdl;
@@ -355,6 +364,23 @@ namespace B2BClasses
                     CustomerMaster = new tblCustomerMaster();
                 }
 
+                if (CustomerMaster.Address == null)
+                {
+                    CustomerMaster.Address = string.Empty;
+                }
+                if (CustomerMaster.PinCode == null)
+                {
+                    CustomerMaster.PinCode = string.Empty;
+                }
+                if (CustomerMaster.ContactNo == null)
+                {
+                    CustomerMaster.ContactNo = string.Empty;
+                }
+                if (CustomerMaster.AlternateNo == null)
+                {
+                    CustomerMaster.AlternateNo = string.Empty;
+                }
+                
                 if (IsUpdate && ((!CustomerMaster.CustomerName.Trim().Equals(mdl.CustomerName?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
                     (!CustomerMaster.Email.Trim().Equals(mdl.Email?.Trim(), StringComparison.CurrentCultureIgnoreCase)) ||
                     CustomerMaster.HaveGST != mdl.HaveGST || CustomerMaster.CountryId != mdl.CountryId || CustomerMaster.StateId != mdl.StateId ||
