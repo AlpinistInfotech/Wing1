@@ -267,8 +267,8 @@ namespace B2BClasses.Models
         [RegularExpression("[a-zA-Z0-9/.,\\s-]*$", ErrorMessage = "Invalid {0}, no special character")]
         public string IPAddess { get; set; }
 
-//        [StringLength(4, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 4)]
-     //   [Range(0, 9999)]
+       [StringLength(4, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 4)]
+       //[Range(0, 9999)]
         [Display(Name = "MPin")]
         public string MPin { get; set; } = "0000";
     }
