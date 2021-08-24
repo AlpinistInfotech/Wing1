@@ -29,7 +29,7 @@
                                     @if (nonstop > 0)
                                     {
                                         <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" id="nonstop" name="stop" value="Non Stop" onclick="checkfilter()" class="custom-control-input">
+                                            <input type="checkbox" id="nonstop" name="stop" value="Non Stop" onclick="checkfilter2()" class="custom-control-input">
                                             <label class="custom-control-label" for="nonstop">
                                                 Non Stop (@nonstop)
                                             </label>
@@ -37,14 +37,14 @@
                                     @if (onestop > 0)
                                     {
                                         <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" id="1stop" value="1 Stop" name="stop" onclick="checkfilter()" class="custom-control-input">
+                                            <input type="checkbox" id="1stop" value="1 Stop" name="stop" onclick="checkfilter2()" class="custom-control-input">
                                             <label class="custom-control-label" for="1stop">1 Stop (@onestop)</label>
                                         </div>}
                                     @if (multistop > 0)
                                     {
                                         <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" id="2stop" value="Many Stop" name="stop" onclick="checkfilter()" class="custom-control-input">
-                                            <label class="custom-control-label" for="2stop">2+ Stop (@multistop)</label>
+                                            <input type="checkbox" id="2stop" value="Many Stop" name="stop" onclick="checkfilter2()" class="custom-control-input">
+                                            <label class="custom-control-label" for="2stop">1+ Stop (@multistop)</label>
                                         </div>}
                                 </div>
                             </div>
@@ -56,27 +56,27 @@
                             <div id="toggleDepartureTime" class="collapse show" aria-labelledby="departureTime">
                                 <div class="card-body">
                                     <div class="custom-control custom-checkbox clearfix">
-                                        <input type="checkbox" id="earlyMorning" name="departureTime" class="custom-control-input">
-                                        <label class="custom-control-label" for="earlyMorning">Early Morning</label>
+                                        <input type="checkbox" id="earlymorning" name="departureTime" onclick="checkfilter2()" value="earlymorning" class="custom-control-input">
+                                        <label class="custom-control-label" for="earlymorning">Early Morning</label>
                                         <small class="text-muted float-right">12am - 8am</small>
                                     </div>
                                     <div class="custom-control custom-checkbox clearfix">
-                                        <input type="checkbox" id="morning" name="departureTime" class="custom-control-input">
+                                        <input type="checkbox" id="morning" name="departureTime" onclick="checkfilter2()" value="morning" class="custom-control-input">
                                         <label class="custom-control-label" for="morning">Morning</label>
                                         <small class="text-muted float-right">8am - 12pm</small>
                                     </div>
                                     <div class="custom-control custom-checkbox clearfix">
-                                        <input type="checkbox" id="midDay" name="departureTime" class="custom-control-input">
-                                        <label class="custom-control-label" for="midDay">Mid-Day</label>
+                                        <input type="checkbox" id="midday" name="departureTime" onclick="checkfilter2()" value="midday" class="custom-control-input">
+                                        <label class="custom-control-label" for="midday">Mid-Day</label>
                                         <small class="text-muted float-right">12pm - 4pm</small>
                                     </div>
                                     <div class="custom-control custom-checkbox clearfix">
-                                        <input type="checkbox" id="evening" name="departureTime" class="custom-control-input">
+                                        <input type="checkbox" id="evening" name="departureTime" onclick="checkfilter2()" value="evening" class="custom-control-input">
                                         <label class="custom-control-label" for="evening">Evening</label>
                                         <small class="text-muted float-right">4pm - 8pm</small>
                                     </div>
                                     <div class="custom-control custom-checkbox clearfix">
-                                        <input type="checkbox" id="night" name="departureTime" class="custom-control-input">
+                                        <input type="checkbox" id="night" name="departureTime" onclick="checkfilter2()" value="night" class="custom-control-input">
                                         <label class="custom-control-label" for="night">Night</label>
                                         <small class="text-muted float-right">8pm - 12am</small>
                                     </div>
@@ -107,8 +107,8 @@
                                     @foreach (var item in Model.Select(x => x.Segment.FirstOrDefault()?.Airline?.Name).Distinct())
                                     {
                                         <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" id="@item" name="airlines" class="custom-control-input">
-                                            <label class="custom-control-label" for="asianaAir">@item</label>
+                                            <input type="checkbox" id="@item" name="airlines" value="@item" class="custom-control-input" onclick="checkfilter2()">
+                                            <label class="custom-control-label" for="@item">@item</label>
                                         </div>
 
                                     }
@@ -138,8 +138,16 @@
                     </div>
                     <div class="flight-list">
                         @{int cnt = 0;}
+                        @{ double maxamt = 0, compmaxamt = 0;
+
+                        }
                         @foreach (var item in Model.Distinct())
                         {
+                            compmaxamt = item.TotalPriceList.Max(x => x.TotalPrice);
+                            if (maxamt < compmaxamt)
+                            {
+                                maxamt = compmaxamt;
+                            }
                             cnt++;
                             <input type="hidden" value="@item.traceid" name="hid_traceid" id="hid_traceid" />
                             <div class="flight-item">
@@ -149,13 +157,44 @@
                                             <img class="img-fluid" alt="" src="~/AirlinesLogo/@(item.Segment.FirstOrDefault()?.Airline?.Code).png">
                                         </span>
                                         <span class="align-middle ml-lg-2">
-                                            <span class="d-block text-1 text-dark">@(item.Segment.FirstOrDefault()?.Airline?.Name)</span>
+                                            <span class="d-block text-1 text-dark spnairlines">@(item.Segment.FirstOrDefault()?.Airline?.Name)</span>
                                             <small class="text-muted d-block">@(item.Segment.FirstOrDefault()?.Airline?.FlightNumber)</small>
                                         </span>
                                     </div>
 
                                     <div class="col col-sm-2 text-center time-info">
                                         <span class="text-4">@item.Segment.FirstOrDefault()?.DepartureTime.ToString("HH:mm")</span>
+                                        @{ string deptime = "";
+                                            TimeSpan now = item.Segment.FirstOrDefault().DepartureTime.TimeOfDay;
+                                            TimeSpan emornstart = TimeSpan.Parse("00:00"); // 12 AM
+                                            TimeSpan emornend = TimeSpan.Parse("08:00");   // 8 AM
+                                            TimeSpan mornstart = TimeSpan.Parse("08:01"); // 12 AM
+                                            TimeSpan mornend = TimeSpan.Parse("12:00");   // 8 AM
+                                            TimeSpan midstart = TimeSpan.Parse("12:01"); // 12 AM
+                                            TimeSpan midend = TimeSpan.Parse("16:00");   // 8 AM
+                                            TimeSpan evenstart = TimeSpan.Parse("16:01"); // 12 AM
+                                            TimeSpan evenend = TimeSpan.Parse("20:00");   // 8 AM
+                                            TimeSpan nigtstart = TimeSpan.Parse("20:01"); // 12 AM
+                                            TimeSpan nigtend = TimeSpan.Parse("23:59");   // 8 AM
+                                            if (now >= emornstart && now <= emornend)
+                                            {
+                                                deptime = "earlymorning";
+                                            }
+                                            else if (now >= mornstart && now <= mornend)
+                                            {
+                                                deptime = "morning";
+                                            }
+                                            else if (now >= midstart && now <= midend)
+                                            {
+                                                deptime = "midday";
+                                            }
+                                            else if (now >= evenstart && now <= evenend)
+                                            {
+                                                deptime = "evening";
+                                            }
+                                            else { deptime = "night"; }
+                                        }
+                                        <input type="hidden" value="@deptime" id="hidflighttime" class="deptimefil" />
                                         <small class="text-muted d-none d-sm-block">@(item.Segment.FirstOrDefault()?.Origin?.CityName)</small>
                                     </div>
                                     <div class="col-sm-2 text-center d-none d-sm-block time-info">
@@ -164,7 +203,19 @@
                                             int mins = t1.Value.Minutes;
                                             <span class="text-3">@hour.ToString("00") : @mins.ToString("00")</span> }
                                         @if (item.Segment.Count > 1)
-                                        {<small class="text-muted d-none d-sm-block spnstop">@(item.Segment.Count - 1) Stop</small> }
+                                        {<small class="text-muted d-none d-sm-block spnstop">@(item.Segment.Count - 1) Stop</small><small>
+                                                via
+                                                @{string depvia = ""; int segcnt = 0; }
+                                                @foreach (var via in item.Segment)
+                                                {
+                                                    if (segcnt > 0)
+                                                    {
+                                                        depvia = depvia + via.Origin.CityName + ",";
+                                                    }
+                                                    segcnt++;
+                                                }
+                                                @depvia.TrimEnd(',')
+                                            </small> }
                                         else
                                         {
                                             <small class="text-muted d-none d-sm-block spnstop">Non Stop</small>}
@@ -203,6 +254,7 @@
                                                 </div>
                                                 @foreach (var totalpricelist in item.TotalPriceList)
                                                 {
+
                                                     <div class="fare-item border-bottom">
                                                         <div class="row align-items-center flex-row pt-4 pb-2 px-3">
                                                             <div class="col col-sm-2 text-center d-lg-flex company-info">
@@ -241,10 +293,10 @@
                                                                             <span class="d-none d-lg-block">Book</span>
                                                                         </a>
                                                                     </div>
-                                                                    </div>
-
-                                                                   
                                                                 </div>
+
+
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 }
@@ -462,7 +514,8 @@
                                     </div>
                                 </div>
                                 <!-- Flight Details Modal Dialog end -->
-                            </div>}
+                            </div>
+                        }
 
 
                     </div>
@@ -476,6 +529,18 @@
 </div>
 <!-- Content end -->
 <script>
+    // Slider Range (jQuery UI)
+    $("#slider-range").slider({
+        range: true,
+        min: 0,
+        max: @maxamt,
+        values: [0, @maxamt],
+        slide: function (event, ui) {
+            $("#amount").val("₹" + ui.values[0] + " - ₹" + ui.values[1]);
+        }
+    });
+    $("#amount").val("₹" + $("#slider-range").slider("values", 0) +
+        " - ₹" + $("#slider-range").slider("values", 1));
     function checkfilter() {
         var chknonstop = $("#nonstop").prop('checked');
         var chkstop = $("#1stop").prop('checked');
@@ -584,4 +649,6 @@
             }
         });*@
     }
+
+
 </script>

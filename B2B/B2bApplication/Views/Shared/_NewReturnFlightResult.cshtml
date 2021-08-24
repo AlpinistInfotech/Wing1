@@ -37,7 +37,7 @@
                                     @if (nonstop > 0)
                                     {
                                         <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" id="nonstop" name="stop" value="Non Stop" onclick="checkfilter()" class="custom-control-input">
+                                            <input type="checkbox" id="nonstop" name="stop" value="Non Stop" onclick="checkfilter2()" class="custom-control-input">
                                             <label class="custom-control-label" for="nonstop">
                                                 Non Stop (@nonstop)
                                             </label>
@@ -45,14 +45,14 @@
                                     @if (onestop > 0)
                                     {
                                         <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" id="1stop" value="1 Stop" name="stop" onclick="checkfilter()" class="custom-control-input">
+                                            <input type="checkbox" id="1stop" value="1 Stop" name="stop" onclick="checkfilter2()" class="custom-control-input">
                                             <label class="custom-control-label" for="1stop">1 Stop (@onestop)</label>
                                         </div>}
                                     @if (multistop > 0)
                                     {
                                         <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" id="2stop" value="Many Stop" name="stop" onclick="checkfilter()" class="custom-control-input">
-                                            <label class="custom-control-label" for="2stop">2+ Stop (@multistop)</label>
+                                            <input type="checkbox" id="2stop" value="Many Stop" name="stop" onclick="checkfilter2()" class="custom-control-input">
+                                            <label class="custom-control-label" for="2stop">1+ Stop (@multistop)</label>
                                         </div>}
                                 </div>
                             </div>
@@ -64,27 +64,27 @@
                             <div id="toggleDepartureTime" class="collapse show" aria-labelledby="departureTime">
                                 <div class="card-body">
                                     <div class="custom-control custom-checkbox clearfix">
-                                        <input type="checkbox" id="earlyMorning" name="departureTime" class="custom-control-input">
-                                        <label class="custom-control-label" for="earlyMorning">Early Morning</label>
+                                        <input type="checkbox" id="earlymorning" value="earlymorning" onclick="checkfilter2()" name="departureTime" class="custom-control-input">
+                                        <label class="custom-control-label" for="earlymorning">Early Morning</label>
                                         <small class="text-muted float-right">12am - 8am</small>
                                     </div>
                                     <div class="custom-control custom-checkbox clearfix">
-                                        <input type="checkbox" id="morning" name="departureTime" class="custom-control-input">
+                                        <input type="checkbox" id="morning" value="morning" name="departureTime" onclick="checkfilter2()" class="custom-control-input">
                                         <label class="custom-control-label" for="morning">Morning</label>
                                         <small class="text-muted float-right">8am - 12pm</small>
                                     </div>
                                     <div class="custom-control custom-checkbox clearfix">
-                                        <input type="checkbox" id="midDay" name="departureTime" class="custom-control-input">
-                                        <label class="custom-control-label" for="midDay">Mid-Day</label>
+                                        <input type="checkbox" id="midday" value="midday" name="departureTime" onclick="checkfilter2()" class="custom-control-input">
+                                        <label class="custom-control-label" for="midday">Mid-Day</label>
                                         <small class="text-muted float-right">12pm - 4pm</small>
                                     </div>
                                     <div class="custom-control custom-checkbox clearfix">
-                                        <input type="checkbox" id="evening" name="departureTime" class="custom-control-input">
+                                        <input type="checkbox" id="evening" value="evening" name="departureTime" onclick="checkfilter2()" class="custom-control-input">
                                         <label class="custom-control-label" for="evening">Evening</label>
                                         <small class="text-muted float-right">4pm - 8pm</small>
                                     </div>
                                     <div class="custom-control custom-checkbox clearfix">
-                                        <input type="checkbox" id="night" name="departureTime" class="custom-control-input">
+                                        <input type="checkbox" id="night" value="night" name="departureTime" onclick="checkfilter2()" class="custom-control-input">
                                         <label class="custom-control-label" for="night">Night</label>
                                         <small class="text-muted float-right">8pm - 12am</small>
                                     </div>
@@ -114,8 +114,8 @@
                                     {
 
                                         <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" id="@item" name="airlines" class="custom-control-input">
-                                            <label class="custom-control-label" for="asianaAir">@item</label>
+                                            <input type="checkbox" id="@item" value="@item" onclick="checkfilter2()" name="airlines" class="custom-control-input">
+                                            <label class="custom-control-label" for="@item">@item</label>
                                         </div>
 
 
@@ -175,15 +175,57 @@
                                                 </div>
                                                 <div class="d-block">
                                                     <img class="img-fluid" id="img-@cnt" alt="" src="~/AirlinesLogo/@(item.Segment.FirstOrDefault()?.Airline?.Code).png">
-                                                    <span class="d-block text-1 text-dark" id="flight-name-@cnt">@(item.Segment.FirstOrDefault()?.Airline?.Name)</span>
+                                                    <span class="d-block text-1 text-dark spnairlines" id="flight-name-@cnt">@(item.Segment.FirstOrDefault()?.Airline?.Name)</span>
                                                     <small class="text-muted d-block" id="flight-no-@cnt">@(item.Segment.FirstOrDefault()?.Airline?.FlightNumber)</small>
                                                 </div>
                                             </div>
                                             <div class="col-6 col-sm col-lg-3 text-center time-info">
                                                 <span id="flight-dtime-@cnt">@item.Segment.FirstOrDefault()?.DepartureTime.ToString("HH:mm")</span>
-
+                                                @{ string deptime = "";
+                                                    TimeSpan now = item.Segment.FirstOrDefault().DepartureTime.TimeOfDay;
+                                                    TimeSpan emornstart = TimeSpan.Parse("00:00"); // 12 AM
+                                                    TimeSpan emornend = TimeSpan.Parse("08:00");   // 8 AM
+                                                    TimeSpan mornstart = TimeSpan.Parse("08:01"); // 12 AM
+                                                    TimeSpan mornend = TimeSpan.Parse("12:00");   // 8 AM
+                                                    TimeSpan midstart = TimeSpan.Parse("12:01"); // 12 AM
+                                                    TimeSpan midend = TimeSpan.Parse("16:00");   // 8 AM
+                                                    TimeSpan evenstart = TimeSpan.Parse("16:01"); // 12 AM
+                                                    TimeSpan evenend = TimeSpan.Parse("20:00");   // 8 AM
+                                                    TimeSpan nigtstart = TimeSpan.Parse("20:01"); // 12 AM
+                                                    TimeSpan nigtend = TimeSpan.Parse("23:59");   // 8 AM
+                                                    if (now >= emornstart && now <= emornend)
+                                                    {
+                                                        deptime = "earlymorning";
+                                                    }
+                                                    else if (now >= mornstart && now <= mornend)
+                                                    {
+                                                        deptime = "morning";
+                                                    }
+                                                    else if (now >= midstart && now <= midend)
+                                                    {
+                                                        deptime = "midday";
+                                                    }
+                                                    else if (now >= evenstart && now <= evenend)
+                                                    {
+                                                        deptime = "evening";
+                                                    }
+                                                    else { deptime = "night"; }
+                                                }
+                                                <input type="hidden" value="@deptime" id="hidflighttime" class="deptimefil" />
                                                 @if (item.Segment.Count > 1)
-                                                {<small class="text-muted d-none d-sm-block spnstop" id="flight-stop-@cnt">@(item.Segment.Count - 1) Stop</small> }
+                                                {<small class="text-muted d-none d-sm-block spnstop">@(item.Segment.Count - 1) Stop</small><small>
+                                                        via
+                                                        @{string depvia = ""; int segcnt = 0; }
+                                                        @foreach (var via in item.Segment)
+                                                        {
+                                                            if (segcnt > 0)
+                                                            {
+                                                                depvia = depvia + via.Origin.CityName + ",";
+                                                            }
+                                                            segcnt++;
+                                                        }
+                                                        @depvia.TrimEnd(',')
+                                                    </small> }
                                                 else
                                                 {
                                                     <small class="text-muted d-none d-sm-block spnstop" id="flight-stop-@cnt">Non Stop</small>}
@@ -444,7 +486,7 @@
                                     cnt++;
                                     rcnt++;
                                     <input type="hidden" value="@item.traceid" name="hid_traceid" id="hid_traceid" />
-                                    <div class="flight-item2">
+                                    <div class="flight-item">
                                         <div class="form-row align-items-center flex-row pt-4 pb-2 px-3">
                                             <div class="col-12 col-sm col-lg-3 d-flex align-items-center text-center mb-2 mb-sm-0 company-info">
                                                 <div class="custom-control custom-radio custom-control-inline mr-1">
@@ -460,18 +502,60 @@
                                                 </div>
                                                 <div class="d-block">
                                                     <img class="img-fluid" id="img-@cnt" alt="" src="~/AirlinesLogo/@(item.Segment.FirstOrDefault()?.Airline?.Code).png">
-                                                    <span class="d-block text-1 text-dark" id="flight-name-@cnt">@(item.Segment.FirstOrDefault()?.Airline?.Name)</span>
+                                                    <span class="d-block text-1 text-dark spnairlines" id="flight-name-@cnt">@(item.Segment.FirstOrDefault()?.Airline?.Name)</span>
                                                     <small class="text-muted d-block" id="flight-no-@cnt">@(item.Segment.FirstOrDefault()?.Airline?.FlightNumber)</small>
                                                 </div>
                                             </div>
                                             <div class="col-6 col-sm col-lg-3 text-center time-info">
                                                 <span id="flight-dtime-@cnt">@item.Segment.FirstOrDefault()?.DepartureTime.ToString("HH:mm")</span>
-
+                                                @{ string deptime = "";
+                                                    TimeSpan now = item.Segment.FirstOrDefault().DepartureTime.TimeOfDay;
+                                                    TimeSpan emornstart = TimeSpan.Parse("00:00"); // 12 AM
+                                                    TimeSpan emornend = TimeSpan.Parse("08:00");   // 8 AM
+                                                    TimeSpan mornstart = TimeSpan.Parse("08:01"); // 12 AM
+                                                    TimeSpan mornend = TimeSpan.Parse("12:00");   // 8 AM
+                                                    TimeSpan midstart = TimeSpan.Parse("12:01"); // 12 AM
+                                                    TimeSpan midend = TimeSpan.Parse("16:00");   // 8 AM
+                                                    TimeSpan evenstart = TimeSpan.Parse("16:01"); // 12 AM
+                                                    TimeSpan evenend = TimeSpan.Parse("20:00");   // 8 AM
+                                                    TimeSpan nigtstart = TimeSpan.Parse("20:01"); // 12 AM
+                                                    TimeSpan nigtend = TimeSpan.Parse("23:59");   // 8 AM
+                                                    if (now >= emornstart && now <= emornend)
+                                                    {
+                                                        deptime = "earlymorning";
+                                                    }
+                                                    else if (now >= mornstart && now <= mornend)
+                                                    {
+                                                        deptime = "morning";
+                                                    }
+                                                    else if (now >= midstart && now <= midend)
+                                                    {
+                                                        deptime = "midday";
+                                                    }
+                                                    else if (now >= evenstart && now <= evenend)
+                                                    {
+                                                        deptime = "evening";
+                                                    }
+                                                    else { deptime = "night"; }
+                                                }
+                                                <input type="hidden" value="@deptime" id="hidflighttime" class="deptimefil" />
                                                 @if (item.Segment.Count > 1)
-                                                {<small class="text-muted d-none d-sm-block spnstop2" id="flight-stop-@cnt">@(item.Segment.Count - 1) Stop</small> }
+                                                {<small class="text-muted d-none d-sm-block spnstop">@(item.Segment.Count - 1) Stop</small><small>
+                                                        via
+                                                        @{string depvia = ""; int segcnt = 0; }
+                                                        @foreach (var via in item.Segment)
+                                                        {
+                                                            if (segcnt > 0)
+                                                            {
+                                                                depvia = depvia + via.Origin.CityName + ",";
+                                                            }
+                                                            segcnt++;
+                                                        }
+                                                        @depvia.TrimEnd(',')
+                                                    </small> }
                                                 else
                                                 {
-                                                    <small class="text-muted d-none d-sm-block spnstop2" id="flight-stop-@cnt">Non Stop</small>}
+                                                    <small class="text-muted d-none d-sm-block spnstop" id="flight-stop-@cnt">Non Stop</small>}
                                             </div>
                                             <div class="col-6 col-sm col-lg-3 text-center time-info">
 
