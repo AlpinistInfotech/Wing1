@@ -39,8 +39,8 @@ namespace B2bApplication.Models
         [RegularExpression("[a-zA-Z0-9]*$", ErrorMessage = "Invalid {0}, no special character")]
         [Display(Name = "MPin")]
         [DataType(DataType.Password)]
-       
         public string NewMpin { get; set; }
+        
         [DataType(DataType.Password)]
         [Display(Name = "Confirm MPin")]
         [Compare(nameof(NewMpin))]
