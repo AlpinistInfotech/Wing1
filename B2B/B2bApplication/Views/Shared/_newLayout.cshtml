@@ -503,10 +503,13 @@
             }, function (chosen_date) {
                 $('#ReturnDt').val(chosen_date.format('DD-MMM-YYYY'));
             });
-            
-       
+
+
         });
     </script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+
     <script src="/js/theme.js"></script>
 
     <script>
