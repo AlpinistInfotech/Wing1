@@ -177,8 +177,8 @@
 
     .select2-container--default .select2-selection--single .select2-selection__rendered {
         color: #777;
-        line-height: 20px;
-        font-size: 1.5rem;
+        line-height: 1.8;
+        font-size: 1rem;
         font-weight: 400;
     }
 

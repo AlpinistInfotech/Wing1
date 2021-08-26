@@ -35,7 +35,7 @@
                                 <div class="row">
                                     <div class="col-sm-11">
                                         <div class="form-group">
-                                            <select id="OriginFrom" asp-for="FlightSearchWraper.From" class="select2 form-control" data-placeholder="From">
+                                            <select id="OriginFrom" asp-for="FlightSearchWraper.From" class="select2 form-control" style="line-height:17px!important;font-size:1rem!important;" data-placeholder="From">
                                                 @foreach (var d in Model.Airports)
                                                 {
                                                     <option value="@d.AirportCode">@(d.AirportCode), @d.CityName, @d.CountryCode  </option>

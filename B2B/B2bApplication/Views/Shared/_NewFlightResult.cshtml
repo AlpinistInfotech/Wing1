@@ -246,8 +246,8 @@
                                                         <div class="col col-sm-2 text-left">
                                                             <span class="d-none d-sm-block">FARES</span>
                                                         </div>
-                                                        <div class="col col-sm-2 text-left">CANCELLATION</div>
-                                                        <div class="col col-sm-2 text-left">DATE CHANGE</div>
+                                                        <div class="col col-sm-2 text-left">CABIN BAGGAGE</div>
+                                                        <div class="col col-sm-2 text-left">CHECK-IN BAGGAGE</div>
                                                         <div class="col col-sm-2 text-left">SEAT</div>
                                                         <div class="col col-sm-2 text-left">MEAL</div>
                                                     </div>
@@ -261,19 +261,17 @@
                                                                 @totalpricelist.ADULT.CabinClass - @totalpricelist.ADULT.ClassOfBooking
                                                             </div>
                                                             <div class="col col-sm-2 text-left d-lg-flex text-1">
-                                                                Cancellation Fee @totalpricelist.FareRule?.FareRule?.fr?.CANCELLATION?.amount
-                                                                @totalpricelist.FareRule?.FareRule?.fr?.CANCELLATION?.policyInfo.Replace("__nls__", " ")
+                                                                @totalpricelist.ADULT.BaggageInformation.CabinBaggage.
                                                             </div>
                                                             <div class="col col-sm-2 text-left d-lg-flex text-1">
-                                                                Datechange Fee @totalpricelist.FareRule?.FareRule?.fr?.DATECHANGE?.amount
-                                                                @totalpricelist.FareRule?.FareRule?.fr?.DATECHANGE?.policyInfo.Replace("__nls__", " ")
+                                                                @totalpricelist.ADULT.BaggageInformation.CheckingBaggage.
                                                             </div>
                                                             <div class="col col-sm-2 text-left d-lg-flex text-1">
 
                                                                 @totalpricelist.FareRule?.FareRule?.fr?.SEAT_CHARGEABLE?.policyInfo
                                                             </div>
                                                             <div class="col col-sm-2 text-left d-lg-flex text-1">
-                                                                @if (totalpricelist.FareRule?.FareRule?.isML == true)
+                                                                @if (totalpricelist.ADULT.IsFreeMeel == true)
                                                                 {
                                                                     <span>Complimentary meals (No meal will be served if flight duration is less than 2 hours)</span>
                                                                 }
@@ -288,7 +286,7 @@
                                                                         @totalpricelist.TotalPrice.ToString("C", _currentuser.cultureInfo)
                                                                     </div>
                                                                     <div class="col-12">
-                                                                        <a href="booking-flights-confirm-details.html" class="btn btn-sm btn-primary">
+                                                                        <a href="/wing/booking-flights-confirm-details.html" class="btn btn-sm btn-primary">
                                                                             <i class="fas fa-shopping-cart d-block d-lg-none"></i>
                                                                             <span class="d-none d-lg-block">Book</span>
                                                                         </a>
@@ -362,30 +360,40 @@
                                                     </ul>
                                                     <div class="tab-content my-3" id="myTabContent-@cnt">
                                                         <div class="tab-pane fade show active" id="first-@cnt" role="tabpanel" aria-labelledby="first-tab-@cnt">
-                                                            <div class="row flex-row pt-4 px-md-4">
-                                                                <div class="col-12 col-sm-3 text-center d-lg-flex company-info">
-                                                                    <span class="align-middle">
-                                                                        <img class="img-fluid" alt="" src="~/AirlinesLogo/@(item.Segment.FirstOrDefault()?.Airline?.Code).png">
-                                                                    </span> <span class="align-middle ml-lg-2">
-                                                                        <span class="d-block text-1 text-dark">@(item.Segment.FirstOrDefault()?.Airline?.Name)</span>
-                                                                        <small class="text-muted d-block"> @(item.Segment.FirstOrDefault()?.Airline?.FlightNumber)</small>
-                                                                    </span>
-                                                                </div>
-                                                                <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
-                                                                    <span class="text-5 text-dark">@item.Segment.FirstOrDefault()?.DepartureTime.ToString("HH:mm")</span>
-                                                                    <small class="text-muted d-block">@(item.Segment.LastOrDefault()?.Origin?.AirportName), @(item.Segment.FirstOrDefault()?.Origin?.CityName)</small>
-                                                                </div>
-                                                                <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
 
-                                                                    <span class="text-3 text-dark">@hour.ToString("00") : @mins.ToString("00")</span>
+                                                            @foreach (var iti in item.Segment)
+                                                            {
+                                                                <div class="row flex-row pt-4 px-md-4">
+                                                                    <div class="col-12 col-sm-3 text-center d-lg-flex company-info">
+                                                                        <span class="align-middle">
+                                                                            <img class="img-fluid" alt="" src="~/AirlinesLogo/@(iti?.Airline?.Code).png">
+                                                                        </span> <span class="align-middle ml-lg-2">
+                                                                            <span class="d-block text-1 text-dark">@(iti?.Airline?.Name)</span>
+                                                                            <small class="text-muted d-block"> @(iti?.Airline?.FlightNumber)</small>
+                                                                        </span>
+                                                                    </div>
+                                                                    <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
+                                                                        <span class="text-5 text-dark">@iti?.DepartureTime.ToString("HH:mm")</span>
+                                                                        <small class="text-muted d-block">@(iti?.Origin?.AirportName), @(iti?.Origin?.CityName)</small>
+                                                                    </div>
+                                                                    <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
+                                                                        @{ TimeSpan? ts = iti?.ArrivalTime- iti?.DepartureTime;
+                                                                            int h = ts.Value.Hours;
+                                                                            int m = ts.Value.Minutes;
+                                                                            <span class="text-3 text-dark">@h.ToString("00") : @m.ToString("00")</span> }
+                                                                       
 
-                                                                    <small class="text-muted d-block">Duration</small>
+                                                                        <small class="text-muted d-block">Duration</small>
+                                                                    </div>
+                                                                    <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
+                                                                        <span class="text-5 text-dark">@iti?.ArrivalTime.ToString("HH:mm")</span>
+                                                                        <small class="text-muted d-block">@(iti?.Destination?.AirportName), @(iti?.Destination?.CityName)</small>
+                                                                    </div>
                                                                 </div>
-                                                                <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
-                                                                    <span class="text-5 text-dark">@item.Segment.FirstOrDefault()?.ArrivalTime.ToString("HH:mm")</span>
-                                                                    <small class="text-muted d-block">@(item.Segment.LastOrDefault()?.Destination?.AirportName), @(item.Segment.LastOrDefault()?.Destination?.CityName)</small>
-                                                                </div>
-                                                            </div>
+                                                            }
+
+
+
                                                         </div>
                                                         <div class="tab-pane fade" id="second-@cnt" role="tabpanel" aria-labelledby="second-tab-@cnt">
                                                             <div class="table-responsive-md">
@@ -424,13 +432,13 @@
                                                                     <tbody>
                                                                         <tr>
                                                                             <td>Adult</td>
-                                                                            <td class="text-center">@item.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CabinBaggage Kg</td>
-                                                                            <td class="text-center">@item.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CheckingBaggage Kg</td>
+                                                                            <td class="text-center">@item.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CabinBaggage </td>
+                                                                            <td class="text-center">@item.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CheckingBaggage </td>
                                                                         </tr>
                                                                         <tr>
                                                                             <td>Child</td>
-                                                                            <td class="text-center">@item.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CabinBaggage Kg</td>
-                                                                            <td class="text-center">@item.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CheckingBaggage Kg</td>
+                                                                            <td class="text-center">@item.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CabinBaggage </td>
+                                                                            <td class="text-center">@item.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CheckingBaggage </td>
                                                                         </tr>
                                                                         <tr>
                                                                             <td>Infant</td>
