@@ -1565,7 +1565,7 @@ h1, h2, h3, h4, h5, h6 {
 .icon-inside {
     position: absolute;
     right: 15px;
-    top: calc(50% - 11px);
+    top: calc(50% - 20px);
     pointer-events: none;
     font-size: 18px;
     font-size: 1.125rem;

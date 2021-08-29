@@ -4,6 +4,7 @@
 @{
     ViewData["Title"] = enmDocumentMaster.Flight.GetDocumentDetails().Name;
     Layout = "~/Views/Shared/_newLayout.cshtml";
+
 }
 <input type="hidden" value="@(enmDocumentMaster.Flight)" id="_currentDocument" name="_currentDocument" />
 
@@ -22,11 +23,11 @@
                     <div asp-validation-summary="All" class="text-danger"></div>
                     <div class="mb-3">
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input id="oneway" asp-for="FlightSearchWraper.JourneyType" class="custom-control-input" value="1" checked="" required="" type="radio">
+                            <input id="oneway" asp-for="FlightSearchWraper.JourneyType" class="custom-control-input" value="1" checked="" type="radio">
                             <label class="custom-control-label" for="oneway">One Way</label>
                         </div>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input id="roundtrip" asp-for="FlightSearchWraper.JourneyType" class="custom-control-input" value="2" required="" type="radio">
+                            <input id="roundtrip" asp-for="FlightSearchWraper.JourneyType" class="custom-control-input" value="2" type="radio">
                             <label class="custom-control-label" for="roundtrip">Round Trip</label>
                         </div>
                     </div>
@@ -47,17 +48,20 @@
                                 }
                             </select>
                         </div>
-                        <div class="col-md-6 col-lg-2 form-group">
-                            <input id="DepartureDt" asp-for="FlightSearchWraper.DepartureDt" autocomplete="off" type="text" class="form-control datepicker" required="" placeholder="Depart Date">
+                        <div class="col-md-6 col-lg-2 form-group ddate">
+                            <input id="DepartureDt" asp-for="FlightSearchWraper.DepartureDt" autocomplete="off" type="text" class="form-control datepicker" placeholder="Depart Date">
                             <span class="icon-inside"><i class="far fa-calendar-alt"></i></span>
+                       <span class="was-validated text-danger" id="spndepdate"></span>
                         </div>
-                        <div class="col-md-6 col-lg-2 form-group">
-                            <input id="ReturnDt" asp-for="FlightSearchWraper.ReturnDt" autocomplete="off" type="text" class="form-control datepicker" required="" placeholder="Return Date">
+                        <div class="col-md-6 col-lg-2 form-group rdate" style="display:none;">
+                            <input id="ReturnDt" asp-for="FlightSearchWraper.ReturnDt" autocomplete="off" type="text" class="form-control datepicker" placeholder="Return Date">
                             <span class="icon-inside"><i class="far fa-calendar-alt"></i></span>
+                            <span class="was-validated text-danger" id="spnretdate"></span>
                         </div>
                         <div class="col-md-6 col-lg-2 travellers-class form-group">
-                            <input type="text" id="flightTravellersClass" class="travellers-class-input form-control" name="flight-travellers-class" placeholder="Travellers, Class" readonly="" required="" onkeypress="return false;">
+                            <input type="text" id="flightTravellersClass" class="travellers-class-input form-control" name="flight-travellers-class" placeholder="Travellers, Class" readonly="" onkeypress="return false;">
                             <span class="icon-inside"><i class="fas fa-caret-down"></i></span>
+                            <span class="was-validated text-danger" id="spnfliclass"></span>
                             <div class="travellers-dropdown">
                                 <div class="row align-items-center">
                                     <div class="col-sm-7">
@@ -161,8 +165,65 @@
 </div>
 <script src="/js/flightfilter.js"></script>
 <script>
-
+    $("input:radio[name='FlightSearchWraper.JourneyType']").click(function () {
+      
+        if ($("input:radio[name='FlightSearchWraper.JourneyType']:checked").val() == "1") {
+            $('.rdate').hide();
+        }
+        else {
+            $('.rdate').show();
+        }
+    });
     $("#btnflightsearch").click(function () {
+
+        var jtype = $("input:radio[name='FlightSearchWraper.JourneyType']:checked").val();
+        var depdate = $('#DepartureDt').val();
+        var retdate = $('#ReturnDt').val();
+        var fliclass = $('#flightTravellersClass').val();
+        if (jtype == "1") {
+            if (depdate == '') {
+                $('#DepartureDt').focus();
+                $('#spndepdate').html('Please choose departure date!');
+                return false;
+            }
+            else {
+                $('#spndepdate').html('')
+            }
+            if (fliclass == "") {
+                $('#flightTravellersClass').focus();
+                $('#spnfliclass').html('Please select travel class!');
+                return false;
+            }
+            else {
+                $('#spnfliclass').html('');
+            }
+        }
+        else {
+            if (depdate == '') {
+                $('#DepartureDt').focus();
+                $('#spndepdate').html('Please choose departure date!');
+                return false;
+            }
+            else {
+                $('#spndepdate').html('')
+            }
+            if (retdate == '') {
+                $('#ReturnDt').focus();
+                $('#spnretdate').html('Please choose return date!');
+                return false;
+            }
+            else {
+                $('#spnretdate').html('')
+            }
+            if (fliclass == "") {
+                $('#flightTravellersClass').focus();
+                $('#spnfliclass').html('Please select travel class!');
+                return false;
+            }
+            else {
+                $('#spnfliclass').html('');
+            }
+        }
 
         if (!$('#bookingFlight').validate().form()) {
             return false;

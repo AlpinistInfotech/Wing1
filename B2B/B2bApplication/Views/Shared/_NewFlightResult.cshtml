@@ -137,7 +137,7 @@
                         </div>
                     </div>
                     <div class="flight-list">
-                        @{int cnt = 0;}
+                        @{int cnt = 0,cntacc = 0;}
                         @{ double maxamt = 0, compmaxamt = 0;
 
                         }
@@ -303,7 +303,7 @@
                                     </div>
                                 </div>
                                 <!-- Flight Details Modal Dialog
-                                ============================================= -->
+            ============================================= -->
                                 <div id="flight-@cnt" class="modal fade" role="dialog" aria-hidden="true">
                                     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                         <div class="modal-content">
@@ -339,182 +339,164 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-12 col-sm-3 col-lg-2 text-center text-sm-right mt-3 mt-sm-0">
-                                                            <span class="text-dark text-7">@(item.TotalPriceList?.FirstOrDefault().TotalPrice.ToString("C", _currentuser.cultureInfo)) </span>
-                                                            <span class="text-1 text-muted d-block">(Per Adult)</span>
-                                                            <span class="text-1 text-danger d-block">@(item.TotalPriceList?.FirstOrDefault()?.ADULT?.SeatRemaing) seat(s) left</span>
-                                                        </div>
-                                                        <div class="col-12 col-sm-3 col-lg-2 text-right ml-auto btn-book">
-                                                            <a href="booking-flights-confirm-details.html" class="btn btn-sm btn-primary">
-                                                                <i class="fas fa-shopping-cart d-block d-lg-none"></i>
-                                                                <span class="d-none d-lg-block">Book</span>
-                                                            </a>
-                                                        </div>
+
                                                     </div>
-                                                    <ul class="nav nav-tabs" id="myTab-@cnt" role="tablist">
-                                                        <li class="nav-item"> <a class="nav-link active" id="first-tab-@cnt" data-toggle="tab" href="#first-@cnt" role="tab" aria-controls="first-@cnt" aria-selected="true">Itinerary</a> </li>
-                                                        <li class="nav-item"> <a class="nav-link" id="second-tab-@cnt" data-toggle="tab" href="#second-@cnt" role="tab" aria-controls="second-@cnt" aria-selected="false">Fare Details</a> </li>
-                                                        <li class="nav-item"> <a class="nav-link" id="third-tab-@cnt" data-toggle="tab" href="#third-@cnt" role="tab" aria-controls="third-@cnt" aria-selected="false">Baggage Details</a> </li>
-                                                        <li class="nav-item"> <a class="nav-link" id="fourth-tab-@cnt" data-toggle="tab" href="#fourth-@cnt" role="tab" aria-controls="fourth-@cnt" aria-selected="false">Cancellation</a> </li>
-                                                        <li class="nav-item"> <a class="nav-link" id="fifth-tab-@cnt" data-toggle="tab" href="#fifth-@cnt" role="tab" aria-controls="fifth-@cnt" aria-selected="false">Date Change</a> </li>
-                                                    </ul>
-                                                    <div class="tab-content my-3" id="myTabContent-@cnt">
-                                                        <div class="tab-pane fade show active" id="first-@cnt" role="tabpanel" aria-labelledby="first-tab-@cnt">
-
-                                                            @foreach (var iti in item.Segment)
+                                                    <hr />
+                                                    <div class="accordion" id="accordionDefault">
+                                                        @{int acccnt = 0;string coll = "collapse"; string acclass = "";}
+                                                        @foreach (var totp in item.TotalPriceList)
+                                                        {
+                                                            if (acccnt == 0)
                                                             {
-                                                                <div class="row flex-row pt-4 px-md-4">
-                                                                    <div class="col-12 col-sm-3 text-center d-lg-flex company-info">
-                                                                        <span class="align-middle">
-                                                                            <img class="img-fluid" alt="" src="~/AirlinesLogo/@(iti?.Airline?.Code).png">
-                                                                        </span> <span class="align-middle ml-lg-2">
-                                                                            <span class="d-block text-1 text-dark">@(iti?.Airline?.Name)</span>
-                                                                            <small class="text-muted d-block"> @(iti?.Airline?.FlightNumber)</small>
-                                                                        </span>
-                                                                    </div>
-                                                                    <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
-                                                                        <span class="text-5 text-dark">@iti?.DepartureTime.ToString("HH:mm")</span>
-                                                                        <small class="text-muted d-block">@(iti?.Origin?.AirportName), @(iti?.Origin?.CityName)</small>
-                                                                    </div>
-                                                                    <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
-                                                                        @{ TimeSpan? ts = iti?.ArrivalTime- iti?.DepartureTime;
-                                                                            int h = ts.Value.Hours;
-                                                                            int m = ts.Value.Minutes;
-                                                                            <span class="text-3 text-dark">@h.ToString("00") : @m.ToString("00")</span> }
-                                                                       
+                                                                coll = "collapse show";
+                                                                acclass = "";
+                                                            }
+                                                            else
+                                                            {
+                                                                coll = "collapse";
+                                                                acclass = "collapsed";
+                                                            }
+                                                            <div class="card">
+                                                                <div class="card-header" id="headingOne-@cntacc">
+                                                                    <h5 class="mb-0">
+                                                                        <a href="#" data-toggle="collapse" data-target="#collapseOne-@cntacc" aria-expanded="true" aria-controls="collapseOne-@cntacc" class="@acclass">
+                                                                            @totp.ADULT?.CabinClass-@totp.ADULT?.ClassOfBooking
+                                                                        </a>
+                                                                    </h5>
+                                                                </div>
+                                                                <div id="collapseOne-@cntacc" style="max-height:400px;overflow:auto" class="@coll" aria-labelledby="headingOne-@cntacc" data-parent="#accordionDefault">
+                                                                    <div class="card-body">
+                                                                        <div class="col-md-12">
+                                                                            <div class="row">
+                                                                                <div class="col-md-6">
+                                                                                    <span class="text-dark text-4">@(totp.TotalPrice.ToString("C", _currentuser.cultureInfo)) </span>
+                                                                                    <span class="text-1 text-muted d-block">(Per Adult)</span>
+                                                                                    
+                                                                                </div>
+                                                                                <div class="col-md-4">
+                                                                                    <span class="text-1 text-danger d-block">@(totp.ADULT?.SeatRemaing) seat(s) left</span>
+                                                                                </div>
+                                                                                    <div class="col-md-2 btn-book">
+                                                                                        <a href="booking-flights-confirm-details.html" class="btn btn-sm btn-primary">
+                                                                                            <i class="fas fa-shopping-cart d-block d-lg-none"></i>
+                                                                                            <span class="d-none d-lg-block">Book</span>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        <ul class="nav nav-tabs" id="myTab-@cntacc" role="tablist">
+                                                                            <li class="nav-item"> <a class="nav-link active" id="first-tab-@cntacc" data-toggle="tab" href="#first-@cntacc" role="tab" aria-controls="first-@cntacc" aria-selected="true">Itinerary</a> </li>
+                                                                            <li class="nav-item"> <a class="nav-link" id="second-tab-@cntacc" data-toggle="tab" href="#second-@cntacc" role="tab" aria-controls="second-@cntacc" aria-selected="false">Fare Details</a> </li>
+                                                                            <li class="nav-item"> <a class="nav-link" id="third-tab-@cntacc" data-toggle="tab" href="#third-@cntacc" role="tab" aria-controls="third-@cntacc" aria-selected="false">Baggage Details</a> </li>
+                                                                            <li class="nav-item"> <a class="nav-link" id="fourth-tab-@cntacc" data-toggle="tab" href="#fourth-@cntacc" role="tab" aria-controls="fourth-@cntacc" aria-selected="false">Cancellation</a> </li>
+                                                                            <li class="nav-item"> <a class="nav-link" id="fifth-tab-@cntacc" data-toggle="tab" href="#fifth-@cntacc" role="tab" aria-controls="fifth-@cntacc" aria-selected="false">Date Change</a> </li>
+                                                                        </ul>
+                                                                        <div class="tab-content my-3" id="myTabContent-@cntacc">
+                                                                            <div class="tab-pane fade show active" id="first-@cntacc" role="tabpanel" aria-labelledby="first-tab-@cntacc">
 
-                                                                        <small class="text-muted d-block">Duration</small>
-                                                                    </div>
-                                                                    <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
-                                                                        <span class="text-5 text-dark">@iti?.ArrivalTime.ToString("HH:mm")</span>
-                                                                        <small class="text-muted d-block">@(iti?.Destination?.AirportName), @(iti?.Destination?.CityName)</small>
+                                                                                @foreach (var iti in item.Segment)
+                                                                                {
+                                                                                    <div class="row flex-row pt-4 px-md-4">
+                                                                                        <div class="col-12 col-sm-3 text-center d-lg-flex company-info">
+                                                                                            <span class="align-middle">
+                                                                                                <img class="img-fluid" alt="" src="~/AirlinesLogo/@(iti?.Airline?.Code).png">
+                                                                                            </span> <span class="align-middle ml-lg-2">
+                                                                                                <span class="d-block text-1 text-dark">@(iti?.Airline?.Name)</span>
+                                                                                                <small class="text-muted d-block"> @(iti?.Airline?.FlightNumber)</small>
+                                                                                            </span>
+                                                                                        </div>
+                                                                                        <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
+                                                                                            <span class="text-5 text-dark">@iti?.DepartureTime.ToString("HH:mm")</span>
+                                                                                            <small class="text-muted d-block">@(iti?.Origin?.AirportName), @(iti?.Origin?.CityName)</small>
+                                                                                        </div>
+                                                                                        <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
+                                                                                            @{ TimeSpan? ts = iti?.ArrivalTime - iti?.DepartureTime;
+                                                                                                int h = ts.Value.Hours;
+                                                                                                int m = ts.Value.Minutes;
+                                                                                                <span class="text-3 text-dark">@h.ToString("00") : @m.ToString("00")</span> }
+
+
+                                                                                            <small class="text-muted d-block">Duration</small>
+                                                                                        </div>
+                                                                                        <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
+                                                                                            <span class="text-5 text-dark">@iti?.ArrivalTime.ToString("HH:mm")</span>
+                                                                                            <small class="text-muted d-block">@(iti?.Destination?.AirportName), @(iti?.Destination?.CityName)</small>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <hr />
+                                                                                }
+
+
+
+                                                                            </div>
+                                                                            <div class="tab-pane fade" id="second-@cntacc" role="tabpanel" aria-labelledby="second-tab-@cntacc">
+                                                                                <div class="table-responsive-md">
+                                                                                    <table class="table table-hover table-bordered">
+                                                                                        <tbody>
+                                                                                            <tr>
+                                                                                                <td>Base Fare</td>
+                                                                                                <td class="text-right">@totp?.BaseFare</td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td>Fees &amp; Surcharge</td>
+                                                                                                <td class="text-right">
+                                                                                                    @{double? totfees = 0;
+                                                                                                        totfees = @totp?.TotalPrice - @totp?.BaseFare; }
+                                                                                                    @totfees
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td>Total</td>
+                                                                                                <td class="text-right">@totp?.TotalPrice</td>
+                                                                                            </tr>
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="tab-pane fade" id="third-@cntacc" role="tabpanel" aria-labelledby="third-tab-@cntacc">
+                                                                                <div class="table-responsive-md">
+                                                                                    <table class="table table-hover table-bordered">
+                                                                                        <thead>
+                                                                                            <tr>
+                                                                                                <th>&nbsp;</th>
+                                                                                                <td class="text-center">Cabin</td>
+                                                                                                <td class="text-center">Check-In</td>
+                                                                                            </tr>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                            <tr>
+                                                                                                <td>Adult</td>
+                                                                                                <td class="text-center">@totp?.ADULT?.BaggageInformation?.CabinBaggage </td>
+                                                                                                <td class="text-center">@totp?.ADULT?.BaggageInformation?.CheckingBaggage </td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td>Child</td>
+                                                                                                <td class="text-center">@totp?.ADULT?.BaggageInformation?.CabinBaggage </td>
+                                                                                                <td class="text-center">@totp?.ADULT?.BaggageInformation?.CheckingBaggage </td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td>Infant</td>
+                                                                                                <td class="text-center">0 Kg</td>
+                                                                                                <td class="text-center">0 Kg</td>
+                                                                                            </tr>
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="tab-pane fade" id="fourth-@cntacc" role="tabpanel" aria-labelledby="fourth-tab-@cntacc">
+                                                                                Cancellation Fee: @totp.FareRule.FareRule?.fr?.CANCELLATION?.amount @totp.FareRule.FareRule?.fr?.CANCELLATION?.policyInfo.Replace("__nls__", "")
+                                                                            </div>
+                                                                            <div class="tab-pane fade" id="fifth-@cnt" role="tabpanel" aria-labelledby="fifth-tab-@cnt">
+                                                                                Cancellation Fee: @totp.FareRule.FareRule?.fr?.DATECHANGE?.amount @totp.FareRule.FareRule?.fr?.DATECHANGE?.policyInfo.Replace("__nls__", "")
+                                                                            </div>
+                                                                        </div>
+
                                                                     </div>
                                                                 </div>
-                                                            }
-
-
-
-                                                        </div>
-                                                        <div class="tab-pane fade" id="second-@cnt" role="tabpanel" aria-labelledby="second-tab-@cnt">
-                                                            <div class="table-responsive-md">
-                                                                <table class="table table-hover table-bordered">
-                                                                    <tbody>
-                                                                        <tr>
-                                                                            <td>Base Fare</td>
-                                                                            <td class="text-right">@item.TotalPriceList?.FirstOrDefault()?.BaseFare</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>Fees &amp; Surcharge</td>
-                                                                            <td class="text-right">
-                                                                                @{double? totfees = 0;
-                                                                                    totfees = item.TotalPriceList?.FirstOrDefault()?.TotalPrice - item.TotalPriceList?.FirstOrDefault()?.BaseFare; }
-                                                                                @totfees
-                                                                            </td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>Total</td>
-                                                                            <td class="text-right">@item.TotalPriceList?.FirstOrDefault()?.TotalPrice</td>
-                                                                        </tr>
-                                                                    </tbody>
-                                                                </table>
                                                             </div>
-                                                        </div>
-                                                        <div class="tab-pane fade" id="third-@cnt" role="tabpanel" aria-labelledby="third-tab-@cnt">
-                                                            <div class="table-responsive-md">
-                                                                <table class="table table-hover table-bordered">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th>&nbsp;</th>
-                                                                            <td class="text-center">Cabin</td>
-                                                                            <td class="text-center">Check-In</td>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        <tr>
-                                                                            <td>Adult</td>
-                                                                            <td class="text-center">@item.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CabinBaggage </td>
-                                                                            <td class="text-center">@item.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CheckingBaggage </td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>Child</td>
-                                                                            <td class="text-center">@item.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CabinBaggage </td>
-                                                                            <td class="text-center">@item.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CheckingBaggage </td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>Infant</td>
-                                                                            <td class="text-center">0 Kg</td>
-                                                                            <td class="text-center">0 Kg</td>
-                                                                        </tr>
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                        <div class="tab-pane fade" id="fourth-@cnt" role="tabpanel" aria-labelledby="fourth-tab-@cnt">
-                                                            <table class="table table-hover table-bordered">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th>&nbsp;</th>
-                                                                        <td class="text-center">Per Passenger Fee</td>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <td>24 hrs - 365 days</td>
-                                                                        <td class="text-center">$960</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>2-24 hours</td>
-                                                                        <td class="text-center">$350 + $50</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>0-2 hours</td>
-                                                                        <td class="text-center">$550 + $50</td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                            <p class="font-weight-bold">Terms & Conditions</p>
-                                                            <ul>
-                                                                <li>The penalty is subject to 4 hrs before departure. No Changes are allowed after that.</li>
-                                                                <li>The charges are per passenger per sector.</li>
-                                                                <li>Partial cancellation is not allowed on tickets booked under special discounted fares.</li>
-                                                                <li>In case of no-show or ticket not cancelled within the stipulated time, only statutory taxes are refundable subject to Service Fee.</li>
-                                                                <li>No Baggage Allowance for Infants</li>
-                                                                <li>Airline penalty needs to be reconfirmed prior to any amendments or cancellation.</li>
-                                                            </ul>
-                                                        </div>
-                                                        <div class="tab-pane fade" id="fifth-@cnt" role="tabpanel" aria-labelledby="fifth-tab-@cnt">
-                                                            <table class="table table-hover table-bordered">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th>&nbsp;</th>
-                                                                        <td class="text-center">Per Passenger Fee</td>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <td>24 hrs - 365 days</td>
-                                                                        <td class="text-center">$960</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>2-24 hours</td>
-                                                                        <td class="text-center">$350 + $50</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>0-2 hours</td>
-                                                                        <td class="text-center">$550 + $50</td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                            <p class="font-weight-bold">Terms & Conditions</p>
-                                                            <ul>
-                                                                <li>The penalty is subject to 4 hrs before departure. No Changes are allowed after that.</li>
-                                                                <li>The charges are per passenger per sector.</li>
-                                                                <li>Partial cancellation is not allowed on tickets booked under special discounted fares.</li>
-                                                                <li>In case of no-show or ticket not cancelled within the stipulated time, only statutory taxes are refundable subject to Service Fee.</li>
-                                                                <li>No Baggage Allowance for Infants</li>
-                                                                <li>Airline penalty needs to be reconfirmed prior to any amendments or cancellation.</li>
-                                                            </ul>
-                                                        </div>
+                                                                                                            acccnt++;
+                                                                                                            cntacc++;
+                                                                                                        }
                                                     </div>
                                                 </div>
                                             </div>
