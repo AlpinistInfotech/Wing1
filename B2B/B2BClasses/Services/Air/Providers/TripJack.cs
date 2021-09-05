@@ -806,8 +806,7 @@ namespace B2BClasses.Services.Air
                     var disSegIds = Data.tblTripJackTravelDetailResult.Select(p => p.segmentId).Distinct().OrderBy(p => p);
                     foreach (var d in disSegIds)
                     {
-                        AllResults.Add(
-                           SearchResultMap(Data.tblTripJackTravelDetailResult.Where(p => p.segmentId == d).Select(p => JsonConvert.DeserializeObject<ONWARD_RETURN_COMBO>(p.JsonData)).ToArray(), Data.TraceId));
+                        AllResults.Add(SearchResultMap(Data.tblTripJackTravelDetailResult.Where(p => p.segmentId == d).Select(p => JsonConvert.DeserializeObject<ONWARD_RETURN_COMBO>(p.JsonData)).ToArray(), Data.TraceId));
                     }
 
                     mdlSearchResponse = new mdlSearchResponse()
@@ -1221,6 +1220,8 @@ namespace B2BClasses.Services.Air
                     int ServiceProvider = (int)enmServiceProvider.TripJack;
                     if (mdl.tripInfos != null)
                     {
+                        
+                        
                         Result1.AddRange(SearchResultMap(mdl.tripInfos, request.TraceId));
                     }
                     if (Result1.Count() > 0)

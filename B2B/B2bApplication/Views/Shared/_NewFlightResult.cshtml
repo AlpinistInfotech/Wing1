@@ -286,10 +286,11 @@
                                                                         @totalpricelist.TotalPrice.ToString("C", _currentuser.cultureInfo)
                                                                     </div>
                                                                     <div class="col-12">
-                                                                        <a href="/wing/booking-flights-confirm-details.html" class="btn btn-sm btn-primary">
+                                                                        <button class="btn btn-sm btn-primary" name='bookFlight' onclick="booking('@totalpricelist.ResultIndex')">
                                                                             <i class="fas fa-shopping-cart d-block d-lg-none"></i>
                                                                             <span class="d-none d-lg-block">Book</span>
-                                                                        </a>
+                                                                        </button>
+                                                                       
                                                                     </div>
                                                                 </div>
 
@@ -376,12 +377,13 @@
                                                                                 <div class="col-md-4">
                                                                                     <span class="text-1 text-danger d-block">@(totp.ADULT?.SeatRemaing) seat(s) left</span>
                                                                                 </div>
-                                                                                    <div class="col-md-2 btn-book">
-                                                                                        <a href="booking-flights-confirm-details.html" class="btn btn-sm btn-primary">
-                                                                                            <i class="fas fa-shopping-cart d-block d-lg-none"></i>
-                                                                                            <span class="d-none d-lg-block">Book</span>
-                                                                                        </a>
-                                                                                    </div>
+                                                                                <div class="col-md-2 btn-book">
+                                                                                    <button class="btn btn-sm btn-primary" name='bookFlight' onclick="booking('@totp.ResultIndex')">
+                                                                                        <i class="fas fa-shopping-cart d-block d-lg-none"></i>
+                                                                                        <span class="d-none d-lg-block">Book</span>
+                                                                                    </button>
+                                                                                   
+                                                                                </div>
                                                                                 </div>
                                                                             </div>
                                                                         <ul class="nav nav-tabs" id="myTab-@cntacc" role="tablist">
@@ -640,5 +642,20 @@
         });*@
     }
 
-
+    function booking(obj) {
+        var resultInde = '';
+        var resultInde1 = obj;
+        if (resultInde1 == null || resultInde1 == undefined) {
+            alert('select Flight');
+            return;
+        }
+        else {
+            resultInde = resultInde1;
+            $("#FareQuoteRequestResultIndex1").val(resultInde1);
+        }
+        var resultInde2 = '';
+        $("#FareQuoteRequestResultIndex2").val(resultInde2);
+        resultInde = resultInde1 + "," + resultInde2;
+        $("#frmFlightReview").submit();
+    }
 </script>

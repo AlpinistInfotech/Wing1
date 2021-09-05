@@ -1,0 +1,348 @@
+﻿@model mdlFlightReview
+@using B2BClasses.Services.Enums
+@inject Microsoft.Extensions.Configuration.IConfiguration _Configuration
+@{
+    ViewData["Title"] = enmDocumentMaster.Flight.GetDocumentDetails().Name;
+    Layout = "~/Views/Shared/_newLayout.cshtml";
+    System.Globalization.CultureInfo nfi = new System.Globalization.CultureInfo(_Configuration["CultureInfo"], false);
+
+}
+<input type="hidden" value="@(enmDocumentMaster.Flight)" id="_currentDocument" name="_currentDocument" />
+
+<!-- Page Header
+       ============================================= -->
+<section class="page-header page-header-text-light bg-secondary">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1>Flights - Confirm Details</h1>
+            </div>
+            <div class="col-md-4">
+                <ul class="breadcrumb justify-content-start justify-content-md-end mb-0">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/">Flights</a></li>
+                    <li class="active">Flights Confirm Details</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section><!-- Page Header end -->
+<!-- Content
+============================================= -->
+<div id="content">
+    <section class="container">
+        <form id="frmFlightBook" method="post" action="">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <input type="hidden" asp-for="FareQuoteRequest.TraceId" />
+            @for (int i = 0; i < (Model.FareQuoteRequest?.ResultIndex?.Count() ?? 0); i++)
+            {
+                <input type="hidden" asp-for="FareQuoteRequest.ResultIndex[i]" />
+            }
+            <input type="hidden" asp-for="NetFare" />
+            <div class="row">
+
+                <div class="col-lg-8">
+                    <div class="bg-white shadow-md rounded p-3 p-sm-4 confirm-details">
+                        <h2 class="text-6 mb-3 mb-sm-4">Confirm Flight Details</h2>
+                        <hr class="mx-n3 mx-sm-n4 mb-4">
+                        @{int cnt = 0;}
+                        @foreach (var md in Model.FareQuotResponse)
+                        {
+                            cnt++;
+                            var tripinfo = md.Results.FirstOrDefault()?.FirstOrDefault()?.Segment;
+                            @if (tripinfo != null)
+                            {
+                                <!-- Departure Flight Detail ============================================= -->
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <div class="row align-items-center trip-title">
+                                            <div class="col-5 col-sm-auto text-center text-sm-left">
+                                                <h5 class="m-0 trip-place">@tripinfo.FirstOrDefault().Origin.CityName</h5>
+                                            </div>
+                                            <div class="col-2 col-sm-auto text-8 text-black-50 text-center trip-arrow">➝</div>
+                                            <div class="col-5 col-sm-auto text-center text-sm-left">
+                                                <h5 class="m-0 trip-place">@tripinfo.LastOrDefault().Destination.CityName</h5>
+                                            </div>
+                                            <div class="col-12 mt-1 d-block d-md-none"></div>
+                                            <div class="col-6 col-sm col-md-auto text-3 date">@tripinfo.FirstOrDefault().DepartureTime.ToString("ddd, dd-MMM-yyyy")</div>
+                                            <div class="col-6 col-sm col-md-auto text-right order-sm-1">
+                                                <a class="text-1" data-toggle="modal" data-target="#fare-rules-@cnt" href="">Fare Rules</a>
+                                            </div>
+                                            <div class="col col-md-auto text-center ml-auto order-sm-0">
+                                                @if (tripinfo.FirstOrDefault().RefundableType == 0)
+                                                {
+                                                    <span class="badge badge-danger py-1 px-2 font-weight-normal text-1">Non Refundable</span> }
+                                                else if (tripinfo.FirstOrDefault().RefundableType == 1)
+                                                {
+                                                    <span class="badge badge-success py-1 px-2 font-weight-normal text-1">Refundable</span> }
+                                                else
+                                                {
+                                                    <span class="badge badge-info py-1 px-2 font-weight-normal text-1">Partial Refundable</span>}
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        @foreach (var tr in tripinfo)
+                                        {
+                                            <div class="row mb-4">
+                                                <div class="col-12 col-sm-3 text-center text-md-left d-lg-flex company-info">
+                                                    <span class="align-middle">
+                                                        <img class="img-fluid" alt="" src="~/AirlinesLogo/@(tr?.Airline?.Code).png">
+                                                    </span> <span class="align-middle ml-lg-2">
+                                                        <span class="d-block text-2 text-dark mt-1 mt-lg-0">@(tr?.Airline?.Name)</span>
+                                                        <small class="text-muted d-block"> @(tr?.Airline?.Code)-@(tr?.Airline?.FlightNumber)</small>
+                                                    </span>
+                                                </div>
+                                                <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
+                                                    <span class="text-5 text-dark">@tr?.DepartureTime.ToString("HH:mm")</span>
+                                                    <small class="text-muted d-block">@tr?.Origin?.AirportName (@tr?.Origin?.AirportCode), @tr?.Origin?.CityName</small>
+                                                </div>
+                                                <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
+                                                    @{ TimeSpan? ts = tr?.ArrivalTime - tr?.DepartureTime;
+                                                        int h = ts.Value.Hours;
+                                                        int m = ts.Value.Minutes;
+                                                        <span class="text-3 text-dark">@h.ToString("00") : @m.ToString("00")</span> }
+                                                    
+                                                    <small class="text-muted d-block">Duration</small>
+                                                </div>
+                                                <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
+                                                    <span class="text-5 text-dark">@tr?.ArrivalTime.ToString("HH:mm")</span>
+                                                    <small class="text-muted d-block">@tr?.Destination?.AirportName (@tr?.Destination?.AirportCode), @tr?.Destination?.CityName</small>
+                                                </div>
+                                            </div>
+                                            
+                                            <hr />
+                                                        }
+    <!-- Fare Rules (Modal Dialog) ============================================= -->
+                                            <div id="fare-rules-@cnt" class="modal fade" role="dialog" aria-hidden="true">
+                                                <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Fare Rules</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <ul class="nav nav-tabs" id="departureTab" role="tablist">
+                                                                <li class="nav-item"> <a class="nav-link active" id="third-tab" data-toggle="tab" href="#third" role="tab" aria-controls="third" aria-selected="false">Baggage Details</a> </li>
+                                                                <li class="nav-item"> <a class="nav-link" id="fourth-tab" data-toggle="tab" href="#fourth" role="tab" aria-controls="fourth" aria-selected="false">Cancellation Fee</a> </li>
+                                                            </ul>
+                                                            <div class="tab-content my-3" id="departureContent">
+                                                                <div class="tab-pane fade show active" id="third" role="tabpanel" aria-labelledby="third-tab">
+                                                                    <div class="table-responsive-md">
+                                                                        <table class="table table-hover table-bordered">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>&nbsp;</th>
+                                                                                    <td class="text-center">Cabin</td>
+                                                                                    <td class="text-center">Check-In</td>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td>Adult</td>
+                                                                                    <td class="text-center">
+                                                                                        @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CabinBaggage??"-")
+                                                                                    </td>
+                                                                                    <td class="text-center">
+                                                                                        @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CheckingBaggage??"-")
+                                                                                    </td>
+
+                                                                                </tr>
+                                                                                @if ((Model.ChildCount) > 0)
+                                                                                {
+                                                                                    <tr>
+                                                                                        <td>Child</td>
+                                                                                        <td class="text-center">
+                                                                                            @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.BaggageInformation?.CheckingBaggage??"-")
+                                                                                        </td>
+
+                                                                                        <td class="text-center">
+                                                                                            @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.BaggageInformation?.CabinBaggage??"-")
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                }
+                                                                                @if ((Model.InfantCount) > 0)
+                                                                                {
+                                                                                    <tr>
+                                                                                        <td>Infant</td>
+                                                                                        <td class="text-center">
+                                                                                            0 Kg
+                                                                                        </td>
+
+                                                                                        <td class="text-center">
+                                                                                            0 kg
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                }
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="tab-pane fade" id="fourth" role="tabpanel" aria-labelledby="fourth-tab">
+                                                                    <table class="table table-hover table-bordered">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>&nbsp;</th>
+                                                                                <td class="text-center">Per Passenger Fee</td>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td>24 hrs - 365 days</td>
+                                                                                <td class="text-center">$250 + $50</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>2-24 hours</td>
+                                                                                <td class="text-center">$350 + $50</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>0-2 hours</td>
+                                                                                <td class="text-center">$550 + $50</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                    <p class="font-weight-bold">Terms & Conditions</p>
+                                                                    <ul>
+                                                                        <li>The penalty is subject to 4 hrs before departure. No Changes are allowed after that.</li>
+                                                                        <li>The charges are per passenger per sector.</li>
+                                                                        <li>Partial cancellation is not allowed on tickets booked under special discounted fares.</li>
+                                                                        <li>In case of no-show or ticket not cancelled within the stipulated time, only statutory taxes are refundable subject to Service Fee.</li>
+                                                                        <li>No Baggage Allowance for Infants</li>
+                                                                        <li>Airline penalty needs to be reconfirmed prior to any amendments or cancellation.</li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div><!-- Fare Rules end -->
+                                        
+                                        </div>
+                                </div>
+                                <!-- Departure Flight Detail end -->
+                            }
+                        }
+
+                        <div class="alert alert-info mt-4"> <span class="badge badge-info">NOTE:</span> This is a special fare given by the airline. Airlines cancellation charges do apply. </div>
+                        <h2 class="text-6 mb-3 mt-5">Traveller Details - <span class="text-3"><a data-toggle="modal" data-target="#login-signup" href="#" title="Login / Sign up">Login</a> to book faster</span></h2>
+                        <p class="font-weight-600">Contact Details</p>
+                        <div class="form-row">
+                            <div class="col-sm-6 form-group">
+                                <input class="form-control" id="email" required placeholder="Enter Email" type="text">
+                            </div>
+                            <div class="col-sm-6 form-group">
+                                <input class="form-control" data-bv-field="number" id="mobileNumber" required placeholder="Enter Mobile Number" type="text">
+                            </div>
+                        </div>
+                        <p class="text-info">Your booking details will be sent to this email address and mobile number.</p>
+                        <p class="font-weight-600">Adult 1</p>
+                        <div class="form-row">
+                            <div class="col-sm-2 form-group">
+                                <select class="custom-select" id="title" required="">
+                                    <option value="">Title</option>
+                                    <option>Mr</option>
+                                    <option>Ms</option>
+                                    <option>Mrs</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-5 form-group">
+                                <input class="form-control" id="firstName" required placeholder="Enter First Name" type="text">
+                            </div>
+                            <div class="col-sm-5 form-group">
+                                <input class="form-control" data-bv-field="number" id="lastName" required placeholder="Enter Last Name" type="text">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Side Panel (Fare Details)
+                ============================================= -->
+                <aside class="col-lg-4 mt-4 mt-lg-0">
+                    <div class="bg-white shadow-md rounded p-3">
+                        <h3 class="text-5 mb-3">Fare Details</h3>
+                        <hr class="mx-n3">
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                Base Fare <span class="float-right text-4 font-weight-500 text-dark">@(Model.TotalBaseFare.ToString("C", nfi))</span><br>
+                                <small class="text-muted">Adult : @(Model.AdultCount), Child : @(Model.ChildCount), Infant : @(Model.InfantCount)</small>
+                            </li>
+                            <li class="mb-2">Fee & Surcharge <span class="float-right text-4 font-weight-500 text-dark">@(Model.FeeSurcharge.ToString("C", nfi))</span></li>
+                            <li class="mb-2">Other Charge <span class="float-right text-4 font-weight-500 text-dark">@(Model.OtherCharge.ToString("C", nfi))</span></li>
+                            @if (Model.Convenience > 0)
+                            {
+                                <li class="mb-2">Convenience <span class="float-right text-4 font-weight-500 text-dark">@(Model.Convenience.ToString("C", nfi))</span></li>
+                            }
+                        </ul>
+                        <div class="text-dark bg-light-4 text-4 font-weight-600 p-3"> Total Amount <span class="float-right text-6">@(Model.NetFare.ToString("C", nfi))</span> </div>
+                        <h3 class="text-4 mb-3 mt-4">Promo Code</h3>
+                        <div class="input-group form-group">
+                            <input class="form-control" placeholder="Promo Code" aria-label="Promo Code" type="text">
+                            <span class="input-group-append">
+                                <button class="btn btn-secondary" type="submit">APPLY</button>
+                            </span>
+                        </div>
+                        <ul class="promo-code pre-scrollable">
+                            <li><span class="d-block text-3 font-weight-600">FLTOFFER</span>Up to $500 Off on your booking. Hurry! Limited period offer. <a class="text-1" href="">Terms & Conditions</a></li>
+                            <li><span class="d-block text-3 font-weight-600">HOTOFFER</span>Up to $500 Off on your booking. Hurry! Limited period offer. <a class="text-1" href="">Terms & Conditions</a></li>
+                            <li><span class="d-block text-3 font-weight-600">SUMMEROFFER</span>Up to $500 Off on your booking. Hurry! Limited period offer. <a class="text-1" href="">Terms & Conditions</a></li>
+                            <li><span class="d-block text-3 font-weight-600">BIGOFFER</span>Up to $500 Off on your booking. Hurry! Limited period offer. <a class="text-1" href="">Terms & Conditions</a></li>
+                            <li><span class="d-block text-3 font-weight-600">FLTOFFER</span>Up to $500 Off on your booking. Hurry! Limited period offer. <a class="text-1" href="">Terms & Conditions</a></li>
+                            <li><span class="d-block text-3 font-weight-600">FLTOFFER</span>Up to $500 Off on your booking. Hurry! Limited period offer. <a class="text-1" href="">Terms & Conditions</a></li>
+                        </ul>
+                        <button type="button" name="btnbook" class="btn btn-primary btn-block">Proceed To Payment</button>
+                        @if (Model.FareQuoteCondition?.IsHoldApplicable ?? false)
+                        {
+                            <button type="button" name="btnHoldFlight" class="btn btn-danger btn-block">Hold</button>
+                        }
+                        @*<button class="btn btn-primary btn-block" onclick="location.href='payment.html';" type="submit">Proceed To Payment</button>*@
+                    </div>
+                </aside>
+                <!-- Side Panel End -->
+
+            </div>
+        </form>
+    </section>
+</div><!-- Content end -->
+<!--MPIN Popup-->
+<div class="modal" id="popmpin" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header bg-light">
+                <h4 class="modal-title">Enter MPIN</h4>
+                <input type="hidden" id="hid_serid" name="hid_serid" />
+                <button type="button" class="close f-s-30" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="clearfix"></div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        @Html.EditorFor(m => m.Mpin, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="clearfix"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" name="btnBookFlight" class="btn btn-secondary" data-dismiss="modal">Book Now</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("button[name='btnbook']").click(function () {
+            $('#popmpin').modal("show");
+        });
+        $("button[name='btnBookFlight']").click(function () {
+            $('#frmFlightBook').attr('action', '/Home/FlightBook');
+            $("#frmFlightBook").submit();
+        });
+    });
+</script>

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -147,6 +148,42 @@ namespace B2bApplication.Controllers
             {
                 return Json("no record");
             }
+        }
+
+        [AcceptVerbs("Get")]
+        [Authorize(policy: nameof(enmDocumentMaster.Flight))]
+        public async Task<IActionResult> NewFlightReviewAsync()
+        {
+            var mdls = TempData["mdl_"] as string;
+            mdlFlightReview mdl = JsonConvert.DeserializeObject<mdlFlightReview>(mdls);
+            ViewBag.SaveStatus = (int)TempData["MessageType"];
+            ViewBag.Message = TempData["Message"];
+            if (mdl == null)
+            {
+                mdl = new mdlFlightReview();
+            }
+            await mdl.LoadFareQuotationAsync(_currentUsers.CustomerId, _booking, _markup, _context);
+
+            //save Data
+            await _booking.CustomerFlightDetailSave(mdl.FareQuoteRequest.TraceId, mdl.FareQuotResponse);
+            mdl.BookingRequestDefaultData();
+            return View(mdl);
+        }
+
+        [AcceptVerbs("Post")]
+        [ValidateAntiForgeryToken]
+
+        [Authorize(policy: nameof(enmDocumentMaster.Flight))]
+        public async Task<IActionResult> NewFlightReview(mdlFlightReview mdl)
+        {
+
+            if (mdl == null)
+            {
+                mdl = new mdlFlightReview();
+            }
+            await mdl.LoadFareQuotationAsync(_currentUsers.CustomerId, _booking, _markup, _context);
+            mdl.BookingRequestDefaultData();
+            return View(mdl);
         }
 
 

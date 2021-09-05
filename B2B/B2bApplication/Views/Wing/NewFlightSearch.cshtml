@@ -8,7 +8,12 @@
 }
 <input type="hidden" value="@(enmDocumentMaster.Flight)" id="_currentDocument" name="_currentDocument" />
 
-
+<form id="frmFlightReview" asp-controller="Wing" asp-action="NewFlightReview" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="FareQuoteRequest.TraceId" value="@(Model.searchResponse?.TraceId??string.Empty)">
+    <input type="hidden" id="FareQuoteRequestResultIndex1" name="FareQuoteRequest.ResultIndex" value="">
+    <input type="hidden" id="FareQuoteRequestResultIndex2" name="FareQuoteRequest.ResultIndex" value="">
+</form>
 <!-- Content============================================= -->
 <div id="content">
 
