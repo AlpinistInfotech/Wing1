@@ -113,7 +113,7 @@
                                                     <small class="text-muted d-block">@tr?.Destination?.AirportName (@tr?.Destination?.AirportCode), @tr?.Destination?.CityName</small>
                                                 </div>
                                             </div>
-                                            
+                                           
                                             <hr />
                                                         }
     <!-- Fare Rules (Modal Dialog) ============================================= -->
@@ -128,6 +128,7 @@
                                                             <ul class="nav nav-tabs" id="departureTab" role="tablist">
                                                                 <li class="nav-item"> <a class="nav-link active" id="third-tab" data-toggle="tab" href="#third" role="tab" aria-controls="third" aria-selected="false">Baggage Details</a> </li>
                                                                 <li class="nav-item"> <a class="nav-link" id="fourth-tab" data-toggle="tab" href="#fourth" role="tab" aria-controls="fourth" aria-selected="false">Cancellation Fee</a> </li>
+                                                                <li class="nav-item"> <a class="nav-link" id="fifth-tab" data-toggle="tab" href="#fifth" role="tab" aria-controls="fifth" aria-selected="false">Date Change Fee</a> </li>
                                                             </ul>
                                                             <div class="tab-content my-3" id="departureContent">
                                                                 <div class="tab-pane fade show active" id="third" role="tabpanel" aria-labelledby="third-tab">
@@ -182,49 +183,24 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="tab-pane fade" id="fourth" role="tabpanel" aria-labelledby="fourth-tab">
-                                                                    <table class="table table-hover table-bordered">
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th>&nbsp;</th>
-                                                                                <td class="text-center">Per Passenger Fee</td>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                <td>24 hrs - 365 days</td>
-                                                                                <td class="text-center">$250 + $50</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>2-24 hours</td>
-                                                                                <td class="text-center">$350 + $50</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>0-2 hours</td>
-                                                                                <td class="text-center">$550 + $50</td>
-                                                                            </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                    <p class="font-weight-bold">Terms & Conditions</p>
-                                                                    <ul>
-                                                                        <li>The penalty is subject to 4 hrs before departure. No Changes are allowed after that.</li>
-                                                                        <li>The charges are per passenger per sector.</li>
-                                                                        <li>Partial cancellation is not allowed on tickets booked under special discounted fares.</li>
-                                                                        <li>In case of no-show or ticket not cancelled within the stipulated time, only statutory taxes are refundable subject to Service Fee.</li>
-                                                                        <li>No Baggage Allowance for Infants</li>
-                                                                        <li>Airline penalty needs to be reconfirmed prior to any amendments or cancellation.</li>
-                                                                    </ul>
+                                                                    Cancellation Fee: @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.FareRule.FareRule?.fr?.CANCELLATION?.policyInfo.Replace("__nls__", ""))
+
+                                                                </div>
+                                                                <div class="tab-pane fade" id="fifth" role="tabpanel" aria-labelledby="fifth-tab">
+                                                                    Cancellation Fee: @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.FareRule.FareRule?.fr?.DATECHANGE?.policyInfo.Replace("__nls__", ""))
+
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div><!-- Fare Rules end -->
-                                        
+
                                         </div>
                                 </div>
                                 <!-- Departure Flight Detail end -->
                             }
-                        }
+                                                        }
 
                         <div class="alert alert-info mt-4"> <span class="badge badge-info">NOTE:</span> This is a special fare given by the airline. Airlines cancellation charges do apply. </div>
                         <h2 class="text-6 mb-3 mt-5">Traveller Details - <span class="text-3"><a data-toggle="modal" data-target="#login-signup" href="#" title="Login / Sign up">Login</a> to book faster</span></h2>
@@ -294,11 +270,11 @@
                         </ul>
                         <button type="button" name="btnbook" class="btn btn-primary btn-block">Proceed To Payment</button>
                         @if (Model.FareQuoteCondition?.IsHoldApplicable ?? false)
-                        {
+                                                        {
                             <button type="button" name="btnHoldFlight" class="btn btn-danger btn-block">Hold</button>
                         }
                         @*<button class="btn btn-primary btn-block" onclick="location.href='payment.html';" type="submit">Proceed To Payment</button>*@
-                    </div>
+                                                                </div>
                 </aside>
                 <!-- Side Panel End -->
 

@@ -1220,8 +1220,16 @@ namespace B2BClasses.Services.Air
                     int ServiceProvider = (int)enmServiceProvider.TripJack;
                     if (mdl.tripInfos != null)
                     {
-                        
-                        
+
+
+
+                        mdlFareRuleRequest mfr = new mdlFareRuleRequest();
+
+                        mfr.id = mdl.tripInfos?.FirstOrDefault()?.totalPriceList?.FirstOrDefault().id;
+                        mfr.flowType = "SEARCH";
+                        var mfs = FareRuleAsync(mfr);
+                        mdl.tripInfos.FirstOrDefault().totalPriceList.FirstOrDefault().farerule = mfs.Result.FareRule;
+
                         Result1.AddRange(SearchResultMap(mdl.tripInfos, request.TraceId));
                     }
                     if (Result1.Count() > 0)
