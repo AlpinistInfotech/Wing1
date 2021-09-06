@@ -471,6 +471,7 @@ namespace B2BClasses.Services.Air
             {
                 ServiceProvider = enmServiceProvider.TripJack,
                 traceid = Traceid,
+                
                 Segment = p.sI.Select(q => new mdlSegment
                 {
                     Airline = new mdlAirline()
@@ -506,6 +507,13 @@ namespace B2BClasses.Services.Air
                         CountryName = q.aa?.country ?? string.Empty,
                         Terminal = q.aa?.terminal ?? string.Empty,
                     },
+                    sinfo=new mdlSsrInfo()
+                    {
+                        MEAL=q?.ssrInfo?.MEAL??null,
+                        BAGGAGE= q?.ssrInfo?.BAGGAGE ?? null,
+                        SEAT= q?.ssrInfo?.SEAT ?? null,
+                        EXTRASERVICES= q?.ssrInfo?.EXTRASERVICES ?? null,
+                    }
 
                 }).ToList(),
                 TotalPriceList = p.totalPriceList.Select(q => new mdlTotalpricelist
@@ -956,7 +964,7 @@ namespace B2BClasses.Services.Air
             public bool iand { get; set; }
             public int sN { get; set; }
             public Ob oB { get; set; }
-            public SsrInfo ssrInfo { get; set; }
+            public mdlSsrInfo ssrInfo { get; set; }
         }
 
         public class Fd
@@ -1097,6 +1105,7 @@ namespace B2BClasses.Services.Air
         public class SsrInfo
         {
             public SsrServices[] SEAT { get; set; }
+            public SsrServices[] BAGGAGE { get; set; }
             public SsrServices[] MEAL { get; set; }
             public SsrServices[] EXTRASERVICES { get; set; }
         }

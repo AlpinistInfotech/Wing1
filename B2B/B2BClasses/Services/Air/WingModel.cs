@@ -89,7 +89,26 @@ namespace B2BClasses.Services.Air
         public string FareBasis { get; set; }
         public bool IsFreeMeel { get; set; }
         public double Convenience { get; set; }
+        public mdlSsrInfo sinfo { get; set; }
+      
     }
+    public class mdlSsrInfo
+    {
+        public SsrInformation[] SEAT { get; set; }
+        public SsrInformation[] BAGGAGE { get; set; }
+        public SsrInformation[] MEAL { get; set; }
+        public SsrInformation[] EXTRASERVICES { get; set; }
+
+       
+    }
+    public class SsrInformation
+    {
+        public string code { get; set; }
+        public double amount { get; set; }
+        public string desc { get; set; }
+
+    }
+
     public class mdlAirline
     {
         public bool isLcc { get; set; }
