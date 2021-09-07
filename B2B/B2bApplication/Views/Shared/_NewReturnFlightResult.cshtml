@@ -166,6 +166,7 @@
                                                     @if (cnt == 1)
                                                     {
                                                         <input id="departure-flight-@cnt" name="departure-flight" onclick="onwardflightdetails(@cnt)" checked class="custom-control-input" type="radio">
+                                                    
                                                     }
                                                     else
                                                     {
@@ -240,7 +241,8 @@
                                             </div>
                                             <div class="col-12 col-sm col-lg-3 text-center text-sm-right text-dark text-3 price">
                                                 @(item.TotalPriceList?.FirstOrDefault().TotalPrice.ToString("C", _currentuser.cultureInfo))
-                                                <input type="hidden" value=" @item.TotalPriceList?.FirstOrDefault().TotalPrice" id="flight-price-@cnt" />
+                                                <input type="hidden" value="@item.TotalPriceList?.FirstOrDefault().TotalPrice" id="flight-price-@cnt" />
+                                                <input type="hidden" value="@item.TotalPriceList?.FirstOrDefault().ResultIndex" id="onward-flightid-@cnt" />
                                             </div>
                                             <div class="col col-sm-auto col-lg-3 ml-auto text-0 text-center text-sm-right">
                                                 <a data-toggle="modal" data-target="#flight-@cnt" href="">Flight Details</a>
@@ -293,8 +295,8 @@
                                                                 <li class="nav-item"> <a class="nav-link active" id="first-tab-@cnt" data-toggle="tab" href="#first-@cnt" role="tab" aria-controls="first-@cnt" aria-selected="true">Itinerary</a> </li>
                                                                 <li class="nav-item"> <a class="nav-link" id="second-tab-@cnt" data-toggle="tab" href="#second-@cnt" role="tab" aria-controls="second-@cnt" aria-selected="false">Fare Details</a> </li>
                                                                 <li class="nav-item"> <a class="nav-link" id="third-tab-@cnt" data-toggle="tab" href="#third-@cnt" role="tab" aria-controls="third-@cnt" aria-selected="false">Baggage Details</a> </li>
-                                                                <li class="nav-item"> <a class="nav-link" id="fourth-tab-@cnt" data-toggle="tab" href="#fourth-@cnt" role="tab" aria-controls="fourth-@cnt" aria-selected="false">Cancellation</a> </li>
-                                                                <li class="nav-item"> <a class="nav-link" id="fifth-tab-@cnt" data-toggle="tab" href="#fifth-@cnt" role="tab" aria-controls="fifth-@cnt" aria-selected="false">Date Change</a> </li>
+                                                                @*<li class="nav-item"> <a class="nav-link" id="fourth-tab-@cnt" data-toggle="tab" href="#fourth-@cnt" role="tab" aria-controls="fourth-@cnt" aria-selected="false">Cancellation</a> </li>
+                                                                <li class="nav-item"> <a class="nav-link" id="fifth-tab-@cnt" data-toggle="tab" href="#fifth-@cnt" role="tab" aria-controls="fifth-@cnt" aria-selected="false">Date Change</a> </li>*@
                                                             </ul>
                                                             <div class="tab-content my-3" id="myTabContent-@cnt">
                                                                 <div class="tab-pane fade show active" id="first-@cnt" role="tabpanel" aria-labelledby="first-tab-@cnt">
@@ -377,7 +379,7 @@
                                                                         </table>
                                                                     </div>
                                                                 </div>
-                                                                <div class="tab-pane fade" id="fourth-@cnt" role="tabpanel" aria-labelledby="fourth-tab-@cnt">
+                                                                @*<div class="tab-pane fade" id="fourth-@cnt" role="tabpanel" aria-labelledby="fourth-tab-@cnt">
                                                                     <table class="table table-hover table-bordered">
                                                                         <thead>
                                                                             <tr>
@@ -442,7 +444,7 @@
                                                                         <li>No Baggage Allowance for Infants</li>
                                                                         <li>Airline penalty needs to be reconfirmed prior to any amendments or cancellation.</li>
                                                                     </ul>
-                                                                </div>
+                                                                </div>*@
                                                             </div>
                                                         </div>
                                                     </div>
@@ -492,11 +494,12 @@
                                                 <div class="custom-control custom-radio custom-control-inline mr-1">
                                                     @if (rcnt == 1)
                                                     {
-                                                        <input id="return-flight-@cnt" name="return-flight" onclick="returnflightdetails(@cnt)" class="custom-control-input" checked type="radio">
+                                                        <input id="return-flight-@cnt" name="return-flight" onclick="returnflightdetails(@cnt,@rcnt)" class="custom-control-input" checked type="radio">
+                                                       
                                                     }
                                                     else
                                                     {
-                                                        <input id="return-flight-@cnt" name="return-flight" onclick="returnflightdetails(@cnt)" class="custom-control-input" type="radio">
+                                                        <input id="return-flight-@cnt" name="return-flight" onclick="returnflightdetails(@cnt,@rcnt)" class="custom-control-input" type="radio">
                                                     }
                                                     <label class="custom-control-label" for="return-flight-@cnt"></label>
                                                 </div>
@@ -568,6 +571,7 @@
                                             <div class="col-12 col-sm col-lg-3 text-center text-sm-right text-dark text-3 price">
                                                 @(item.TotalPriceList?.FirstOrDefault().TotalPrice.ToString("C", _currentuser.cultureInfo))
                                                 <input type="hidden" value=" @item.TotalPriceList?.FirstOrDefault().TotalPrice" id="flight-price-@cnt" />
+                                                <input type="hidden" value=" @item.TotalPriceList?.FirstOrDefault().ResultIndex" id="return-flightid-@rcnt" />
                                             </div>
                                             <div class="col col-sm-auto col-lg-3 ml-auto text-0 text-center text-sm-right">
                                                 <a data-toggle="modal" data-target="#flight-@cnt" href="">Flight Details</a>
@@ -620,8 +624,8 @@
                                                                 <li class="nav-item"> <a class="nav-link active" id="first-tab-@cnt" data-toggle="tab" href="#first-@cnt" role="tab" aria-controls="first-@cnt" aria-selected="true">Itinerary</a> </li>
                                                                 <li class="nav-item"> <a class="nav-link" id="second-tab-@cnt" data-toggle="tab" href="#second-@cnt" role="tab" aria-controls="second-@cnt" aria-selected="false">Fare Details</a> </li>
                                                                 <li class="nav-item"> <a class="nav-link" id="third-tab-@cnt" data-toggle="tab" href="#third-@cnt" role="tab" aria-controls="third-@cnt" aria-selected="false">Baggage Details</a> </li>
-                                                                <li class="nav-item"> <a class="nav-link" id="fourth-tab-@cnt" data-toggle="tab" href="#fourth-@cnt" role="tab" aria-controls="fourth-@cnt" aria-selected="false">Cancellation</a> </li>
-                                                                <li class="nav-item"> <a class="nav-link" id="fifth-tab-@cnt" data-toggle="tab" href="#fifth-@cnt" role="tab" aria-controls="fifth-@cnt" aria-selected="false">Date Change</a> </li>
+                                                                @*<li class="nav-item"> <a class="nav-link" id="fourth-tab-@cnt" data-toggle="tab" href="#fourth-@cnt" role="tab" aria-controls="fourth-@cnt" aria-selected="false">Cancellation</a> </li>
+                                                                <li class="nav-item"> <a class="nav-link" id="fifth-tab-@cnt" data-toggle="tab" href="#fifth-@cnt" role="tab" aria-controls="fifth-@cnt" aria-selected="false">Date Change</a> </li>*@
                                                             </ul>
                                                             <div class="tab-content my-3" id="myTabContent-@cnt">
                                                                 <div class="tab-pane fade show active" id="first-@cnt" role="tabpanel" aria-labelledby="first-tab-@cnt">
@@ -704,72 +708,7 @@
                                                                         </table>
                                                                     </div>
                                                                 </div>
-                                                                <div class="tab-pane fade" id="fourth-@cnt" role="tabpanel" aria-labelledby="fourth-tab-@cnt">
-                                                                    <table class="table table-hover table-bordered">
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th>&nbsp;</th>
-                                                                                <td class="text-center">Per Passenger Fee</td>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                <td>24 hrs - 365 days</td>
-                                                                                <td class="text-center">$960</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>2-24 hours</td>
-                                                                                <td class="text-center">$350 + $50</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>0-2 hours</td>
-                                                                                <td class="text-center">$550 + $50</td>
-                                                                            </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                    <p class="font-weight-bold">Terms & Conditions</p>
-                                                                    <ul>
-                                                                        <li>The penalty is subject to 4 hrs before departure. No Changes are allowed after that.</li>
-                                                                        <li>The charges are per passenger per sector.</li>
-                                                                        <li>Partial cancellation is not allowed on tickets booked under special discounted fares.</li>
-                                                                        <li>In case of no-show or ticket not cancelled within the stipulated time, only statutory taxes are refundable subject to Service Fee.</li>
-                                                                        <li>No Baggage Allowance for Infants</li>
-                                                                        <li>Airline penalty needs to be reconfirmed prior to any amendments or cancellation.</li>
-                                                                    </ul>
-                                                                </div>
-                                                                <div class="tab-pane fade" id="fifth-@cnt" role="tabpanel" aria-labelledby="fifth-tab-@cnt">
-                                                                    <table class="table table-hover table-bordered">
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th>&nbsp;</th>
-                                                                                <td class="text-center">Per Passenger Fee</td>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                <td>24 hrs - 365 days</td>
-                                                                                <td class="text-center">$960</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>2-24 hours</td>
-                                                                                <td class="text-center">$350 + $50</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>0-2 hours</td>
-                                                                                <td class="text-center">$550 + $50</td>
-                                                                            </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                    <p class="font-weight-bold">Terms & Conditions</p>
-                                                                    <ul>
-                                                                        <li>The penalty is subject to 4 hrs before departure. No Changes are allowed after that.</li>
-                                                                        <li>The charges are per passenger per sector.</li>
-                                                                        <li>Partial cancellation is not allowed on tickets booked under special discounted fares.</li>
-                                                                        <li>In case of no-show or ticket not cancelled within the stipulated time, only statutory taxes are refundable subject to Service Fee.</li>
-                                                                        <li>No Baggage Allowance for Infants</li>
-                                                                        <li>Airline penalty needs to be reconfirmed prior to any amendments or cancellation.</li>
-                                                                    </ul>
-                                                                </div>
+                                                               
                                                             </div>
                                                         </div>
                                                     </div>
@@ -897,10 +836,12 @@
                                         @totfprice
                                     </small>
                                 </div>
-                                <div class="col-12 col-md-6 text-center mt-2 mt-md-0 btn-book"> 
-                                <a href="booking-flights-confirm-details.html" class="btn btn-sm btn-primary px-sm-2 px-lg-3">
-                                    <i class="fas fa-shopping-cart d-block d-lg-none"></i> 
-                                    <span class="d-none d-lg-block">Book Now</span></a> 
+                                <div class="col-12 col-md-6 text-center mt-2 mt-md-0 btn-book">
+                                    <button class="btn btn-sm btn-primary px-sm-2 px-lg-3" name='bookFlight' >
+                                        <i class="fas fa-shopping-cart d-block d-lg-none"></i>
+                                        <span class="d-none d-lg-block">Book</span>
+                                    </button>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -984,7 +925,7 @@
             });
         }
     }
-    function returnflightdetails(obj) {
+    function returnflightdetails(obj,obj2) {
 
         $('#rflight-name').html($('#flight-name-' + obj).html());
         $('#rflight-no').html($('#flight-no-' + obj).html());
@@ -997,6 +938,8 @@
         $("#rflight-from").html($('#rflightfrom').html());
         $("#rflight-to").html($('#rflightto').html());
         var price = $('#flight-price-' + obj).val();
+        var flightid = $('#return-flightid-' + obj2).val();
+        $('#FareQuoteRequestResultIndex2').val(flightid);
         let onwardradio = $('input[type=radio][name=departure-flight]:checked').attr('id')
         const myArr = onwardradio.split("-");
         if (myArr.length > 0) {
@@ -1017,6 +960,8 @@
         $("#dflight-from").html($('#dflightfrom').html());
         $("#dflight-to").html($('#dflightto').html());
         var price = $('#flight-price-' + obj).val();
+        var flightid = $('#onward-flightid-' + obj).val();
+        $('#FareQuoteRequestResultIndex1').val(flightid);
         let returnradio = $('input[type=radio][name=return-flight]:checked').attr('id')
         const myArr = returnradio.split("-");
         if (myArr.length > 0) {
@@ -1025,5 +970,17 @@
             $('#flight-tprice').html(totprice.toFixed(2));
         }
     }
-
+    $("button[name='bookFlight']").click(function () {
+        debugger;
+        var resultIndex1 = $('#FareQuoteRequestResultIndex1').val();
+        var resultIndex2 = $('#FareQuoteRequestResultIndex2').val();
+        if (resultIndex1 == '') {
+            $('#FareQuoteRequestResultIndex1').val($('#onward-flightid-1').val());
+        }
+        if (resultIndex2 == '') {
+            resultindex2 = $('#return-flightid-1').val();
+            $('#FareQuoteRequestResultIndex2').val($('#return-flightid-1').val());
+        }
+        $("#frmFlightReview").submit();
+    });
 </script>
