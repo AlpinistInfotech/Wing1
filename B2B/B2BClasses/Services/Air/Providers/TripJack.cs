@@ -1234,7 +1234,7 @@ namespace B2BClasses.Services.Air
                         for (int i = 0; i < mdl.tripInfos.FirstOrDefault().totalPriceList.Count(); i++)
                         {
                             mfr.id = mdl.tripInfos?.FirstOrDefault()?.totalPriceList[i].id;
-                            mfr.flowType = "SEARCH";
+                            mfr.flowType = "REVIEW";
                             var mfs = FareRuleAsync(mfr);
                             mdl.tripInfos.FirstOrDefault().totalPriceList[i].farerule = mfs.Result.FareRule;
                         }
@@ -1319,15 +1319,30 @@ namespace B2BClasses.Services.Air
             }
             else
             {
-                mdlS = new mdlFareQuotResponse()
+                if (HaveResponse == null)
                 {
-                    ResponseStatus = 100,
-                    Error = new mdlError()
+                    mdlS = new mdlFareQuotResponse()
                     {
-                        Code = 100,
-                        Message = "Unable to Process",
-                    }
-                };
+                        ResponseStatus = 100,
+                        Error = new mdlError()
+                        {
+                            Code = 100,
+                            Message = "Unable to Process",
+                        }
+                    };
+                }
+                else
+                {
+                    mdlS = new mdlFareQuotResponse()
+                    {
+                        ResponseStatus = HaveResponse.Code,
+                        Error = new mdlError()
+                        {
+                            Code = HaveResponse.Code,
+                            Message = HaveResponse.Message,
+                        }
+                    };
+                }
             }
 
             return mdlS;

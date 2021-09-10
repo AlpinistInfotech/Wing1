@@ -285,91 +285,93 @@ namespace B2BClasses
                 {
                     BookingId = mdl.BookingId;
                 }
-                var TPL = mdl.Results.FirstOrDefault().FirstOrDefault().TotalPriceList.FirstOrDefault();
+                if (mdl.Results != null)
+                {
+                    var TPL = mdl.Results.FirstOrDefault().FirstOrDefault().TotalPriceList.FirstOrDefault();
 
-                _context.tblFlightBookingSegment.AddRange(
-                    mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.Segment?.Select(p => new tblFlightBookingSegment
+                    _context.tblFlightBookingSegment.AddRange(
+                        mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.Segment?.Select(p => new tblFlightBookingSegment
+                        {
+                            Airline = p.Airline.Name,
+                            AirlineCode = p.Airline.Code,
+                            SegmentDisplayOrder = index,
+                            ArrivalTime = p.ArrivalTime,
+                            DepartureTime = p.DepartureTime,
+                            Origin = p.Origin.CityCode,
+                            Destination = p.Destination.CityCode,
+                            CabinClass = TPL.ADULT.CabinClass,
+                            ClassOfBooking = TPL.ADULT.ClassOfBooking,
+                            FlightNumber = p.Airline.FlightNumber,
+                            ProviderResultIndex = TPL.ResultIndex,
+                            ServiceProvider = mdl.ServiceProvider,
+                            TraceId = traceId,
+                            TripIndicator = p.TripIndicator,
+                            TravelDt = p.DepartureTime.Date,
+                        })
+                     );
+                    _context.tblFlightBookingSegmentMaster.Add(new tblFlightBookingSegmentMaster
                     {
-                        Airline = p.Airline.Name,
-                        AirlineCode = p.Airline.Code,
-                        SegmentDisplayOrder = index,
-                        ArrivalTime = p.ArrivalTime,
-                        DepartureTime = p.DepartureTime,
-                        Origin = p.Origin.CityCode,
-                        Destination = p.Destination.CityCode,
-                        CabinClass = TPL.ADULT.CabinClass,
-                        ClassOfBooking = TPL.ADULT.ClassOfBooking,
-                        FlightNumber = p.Airline.FlightNumber,
-                        ProviderResultIndex = TPL.ResultIndex,
-                        ServiceProvider = mdl.ServiceProvider,
+                        BookingId = BookingId,
                         TraceId = traceId,
-                        TripIndicator = p.TripIndicator,
-                        TravelDt = p.DepartureTime.Date,
-                    })
-                 );
-                _context.tblFlightBookingSegmentMaster.Add(new tblFlightBookingSegmentMaster
-                {
-                    BookingId = BookingId,
-                    TraceId = traceId,
-                    TravelDt = mdl.SearchQuery.DepartureDt.HasValue ? mdl.SearchQuery.DepartureDt.Value : DateTime.Now,
-                    BookingStatus = enmBookingStatus.Pending,
-                    Destination = mdl.SearchQuery.To,
-                    Origin = mdl.SearchQuery.From,
-                    SegmentDisplayOrder = index,
-                    ServiceProvider = mdl.ServiceProvider,
-                    BookingMessage = string.Empty
-                });
+                        TravelDt = mdl.SearchQuery.DepartureDt.HasValue ? mdl.SearchQuery.DepartureDt.Value : DateTime.Now,
+                        BookingStatus = enmBookingStatus.Pending,
+                        Destination = mdl.SearchQuery.To,
+                        Origin = mdl.SearchQuery.From,
+                        SegmentDisplayOrder = index,
+                        ServiceProvider = mdl.ServiceProvider,
+                        BookingMessage = string.Empty
+                    });
 
-                _context.tblFlightBookingFareDetails.Add(new tblFlightBookingFareDetails()
-                {
-                    TraceId = traceId,
-                    convenience = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.TotalConvenience ?? 0,
-                    NetFare = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.NetPrice ?? 0,
-                    TotalFare = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.TotalPrice ?? 0,
-                    WingAdultMarkup = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.FareComponent?.WingMarkup ?? 0,
-                    WingChildMarkup = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.FareComponent?.WingMarkup ?? 0,
-                    WingInfantMarkup = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.INFANT?.FareComponent?.WingMarkup ?? 0,
-                    WingTotalMarkup = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.WingMarkup ?? 0,
-                    CustomerMarkup = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CustomerMarkup ?? 0,
-                    SegmentDisplayOrder = index
-                });
+                    _context.tblFlightBookingFareDetails.Add(new tblFlightBookingFareDetails()
+                    {
+                        TraceId = traceId,
+                        convenience = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.TotalConvenience ?? 0,
+                        NetFare = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.NetPrice ?? 0,
+                        TotalFare = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.TotalPrice ?? 0,
+                        WingAdultMarkup = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.FareComponent?.WingMarkup ?? 0,
+                        WingChildMarkup = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.FareComponent?.WingMarkup ?? 0,
+                        WingInfantMarkup = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.INFANT?.FareComponent?.WingMarkup ?? 0,
+                        WingTotalMarkup = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.WingMarkup ?? 0,
+                        CustomerMarkup = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CustomerMarkup ?? 0,
+                        SegmentDisplayOrder = index
+                    });
 
-                double AdultBaseFare_ = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.FareComponent?.BaseFare ?? 0;
-                double ChildBaseFare_ = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.FareComponent?.BaseFare ?? 0;
-                double InfantBaseFare_ = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault().INFANT?.FareComponent?.BaseFare ?? 0;
-                double AdultTotalFare_ = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.FareComponent?.TotalFare ?? 0;
-                double ChildTotalFare_ = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.FareComponent?.TotalFare ?? 0;
-                double InfantTotalFare_ = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.INFANT?.FareComponent?.TotalFare ?? 0; ;
-                double AdultNetFare_ = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.FareComponent?.NetFare ?? 0;
-                double ChildNetFare_ = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.FareComponent?.NetFare ?? 0;
-                double InfantNetFare_ = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.INFANT?.FareComponent?.NetFare ?? 0;
+                    double AdultBaseFare_ = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.FareComponent?.BaseFare ?? 0;
+                    double ChildBaseFare_ = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.FareComponent?.BaseFare ?? 0;
+                    double InfantBaseFare_ = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault().INFANT?.FareComponent?.BaseFare ?? 0;
+                    double AdultTotalFare_ = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.FareComponent?.TotalFare ?? 0;
+                    double ChildTotalFare_ = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.FareComponent?.TotalFare ?? 0;
+                    double InfantTotalFare_ = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.INFANT?.FareComponent?.TotalFare ?? 0; ;
+                    double AdultNetFare_ = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.FareComponent?.NetFare ?? 0;
+                    double ChildNetFare_ = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.FareComponent?.NetFare ?? 0;
+                    double InfantNetFare_ = mdl.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.INFANT?.FareComponent?.NetFare ?? 0;
 
-                _context.tblFlightBookingFarePurchaseDetails.Add(new tblFlightBookingFarePurchaseDetails()
-                {
-                    TraceId = traceId,
-                    Provider = mdl.ServiceProvider,
-                    AdultBaseFare = AdultBaseFare_,
-                    ChildBaseFare = ChildBaseFare_,
-                    InfantBaseFare = InfantBaseFare_,
-                    AdultTotalFare = AdultTotalFare_,
-                    ChildTotalFare = ChildTotalFare_,
-                    InfantTotalFare = InfantTotalFare_,
-                    AdultNetFare = AdultNetFare_,
-                    ChildNetFare = ChildNetFare_,
-                    InfantNetFare = InfantNetFare_,
-                    NetFare = ((mdl?.SearchQuery?.AdultCount ?? 0) * AdultNetFare_) + ((mdl?.SearchQuery?.ChildCount ?? 0) * ChildNetFare_) + ((mdl?.SearchQuery?.InfantCount ?? 0) * InfantNetFare_),
-                    TotalFare = ((mdl?.SearchQuery?.AdultCount ?? 0) * AdultTotalFare_) + ((mdl?.SearchQuery?.ChildCount ?? 0) * ChildTotalFare_) + ((mdl?.SearchQuery?.InfantCount ?? 0) * InfantTotalFare_),
-                    SegmentDisplayOrder = index
-                });
-                index = index + 1;
+                    _context.tblFlightBookingFarePurchaseDetails.Add(new tblFlightBookingFarePurchaseDetails()
+                    {
+                        TraceId = traceId,
+                        Provider = mdl.ServiceProvider,
+                        AdultBaseFare = AdultBaseFare_,
+                        ChildBaseFare = ChildBaseFare_,
+                        InfantBaseFare = InfantBaseFare_,
+                        AdultTotalFare = AdultTotalFare_,
+                        ChildTotalFare = ChildTotalFare_,
+                        InfantTotalFare = InfantTotalFare_,
+                        AdultNetFare = AdultNetFare_,
+                        ChildNetFare = ChildNetFare_,
+                        InfantNetFare = InfantNetFare_,
+                        NetFare = ((mdl?.SearchQuery?.AdultCount ?? 0) * AdultNetFare_) + ((mdl?.SearchQuery?.ChildCount ?? 0) * ChildNetFare_) + ((mdl?.SearchQuery?.InfantCount ?? 0) * InfantNetFare_),
+                        TotalFare = ((mdl?.SearchQuery?.AdultCount ?? 0) * AdultTotalFare_) + ((mdl?.SearchQuery?.ChildCount ?? 0) * ChildTotalFare_) + ((mdl?.SearchQuery?.InfantCount ?? 0) * InfantTotalFare_),
+                        SegmentDisplayOrder = index
+                    });
+                    index = index + 1;
 
+                }
+
+
+
+
+                await _context.SaveChangesAsync();
             }
-
-
-
-
-            await _context.SaveChangesAsync();
-
             return true;
         }
 

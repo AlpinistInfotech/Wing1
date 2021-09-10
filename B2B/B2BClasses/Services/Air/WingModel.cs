@@ -232,6 +232,7 @@ namespace B2BClasses.Services.Air
         public mdlTotalPriceInfo TotalPriceInfo { get; set; }
         public mdlFlightSearchWraper SearchQuery { get; set; }
         public mdlFareQuoteCondition FareQuoteCondition { get; set; }
+        
     }
 
     public class mdlTotalPriceInfo

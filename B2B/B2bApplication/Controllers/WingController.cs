@@ -2,6 +2,7 @@
 using B2BClasses;
 using B2BClasses.Database;
 using B2BClasses.Models;
+using B2BClasses.Services.Air;
 using B2BClasses.Services.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -37,7 +38,6 @@ namespace B2bApplication.Controllers
             _markup = markup;
             _currentUsers = currentUsers;
         }
-
         public string GetUserDetail([FromServices] ICurrentUsers currentUsers )
         {
             return currentUsers.Name;
@@ -58,8 +58,8 @@ namespace B2bApplication.Controllers
                     ChildCount = 0,
                     InfantCount = 0,
                     CabinClass = enmCabinClass.ECONOMY,
-                    DepartureDt = null,
-                    ReturnDt = null,
+                    DepartureDt = DateTime.Now,
+                    ReturnDt = DateTime.Now.AddDays(1),
                     From = "DEL",
                     To = "BOM",
                     JourneyType = enmJourneyType.OneWay,
@@ -81,8 +81,8 @@ namespace B2bApplication.Controllers
                     ChildCount = 0,
                     InfantCount = 0,
                     CabinClass = enmCabinClass.ECONOMY,
-                    DepartureDt = null,
-                    ReturnDt = null,
+                    DepartureDt = DateTime.Now,
+                    ReturnDt = DateTime.Now.AddDays(1),
                     From = "DEL",
                     To = "BOM",
                     JourneyType = enmJourneyType.OneWay,
@@ -117,6 +117,7 @@ namespace B2bApplication.Controllers
                 mdl.LoadDefaultSearchRequestAsync(_booking);
                 _booking.CustomerId = CustomerId;
                 mdl.searchResponse = (await _booking.SearchFlightMinPrices(mdl.searchRequest));
+                
                 if (mdl.searchResponse.Results != null)
                 {
                     _markup.CustomerMarkup(mdl.searchResponse.Results, CustomerId);
@@ -135,6 +136,11 @@ namespace B2bApplication.Controllers
             {
                 if (mdl.FlightSearchWraper.JourneyType == enmJourneyType.OneWay)
                 {
+                    foreach (var some in mdl.searchResponse.Results.FirstOrDefault().ToList())
+                    {
+                        some.traceid = mdl.searchResponse.TraceId;                       
+                    }
+                    //mdl.searchResponse.Results.FirstOrDefault().FirstOrDefault().traceid = mdl.searchResponse?.TraceId;
                     var res = mdl.searchResponse?.Results.FirstOrDefault();
                     return PartialView("_NewFlightResult", res);
                 }
@@ -184,6 +190,130 @@ namespace B2bApplication.Controllers
             await mdl.LoadFareQuotationAsync(_currentUsers.CustomerId, _booking, _markup, _context);
             mdl.BookingRequestDefaultData();
             return View(mdl);
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        [ValidateAntiForgeryToken]
+        [Authorize(policy: nameof(enmDocumentMaster.Flight))]
+        public async Task<IActionResult> NewFlightBook(mdlFlightReview mdl, [FromServices] ICustomerWallet customerWallet)
+        {
+            mdlFlighBook mdlres = new mdlFlighBook() { FareQuotResponse = new List<mdlFareQuotResponse>(), IsSucess = new List<bool>(), BookingId = new List<string>() };
+            bool IsPriceChanged = false;
+            if (!(mdl == null || mdl.FareQuoteRequest == null))
+            {
+                var s = JsonConvert.SerializeObject(mdl);
+                if (mdl.contacts == null)
+                {
+                    TempData["mdl_"] = s;
+                    TempData["MessageType"] = (int)enmMessageType.Warning;
+                    TempData["Message"] = "Required Contact no";
+                    return RedirectToAction("NewFlightReview");
+                }
+                else if (mdl.emails == null)
+                {
+                    TempData["mdl_"] = s;
+                    TempData["MessageType"] = (int)enmMessageType.Warning;
+                    TempData["Message"] = "Required Email Address";
+                    return RedirectToAction("NewFlightReview");
+                }
+
+                string CustomerMPin = _currentUsers.MPin ?? "0000";
+                if (CustomerMPin != mdl.Mpin)
+                {
+                    TempData["mdl_"] = s;
+                    TempData["MessageType"] = (int)enmMessageType.Error;
+                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.MpinNotMatch);
+                    return RedirectToAction("NewFlightReview");
+                }
+
+                await mdl.LoadFareQuotationAsync(_currentUsers.CustomerId, _booking, _markup, _context);
+                IsPriceChanged = mdl.FareQuotResponse.Any(p => p.IsPriceChanged);
+                if (IsPriceChanged)
+                {
+
+                    TempData["mdl_"] = s;
+                    TempData["MessageType"] = (int)enmMessageType.Warning;
+                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.FlightPriceChanged);
+                    return RedirectToAction("NewFlightReview");
+                }
+
+                customerWallet.CustomerId = _currentUsers.CustomerId;
+                double WalletBalance = await customerWallet.GetBalanceAsync();
+                if (WalletBalance < mdl.NetFare)
+                {
+                    TempData["mdl_"] = s;
+                    TempData["MessageType"] = (int)enmMessageType.Warning;
+                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.InsufficientWalletBalance);
+                    return RedirectToAction("NewFlightReview");
+                }
+                else
+                {
+                    await customerWallet.DeductBalanceAsync(DateTime.Now, mdl.NetFare, enmTransactionType.FlightTicketBook, mdl.FareQuoteRequest.TraceId);
+                }
+
+                //if Price not chnage then Book the Flight
+                for (int i = 0; i < mdl.FareQuotResponse.Count(); i++)
+                {
+                    List<string> cont = new List<string>();
+                    cont.Add(mdl.contacts);
+                    List<string> eml = new List<string>();
+                    eml.Add(mdl.emails);
+                    List<mdlPaymentInfos> pi = new List<mdlPaymentInfos>();
+                    pi.Add(new mdlPaymentInfos() { amount = mdl.FareQuotResponse[i].TotalPriceInfo.TotalFare });
+                    string bookid = mdl.FareQuotResponse[i].BookingId;
+                    mdlBookingRequest mdlReq = new mdlBookingRequest()
+                    {
+                        TraceId = mdl.FareQuoteRequest.TraceId,
+                        BookingId = bookid,
+                        travellerInfo = mdl.travellerInfo,
+                        deliveryInfo = new mdlDeliveryinfo() { contacts = cont, emails = eml },
+                        gstInfo = mdl.gstInfo,
+                        paymentInfos = pi
+                    };
+                    var Result = await _booking.BookingAsync(mdlReq);
+                   
+                    mdlres.FareQuotResponse.Add(mdl.FareQuotResponse[i]);
+                    mdlres.IsSucess.Add(Result.ResponseStatus == 1 ? true : false);
+                    mdlres.BookingId.Add(Result.ResponseStatus == 1 ? Result.bookingId : Result.Error.Message);
+                    mdlres.travellerInfo = mdl.travellerInfo;
+                    mdlres.deliveryInfo = mdlReq.deliveryInfo;
+                    if (!(Result.ResponseStatus == 1))
+                    {
+                        ViewBag.SaveStatus = (int)enmMessageType.Warning;
+                        ViewBag.Message = Result.Error.Message;
+                    }
+
+                }
+            }
+            else
+            {
+                return RedirectToAction("NewFlightSearch", "Wing");
+            }
+
+            enmBookingStatus bookingStatus = enmBookingStatus.Pending;
+            if (mdlres.IsSucess.Count > 0)
+            {
+                if (mdlres.IsSucess.Any(p => !p))
+                {
+                    if (mdlres.IsSucess.Any(p => p))
+                    {
+                        bookingStatus = enmBookingStatus.PartialBooked;
+                    }
+                    else
+                    {
+                        bookingStatus = enmBookingStatus.Failed;
+                        //return the all Amount
+                        await customerWallet.AddBalanceAsync(DateTime.Now, mdl.NetFare, enmTransactionType.FlightTicketBook, string.Concat("Booking Ids", string.Join(',', mdl.FareQuotResponse.Select(p => p.BookingId))));
+                    }
+                }
+                else
+                {
+                    bookingStatus = enmBookingStatus.Booked;
+                }
+            }
+            _booking.CompleteBooking(mdl.FareQuoteRequest.TraceId ?? "", bookingStatus);
+
+            return View(mdlres);
         }
 
 

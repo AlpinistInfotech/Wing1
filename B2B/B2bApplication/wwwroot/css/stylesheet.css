@@ -1563,14 +1563,16 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .icon-inside {
-    position: absolute;
+    position: relative;
     right: 15px;
-    top: calc(50% - 20px);
+    top: -35px;
     pointer-events: none;
     font-size: 18px;
     font-size: 1.125rem;
     color: #c4c3c3;
     z-index: 3;
+    float: right;
+
 }
 
 .form-control-sm + .icon-inside {

@@ -1,0 +1,262 @@
+﻿@model mdlFlighBook
+@using B2BClasses.Services.Enums
+@inject ICurrentUsers _currentuser
+@{
+    ViewData["Title"] = enmDocumentMaster.Flight.GetDocumentDetails().Name;
+    Layout = "~/Views/Shared/_newLayout.cshtml";
+}
+<!-- Page Header
+       ============================================= -->
+<section class="page-header page-header-text-light bg-secondary">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1>Flights - Booking Details</h1>
+            </div>
+            <div class="col-md-4">
+                <ul class="breadcrumb justify-content-start justify-content-md-end mb-0">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/">Flights</a></li>
+                    <li class="active">Flights Booking Details</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section><!-- Page Header end -->
+<!-- Content
+============================================= -->
+<div id="content">
+    <section class="container">
+        <table align="center" border="0" cellpadding="0" cellspacing="0" height="100%" width="100%">
+            <tr>
+                <td align="center" valign="top">
+
+                    <table class="contenttable" border="0" cellpadding="0" cellspacing="0" width="600" bgcolor="#ffffff" style="border-width:1px; border-style: solid; border-collapse: separate; border-color:#ededed; margin-top:20px; font-family:Arial, Helvetica, sans-serif">
+                        <tr>
+                            <td>
+                                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                    <tbody>
+                                        <tr>
+                                            <td width="100%" height="30">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td valign="top" align="center">
+                                                <a href="#">
+                                                    <img alt="" src="logo.png" style="padding-bottom: 0; display: inline !important;">
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="100%" height="30">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+
+                        @for (int i = 0; i < Model.FareQuotResponse.Count; i++)
+                        {
+                            var tripinfo = Model.FareQuotResponse[i].Results.FirstOrDefault()?.FirstOrDefault()?.Segment;
+
+                            @if (tripinfo != null)
+                            {
+                                <tr>
+                                    <td style="padding:0px 20px;">
+                                        <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                                            <tbody>
+                                                <tr>
+                                                    <td style="border:4px solid #eee; border-radius:4px; padding:25px 0px;">
+                                                        <table width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td style="font-size:14px; padding:0px 25px;" width="50">
+                                                                        <img alt="" src="booking-successful.png">
+                                                                    </td>
+                                                                    <td style="font-size:16px; font-weight:600; color:#777; line-height:26px; padding-right:20px;">
+                                                                        <span style="font-size:13px;">Hi @_currentuser.Name,</span><br>
+                                                                        Congratulations! Your flight booking is <span style="color:#28a745;">confirmed</span>.
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:20px;">
+                                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                            <tbody>
+                                                <tr>
+                                                    <td style="font-size:14px; line-height:28px;">
+                                                        <span style="color:#7a7a7a;">Booking Reference Number -</span>
+                                                        <a style="outline:none; color:#0071cc; text-decoration:none;" href="#">@Model.BookingId[i]</a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="font-size:14px; line-height:28px;">
+                                                        <span style="color:#7a7a7a;">Booking Status -</span>  @if (Model.IsSucess[i])
+                                                        {<span style="color:darkgreen">Confirmed</span>}
+                                                        else
+                                                        {<span style="color:red;">Not Confirmed</span>}
+                                                    </td>
+
+                                                </tr>
+
+                                                <tr>
+
+                                                    <td style="font-size:14px; line-height:28px;"> Thank you for booking your travel itinerary with Wing Travel.</td>
+
+                                                </tr>
+
+                                            </tbody>
+
+                                        </table>
+
+                                    </td>
+
+                                </tr>
+
+                                <tr>
+
+                                    <td class="tablepadding" style="background:#f8f8f8;border-top:1px solid #e9e9e9;border-bottom:1px solid #e9e9e9;padding:13px 20px;">
+                                        <table width="100%" align="center" cellpadding="0" cellspacing="0" border="0">
+                                            <tbody>
+                                                <tr>
+                                                    <td style="font-size:14px; line-height:20px;">
+                                                        <span style="color:#909090">Booking Date:</span><br />
+                                                        <span style="color:#000000;display:inline-block">@Convert.ToDateTime(DateTime.Now).ToString("dd-MMM-yyyy"))</span>
+                                                    </td>
+                                                    <td style="font-size:14px; line-height:20px;">
+                                                        <span style="color:#909090">Booking No:</span><br />
+                                                        <a style="outline:none; color:#0071cc; text-decoration:none;" href="#">@Model.BookingId[i]</a>
+                                                    </td>
+                                                    <td style="font-size:14px; line-height:20px;">
+                                                        <span style="color:#909090">Payment:</span><br />
+                                                        by Wallet
+                                                    </td>
+
+                                                </tr>
+
+                                            </tbody>
+
+                                        </table>
+
+                                    </td>
+
+                                </tr>
+
+                                <!--Flight Details start-->
+
+                                <tr>
+
+                                    <td style="padding:25px 20px 0px;">
+
+                                        <h3 style="margin:0; font-weight:normal; color:#444444;">
+                                            Flight Details
+                                        </h3>
+
+                                    </td>
+
+                                </tr>
+                                @foreach (var tr in tripinfo)
+                                {
+                                    <tr>
+
+                                        <td class="tablepadding" style="padding:20px;">
+                                            <table class="" style="border-collapse:collapse;width:100%;border-top:1px solid #dddddd;border-left:1px solid #dddddd;">
+                                                <thead>
+                                                    <tr>
+                                                        <td style="font-size:13px;border-right:1px solid #dddddd;border-bottom:1px solid #dddddd;background-color:#efefef;font-weight:bold;padding:7px;color:#777777"> Flight </td>
+                                                        <td style="font-size:13px;border-right:1px solid #dddddd;border-bottom:1px solid #dddddd;background-color:#efefef;font-weight:bold;padding:7px;color:#777777">Depart</td>
+                                                        <td style="font-size:13px;border-right:1px solid #dddddd;border-bottom:1px solid #dddddd;background-color:#efefef;font-weight:bold;padding:7px;color:#777777"> Arrive </td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+
+                                                    <tr>
+                                                        <td width="25%" valign="top" style="border-right:1px solid #dddddd;border-bottom:1px solid #dddddd;text-align:left;padding:7px;line-height:22px;">
+                                                            <img class="img-fluid" alt="" src="~/AirlinesLogo/@(tr?.Airline?.Code).png"><br />
+                                                            @(tr?.Airline?.Name)<br />
+                                                            <span style="font-size:13px; color:#555;">  @(tr?.Airline?.Code)-@(tr?.Airline?.FlightNumber) </span>
+                                                        </td>
+                                                        <td valign="top" style="border-right:1px solid #dddddd;border-bottom:1px solid #dddddd;padding:7px;line-height:22px;">
+                                                            @tr?.Origin?.CityName (@tr?.Origin?.AirportName, @tr?.Origin?.AirportCode)<br />
+                                                            <span style="font-size:14px; color:#111111;"> @tr?.DepartureTime.ToString("ddd, dd-MMM-yyyy"), @tr?.DepartureTime.ToString("HH:mm")</span><br />
+
+                                                            <span style="font-size:13px; color:#555555;"> Cabin Class: @tr.CabinClass -@tr.ClassOfBooking</span><br />
+
+                                                        </td>
+                                                        <td valign="top" style="border-right:1px solid #dddddd;border-bottom:1px solid #dddddd;padding:7px;line-height:22px;">
+                                                            @tr?.Destination?.CityName (@tr?.Destination?.AirportName, @tr?.Destination?.AirportCode) < br />
+                                                            <span style="font-size:14px; color:#111111;"> @tr?.ArrivalTime.ToString("ddd, dd-MMM-yyyy"), @tr?.ArrivalTime.ToString("HH:mm")</span><br />
+                                                            <span style="font-size:13px; color:#555555;"> Travel Time: @(TimeSpan.FromMinutes(tr.Duration).Hours)h : @(TimeSpan.FromMinutes(tr.Duration ).Minutes)m</span><br />
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding:0px 20px 0px;">
+                                            <h3 style="margin:0; font-weight:normal; color:#444444;">
+                                                Passenger Information
+                                            </h3>
+                                        </td>
+                                    </tr>
+                                    
+                                        <tr>
+                                            <td class="tablepadding" style="padding:20px 20px 25px;">
+                                                <table class="" style="border-collapse:collapse;width:100%;border-top:1px solid #dddddd;border-left:1px solid #dddddd;">
+                                                    <thead>
+                                                        <tr>
+                                                            <td style="font-size:13px;border-right:1px solid #dddddd;border-bottom:1px solid #dddddd;background-color:#efefef;font-weight:bold;padding:7px;color:#777777"> Name </td>
+                                                            <td align="center" style="font-size:13px;border-right:1px solid #dddddd;border-bottom:1px solid #dddddd;background-color:#efefef;font-weight:bold;padding:7px;color:#777777">Confirmation</td>
+                                                            
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach (var item in Model.travellerInfo)
+                                                        {
+                                                        <tr>
+                                                            <td width="70%" valign="top" style="border-right:1px solid #dddddd;border-bottom:1px solid #dddddd;text-align:left;padding:7px;line-height:22px;">@item.Title @item.FirstName @item.LastName</td>
+                                                            <td width="30%" valign="top" align="center" style="border-right:1px solid #dddddd;border-bottom:1px solid #dddddd;padding:7px;line-height:22px;"> @Model.BookingId[i] </td>
+                                                            
+                                                        </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    
+
+
+                                    <!--Flight details end-->
+                                }
+                            }
+                        }
+                        <tr>
+                            <td>
+                                <table width="100%" cellspacing="0" cellpadding="0" border="0" style="font-size:13px;color:#555555; font-family:Arial, Helvetica, sans-serif;">
+                                    <tbody>
+                                        <tr>
+                                            <td class="tablepadding" align="center" style="font-size:14px; line-height:32px; padding:34px 20px; border-top:1px solid #e9e9e9;">
+                                                Any Questions? Get in touch with our 24x7 Customer Care team.<br />
+                                                <a href="#" style="background-color:#0071cc; color:#ffffff; padding:8px 25px; border-radius:4px; font-size:14px; text-decoration:none; display:inline-block; text-transform:uppercase; margin-top:10px;">Contact Customer Care</a>
+                                            </td>
+                                        </tr>
+                                        <tr> </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+        </table>
+    </section>
+</div>

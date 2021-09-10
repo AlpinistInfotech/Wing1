@@ -10,7 +10,7 @@
 
 <form id="frmFlightReview" asp-controller="Wing" asp-action="NewFlightReview" method="post">
     @Html.AntiForgeryToken()
-    <input type="hidden" name="FareQuoteRequest.TraceId" value="@(Model.searchResponse?.TraceId??string.Empty)">
+    <input type="hidden" id="FareQuoteRequestTraceId" name="FareQuoteRequest.TraceId" value="@(Model.searchResponse?.TraceId??string.Empty)">
     <input type="hidden" id="FareQuoteRequestResultIndex1" name="FareQuoteRequest.ResultIndex" value="">
     <input type="hidden" id="FareQuoteRequestResultIndex2" name="FareQuoteRequest.ResultIndex" value="">
 </form>
@@ -54,19 +54,19 @@
                             </select>
                         </div>
                         <div class="col-md-6 col-lg-2 form-group ddate">
-                            <input id="DepartureDt" asp-for="FlightSearchWraper.DepartureDt" autocomplete="off" type="text" class="form-control datepicker" placeholder="Depart Date">
+                            <input id="DepartureDt" asp-for="FlightSearchWraper.DepartureDt" value="@Convert.ToDateTime(Model.FlightSearchWraper.DepartureDt).ToString("dd-MMM-yyyy")" autocomplete="off" type="text" class="form-control datepicker" placeholder="Depart Date">
                             <span class="icon-inside"><i class="far fa-calendar-alt"></i></span>
-                       <span class="was-validated text-danger" id="spndepdate"></span>
+                            <span class="was-validated text-danger" id="spndepdate"></span>
                         </div>
                         <div class="col-md-6 col-lg-2 form-group rdate" style="display:none;">
                             <input id="ReturnDt" asp-for="FlightSearchWraper.ReturnDt" autocomplete="off" type="text" class="form-control datepicker" placeholder="Return Date">
                             <span class="icon-inside"><i class="far fa-calendar-alt"></i></span>
-                            <span class="was-validated text-danger" id="spnretdate"></span>
+                            <p class="was-validated text-danger" id="spnretdate"></p>
                         </div>
                         <div class="col-md-6 col-lg-2 travellers-class form-group">
                             <input type="text" id="flightTravellersClass" class="travellers-class-input form-control" name="flight-travellers-class" placeholder="Travellers, Class" readonly="" onkeypress="return false;">
                             <span class="icon-inside"><i class="fas fa-caret-down"></i></span>
-                            <span class="was-validated text-danger" id="spnfliclass"></span>
+                            <p class="was-validated text-danger" id="spnfliclass"></p>
                             <div class="travellers-dropdown">
                                 <div class="row align-items-center">
                                     <div class="col-sm-7">
@@ -171,7 +171,7 @@
 <script src="/js/flightfilter.js"></script>
 <script>
     $("input:radio[name='FlightSearchWraper.JourneyType']").click(function () {
-      
+
         if ($("input:radio[name='FlightSearchWraper.JourneyType']:checked").val() == "1") {
             $('.rdate').hide();
         }
@@ -188,7 +188,7 @@
         if (jtype == "1") {
             if (depdate == '') {
                 $('#DepartureDt').focus();
-                $('#spndepdate').html('Please choose departure date!');
+                $('#spndepdate').html('Choose departure date!');
                 return false;
             }
             else {
@@ -196,7 +196,7 @@
             }
             if (fliclass == "") {
                 $('#flightTravellersClass').focus();
-                $('#spnfliclass').html('Please select travel class!');
+                $('#spnfliclass').html('Select travel class!');
                 return false;
             }
             else {
@@ -206,7 +206,7 @@
         else {
             if (depdate == '') {
                 $('#DepartureDt').focus();
-                $('#spndepdate').html('Please choose departure date!');
+                $('#spndepdate').html('Choose departure date!');
                 return false;
             }
             else {
@@ -214,7 +214,7 @@
             }
             if (retdate == '') {
                 $('#ReturnDt').focus();
-                $('#spnretdate').html('Please choose return date!');
+                $('#spnretdate').html('Choose return date!');
                 return false;
             }
             else {
@@ -222,7 +222,7 @@
             }
             if (fliclass == "") {
                 $('#flightTravellersClass').focus();
-                $('#spnfliclass').html('Please select travel class!');
+                $('#spnfliclass').html('Select travel class!');
                 return false;
             }
             else {

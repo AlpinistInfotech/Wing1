@@ -236,6 +236,8 @@ namespace B2bApplication.Models
         public List<mdlFareQuotResponse> FareQuotResponse { get; set; }
         public List<bool> IsSucess { get; set; }
         public List<string> BookingId { get; set; }
+        public List<mdlTravellerinfo> travellerInfo { get; set; }
+        public mdlDeliveryinfo deliveryInfo { get; set; }
     }
 
     public class mdlWingMarkupWraper

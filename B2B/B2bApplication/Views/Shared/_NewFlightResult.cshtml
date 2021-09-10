@@ -137,10 +137,11 @@
                         </div>
                     </div>
                     <div class="flight-list">
-                        @{int cnt = 0,cntacc = 0;}
+                        @{int cnt = 0, cntacc = 0;}
                         @{ double maxamt = 0, compmaxamt = 0;
 
                         }
+                        <input type="hidden" value="@Model.FirstOrDefault().traceid" name="hid_traceid" id="hid_traceid" />
                         @foreach (var item in Model.Distinct())
                         {
                             compmaxamt = item.TotalPriceList.Max(x => x.TotalPrice);
@@ -149,7 +150,7 @@
                                 maxamt = compmaxamt;
                             }
                             cnt++;
-                            <input type="hidden" value="@item.traceid" name="hid_traceid" id="hid_traceid" />
+
                             <div class="flight-item">
                                 <div class="row align-items-center flex-row pt-4 pb-2 px-3">
                                     <div class="col col-sm-2 text-center d-lg-flex company-info">
@@ -268,8 +269,8 @@
                                                             </div>
                                                             @*<div class="col col-sm-2 text-left d-lg-flex text-1">
 
-                                                                @totalpricelist.FareRule?.FareRule?.fr?.SEAT_CHARGEABLE?.policyInfo
-                                                            </div>*@
+                                                @totalpricelist.FareRule?.FareRule?.fr?.SEAT_CHARGEABLE?.policyInfo
+                                            </div>*@
                                                             <div class="col col-sm-3 text-left d-lg-flex text-1">
                                                                 @if (totalpricelist.ADULT.IsFreeMeel == true)
                                                                 {
@@ -290,7 +291,7 @@
                                                                             <i class="fas fa-shopping-cart d-block d-lg-none"></i>
                                                                             <span class="d-none d-lg-block">Book</span>
                                                                         </button>
-                                                                       
+
                                                                     </div>
                                                                 </div>
 
@@ -344,7 +345,7 @@
                                                     </div>
                                                     <hr />
                                                     <div class="accordion" id="accordionDefault">
-                                                        @{int acccnt = 0;string coll = "collapse"; string acclass = "";}
+                                                        @{int acccnt = 0; string coll = "collapse"; string acclass = "";}
                                                         @foreach (var totp in item.TotalPriceList)
                                                         {
                                                             if (acccnt == 0)
@@ -372,7 +373,7 @@
                                                                                 <div class="col-md-6">
                                                                                     <span class="text-dark text-4">@(totp.TotalPrice.ToString("C", _currentuser.cultureInfo)) </span>
                                                                                     <span class="text-1 text-muted d-block">(Per Adult)</span>
-                                                                                    
+
                                                                                 </div>
                                                                                 <div class="col-md-4">
                                                                                     <span class="text-1 text-danger d-block">@(totp.ADULT?.SeatRemaing) seat(s) left</span>
@@ -382,16 +383,16 @@
                                                                                         <i class="fas fa-shopping-cart d-block d-lg-none"></i>
                                                                                         <span class="d-none d-lg-block">Book</span>
                                                                                     </button>
-                                                                                   
-                                                                                </div>
+
                                                                                 </div>
                                                                             </div>
+                                                                        </div>
                                                                         <ul class="nav nav-tabs" id="myTab-@cntacc" role="tablist">
                                                                             <li class="nav-item"> <a class="nav-link active" id="first-tab-@cntacc" data-toggle="tab" href="#first-@cntacc" role="tab" aria-controls="first-@cntacc" aria-selected="true">Itinerary</a> </li>
                                                                             <li class="nav-item"> <a class="nav-link" id="second-tab-@cntacc" data-toggle="tab" href="#second-@cntacc" role="tab" aria-controls="second-@cntacc" aria-selected="false">Fare Details</a> </li>
                                                                             <li class="nav-item"> <a class="nav-link" id="third-tab-@cntacc" data-toggle="tab" href="#third-@cntacc" role="tab" aria-controls="third-@cntacc" aria-selected="false">Baggage Details</a> </li>
                                                                             @*<li class="nav-item"> <a class="nav-link" id="fourth-tab-@cntacc" data-toggle="tab" href="#fourth-@cntacc" role="tab" aria-controls="fourth-@cntacc" aria-selected="false">Cancellation</a> </li>
-                                                                            <li class="nav-item"> <a class="nav-link" id="fifth-tab-@cntacc" data-toggle="tab" href="#fifth-@cntacc" role="tab" aria-controls="fifth-@cntacc" aria-selected="false">Date Change</a> </li>*@
+                                                            <li class="nav-item"> <a class="nav-link" id="fifth-tab-@cntacc" data-toggle="tab" href="#fifth-@cntacc" role="tab" aria-controls="fifth-@cntacc" aria-selected="false">Date Change</a> </li>*@
                                                                         </ul>
                                                                         <div class="tab-content my-3" id="myTabContent-@cntacc">
                                                                             <div class="tab-pane fade show active" id="first-@cntacc" role="tabpanel" aria-labelledby="first-tab-@cntacc">
@@ -486,19 +487,19 @@
                                                                                 </div>
                                                                             </div>
                                                                             @*<div class="tab-pane fade" id="fourth-@cntacc" role="tabpanel" aria-labelledby="fourth-tab-@cntacc">
-                                                                                Cancellation Fee: @totp.FareRule.FareRule?.fr?.CANCELLATION?.amount @totp.FareRule.FareRule?.fr?.CANCELLATION?.policyInfo.Replace("__nls__", "")
-                                                                            </div>
-                                                                            <div class="tab-pane fade" id="fifth-@cnt" role="tabpanel" aria-labelledby="fifth-tab-@cnt">
-                                                                                Date Change Fee: @totp.FareRule.FareRule?.fr?.DATECHANGE?.amount @totp.FareRule.FareRule?.fr?.DATECHANGE?.policyInfo.Replace("__nls__", "")
-                                                                            </div>*@
+                                                                Cancellation Fee: @totp.FareRule.FareRule?.fr?.CANCELLATION?.amount @totp.FareRule.FareRule?.fr?.CANCELLATION?.policyInfo.Replace("__nls__", "")
+                                                            </div>
+                                                            <div class="tab-pane fade" id="fifth-@cnt" role="tabpanel" aria-labelledby="fifth-tab-@cnt">
+                                                                Date Change Fee: @totp.FareRule.FareRule?.fr?.DATECHANGE?.amount @totp.FareRule.FareRule?.fr?.DATECHANGE?.policyInfo.Replace("__nls__", "")
+                                                            </div>*@
                                                                         </div>
 
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                                                                            acccnt++;
-                                                                                                            cntacc++;
-                                                                                                        }
+                                                            acccnt++;
+                                                            cntacc++;
+                                                        }
                                                     </div>
                                                 </div>
                                             </div>
@@ -654,6 +655,8 @@
             $("#FareQuoteRequestResultIndex1").val(resultInde1);
         }
         var resultInde2 = '';
+        var traceid = $('#hid_traceid').val();
+        $("#FareQuoteRequestTraceId").val(traceid);
         $("#FareQuoteRequestResultIndex2").val(resultInde2);
         resultInde = resultInde1 + "," + resultInde2;
         $("#frmFlightReview").submit();

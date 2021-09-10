@@ -66,245 +66,333 @@
             <div asp-validation-summary="All" class="text-danger"></div>
 
             <input type="hidden" asp-for="FareQuoteRequest.TraceId" />
+            
             @for (int i = 0; i < (Model.FareQuoteRequest?.ResultIndex?.Count() ?? 0); i++)
             {
                 <input type="hidden" asp-for="FareQuoteRequest.ResultIndex[i]" />
             }
             <input type="hidden" asp-for="NetFare" />
-            <div class="row">
+            @if (Model.FareQuotResponse.FirstOrDefault()?.Results != null)
+            {
+                <div class="row">
 
-                <div class="col-lg-8">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="bg-white shadow-md rounded p-3 p-sm-4 confirm-details">
-                                <h2 class="text-6 mb-3 mb-sm-4">Confirm Flight Details</h2>
-                                <hr class="mx-n3 mx-sm-n4 mb-4">
-                                @{int cnt = 0;}
-                                @foreach (var md in Model.FareQuotResponse)
-                                {
-                                    cnt++;
-                                    var tripinfo = md.Results.FirstOrDefault()?.FirstOrDefault()?.Segment;
-                                    @if (tripinfo != null)
+                    <div class="col-lg-8">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="bg-white shadow-md rounded p-3 p-sm-4 confirm-details">
+                                    <h2 class="text-6 mb-3 mb-sm-4">Confirm Flight Details</h2>
+                                    <hr class="mx-n3 mx-sm-n4 mb-4">
+                                    @{int cnt = 0;}
+
+                                    @foreach (var md in Model.FareQuotResponse)
                                     {
-                                        <!-- Departure Flight Detail ============================================= -->
-                                        <div class="card mb-4">
-                                            <div class="card-header">
-                                                <div class="row align-items-center trip-title">
-                                                    <div class="col-5 col-sm-auto text-center text-sm-left">
-                                                        <h5 class="m-0 trip-place">@tripinfo.FirstOrDefault().Origin.CityName</h5>
-                                                    </div>
-                                                    <div class="col-2 col-sm-auto text-8 text-black-50 text-center trip-arrow">➝</div>
-                                                    <div class="col-5 col-sm-auto text-center text-sm-left">
-                                                        <h5 class="m-0 trip-place">@tripinfo.LastOrDefault().Destination.CityName</h5>
-                                                    </div>
-                                                    <div class="col-12 mt-1 d-block d-md-none"></div>
-                                                    <div class="col-6 col-sm col-md-auto text-3 date">@tripinfo.FirstOrDefault().DepartureTime.ToString("ddd, dd-MMM-yyyy")</div>
-                                                    <div class="col-6 col-sm col-md-auto text-right order-sm-1">
-                                                        <a class="text-1" data-toggle="modal" data-target="#fare-rules-@cnt" href="">Fare Rules</a>
-                                                    </div>
-                                                    <div class="col col-md-auto text-center ml-auto order-sm-0">
-                                                        @if (tripinfo.FirstOrDefault().RefundableType == 0)
-                                                        {
-                                                            <span class="badge badge-danger py-1 px-2 font-weight-normal text-1">Non Refundable</span> }
-                                                        else if (tripinfo.FirstOrDefault().RefundableType == 1)
-                                                        {
-                                                            <span class="badge badge-success py-1 px-2 font-weight-normal text-1">Refundable</span> }
-                                                        else
-                                                        {
-                                                            <span class="badge badge-info py-1 px-2 font-weight-normal text-1">Partial Refundable</span>}
+                                        cnt++;
+                                        var tripinfo = md.Results.FirstOrDefault()?.FirstOrDefault()?.Segment;
+                                        @if (tripinfo != null)
+                                        {
+                                            <!-- Departure Flight Detail ============================================= -->
+                                            <div class="card mb-4">
+                                                <div class="card-header">
+                                                    <div class="row align-items-center trip-title">
+                                                        <div class="col-5 col-sm-auto text-center text-sm-left">
+                                                            <h5 class="m-0 trip-place">@tripinfo.FirstOrDefault().Origin.CityName</h5>
+                                                        </div>
+                                                        <div class="col-2 col-sm-auto text-8 text-black-50 text-center trip-arrow">➝</div>
+                                                        <div class="col-5 col-sm-auto text-center text-sm-left">
+                                                            <h5 class="m-0 trip-place">@tripinfo.LastOrDefault().Destination.CityName</h5>
+                                                        </div>
+                                                        <div class="col-12 mt-1 d-block d-md-none"></div>
+                                                        <div class="col-6 col-sm col-md-auto text-3 date">@tripinfo.FirstOrDefault().DepartureTime.ToString("ddd, dd-MMM-yyyy")</div>
+                                                        <div class="col-6 col-sm col-md-auto text-right order-sm-1">
+                                                            <a class="text-1" data-toggle="modal" data-target="#fare-rules-@cnt" href="">Fare Rules</a>
+                                                        </div>
+                                                        <div class="col col-md-auto text-center ml-auto order-sm-0">
+                                                            @if (tripinfo.FirstOrDefault().RefundableType == 0)
+                                                            {
+                                                                <span class="badge badge-danger py-1 px-2 font-weight-normal text-1">Non Refundable</span> }
+                                                            else if (tripinfo.FirstOrDefault().RefundableType == 1)
+                                                            {
+                                                                <span class="badge badge-success py-1 px-2 font-weight-normal text-1">Refundable</span> }
+                                                            else
+                                                            {
+                                                                <span class="badge badge-info py-1 px-2 font-weight-normal text-1">Partial Refundable</span>}
 
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="card-body">
-                                                @for (int i = 0; i < tripinfo.Count; i++)
-                                                {
-                                                    if (i > 0)
+                                                <div class="card-body">
+                                                    @for (int i = 0; i < tripinfo.Count; i++)
                                                     {
+                                                        if (i > 0)
+                                                        {
 
-                                                        <div class="fli-list-flight_details__info clearfix mb-4">
-                                                            <div class="flight_details__infoSctn">
+                                                            <div class="fli-list-flight_details__info clearfix mb-4">
+                                                                <div class="flight_details__infoSctn">
 
-                                                                <span>
-                                                                    @{ TimeSpan? ts2 = tripinfo[i]?.DepartureTime - tripinfo[i - 1]?.ArrivalTime;
-                                                                        string h2 = ts2.Value.Hours.ToString("00");
-                                                                        string m2 = ts2.Value.Minutes.ToString("00");
-                                                                    }
-                                                                    Technical Stopover | @h2 h:@m2 m in @tripinfo[i]?.Origin?.CityName
+                                                                    <span>
+                                                                        @{ TimeSpan? ts2 = tripinfo[i]?.DepartureTime - tripinfo[i - 1]?.ArrivalTime;
+                                                                            string h2 = ts2.Value.Hours.ToString("00");
+                                                                            string m2 = ts2.Value.Minutes.ToString("00");
+                                                                        }
+                                                                        Technical Stopover | @h2 h:@m2 m in @tripinfo[i]?.Origin?.CityName
 
 
+                                                                    </span>
+
+                                                                </div>
+
+                                                            </div>
+
+                                                        }
+
+
+                                                        <div class="row mb-4">
+                                                            <div class="col-12 col-sm-3 text-center text-md-left d-lg-flex company-info">
+                                                                <span class="align-middle">
+                                                                    <img class="img-fluid" alt="" src="~/AirlinesLogo/@(tripinfo[i]?.Airline?.Code).png">
+                                                                </span> <span class="align-middle ml-lg-2">
+                                                                    <span class="d-block text-2 text-dark mt-1 mt-lg-0">@(tripinfo[i]?.Airline?.Name)</span>
+                                                                    <small class="text-muted d-block">@(tripinfo[i]?.Airline?.Code)-@(tripinfo[i]?.Airline?.FlightNumber)</small>
                                                                 </span>
+                                                            </div>
+
+                                                            <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
+                                                                <span class="text-5 text-dark">@tripinfo[i]?.DepartureTime.ToString("HH:mm")</span>
+                                                                <small class="text-muted d-block">@tripinfo[i]?.Origin?.AirportName (@tripinfo[i]?.Origin?.AirportCode), @tripinfo[i]?.Origin?.CityName</small>
+                                                            </div>
+                                                            <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
+                                                                @{ TimeSpan? ts = tripinfo[i]?.ArrivalTime - tripinfo[i]?.DepartureTime;
+                                                                    int h = ts.Value.Hours;
+                                                                    int m = ts.Value.Minutes;
+                                                                    <span class="text-3 text-dark">@h.ToString("00") : @m.ToString("00")</span> }
+
+                                                                <small class="text-muted d-block">Duration</small>
+                                                            </div>
+                                                            <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
+                                                                <span class="text-5 text-dark">@tripinfo[i]?.ArrivalTime.ToString("HH:mm")</span>
+                                                                <small class="text-muted d-block">@tripinfo[i]?.Destination?.AirportName (@tripinfo[i]?.Destination?.AirportCode), @tripinfo[i]?.Destination?.CityName</small>
+                                                            </div>
+
+                                                            <div class="col-12 col-sm-12 mt-3 mt-s-0">
+                                                                <div class="col-sm-offset-2 col-sm-12">
+                                                                    <table class="table table-striped table-hover">
+                                                                        <thead class="thin-border-bottom">
+                                                                            <tr>
+                                                                                <th>
+                                                                                    <i class="ace-icon fa fa-suitcase"></i>
+                                                                                    Baggage
+                                                                                </th>
+
+                                                                                <th>
+                                                                                    Check In
+                                                                                </th>
+                                                                                <th>Cabin</th>
+                                                                            </tr>
+                                                                        </thead>
+
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td class="">Adult</td>
+                                                                                <td>
+                                                                                    @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CheckingBaggage ?? "-")
+                                                                                </td>
+
+                                                                                <td class="hidden-480">
+                                                                                    @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CabinBaggage ?? "-")
+                                                                                </td>
+                                                                            </tr>
+                                                                            @if ((Model.ChildCount) > 0)
+                                                                            {
+                                                                                <tr>
+                                                                                    <td class="">Child</td>
+                                                                                    <td>
+                                                                                        @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.BaggageInformation?.CheckingBaggage ?? "-")
+                                                                                    </td>
+
+                                                                                    <td class="hidden-480">
+                                                                                        @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.BaggageInformation?.CabinBaggage ?? "-")
+                                                                                    </td>
+                                                                                </tr>
+                                                                            }
+                                                                            @if ((Model.InfantCount) > 0)
+                                                                            {
+                                                                                <tr>
+                                                                                    <td class="">Infant</td>
+                                                                                    <td>
+                                                                                        0 Kg
+                                                                                    </td>
+
+                                                                                    <td class="hidden-480">
+                                                                                        0 Kg
+                                                                                    </td>
+                                                                                </tr>
+                                                                            }
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
 
                                                             </div>
 
                                                         </div>
-
                                                     }
+                                                    <!-- Fare Rules (Modal Dialog) ============================================= -->
+                                                    <div id="fare-rules-@cnt" class="modal fade" role="dialog" aria-hidden="true">
+                                                        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title">Fare Rules</h5>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <ul class="nav nav-tabs" id="departureTab" role="tablist">
+                                                                        <li class="nav-item"> <a class="nav-link active" id="third-tab" data-toggle="tab" href="#third" role="tab" aria-controls="third" aria-selected="false">Baggage Details</a> </li>
+                                                                        <li class="nav-item"> <a class="nav-link" id="fourth-tab" data-toggle="tab" href="#fourth" role="tab" aria-controls="fourth" aria-selected="false">Cancellation Fee</a> </li>
+                                                                        <li class="nav-item"> <a class="nav-link" id="fifth-tab" data-toggle="tab" href="#fifth" role="tab" aria-controls="fifth" aria-selected="false">Date Change Fee</a> </li>
+                                                                    </ul>
+                                                                    <div class="tab-content my-3" id="departureContent">
+                                                                        <div class="tab-pane fade show active" id="third" role="tabpanel" aria-labelledby="third-tab">
+                                                                            <div class="table-responsive-md">
+                                                                                <table class="table table-hover table-bordered">
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            <th>&nbsp;</th>
+                                                                                            <td class="text-center">Cabin</td>
+                                                                                            <td class="text-center">Check-In</td>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        <tr>
+                                                                                            <td>Adult</td>
+                                                                                            <td class="text-center">
+                                                                                                @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CabinBaggage ?? "-")
+                                                                                            </td>
+                                                                                            <td class="text-center">
+                                                                                                @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CheckingBaggage ?? "-")
+                                                                                            </td>
 
+                                                                                        </tr>
+                                                                                        @if ((Model.ChildCount) > 0)
+                                                                                        {
+                                                                                            <tr>
+                                                                                                <td>Child</td>
+                                                                                                <td class="text-center">
+                                                                                                    @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.BaggageInformation?.CheckingBaggage ?? "-")
+                                                                                                </td>
 
-                                                    <div class="row mb-4">
+                                                                                                <td class="text-center">
+                                                                                                    @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.BaggageInformation?.CabinBaggage ?? "-")
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        }
+                                                                                        @if ((Model.InfantCount) > 0)
+                                                                                        {
+                                                                                            <tr>
+                                                                                                <td>Infant</td>
+                                                                                                <td class="text-center">
+                                                                                                    0 Kg
+                                                                                                </td>
 
-                                                        <div class="col-12 col-sm-3 text-center text-md-left d-lg-flex company-info">
-                                                            <span class="d-block text-2 text-dark mt-1 mt-lg-0">@(tripinfo[i]?.Airline?.Name)</span>
-                                                            <span class="align-middle">
-                                                                <img class="img-fluid" alt="" src="~/AirlinesLogo/@(tripinfo[i]?.Airline?.Code).png">
-                                                            </span> 
-                                                            <span class="align-middle ml-lg-2">
-                                                                <small class="text-muted d-block"> @(tripinfo[i]?.Airline?.Code)-@(tripinfo[i]?.Airline?.FlightNumber)</small>
+                                                                                                <td class="text-center">
+                                                                                                    0 kg
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        }
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="tab-pane fade" id="fourth" role="tabpanel" aria-labelledby="fourth-tab">
+                                                                            Cancellation Fee: @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.FareRule.FareRule?.fr?.CANCELLATION?.policyInfo.Replace("__nls__", ""))
+
+                                                                        </div>
+                                                                        <div class="tab-pane fade" id="fifth" role="tabpanel" aria-labelledby="fifth-tab">
+                                                                            Cancellation Fee: @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.FareRule.FareRule?.fr?.DATECHANGE?.policyInfo.Replace("__nls__", ""))
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- Fare Rules end -->
+
+                                                </div>
+                                            </div>
+
+                                            <!-- Departure Flight Detail end -->
+                                            @if (Model.FareQuotResponse.FirstOrDefault().Results.FirstOrDefault()?.FirstOrDefault()?.Segment?.FirstOrDefault().sinfo?.BAGGAGE != null)
+                                            {
+                                                <div class="alert alert-primary mt-4">
+                                                    <div class="row">
+                                                        <div class="col-9">
+                                                            <span>
+                                                                Add Extra check-in baggage:
+                                                                <br />
+                                                                <small>Add Extra check-in baggage to this trip at a discounted price</small>
                                                             </span>
                                                         </div>
-                                                        <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
-                                                            <span class="text-5 text-dark">@tripinfo[i]?.DepartureTime.ToString("HH:mm")</span>
-                                                            <small class="text-muted d-block">@tripinfo[i]?.Origin?.AirportName (@tripinfo[i]?.Origin?.AirportCode), @tripinfo[i]?.Origin?.CityName</small>
+                                                        <div class="col-3">
+                                                            <button type="button" data-toggle="modal" data-target="#baggage-@cnt" class="btn fli_secondry_btn fast-forward-btn">+ ADD</button>
                                                         </div>
-                                                        <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
-                                                            @{ TimeSpan? ts = tripinfo[i]?.ArrivalTime - tripinfo[i]?.DepartureTime;
-                                                                int h = ts.Value.Hours;
-                                                                int m = ts.Value.Minutes;
-                                                                <span class="text-3 text-dark">@h.ToString("00") : @m.ToString("00")</span> }
-
-                                                            <small class="text-muted d-block">Duration</small>
-                                                        </div>
-                                                        <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
-                                                            <span class="text-5 text-dark">@tripinfo[i]?.ArrivalTime.ToString("HH:mm")</span>
-                                                            <small class="text-muted d-block">@tripinfo[i]?.Destination?.AirportName (@tripinfo[i]?.Destination?.AirportCode), @tripinfo[i]?.Destination?.CityName</small>
-                                                        </div>
-
-                                                        <div class="col-12 col-sm-12 mt-3 mt-s-0">
-                                                            <div class="col-sm-offset-2 col-sm-12">
-                                                                <table class="table table-striped table-hover">
-                                                                    <thead class="thin-border-bottom">
-                                                                        <tr>
-                                                                            <th>
-                                                                                <i class="ace-icon fa fa-suitcase"></i>
-                                                                                Baggage
-                                                                            </th>
-
-                                                                            <th>
-                                                                                Check In
-                                                                            </th>
-                                                                            <th>Cabin</th>
-                                                                        </tr>
-                                                                    </thead>
-
-                                                                    <tbody>
-                                                                        <tr>
-                                                                            <td class="">Adult</td>
-                                                                            <td>
-                                                                                @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CheckingBaggage ?? "-")
-                                                                            </td>
-
-                                                                            <td class="hidden-480">
-                                                                                @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CabinBaggage ?? "-")
-                                                                            </td>
-                                                                        </tr>
-                                                                        @if ((Model.ChildCount) > 0)
-                                                                        {
-                                                                            <tr>
-                                                                                <td class="">Child</td>
-                                                                                <td>
-                                                                                    @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.BaggageInformation?.CheckingBaggage ?? "-")
-                                                                                </td>
-
-                                                                                <td class="hidden-480">
-                                                                                    @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.BaggageInformation?.CabinBaggage ?? "-")
-                                                                                </td>
-                                                                            </tr>
-                                                                        }
-                                                                        @if ((Model.InfantCount) > 0)
-                                                                        {
-                                                                            <tr>
-                                                                                <td class="">Infant</td>
-                                                                                <td>
-                                                                                    0 Kg
-                                                                                </td>
-
-                                                                                <td class="hidden-480">
-                                                                                    0 Kg
-                                                                                </td>
-                                                                            </tr>
-                                                                        }
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-
-                                                        </div>
-
                                                     </div>
-                                                }
-                                                <!-- Fare Rules (Modal Dialog) ============================================= -->
-                                                <div id="fare-rules-@cnt" class="modal fade" role="dialog" aria-hidden="true">
+                                                </div>
+                                                <!-- Baggage (Modal Dialog) ============================================= -->
+                                                <div id="baggage-@cnt" class="modal fade" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
                                                     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title">Fare Rules</h5>
+                                                                <h5 class="modal-title">Add extra baggage</h5>
                                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
                                                             </div>
                                                             <div class="modal-body">
-                                                                <ul class="nav nav-tabs" id="departureTab" role="tablist">
-                                                                    <li class="nav-item"> <a class="nav-link active" id="third-tab" data-toggle="tab" href="#third" role="tab" aria-controls="third" aria-selected="false">Baggage Details</a> </li>
-                                                                    <li class="nav-item"> <a class="nav-link" id="fourth-tab" data-toggle="tab" href="#fourth" role="tab" aria-controls="fourth" aria-selected="false">Cancellation Fee</a> </li>
-                                                                    <li class="nav-item"> <a class="nav-link" id="fifth-tab" data-toggle="tab" href="#fifth" role="tab" aria-controls="fifth" aria-selected="false">Date Change Fee</a> </li>
-                                                                </ul>
-                                                                <div class="tab-content my-3" id="departureContent">
-                                                                    <div class="tab-pane fade show active" id="third" role="tabpanel" aria-labelledby="third-tab">
-                                                                        <div class="table-responsive-md">
-                                                                            <table class="table table-hover table-bordered">
-                                                                                <thead>
-                                                                                    <tr>
-                                                                                        <th>&nbsp;</th>
-                                                                                        <td class="text-center">Cabin</td>
-                                                                                        <td class="text-center">Check-In</td>
-                                                                                    </tr>
-                                                                                </thead>
-                                                                                <tbody>
-                                                                                    <tr>
-                                                                                        <td>Adult</td>
-                                                                                        <td class="text-center">
-                                                                                            @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CabinBaggage??"-")
-                                                                                        </td>
-                                                                                        <td class="text-center">
-                                                                                            @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CheckingBaggage??"-")
-                                                                                        </td>
-
-                                                                                    </tr>
-                                                                                    @if ((Model.ChildCount) > 0)
-                                                                                    {
-                                                                                        <tr>
-                                                                                            <td>Child</td>
-                                                                                            <td class="text-center">
-                                                                                                @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.BaggageInformation?.CheckingBaggage??"-")
-                                                                                            </td>
-
-                                                                                            <td class="text-center">
-                                                                                                @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD?.BaggageInformation?.CabinBaggage??"-")
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                    }
-                                                                                    @if ((Model.InfantCount) > 0)
-                                                                                    {
-                                                                                        <tr>
-                                                                                            <td>Infant</td>
-                                                                                            <td class="text-center">
-                                                                                                0 Kg
-                                                                                            </td>
-
-                                                                                            <td class="text-center">
-                                                                                                0 kg
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                    }
-                                                                                </tbody>
-                                                                            </table>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="tab-pane fade" id="fourth" role="tabpanel" aria-labelledby="fourth-tab">
-                                                                        Cancellation Fee: @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.FareRule.FareRule?.fr?.CANCELLATION?.policyInfo.Replace("__nls__", ""))
+                                                                <div class="row">
+                                                                    <div class="col-12 text-left mb-4">
+                                                                        <img class="img-fluid" alt="" src="~/AirlinesLogo/@(tripinfo?.FirstOrDefault()?.Airline?.Code).png">
+                                                                        @tripinfo.FirstOrDefault().Origin.CityName➝@tripinfo.LastOrDefault().Destination.CityName
+                                                                        <br />
+                                                                        <span id="spnselcount">0</span> of 1 Selected
+                                                                        <br />
+                                                                        Included Check-in baggage per person - @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CheckingBaggage ?? "-")
 
                                                                     </div>
-                                                                    <div class="tab-pane fade" id="fifth" role="tabpanel" aria-labelledby="fifth-tab">
-                                                                        Cancellation Fee: @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.FareRule.FareRule?.fr?.DATECHANGE?.policyInfo.Replace("__nls__", ""))
+                                                                    <div class="col-12">
 
+                                                                        <hr />
+                                                                    </div>
+                                                                    <div style="height:300px;width:100%; overflow:auto">
+                                                                        @{int bagcnt = 0;}
+                                                                        <input type="hidden" id="hid_isbagadded" />
+                                                                        @foreach (var ml in Model.FareQuotResponse.FirstOrDefault().Results.FirstOrDefault()?.FirstOrDefault()?.Segment?.FirstOrDefault().sinfo?.BAGGAGE)
+                                                                        {
+                                                                            bagcnt++;
+                                                                            <div class="col-12">
+                                                                                <div class="row">
+
+                                                                                    <div class="col-6 col-sm-6 text-left time-info">
+                                                                                        <span class="align-middle">
+                                                                                            <img alt="" class="img-fluid" src="/images/baggage.png" style="height: 40px; max-width: 100%;">
+                                                                                        </span>
+                                                                                        <span class="align-middle ml-lg-2">
+                                                                                            <span class="text-2 text-dark">Additional @ml.desc </span>
+                                                                                            <input type="hidden" id="hid_bagcode-@bagcnt" value="@ml.code" />
+                                                                                        </span>
+
+
+                                                                                    </div>
+                                                                                    <div class="col-6 col-sm-3 text-left time-info">
+
+                                                                                        <span class="text-3 text-dark">₹ @ml.amount</span>
+                                                                                        <input type="hidden" id="hid_bagamt-@bagcnt" value="@ml.amount" />
+                                                                                    </div>
+                                                                                    <div class="col-6 col-sm-3 text-left time-info">
+                                                                                        <button type="button" style="padding: .40rem 1.5rem!important;" onclick="bagadd('@ml.code',@ml.amount)" class="btn btn-outline-primary"><span id="spnbtn-@bagcnt">+ Add</span></button>
+                                                                                    </div>
+
+
+                                                                                </div>
+                                                                                <hr />
+                                                                            </div>
+                                                                        }
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -312,345 +400,294 @@
                                                     </div>
                                                 </div>
                                                 <!-- Fare Rules end -->
-
-                                            </div>
-                                        </div>
-                                        <!-- Departure Flight Detail end -->
-                                        <div class="alert alert-primary mt-4">
-                                            <div class="row">
-                                                <div class="col-9">
-                                                    <span>
-                                                        Add Extra check-in baggage:
-                                                        <br />
-                                                        <small>Add Extra check-in baggage to this trip at a discounted price</small>
-                                                    </span>
-                                                </div>
-                                                <div class="col-3">
-                                                    <button type="button" data-toggle="modal" data-target="#baggage-@cnt" class="btn fli_secondry_btn fast-forward-btn">+ ADD</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- Baggage (Modal Dialog) ============================================= -->
-                                        <div id="baggage-@cnt" class="modal fade" role="dialog" aria-hidden="true">
-                                            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title">Add extra baggage</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <div class="row">
-                                                            <div class="col-12 text-left mb-4">
-                                                                <img class="img-fluid" alt="" src="~/AirlinesLogo/@(tripinfo?.FirstOrDefault()?.Airline?.Code).png">
-                                                                @tripinfo.FirstOrDefault().Origin.CityName➝@tripinfo.LastOrDefault().Destination.CityName
-                                                                <br />
-                                                                <span id="spnselcount">0</span> of 1 Selected
-                                                                <br />
-                                                                Included Check-in baggage per person - @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CheckingBaggage ?? "-")
-                                                                <hr />
-                                                            </div>
-                                                            @foreach (var ml in Model.FareQuotResponse.FirstOrDefault().Results.FirstOrDefault()?.FirstOrDefault()?.Segment?.FirstOrDefault().sinfo?.BAGGAGE)
-                                                            {
-                                                        <div class="col-12">
-                                                            <div class="row">
-
-                                                                <div class="col-6 col-sm-3 text-center text-md-left d-lg-flex company-info">
-                                                                    <img alt="" src="https://imgak.mmtcdn.com/flights/assets/media/dt/ancillaries/baggage_15kg_andabove_icon.png?v=1" style="height: 60px; max-width: 100%;">
-                                                                </div>
-                                                                <div class="col-6 col-sm-3 text-center time-info mt-3 mt-sm-0">
-                                                                    <span class="text-5 text-dark">Additional @ml.desc </span>
-                                                                    <input type="hidden" id="hid_bagcode" value="@ml.code" />
-                                                                </div>
-                                                                <div class="col-6 col-sm-3 text-center time-info mt-3 mt-sm-0">
-
-                                                                    <span class="text-3 text-dark">rs. @ml.amount</span>
-
-                                                                </div>
-                                                                <div class="col-6 col-sm-3 text-center time-info mt-3 mt-sm-0">
-                                                                    <button type="button" class="btn btn-outline-primary"> Add</button>
-                                                                </div>
-
-
-                                                            </div>
-                                                            <hr />
-                                                        </div>
-                                                            }
-                                                            
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- Fare Rules end -->
+                                            }
+                                        }
                                     }
-                                }
 
-                                <div class="alert alert-info mt-4"> <span class="badge badge-info">NOTE:</span> This is a special fare given by the airline. Airlines cancellation charges do apply. </div>
+                                    <div class="alert alert-info mt-4"> <span class="badge badge-info">NOTE:</span> This is a special fare given by the airline. Airlines cancellation charges do apply. </div>
 
 
-                                <h2 class="text-6 mb-3 mt-5">Traveller Details - <span class="text-3"><a data-toggle="modal" data-target="#login-signup" href="#" title="Login / Sign up">Login</a> to book faster</span></h2>
-                                <p class="font-weight-600">Contact Details</p>
-                                <div class="form-row">
-                                    <div class="col-sm-6 form-group">
-                                        <label>Email</label>
-                                        <input type="email" class="form-control" id="BookingEmail" placeholder="Email" asp-for="emails">
-                                    </div>
-                                    <div class="col-sm-6 form-group">
-                                        <label>Phone</label>
-                                        <input type="number" class="form-control" id="BookingContact" placeholder="Contact" asp-for="contacts">
-                                    </div>
-                                </div>
-                                <p class="text-info">Your booking details will be sent to this email address and mobile number.</p>
-                                @{ int adcnt = 0, cdcnt = 0, ifcnt = 0; }
-                                @for (int i = 0; i < Model.travellerInfo.Count; i++)
-                                {
-                                    <input type="hidden" asp-for="travellerInfo[i].passengerType" />
-                                    if (Model.travellerInfo[i].passengerType == enmPassengerType.Adult)
-                                    {
-                                        adcnt++;
-
-                                        <p class="font-weight-600">Adult @adcnt</p>
-                                    }
-                                    if (Model.travellerInfo[i].passengerType == enmPassengerType.Child)
-                                    {
-                                        cdcnt++;
-
-                                        <p class="font-weight-600">Child @cdcnt</p>
-                                    }
-                                    if (Model.travellerInfo[i].passengerType == enmPassengerType.Infant)
-                                    {
-                                        ifcnt++;
-
-                                        <p class="font-weight-600">Infant ifcnt</p>
-                                    }
+                                    <h2 class="text-6 mb-3 mt-5">Traveller Details - <span class="text-3"><a data-toggle="modal" data-target="#login-signup" href="#" title="Login / Sign up">Login</a> to book faster</span></h2>
+                                    <p class="font-weight-600">Contact Details</p>
                                     <div class="form-row">
-                                        <div class="col-sm-2 form-group">
-                                            @if (Model.travellerInfo[i].passengerType == enmPassengerType.Adult)
-                                            {
-                                                <select class="custom-select" asp-for="travellerInfo[i].Title">
-                                                    <option value="">Title</option>
-                                                    <option>Mr</option>
-                                                    <option>Ms</option>
-                                                    <option>Mrs</option>
-                                                </select>
-                                            }
-                                            else
-                                            {
-                                                <select class="custom-select" asp-for="travellerInfo[i].Title">
-                                                    <option value="Master">Master</option>
-                                                    <option value="Ms">Ms</option>
-                                                </select>
-                                            }
+                                        <div class="col-sm-6 form-group">
+                                            <label>Email</label>
+                                            <input type="email" class="form-control" id="BookingEmail" placeholder="Email" asp-for="emails">
                                         </div>
-                                        <div class="col-sm-5 form-group">
-                                            <input class="form-control" asp-for="travellerInfo[i].FirstName" placeholder="Enter First Name" type="text">
+                                        <div class="col-sm-6 form-group">
+                                            <label>Phone</label>
+                                            <input type="number" class="form-control" id="BookingContact" placeholder="Contact" asp-for="contacts">
                                         </div>
-                                        <div class="col-sm-5 form-group">
-                                            <input class="form-control" asp-for="travellerInfo[i].LastName" placeholder="Enter Last Name" type="text">
-                                        </div>
-                                        @if (Model.travellerInfo[i].passengerType == enmPassengerType.Adult && Model.FareQuoteCondition.dob.adobr == true)
-                                        {
-                                            <div class="col-sm-6 form-group">
-                                                <input class="form-control datepicker" asp-for="travellerInfo[i].dob" placeholder="Enter Date of Birth" type="text">
-                                            </div>
-                                        }
-                                        @if (Model.travellerInfo[i].passengerType == enmPassengerType.Child && Model.FareQuoteCondition.dob.cdobr == true)
-                                        {
-                                            <div class="col-sm-6 form-group">
-                                                <input class="form-control datepicker" asp-for="travellerInfo[i].dob" placeholder="Enter Date of Birth" type="text">
-                                            </div>
-                                        }
-                                        @if (Model.travellerInfo[i].passengerType == enmPassengerType.Infant && Model.FareQuoteCondition.dob.idobr == true)
-                                        {
-                                            <div class="col-sm-6 form-group">
-                                                <input class="form-control datepicker" asp-for="travellerInfo[i].dob" placeholder="Enter Date of Birth" type="text">
-                                            </div>
-                                        }
-                                        @if (Model.FareQuotResponse.FirstOrDefault().Results.FirstOrDefault()?.FirstOrDefault()?.Segment?.FirstOrDefault().sinfo?.MEAL.Count() > 0)
-                                        {
-                                            <div class="col-sm-6 form-group">
-                                                <label for="meal">Meal</label>
-                                                <select class="custom-select" id="meal">
-                                                    <option value="">Select</option>
-                                                    @foreach (var ml in Model.FareQuotResponse.FirstOrDefault().Results.FirstOrDefault()?.FirstOrDefault()?.Segment?.FirstOrDefault().sinfo?.MEAL)
-                                                    {
-                                                        <option value="@ml.amount">@ml.desc</option>
-                                                    }
-                                                </select>
-                                            </div>
-                                        }
                                     </div>
-                                    @if (Model.FareQuoteCondition.PassportCondition?.isPassportRequired ?? false)
+                                    <p class="text-info">Your booking details will be sent to this email address and mobile number.</p>
+                                    @{ int adcnt = 0, cdcnt = 0, ifcnt = 0; }
+                                    @for (int i = 0; i < Model.travellerInfo.Count; i++)
                                     {
-                                        <h2 class="text-6 mb-3 mb-sm-4">
-                                            Passport Details
-                                        </h2>
+                                        <input type="hidden" asp-for="travellerInfo[i].passengerType" />
+                                        if (Model.travellerInfo[i].passengerType == enmPassengerType.Adult)
+                                        {
+                                            adcnt++;
 
+                                            <p class="font-weight-600">Adult @adcnt</p>
+                                        }
+                                        if (Model.travellerInfo[i].passengerType == enmPassengerType.Child)
+                                        {
+                                            cdcnt++;
+
+                                            <p class="font-weight-600">Child @cdcnt</p>
+                                        }
+                                        if (Model.travellerInfo[i].passengerType == enmPassengerType.Infant)
+                                        {
+                                            ifcnt++;
+
+                                            <p class="font-weight-600">Infant ifcnt</p>
+                                        }
                                         <div class="form-row">
-                                            <div class="col-sm-6 form-group">
-                                                <label>Passport Number</label>
-                                                <input type="text" placeholder="Passport Number" class="form-control" asp-for="travellerInfo[i].pNum">
+                                            <div class="col-sm-2 form-group">
+                                                @if (Model.travellerInfo[i].passengerType == enmPassengerType.Adult)
+                                                {
+                                                    <select class="custom-select" asp-for="travellerInfo[i].Title">
+                                                        <option value="">Title</option>
+                                                        <option>Mr</option>
+                                                        <option>Ms</option>
+                                                        <option>Mrs</option>
+                                                    </select>
+                                                }
+                                                else
+                                                {
+                                                    <select class="custom-select" asp-for="travellerInfo[i].Title">
+                                                        <option value="Master">Master</option>
+                                                        <option value="Ms">Ms</option>
+                                                    </select>
+                                                }
                                             </div>
-                                            <div class="col-sm-6 form-group">
-                                                <label>Passport Issue Date</label>
-                                                <input class="form-control date-picker" asp-for="travellerInfo[i].PassportIssueDate" type="text" data-date-format="dd-MMM-yyyy">
+                                            <div class="col-sm-5 form-group">
+                                                <input class="form-control" asp-for="travellerInfo[i].FirstName" placeholder="Enter First Name" type="text">
                                             </div>
-                                            <div class="col-sm-6 form-group">
-                                                <label>Passport Expiry Date</label>
-                                                <input class="form-control date-picker" asp-for="travellerInfo[i].PassportExpiryDate" type="text" data-date-format="dd-MMM-yyyy">
+                                            <div class="col-sm-5 form-group">
+                                                <input class="form-control" asp-for="travellerInfo[i].LastName" placeholder="Enter Last Name" type="text">
                                             </div>
-                                            <div class="col-sm-6 form-group">
-                                                <label>GST Phone</label>
-                                                <input type="number" id="GSTContact" class="form-control" placeholder="Contact" asp-for="gstInfo.mobile">
-                                            </div>
-                                            <div class="col-sm-6 form-group">
-                                                <label>GST Address</label>
-                                                <textarea class="form-control" id="GSTAddress" placeholder="Address" asp-for="gstInfo.address"></textarea>
-                                            </div>
+                                            @if (Model.travellerInfo[i].passengerType == enmPassengerType.Adult && Model.FareQuoteCondition.dob.adobr == true)
+                                            {
+                                                <div class="col-sm-6 form-group">
+                                                    <input class="form-control datepicker" asp-for="travellerInfo[i].dob" placeholder="Enter Date of Birth" type="text">
+                                                </div>
+                                            }
+                                            @if (Model.travellerInfo[i].passengerType == enmPassengerType.Child && Model.FareQuoteCondition.dob.cdobr == true)
+                                            {
+                                                <div class="col-sm-6 form-group">
+                                                    <input class="form-control datepicker" asp-for="travellerInfo[i].dob" placeholder="Enter Date of Birth" type="text">
+                                                </div>
+                                            }
+                                            @if (Model.travellerInfo[i].passengerType == enmPassengerType.Infant && Model.FareQuoteCondition.dob.idobr == true)
+                                            {
+                                                <div class="col-sm-6 form-group">
+                                                    <input class="form-control datepicker" asp-for="travellerInfo[i].dob" placeholder="Enter Date of Birth" type="text">
+                                                </div>
+                                            }
+                                            @if (Model.FareQuotResponse.FirstOrDefault().Results.FirstOrDefault()?.FirstOrDefault()?.Segment?.FirstOrDefault().sinfo?.MEAL.Count() > 0)
+                                            {
+                                                <div class="col-sm-6 form-group">
+                                                    <label for="meal">Meal</label>
+                                                    <select class="custom-select" id="meal" asp-for="travellerInfo[i].ssrMealInfos">
+                                                        <option value="">Select</option>
+                                                        @foreach (var ml in Model.FareQuotResponse.FirstOrDefault().Results.FirstOrDefault()?.FirstOrDefault()?.Segment?.FirstOrDefault().sinfo?.MEAL)
+                                                        {
+                                                            <option value="@ml.code">@ml.desc-@ml.amount</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            }
                                         </div>
+                                        @if (Model.FareQuoteCondition.PassportCondition?.isPassportRequired ?? false)
+                                        {
+                                            <h2 class="text-6 mb-3 mb-sm-4">
+                                                Passport Details
+                                            </h2>
+
+                                            <div class="form-row">
+                                                <div class="col-sm-6 form-group">
+                                                    <label>Passport Number</label>
+                                                    <input type="text" placeholder="Passport Number" class="form-control" asp-for="travellerInfo[i].pNum">
+                                                </div>
+                                                <div class="col-sm-6 form-group">
+                                                    <label>Passport Issue Date</label>
+                                                    <input class="form-control date-picker" asp-for="travellerInfo[i].PassportIssueDate" type="text" data-date-format="dd-MMM-yyyy">
+                                                </div>
+                                                <div class="col-sm-6 form-group">
+                                                    <label>Passport Expiry Date</label>
+                                                    <input class="form-control date-picker" asp-for="travellerInfo[i].PassportExpiryDate" type="text" data-date-format="dd-MMM-yyyy">
+                                                </div>
+                                                <div class="col-sm-6 form-group">
+                                                    <label>GST Phone</label>
+                                                    <input type="number" id="GSTContact" class="form-control" placeholder="Contact" asp-for="gstInfo.mobile">
+                                                </div>
+                                                <div class="col-sm-6 form-group">
+                                                    <label>GST Address</label>
+                                                    <textarea class="form-control" id="GSTAddress" placeholder="Address" asp-for="gstInfo.address"></textarea>
+                                                </div>
+                                            </div>
+                                        }
                                     }
-                                }
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="col-lg-12 mt-4">
+                            <div class="col-lg-12 mt-4">
 
-                            <div class="bg-white shadow-md rounded p-3 p-sm-4 confirm-details">
-                                <h2 class="text-6 mb-3 mb-sm-4">
-                                    @if (Model.FareQuoteCondition.GstCondition?.IsGstMandatory ?? false)
-                                    {
-                                        <input type="checkbox" name="id-have-gst" id="id-have-gst" value="true" checked="checked" />
-                                    }
-                                    else
-                                    {
-                                        <input type="checkbox" name="id-have-gst" id="id-have-gst" value="false" />
-                                    }
-                                    To claim credit of GST charged
-                                </h2>
+                                <div class="bg-white shadow-md rounded p-3 p-sm-4 confirm-details">
+                                    <h2 class="text-6 mb-3 mb-sm-4">
+                                        @if (Model.FareQuoteCondition.GstCondition?.IsGstMandatory ?? false)
+                                        {
+                                            <input type="checkbox" name="id-have-gst" id="id-have-gst" value="true" checked="checked" />
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" name="id-have-gst" id="id-have-gst" value="false" />
+                                        }
+                                        To claim credit of GST charged
+                                    </h2>
 
-                                <div class="form-row" style="display:none;" id="divgst">
-                                    <div class="col-sm-6 form-group">
-                                        <label>GST No.</label>
-                                        <input type="text" class="form-control" id="GstNumber" placeholder="Gst No." asp-for="gstInfo.gstNumber">
-                                    </div>
-                                    <div class="col-sm-6 form-group">
-                                        <label>Registered Name</label>
-                                        <input type="text" id="RegisteredName" class="form-control" placeholder="Registered Name" asp-for="gstInfo.registeredName">
-                                    </div>
-                                    <div class="col-sm-6 form-group">
-                                        <label>GST Email</label>
-                                        <input type="email" id="GSTEmail" class="form-control" placeholder="Email" asp-for="gstInfo.email">
-                                    </div>
-                                    <div class="col-sm-6 form-group">
-                                        <label>GST Phone</label>
-                                        <input type="number" id="GSTContact" class="form-control" placeholder="Contact" asp-for="gstInfo.mobile">
-                                    </div>
-                                    <div class="col-sm-6 form-group">
-                                        <label>GST Address</label>
-                                        <textarea class="form-control" id="GSTAddress" placeholder="Address" asp-for="gstInfo.address"></textarea>
+                                    <div class="form-row" style="display:none;" id="divgst">
+                                        <div class="col-sm-6 form-group">
+                                            <label>GST No.</label>
+                                            <input type="text" class="form-control" id="GstNumber" placeholder="Gst No." asp-for="gstInfo.gstNumber">
+                                        </div>
+                                        <div class="col-sm-6 form-group">
+                                            <label>Registered Name</label>
+                                            <input type="text" id="RegisteredName" class="form-control" placeholder="Registered Name" asp-for="gstInfo.registeredName">
+                                        </div>
+                                        <div class="col-sm-6 form-group">
+                                            <label>GST Email</label>
+                                            <input type="email" id="GSTEmail" class="form-control" placeholder="Email" asp-for="gstInfo.email">
+                                        </div>
+                                        <div class="col-sm-6 form-group">
+                                            <label>GST Phone</label>
+                                            <input type="number" id="GSTContact" class="form-control" placeholder="Contact" asp-for="gstInfo.mobile">
+                                        </div>
+                                        <div class="col-sm-6 form-group">
+                                            <label>GST Address</label>
+                                            <textarea class="form-control" id="GSTAddress" placeholder="Address" asp-for="gstInfo.address"></textarea>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
+
+                        </div>
 
                     </div>
+
+                    <!-- Side Panel(Fare Details)
+            ============================================= -->
+                    <aside class="col-lg-4 mt-4 mt-lg-0">
+                        <div class="bg-white shadow-md rounded p-3">
+                            <h3 class="text-5 mb-3">Fare Details</h3>
+                            <hr class="mx-n3">
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    Base Fare <span class="float-right text-4 font-weight-500 text-dark">@(Model.TotalBaseFare.ToString("C", nfi))</span><br>
+                                    <small class="text-muted">
+                                        Adult(s) : @(Model.AdultCount) × @(Model.AdultBaseFare.ToString("C", nfi)) = @(Model.AdultTotalBaseFare.ToString("C", nfi))
+                                    </small>
+                                    @if (Model.ChildCount > 0)
+                                    {
+                                        <small class="text-muted">
+                                            Child(s) : @(Model.ChildCount) x @(Model.ChildBaseFare.ToString("C", nfi)) = @(Model.ChildTotalBaseFare.ToString("C", nfi))
+                                        </small>
+                                    }
+                                    @if (Model.InfantCount > 0)
+                                    {
+                                        <small class="text-muted">
+                                            Infant(s) : @(Model.InfantCount) x @(Model.InfantBaseFare.ToString("C", nfi)) = @(Model.InfantTotalBaseFare.ToString("C", nfi))
+                                        </small>
+                                    }
+
+                                </li>
+                                <li class="mb-2">Fee & Surcharge <span class="float-right text-4 font-weight-500 text-dark">@(Model.FeeSurcharge.ToString("C", nfi))</span></li>
+
+                                <li class="mb-2">Other Charge <span class="float-right text-4 font-weight-500 text-dark">@(Model.OtherCharge.ToString("C", nfi))</span></li>
+                                <li class="mb-2">Insurance <span class="float-right text-4 font-weight-500 text-dark">0</span></li>
+                                @if (Model.Convenience > 0)
+                                {
+                                    <li class="mb-2">Convenience <span class="float-right text-4 font-weight-500 text-dark">@(Model.Convenience.ToString("C", nfi))</span></li>
+                                }
+                                <li class="mb-2">Discount <span class="float-right text-4 font-weight-500 text-dark">0</span></li>
+                            </ul>
+
+                            <div class="text-dark bg-light-4 text-4 font-weight-600 p-3"> Total Amount <span class="float-right text-6">@(Model.NetFare.ToString("C", nfi))</span> </div>
+                            <h3 class="text-4 mb-3 mt-4">Promo Code</h3>
+                            <div class="input-group form-group">
+                                <input class="form-control" placeholder="Promo Code" aria-label="Promo Code" type="text">
+                                <span class="input-group-append">
+                                    <button class="btn btn-secondary" type="submit">APPLY</button>
+                                </span>
+                            </div>
+                            <ul class="promo-code pre-scrollable">
+                                <li><span class="d-block text-3 font-weight-600">FLTOFFER</span>Up to $500 Off on your booking. Hurry! Limited period offer. <a class="text-1" href="">Terms & Conditions</a></li>
+                                <li><span class="d-block text-3 font-weight-600">HOTOFFER</span>Up to $500 Off on your booking. Hurry! Limited period offer. <a class="text-1" href="">Terms & Conditions</a></li>
+                                <li><span class="d-block text-3 font-weight-600">SUMMEROFFER</span>Up to $500 Off on your booking. Hurry! Limited period offer. <a class="text-1" href="">Terms & Conditions</a></li>
+                                <li><span class="d-block text-3 font-weight-600">BIGOFFER</span>Up to $500 Off on your booking. Hurry! Limited period offer. <a class="text-1" href="">Terms & Conditions</a></li>
+                                <li><span class="d-block text-3 font-weight-600">FLTOFFER</span>Up to $500 Off on your booking. Hurry! Limited period offer. <a class="text-1" href="">Terms & Conditions</a></li>
+                                <li><span class="d-block text-3 font-weight-600">FLTOFFER</span>Up to $500 Off on your booking. Hurry! Limited period offer. <a class="text-1" href="">Terms & Conditions</a></li>
+                            </ul>
+                            <button type="button" name="btnbook" class="btn btn-primary btn-block">Proceed To Payment</button>
+                            @if (Model.FareQuoteCondition?.IsHoldApplicable ?? false)
+                            {
+                                <button type="button" name="btnHoldFlight" class="btn btn-danger btn-block">Hold</button>
+                            }
+                            @*<button class="btn btn-primary btn-block" onclick="location.href='payment.html';" type="submit">Proceed To Payment</button>*@
+                        </div>
+                    </aside>
+                    <!-- Side Panel End -->
+
 
                 </div>
+            }
+            else
+            {
+                <div class="col-lg-12">
+                    <div class="card">
 
-                <!-- Side Panel(Fare Details)
-                ============================================= -->
-                <aside class="col-lg-4 mt-4 mt-lg-0">
-                    <div class="bg-white shadow-md rounded p-3">
-                        <h3 class="text-5 mb-3">Fare Details</h3>
-                        <hr class="mx-n3">
-                        <ul class="list-unstyled">
-                            <li class="mb-2">
-                                Base Fare <span class="float-right text-4 font-weight-500 text-dark">@(Model.TotalBaseFare.ToString("C", nfi))</span><br>
-                                <small class="text-muted">
-                                    Adult(s) : @(Model.AdultCount) × @(Model.AdultBaseFare.ToString("C", nfi)) = @(Model.AdultTotalBaseFare.ToString("C", nfi))
-                                </small>
-                                @if (Model.ChildCount > 0)
-                                {
-                                    <small class="text-muted">
-                                        Child(s) : @(Model.ChildCount) x @(Model.ChildBaseFare.ToString("C", nfi)) = @(Model.ChildTotalBaseFare.ToString("C", nfi))
-                                    </small>
-                                }
-                                @if (Model.InfantCount > 0)
-                                {
-                                    <small class="text-muted">
-                                        Infant(s) : @(Model.InfantCount) x @(Model.InfantBaseFare.ToString("C", nfi)) = @(Model.InfantTotalBaseFare.ToString("C", nfi))
-                                    </small>
-                                }
-
-                            </li>
-                            <li class="mb-2">Fee & Surcharge <span class="float-right text-4 font-weight-500 text-dark">@(Model.FeeSurcharge.ToString("C", nfi))</span></li>
-                            <li class="mb-2">Other Charge <span class="float-right text-4 font-weight-500 text-dark">@(Model.OtherCharge.ToString("C", nfi))</span></li>
-                            @if (Model.Convenience > 0)
-                            {
-                                <li class="mb-2">Convenience <span class="float-right text-4 font-weight-500 text-dark">@(Model.Convenience.ToString("C", nfi))</span></li>
-                            }
-                        </ul>
-                        <div class="text-dark bg-light-4 text-4 font-weight-600 p-3"> Total Amount <span class="float-right text-6">@(Model.NetFare.ToString("C", nfi))</span> </div>
-                        <h3 class="text-4 mb-3 mt-4">Promo Code</h3>
-                        <div class="input-group form-group">
-                            <input class="form-control" placeholder="Promo Code" aria-label="Promo Code" type="text">
-                            <span class="input-group-append">
-                                <button class="btn btn-secondary" type="submit">APPLY</button>
-                            </span>
+                        <div class="card-body">
+                            <h5 class="card-title">No Result Found.</h5>
+                            <p class="card-text">@Model.FareQuotResponse.FirstOrDefault()?.Error.Message</p>
+                            <a href="/wing/newflightsearch" class="btn btn-primary">Go to Back</a>
                         </div>
-                        <ul class="promo-code pre-scrollable">
-                            <li><span class="d-block text-3 font-weight-600">FLTOFFER</span>Up to $500 Off on your booking. Hurry! Limited period offer. <a class="text-1" href="">Terms & Conditions</a></li>
-                            <li><span class="d-block text-3 font-weight-600">HOTOFFER</span>Up to $500 Off on your booking. Hurry! Limited period offer. <a class="text-1" href="">Terms & Conditions</a></li>
-                            <li><span class="d-block text-3 font-weight-600">SUMMEROFFER</span>Up to $500 Off on your booking. Hurry! Limited period offer. <a class="text-1" href="">Terms & Conditions</a></li>
-                            <li><span class="d-block text-3 font-weight-600">BIGOFFER</span>Up to $500 Off on your booking. Hurry! Limited period offer. <a class="text-1" href="">Terms & Conditions</a></li>
-                            <li><span class="d-block text-3 font-weight-600">FLTOFFER</span>Up to $500 Off on your booking. Hurry! Limited period offer. <a class="text-1" href="">Terms & Conditions</a></li>
-                            <li><span class="d-block text-3 font-weight-600">FLTOFFER</span>Up to $500 Off on your booking. Hurry! Limited period offer. <a class="text-1" href="">Terms & Conditions</a></li>
-                        </ul>
-                        <button type="button" name="btnbook" class="btn btn-primary btn-block">Proceed To Payment</button>
-                        @if (Model.FareQuoteCondition?.IsHoldApplicable ?? false)
-                        {
-                            <button type="button" name="btnHoldFlight" class="btn btn-danger btn-block">Hold</button>
-                        }
-                        @*<button class="btn btn-primary btn-block" onclick="location.href='payment.html';" type="submit">Proceed To Payment</button>*@
                     </div>
-                </aside>
-                <!-- Side Panel End -->
+                </div>
+            }
 
-
+            <div class="modal" id="popmpin" role="dialog" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <!-- Modal Header -->
+                        <div class="modal-header bg-light">
+                            <h4 class="modal-title">Enter MPIN</h4>
+                            <input type="hidden" id="hid_serid" name="hid_serid" />
+                            <button type="button" class="close f-s-30" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="clearfix"></div>
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-lg-12 form-grop">
+                                    @Html.EditorFor(m => m.Mpin, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" name="btnBookFlight" class="btn btn-secondary" data-dismiss="modal">Book Now</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </form>
     </section>
 </div><!-- Content end -->
 <!--MPIN Popup-->
-<div class="modal" id="popmpin" role="dialog" data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <!-- Modal Header -->
-            <div class="modal-header bg-light">
-                <h4 class="modal-title">Enter MPIN</h4>
-                <input type="hidden" id="hid_serid" name="hid_serid" />
-                <button type="button" class="close f-s-30" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="clearfix"></div>
-            <!-- Modal body -->
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-xs-12">
-                        @Html.EditorFor(m => m.Mpin, new { htmlAttributes = new { @class = "form-control" } })
-                    </div>
-                </div>
 
-            </div>
-
-            <div class="clearfix"></div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" name="btnBookFlight" class="btn btn-secondary" data-dismiss="modal">Book Now</button>
-            </div>
-        </div>
-    </div>
-</div>
 <script>
     $(document).ready(function () {
         var checkBox = document.getElementById("id-have-gst");
@@ -671,7 +708,7 @@
             $('#popmpin').modal("show");
         });
         $("button[name='btnBookFlight']").click(function () {
-            $('#frmFlightBook').attr('action', '/Home/FlightBook');
+            $('#frmFlightBook').attr('action', '/Wing/NewFlightBook');
             $("#frmFlightBook").submit();
         });
     });
