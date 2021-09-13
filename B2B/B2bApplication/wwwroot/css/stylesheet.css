@@ -62,7 +62,7 @@ img {
 }
 
 a, a:focus {
-    color: #0071cc;
+    color: #ef6614;
     -webkit-transition: all 0.2s ease;
     transition: all 0.2s ease;
 }
@@ -135,8 +135,8 @@ h1, h2, h3, h4, h5, h6 {
         margin-top: -25px;
         content: " ";
         border-radius: 50%;
-        border: 5px solid #0071cc;
-        border-color: #0071cc transparent #0071cc transparent;
+        border: 5px solid #ef6614;
+        border-color: #ef6614 transparent #ef6614 transparent;
         animation: dual-ring 1.2s linear infinite;
     }
 
@@ -721,7 +721,7 @@ h1, h2, h3, h4, h5, h6 {
         }
 
         .primary-menu ul.navbar-nav > li:hover > a:not(.btn), .primary-menu ul.navbar-nav > li.active > a:not(.btn), .login-signup ul.navbar-nav > li:hover > a:not(.btn), .login-signup ul.navbar-nav > li.active > a:not(.btn) {
-            color: #0071cc;
+            color: #ef6614;
             -webkit-transition: all 0.2s ease;
             transition: all 0.2s ease;
         }
@@ -742,7 +742,7 @@ h1, h2, h3, h4, h5, h6 {
             }
 
         .primary-menu ul.navbar-nav > li.dropdown .dropdown-menu li:hover > a:not(.btn), .login-signup ul.navbar-nav > li.dropdown .dropdown-menu li:hover > a:not(.btn) {
-            color: #0071cc;
+            color: #ef6614;
             -webkit-transition: all 0.2s ease;
             transition: all 0.2s ease;
         }
@@ -962,17 +962,17 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .primary-menu.nav-primary-dropdown ul.navbar-nav > li.dropdown .dropdown-menu, .login-signup.nav-primary-dropdown ul.navbar-nav > li.dropdown .dropdown-menu {
-    background-color: #0071cc;
+    background-color: #ef6614;
     color: #fff;
-    border-color: #0071cc;
+    border-color: #ef6614;
 }
 
     .primary-menu.nav-primary-dropdown ul.navbar-nav > li.dropdown .dropdown-menu .dropdown-menu, .login-signup.nav-primary-dropdown ul.navbar-nav > li.dropdown .dropdown-menu .dropdown-menu {
-        background-color: #0071cc;
+        background-color: #ef6614;
     }
 
 .primary-menu.nav-primary-dropdown ul.navbar-nav > li.dropdown:hover > a:after, .login-signup.nav-primary-dropdown ul.navbar-nav > li.dropdown:hover > a:after {
-    border-color: transparent transparent #0071cc transparent;
+    border-color: transparent transparent #ef6614 transparent;
 }
 
 .primary-menu.nav-primary-dropdown ul.navbar-nav > li.dropdown .dropdown-menu li > a:not(.btn), .login-signup.nav-primary-dropdown ul.navbar-nav > li.dropdown .dropdown-menu li > a:not(.btn) {
@@ -993,11 +993,11 @@ h1, h2, h3, h4, h5, h6 {
     }
 
     #header .nav-primary-dropdown.primary-menu:before {
-        background-color: #0071cc;
+        background-color: #ef6614;
     }
 
     .primary-menu.nav-primary-dropdown ul.navbar-nav > li.dropdown .dropdown-menu .dropdown-menu {
-        background-color: #0071cc;
+        background-color: #ef6614;
     }
 
     .primary-menu.nav-dark-dropdown ul.navbar-nav li {
@@ -1355,7 +1355,7 @@ h1, h2, h3, h4, h5, h6 {
 
     .secondary-nav.nav .nav-item .nav-link.active {
         background: #fff;
-        color: #0071cc;
+        color: #ef6614;
         border-radius: 4px 4px 0px 0px;
     }
 
@@ -1370,7 +1370,7 @@ h1, h2, h3, h4, h5, h6 {
         .secondary-nav.nav.alternate .nav-item .nav-link.active {
             background-color: transparent;
             color: #fff;
-            border-bottom: 3px solid #0071cc;
+            border-bottom: 3px solid #ef6614;
         }
 
 @media (max-width: 1199.98px) {
@@ -1465,7 +1465,7 @@ h1, h2, h3, h4, h5, h6 {
         }
 
             .page-header.page-header-text-dark .breadcrumb > li a:hover {
-                color: #0071cc;
+                color: #ef6614;
             }
 
 /* =================================== */
@@ -1880,7 +1880,7 @@ body {
         }
 
     .list-item a:hover {
-        color: #0071cc;
+        color: #ef6614;
     }
 
     .list-item li a span {
@@ -1905,7 +1905,7 @@ body {
     }
 
         .tags a:hover {
-            background: #0071cc;
+            background: #ef6614;
             color: #fff;
             -webkit-transition: all 0.3s ease-in-out;
             transition: all 0.3s ease-in-out;
@@ -1939,7 +1939,7 @@ body {
     }
 
         .side-post .item-post .caption a:hover {
-            color: #0071cc;
+            color: #ef6614;
             -webkit-transition: all 0.3s ease-in-out;
             transition: all 0.3s ease-in-out;
         }
@@ -1960,7 +1960,7 @@ body {
     }
 
         .blog-post .title-blog a:hover {
-            color: #0071cc;
+            color: #ef6614;
         }
 
 .blog-post .meta-blog {
@@ -1977,7 +1977,7 @@ body {
 
         .blog-post .meta-blog li i {
             font-size: 16px;
-            color: #0071cc;
+            color: #ef6614;
             margin-right: 5px;
         }
 
@@ -1986,7 +1986,7 @@ body {
         }
 
             .blog-post .meta-blog li a:hover {
-                color: #0071cc;
+                color: #ef6614;
             }
 
 /* Post Comment */
@@ -2165,7 +2165,7 @@ body {
     }
 
 .accordion:not(.accordion-alternate) .card-header a {
-    background-color: #0071cc;
+    background-color: #ef6614;
     color: #fff;
 }
 
@@ -2356,7 +2356,7 @@ body {
     }
 
         .accordion.accordion-alternate.popularRoutes .routes-list a:hover {
-            color: #0071cc;
+            color: #ef6614;
             text-decoration: underline;
         }
 
@@ -2374,7 +2374,7 @@ body {
     }
 
     .nav-pills.alternate .nav-link:not(.active):hover {
-        color: #0071cc;
+        color: #ef6614;
     }
 
 .nav-pills.flex-column.alternate .nav-link {
@@ -2432,7 +2432,7 @@ body {
                 height: 3px;
                 width: 100%;
                 content: ' ';
-                background-color: #0071cc;
+                background-color: #ef6614;
                 display: block;
                 position: absolute;
                 bottom: -3px;
@@ -2466,7 +2466,7 @@ body {
 
         .nav-tabs.flex-column .nav-item .nav-link.active {
             background-color: transparent;
-            color: #0071cc;
+            color: #ef6614;
         }
 
             .nav-tabs.flex-column .nav-item .nav-link.active:after {
@@ -2499,7 +2499,7 @@ body {
                 }
 
                     .nav-tabs.style-2 .nav-item .nav-link.active, .nav-tabs.style-2 .nav-item .nav-link:hover.active {
-                        background: #0071cc;
+                        background: #ef6614;
                     }
 
                         .nav-tabs.style-2 .nav-item .nav-link.active:after {
@@ -2657,7 +2657,7 @@ body {
 
         .nav-tabs.flex-sm-column .nav-item .nav-link.active {
             background-color: transparent;
-            color: #0071cc;
+            color: #ef6614;
         }
 
             .nav-tabs.flex-sm-column .nav-item .nav-link.active:after {
@@ -2725,7 +2725,7 @@ body {
 
         .nav-tabs.flex-md-column .nav-item .nav-link.active {
             background-color: transparent;
-            color: #0071cc;
+            color: #ef6614;
         }
 
             .nav-tabs.flex-md-column .nav-item .nav-link.active:after {
@@ -2793,7 +2793,7 @@ body {
 
         .nav-tabs.flex-lg-column .nav-item .nav-link.active {
             background-color: transparent;
-            color: #0071cc;
+            color: #ef6614;
         }
 
             .nav-tabs.flex-lg-column .nav-item .nav-link.active:after {
@@ -2952,7 +2952,7 @@ h2.resp-accordion {
 
 .resp-tab-active {
     margin-bottom: -1px !important;
-    border-bottom: 2px solid #0071cc;
+    border-bottom: 2px solid #ef6614;
 }
 
 .resp-content-active, .resp-accordion-active {
@@ -3029,7 +3029,7 @@ h2.resp-accordion span {
 }
 
 .resp-vtabs li.resp-tab-active, .resp-vtabs li.resp-tab-active:hover {
-    color: #0071cc;
+    color: #ef6614;
     -webkit-box-shadow: -5px 0px 24px -18px rgba(0, 0, 0, 0.4);
     box-shadow: -5px 0px 24px -18px rgba(0, 0, 0, 0.4);
     border-radius: 4px 0px 0px 4px;
@@ -3211,7 +3211,7 @@ h2.resp-accordion:first-child {
 
         .brands-grid > .row > div a:hover {
             opacity: 1;
-            color: #0071cc;
+            color: #ef6614;
         }
 
 /* Banner */
@@ -3596,13 +3596,13 @@ h2.resp-accordion:first-child {
         }
 
             #footer .nav .nav-item .nav-link:focus {
-                color: #0071cc;
+                color: #ef6614;
                 -webkit-transition: all 0.2s ease;
                 transition: all 0.2s ease;
             }
 
     #footer .nav .nav-link:hover {
-        color: #0071cc;
+        color: #ef6614;
         -webkit-transition: all 0.2s ease;
         transition: all 0.2s ease;
     }
@@ -3632,7 +3632,7 @@ h2.resp-accordion:first-child {
         }
 
             #footer .nav.flex-column .nav-item .nav-link:hover {
-                color: #0071cc;
+                color: #ef6614;
                 -webkit-transition: all 0.2s ease;
                 transition: all 0.2s ease;
             }
@@ -3944,7 +3944,7 @@ h2.resp-accordion:first-child {
 }
 
     #back-to-top:hover {
-        background-color: #0071cc;
+        background-color: #ef6614;
         -webkit-box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
         box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
         -webkit-transition: all 0.3s ease-in-out;
@@ -4095,45 +4095,45 @@ select.form-control:not([size]):not([multiple]):not(.form-control-sm) {
 }
 
 .bg-primary, .badge-primary {
-    background-color: #0071cc !important;
+    background-color: #ef6614 !important;
 }
 
 .bg-secondary {
-    background-color: #0c2f55 !important;
+    background-color: #E16318!important;
 }
 
 .text-secondary {
-    color: #0c2f55 !important;
+    color: #E16318!important;
 }
 
 .text-primary {
-    color: #0071cc !important;
+    color: #ef6614 !important;
 }
 
 .btn-link {
-    color: #0071cc;
+    color: #ef6614;
 }
 
     .btn-link:hover {
-        color: #0e7fd9 !important;
+        color: #FB792C !important;
     }
 
 .border-primary {
-    border-color: #0071cc !important;
+    border-color: #ef6614 !important;
 }
 
 .border-secondary {
-    border-color: #0c2f55 !important;
+    border-color: #E16318!important;
 }
 
 .btn-primary {
-    background-color: #0071cc;
-    border-color: #0071cc;
+    background-color: #ef6614;
+    border-color: #ef6614;
 }
 
     .btn-primary:hover {
-        background-color: #0e7fd9;
-        border-color: #0e7fd9;
+        background-color: #FB792C;
+        border-color: #FB792C;
     }
 
 .btn-secondary {
@@ -4142,13 +4142,13 @@ select.form-control:not([size]):not([multiple]):not(.form-control-sm) {
 }
 
 .btn-outline-primary {
-    color: #0071cc;
-    border-color: #0071cc;
+    color: #ef6614;
+    border-color: #ef6614;
 }
 
     .btn-outline-primary:hover {
-        background-color: #0071cc;
-        border-color: #0071cc;
+        background-color: #ef6614;
+        border-color: #ef6614;
         color: #fff;
     }
 
@@ -4165,7 +4165,7 @@ select.form-control:not([size]):not([multiple]):not(.form-control-sm) {
 
 .progress-bar,
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-    background-color: #0071cc;
+    background-color: #ef6614;
 }
 
 .page-item.active .page-link,
@@ -4173,21 +4173,21 @@ select.form-control:not([size]):not([multiple]):not(.form-control-sm) {
 .custom-control-input:checked ~ .custom-control-label::before,
 .custom-checkbox .custom-control-input:checked ~ .custom-control-label:before,
 .custom-control-input:checked ~ .custom-control-label:before {
-    background-color: #0071cc;
-    border-color: #0071cc;
+    background-color: #ef6614;
+    border-color: #ef6614;
 }
 
 .list-group-item.active {
-    background-color: #0071cc;
-    border-color: #0071cc;
+    background-color: #ef6614;
+    border-color: #ef6614;
 }
 
 .page-link {
-    color: #0071cc;
+    color: #ef6614;
 }
 
     .page-link:hover {
-        color: #0e7fd9;
+        color: #FB792C;
     }
 
 /* Pagination */
@@ -4224,7 +4224,7 @@ select.form-control:not([size]):not([multiple]):not(.form-control-sm) {
 }
 
 .ui-slider .ui-widget-header {
-    background: #0071cc;
+    background: #ef6614;
 }
 
 .ui-menu.ui-widget.ui-widget-content {
@@ -4242,8 +4242,8 @@ select.form-control:not([size]):not([multiple]):not(.form-control-sm) {
 }
 
 .ui-menu.ui-widget-content .ui-state-active {
-    background: #0071cc;
-    border-color: #0071cc;
+    background: #ef6614;
+    border-color: #ef6614;
 }
 
 .ui-menu .ui-menu-divider {
