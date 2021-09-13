@@ -2,16 +2,7 @@
     let webRootPath = localStorage.getItem('_rootpath');
     if (webRootPath == null) { webRootPath = ""; }
 
-    let tokkenData = JSON.parse(sessionStorage.getItem('_tokkenData'));
-    var currentDate = new Date();
-    if (tokkenData == null || Date.parse(tokkenData.expiryTime) < currentDate) {
-        let requestUrl = webRootPath + "/Account/GetTokken";// + currentApplication ;
-        $.ajax({ url: requestUrl }).done(function (data) {
-            
-            currentDate = currentDate.setHours(currentDate.getHours() + 2);            
-            sessionStorage.setItem('_tokkenData', JSON.stringify({ tokken: data, expiryTime: currentDate }));
-        });
-    }
+   
 
     let sideMenutemp = JSON.parse(sessionStorage.getItem('_SideMenu'));
     let currentApplication = sessionStorage.getItem('_CurrentApplication');
@@ -68,17 +59,19 @@
         itemlink.href = linkname;
         if (isrootMenu) {
             if (menuname != "Dashboard") {
+                itemlink.classList.add("dropdown-item");
                 itemlink.classList.add("dropdown-toggle");
             }
         }
         else {
             itemlink.classList.add("dropdown-item");
             if (hastree) {
-                itemlink.classList.add("dropdown-toggle");                
+                itemlink.classList.add("dropdown-toggle");
             }
         }
 
         itemlink.appendChild(fncCreateMenuIcon(iconname));
+        
         //if (isrootMenu) {
         //    let itemSpan = document.createElement("span");
         //    itemSpan.classList.add("menu-text");
@@ -87,7 +80,7 @@
         //}
         //else
         {
-            itemlink.textContent = itemlink.textContent + menuname
+            itemlink.textContent = itemlink.textContent + menuname 
         }
 
         //if (hastree) {
@@ -201,6 +194,6 @@
         }
 
     }
-
+    
 
 });

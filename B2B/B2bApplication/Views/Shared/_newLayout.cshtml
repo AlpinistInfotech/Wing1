@@ -27,9 +27,11 @@
     <script src="/js/jquery.min.js"></script>
 
     <script src="/js/jquery-ui.min.js"></script>
+    <script src="~/js/SideMenuNew.js" asp-append-version="true"></script>
     <script src="/js/bootstrap.bundle.min.js"></script>
     <script src="~/assets/js/select2.min.js"></script>
     <script src="~/assets/js/toastr.min.js"></script>
+   
 </head>
 <body>
     <!-- Preloader -->
@@ -64,10 +66,21 @@
                             <div id="header-nav" class="collapse navbar-collapse">
 
 
-                                
+                                <ul class="navbar-nav" id="panelSideMenu2">
+                                    <li class="dropdown">
+                                        <a class="dropdown-item dropdown-toggle" href="#">Login/Signup</a>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="login.html">Login</a></li>
+                                            <li><a class="dropdown-item" href="signup.html">Sign Up</a></li>
+                                            <li><a class="dropdown-item" href="forgot-password.html">Forgot Password</a></li>
+                                            <li><a class="dropdown-item" href="otp.html">OTP - One Time Password</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
 
-                            <ul class="navbar-nav" id="panelSideMenu">
-                            </ul>
+                                <ul class="navbar-nav" id="panelSideMenu">
+                                    
+                                </ul>
 
 
 
@@ -485,35 +498,13 @@
 
     <script src="/js/owl.carousel.min.js"></script>
     <script src="/js/bootstrap-spinner.js"></script>
-    <script src="/js/moment.min.js"></script>
-    <script src="/js/daterangepicker.js"></script>
-    <script src="~/js/SideMenuNew.js" asp-append-version="true"></script>
+    
+    
     <script>
         $(function () {
             'use strict';
             $('.select2').select2({ allowClear: true });
-            // Depart Date
-            $('#DepartureDt').daterangepicker({
-                singleDatePicker: true,
-
-                autoApply: true,
-                minDate: moment(),
-                autoUpdateInput: false,
-            }, function (chosen_date) {
-                $('#DepartureDt').val(chosen_date.format('DD-MMM-YYYY'));
-            });
-
-            // Return Date
-            $('#ReturnDt').daterangepicker({
-                singleDatePicker: true,
-                autoApply: true,
-                minDate: moment(),
-                autoUpdateInput: false,
-            }, function (chosen_date) {
-                $('#ReturnDt').val(chosen_date.format('DD-MMM-YYYY'));
-            });
-
-
+            
         });
     </script>
     @await RenderSectionAsync("Scripts", required: false)
@@ -521,6 +512,8 @@
 
     <script src="/js/theme.js"></script>
     @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    
     <script>
         var mustAcceptCookies = false;
     </script>

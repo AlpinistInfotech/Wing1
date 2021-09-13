@@ -54,7 +54,7 @@
                             </select>
                         </div>
                         <div class="col-md-6 col-lg-2 form-group ddate">
-                            <input id="DepartureDt" asp-for="FlightSearchWraper.DepartureDt" value="@Convert.ToDateTime(Model.FlightSearchWraper.DepartureDt).ToString("dd-MMM-yyyy")" autocomplete="off" type="text" class="form-control datepicker" placeholder="Depart Date">
+                            <input id="DepartureDt" asp-for="FlightSearchWraper.DepartureDt" autocomplete="off" type="text" class="form-control datepicker" placeholder="Depart Date">
                             <span class="icon-inside"><i class="far fa-calendar-alt"></i></span>
                             <span class="was-validated text-danger" id="spndepdate"></span>
                         </div>
@@ -169,6 +169,9 @@
     </div>
 </div>
 <script src="/js/flightfilter.js"></script>
+<script src="/js/moment.min.js"></script>
+<script src="/js/daterangepicker.js"></script>
+
 <script>
     $(function () {
         'use strict';
@@ -176,8 +179,7 @@
         // Depart Date
         $('#DepartureDt').daterangepicker({
             singleDatePicker: true,
-
-            autoApply: true,
+            autoApply: true,            
             minDate: moment(),
             autoUpdateInput: false,
         }, function (chosen_date) {
