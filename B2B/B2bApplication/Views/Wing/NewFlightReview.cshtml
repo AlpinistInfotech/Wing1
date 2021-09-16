@@ -66,7 +66,7 @@
             <div asp-validation-summary="All" class="text-danger"></div>
 
             <input type="hidden" asp-for="FareQuoteRequest.TraceId" />
-            
+
             @for (int i = 0; i < (Model.FareQuoteRequest?.ResultIndex?.Count() ?? 0); i++)
             {
                 <input type="hidden" asp-for="FareQuoteRequest.ResultIndex[i]" />
@@ -233,7 +233,109 @@
 
                                                             </div>
 
+                                                            <!-- Departure Flight Detail end -->
+                                                            @if (tripinfo[i].sinfo?.BAGGAGE != null)
+                                                            {
+                                                                <div class="alert alert-primary col-12 col-sm-12 mt-3 mt-s-0">
+                                                                    <div class="row">
+                                                                        <div class="col-9">
+                                                                            <span>
+                                                                                Add Extra check-in baggage:
+                                                                                <br />
+                                                                                <small>Add Extra check-in baggage to this trip at a discounted price</small>
+                                                                            </span>
+                                                                        </div>
+                                                                        <div class="col-3">
+                                                                            <button type="button" data-toggle="modal" data-target="#baggage-@cnt" class="btn fli_secondry_btn fast-forward-btn">+ ADD</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- Baggage (Modal Dialog) ============================================= -->
+                                                                <div id="baggage-@cnt" class="modal fade" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+                                                                    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                                <h5 class="modal-title">Add extra baggage</h5>
+                                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                                <div class="row">
+                                                                                    <div class="col-12 text-left mb-4">
+                                                                                        <img class="img-fluid" alt="" src="~/AirlinesLogo/@(tripinfo?.FirstOrDefault()?.Airline?.Code).png">
+                                                                                        @tripinfo.FirstOrDefault().Origin.CityName➝@tripinfo.LastOrDefault().Destination.CityName
+                                                                                        <br />
+                                                                                        <span id="spnselcount">0</span> of @Model.travellerInfo.Count Selected
+                                                                                        <br />
+                                                                                        Included Check-in baggage per person - @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CheckingBaggage ?? "-")
+                                                                                        <br />
+                                                                                        <span id="spnerrmorebag" class="text-danger"></span>
+                                                                                    </div>
+                                                                                    <div class="col-12">
+
+                                                                                        <hr />
+                                                                                    </div>
+                                                                                    <div style="height:300px;width:100%; overflow:auto">
+                                                                                        @{int bagcnt = 0;}
+                                                                                        <input type="hidden" id="hid_isbagadded" />
+                                                                                        @foreach (var ml in tripinfo[i].sinfo?.BAGGAGE)
+                                                                                        {
+
+                                                                                            <div class="col-12">
+                                                                                                <div class="row">
+
+                                                                                                    <div class="col-6 col-sm-6 text-left time-info">
+                                                                                                        <span class="align-middle">
+                                                                                                            <img alt="" class="img-fluid" src="/images/baggage.png" style="height: 40px; max-width: 100%;">
+                                                                                                        </span>
+                                                                                                        <span class="align-middle ml-lg-2">
+                                                                                                            <span class="text-2 text-dark">Additional @ml.desc </span>
+                                                                                                            <input type="hidden" id="hid_bagcode-@bagcnt" value="@ml.code" />
+                                                                                                        </span>
+                                                                                                    </div>
+                                                                                                    <div class="col-6 col-sm-3 text-left time-info">
+
+                                                                                                        <span class="text-3 text-dark">₹ @ml.amount</span>
+                                                                                                        <input type="hidden" id="hid_bagamt-@bagcnt" value="@ml.amount" />
+                                                                                                    </div>
+                                                                                                    <div class="col-6 col-sm-3 text-left time-info">
+                                                                                                        <button type="button" style="padding: .40rem 1.5rem!important;" onclick="additionalbag('@ml.code',@ml.amount,@tripinfo[i].Id,@Model.travellerInfo.Count)" class="btn btn-outline-primary">
+                                                                                                            <span id="spnbtn-@bagcnt">+ Add</span>
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                    <div class="col-6 col-sm-3 text-left time-info" style="display:none;">
+                                                                                                        <div class="qty input-group">
+                                                                                                            <div class="input-group-prepend">
+                                                                                                                <button type="button" class="btn bg-light-4" data-value="decrease" data-target="#addbag-@bagcnt" data-toggle="spinner">-</button>
+                                                                                                            </div>
+                                                                                                            <input type="text" data-ride="spinner" id="addbag-@bagcnt" class="qty-spinner form-control" value="1" readonly="">
+                                                                                                            <div class="input-group-append">
+                                                                                                                <button type="button" class="btn bg-light-4" data-value="increase" data-target="#addbag-@bagcnt" data-toggle="spinner">+</button>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+
+                                                                                                </div>
+                                                                                                <hr />
+                                                                                            </div>
+                                                                                            bagcnt++;
+                                                                                        }
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div class="modal-footer">
+                                                                                <button type="button" class="btn btn-primary" data-dismiss="modal">Done</button>
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- Fare Rules end -->
+                                                            }
+
                                                         </div>
+
+
                                                     }
                                                     <!-- Fare Rules (Modal Dialog) ============================================= -->
                                                     <div id="fare-rules-@cnt" class="modal fade" role="dialog" aria-hidden="true">
@@ -319,88 +421,7 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Departure Flight Detail end -->
-                                            @if (Model.FareQuotResponse.FirstOrDefault().Results.FirstOrDefault()?.FirstOrDefault()?.Segment?.FirstOrDefault().sinfo?.BAGGAGE != null)
-                                            {
-                                                <div class="alert alert-primary mt-4">
-                                                    <div class="row">
-                                                        <div class="col-9">
-                                                            <span>
-                                                                Add Extra check-in baggage:
-                                                                <br />
-                                                                <small>Add Extra check-in baggage to this trip at a discounted price</small>
-                                                            </span>
-                                                        </div>
-                                                        <div class="col-3">
-                                                            <button type="button" data-toggle="modal" data-target="#baggage-@cnt" class="btn fli_secondry_btn fast-forward-btn">+ ADD</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- Baggage (Modal Dialog) ============================================= -->
-                                                <div id="baggage-@cnt" class="modal fade" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-                                                    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title">Add extra baggage</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <div class="row">
-                                                                    <div class="col-12 text-left mb-4">
-                                                                        <img class="img-fluid" alt="" src="~/AirlinesLogo/@(tripinfo?.FirstOrDefault()?.Airline?.Code).png">
-                                                                        @tripinfo.FirstOrDefault().Origin.CityName➝@tripinfo.LastOrDefault().Destination.CityName
-                                                                        <br />
-                                                                        <span id="spnselcount">0</span> of 1 Selected
-                                                                        <br />
-                                                                        Included Check-in baggage per person - @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CheckingBaggage ?? "-")
 
-                                                                    </div>
-                                                                    <div class="col-12">
-
-                                                                        <hr />
-                                                                    </div>
-                                                                    <div style="height:300px;width:100%; overflow:auto">
-                                                                        @{int bagcnt = 0;}
-                                                                        <input type="hidden" id="hid_isbagadded" />
-                                                                        @foreach (var ml in Model.FareQuotResponse.FirstOrDefault().Results.FirstOrDefault()?.FirstOrDefault()?.Segment?.FirstOrDefault().sinfo?.BAGGAGE)
-                                                                        {
-                                                                            bagcnt++;
-                                                                            <div class="col-12">
-                                                                                <div class="row">
-
-                                                                                    <div class="col-6 col-sm-6 text-left time-info">
-                                                                                        <span class="align-middle">
-                                                                                            <img alt="" class="img-fluid" src="/images/baggage.png" style="height: 40px; max-width: 100%;">
-                                                                                        </span>
-                                                                                        <span class="align-middle ml-lg-2">
-                                                                                            <span class="text-2 text-dark">Additional @ml.desc </span>
-                                                                                            <input type="hidden" id="hid_bagcode-@bagcnt" value="@ml.code" />
-                                                                                        </span>
-
-
-                                                                                    </div>
-                                                                                    <div class="col-6 col-sm-3 text-left time-info">
-
-                                                                                        <span class="text-3 text-dark">₹ @ml.amount</span>
-                                                                                        <input type="hidden" id="hid_bagamt-@bagcnt" value="@ml.amount" />
-                                                                                    </div>
-                                                                                    <div class="col-6 col-sm-3 text-left time-info">
-                                                                                        <button type="button" style="padding: .40rem 1.5rem!important;" onclick="bagadd('@ml.code',@ml.amount)" class="btn btn-outline-primary"><span id="spnbtn-@bagcnt">+ Add</span></button>
-                                                                                    </div>
-
-
-                                                                                </div>
-                                                                                <hr />
-                                                                            </div>
-                                                                        }
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- Fare Rules end -->
-                                            }
                                         }
                                     }
 
@@ -423,6 +444,8 @@
                                     @{ int adcnt = 0, cdcnt = 0, ifcnt = 0; }
                                     @for (int i = 0; i < Model.travellerInfo.Count; i++)
                                     {
+                                        <input type="hidden" asp-for="travellerInfo[i].ssrBaggageInfos.key" id="hid_baginfokey-@i" />
+                                        <input type="hidden" asp-for="travellerInfo[i].ssrBaggageInfos.value" id="hid_baginfoval-@i" />
                                         <input type="hidden" asp-for="travellerInfo[i].passengerType" />
                                         if (Model.travellerInfo[i].passengerType == enmPassengerType.Adult)
                                         {
@@ -578,7 +601,7 @@
                     </div>
 
                     <!-- Side Panel(Fare Details)
-            ============================================= -->
+                    ============================================= -->
                     <aside class="col-lg-4 mt-4 mt-lg-0">
                         <div class="bg-white shadow-md rounded p-3">
                             <h3 class="text-5 mb-3">Fare Details</h3>
@@ -590,13 +613,14 @@
                                         Adult(s) : @(Model.AdultCount) × @(Model.AdultBaseFare.ToString("C", nfi)) = @(Model.AdultTotalBaseFare.ToString("C", nfi))
                                     </small>
                                     @if (Model.ChildCount > 0)
-                                    {
+                                    {<br />
                                         <small class="text-muted">
                                             Child(s) : @(Model.ChildCount) x @(Model.ChildBaseFare.ToString("C", nfi)) = @(Model.ChildTotalBaseFare.ToString("C", nfi))
                                         </small>
                                     }
                                     @if (Model.InfantCount > 0)
                                     {
+                                        <br />
                                         <small class="text-muted">
                                             Infant(s) : @(Model.InfantCount) x @(Model.InfantBaseFare.ToString("C", nfi)) = @(Model.InfantTotalBaseFare.ToString("C", nfi))
                                         </small>
@@ -605,16 +629,57 @@
                                 </li>
                                 <li class="mb-2">Fee & Surcharge <span class="float-right text-4 font-weight-500 text-dark">@(Model.FeeSurcharge.ToString("C", nfi))</span></li>
 
-                                <li class="mb-2">Other Charge <span class="float-right text-4 font-weight-500 text-dark">@(Model.OtherCharge.ToString("C", nfi))</span></li>
-                                <li class="mb-2">Insurance <span class="float-right text-4 font-weight-500 text-dark">0</span></li>
+                                <li class="mb-2">
+                                    <i class="fa fa-plus-circle" data-toggle="collapse" href="#othcharge-@cnt" role="button" aria-expanded="false" aria-controls="othcharge-@cnt"></i>
+                                    Other Charge <span id="spnothcharge" class="float-right text-4 font-weight-500 text-dark">@(Model.OtherCharge.ToString("C", nfi))</span>
+                                    <input type="hidden" name="OtherCharge" id="OtherCharge" value="@Model.OtherCharge" />
+                                    <br />
+                                    <div class="col-12 col-sm-12 ml-auto btn-book">
+                                        <div class="collapse" id="othcharge-@cnt">
+                                            <div class="card card-body" style="padding:0rem!important;border:none!important;">
+                                                <div class="text-1" style="margin-right:-15px;">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <span class="text-muted">
+                                                                Meal(s) : <span id="spnmealtotal" class="float-right text-4 font-weight-500 text-dark">0</span>
+                                                                <input type="hidden" value="0" id="mealtotamt" />
+                                                            </span>
+                                                        </div>
+                                                        <div class="col-sm-12">
+                                                            <span class="text-muted">
+                                                                Baggage(s) :<span id="spnbagtotal" class="float-right text-4 font-weight-500 text-dark">0</span>
+                                                           <input type="hidden" value="0" id="bagtotamt" />
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </li>
+                                <li class="mb-2">
+                                    Insurance <span id="spninsuranceamt" class="float-right text-4 font-weight-500 text-dark">0</span>
+                                    <input type="hidden" name="InsuranceCharge" id="InsuranceCharge" value="@Model.InsuranceCharge" />
+                                </li>
                                 @if (Model.Convenience > 0)
                                 {
-                                    <li class="mb-2">Convenience <span class="float-right text-4 font-weight-500 text-dark">@(Model.Convenience.ToString("C", nfi))</span></li>
+                                    <li class="mb-2">
+                                        Convenience <span id="spnconvenamt" class="float-right text-4 font-weight-500 text-dark">@(Model.Convenience.ToString("C", nfi))</span>
+                                        <input type="hidden" name="Convenience" id="Convenience" value="@Model.Convenience" />
+                                    </li>
                                 }
-                                <li class="mb-2">Discount <span class="float-right text-4 font-weight-500 text-dark">0</span></li>
+                                <li class="mb-2">
+                                    Discount <span id="spndiscountamt" class="float-right text-4 font-weight-500 text-dark">0</span>
+                                    <input type="hidden" name="CouponAmount" id="CouponAmount" value="@Model.CouponAmount" />
+                                </li>
                             </ul>
 
-                            <div class="text-dark bg-light-4 text-4 font-weight-600 p-3"> Total Amount <span class="float-right text-6">@(Model.NetFare.ToString("C", nfi))</span> </div>
+                            <div class="text-dark bg-light-4 text-4 font-weight-600 p-3">
+                                Total Amount <span class="float-right text-6" id="spntotamt">@(Model.NetFare.ToString("C", nfi))</span>
+                                <input type="hidden" name="NetFare" id="NetFare" value="@Model.NetFare" />
+                            </div>
                             <h3 class="text-4 mb-3 mt-4">Promo Code</h3>
                             <div class="input-group form-group">
                                 <input class="form-control" placeholder="Promo Code" aria-label="Promo Code" type="text">
@@ -677,7 +742,7 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                             <button type="button" name="btnBookFlight" class="btn btn-secondary" data-dismiss="modal">Book Now</button>
                         </div>
                     </div>
@@ -712,4 +777,73 @@
             $("#frmFlightBook").submit();
         });
     });
+
+     function calculateamount(bagamt,mealamt,incamt,convamt,discamt) {
+        var totbagamt = 0;
+        var totconvamt = 0;
+        var totincamt = 0;
+        var totdiscamt = 0;
+        var totmealamt = 0;
+
+        var spanbagtotal = $('#bagtotamt').text();
+        var spanmealtotal = $('#mealtotamt').text();
+        var spaninctotal = $('#InsuranceCharge').text();
+        var spandisctotal = $('#CouponAmount').text();
+        var spanconvtotal = $('#Convenience').text();
+        if (spaninctotal != '' && parseFloat(spaninctotal) >= 0) {
+            totincamt = parseFloat(spaninctotal) + parseFloat(incamt);
+        }
+        if (spandisctotal != '' && parseFloat(spandisctotal) >= 0) {
+            totdiscamt = parseFloat(spandisctotal) + parseFloat(discamt);
+        }
+        if (spanconvtotal != '' && parseFloat(spanconvtotal) >= 0) {
+            totconvamt = parseFloat(spanconvtotal) + parseFloat(convamt);
+        }
+        if (spanmealtotal != '' && parseFloat(spanmealtotal) >= 0) {
+            totmealamt = parseFloat(spanmealtotal) + parseFloat(mealamt);
+        }
+        if (spanbagtotal != '' && parseFloat(spanbagtotal) >= 0) {
+            totbagamt = parseFloat(spanbagtotal) + parseFloat(bagamt);
+        }
+        $('#spnbagtotal').html("@nfi.NumberFormat.CurrencySymbol"+" "+totbagamt);
+        var othcharge =0 ;
+            if ($('#spnothcharge').text() != '') {
+                othcharge = parseFloat($('#spnothcharge').text());
+            }
+            if (parseFloat(othcharge) >= 0) {
+                othcharge = othcharge + totbagamt+totmealamt;
+            }
+            $('#spnothcharge').html("@nfi.NumberFormat.CurrencySymbol"+" "+othcharge);
+        $('#OtherCharge').val(othcharge);
+        $('#InsuranceCharge').val(totincamt);
+        $('#spninsuranceamt').html("@nfi.NumberFormat.CurrencySymbol" + " " + totincamt);
+        $('#spnconvenamt').html("@nfi.NumberFormat.CurrencySymbol" + " " + totconvamt);
+        $('#spndiscountamt').html("@nfi.NumberFormat.CurrencySymbol" + " " + totdiscamt);
+
+           var totfare = $('#NetFare').val();
+            totfare = (totfare + totbagamt+totincamt+totconvamt)-totdiscamt;
+
+            $('#spntotamt').html("@nfi.NumberFormat.CurrencySymbol"+" "+totfare);
+            $('#NetFare').val(totfare);
+
+    }
+
+    function additionalbag(bagcode, bagamt, segcode, totalbag) {
+        debugger;
+        var addedbagcnt = 0;
+        if ($('#spnselcount').text() != '') {
+            addedbagcnt = parseFloat($('#spnselcount').text());
+        }
+        if (addedbagcnt < totalbag) {
+            addedbagcnt = addedbagcnt + 1;
+            var cnt = addedbagcnt - 1;
+            $('#spnselcount').html(addedbagcnt);
+            $('#hid_baginfokey-' + cnt).val(segcode);
+            $('#hid_baginfoval-' + cnt).val(bagcode);
+            calculateamount(bagamt, 0, 0, 0, 0)
+        }
+        else {
+            $('#spnerrmorebag').html('You do not add more than '+totalbag+' bag.');
+        }
+    }
 </script>

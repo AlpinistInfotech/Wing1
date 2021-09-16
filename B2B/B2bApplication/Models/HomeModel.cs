@@ -59,7 +59,8 @@ namespace B2bApplication.Models
         public double NetFare { get; set; }
         public double Convenience { get; set; }
         public double TotalOtherCharge { get; set; }
-
+        public double InsuranceCharge { get; set; }
+        public double CouponAmount { get; set; }
 
 
         public void SetFareAmount()

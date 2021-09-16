@@ -1565,7 +1565,7 @@ h1, h2, h3, h4, h5, h6 {
 .icon-inside {
     position: relative;
     right: 15px;
-    top: -35px;
+    top: -29px;
     pointer-events: none;
     font-size: 18px;
     font-size: 1.125rem;
@@ -3978,7 +3978,7 @@ h2.resp-accordion:first-child {
     }
 
     .form-control:not(.form-control-sm) {
-        padding: .810rem .96rem;
+      
         height: inherit;
     }
 
@@ -3996,25 +3996,6 @@ select.form-control:not([size]):not([multiple]):not(.form-control-sm) {
     padding-bottom: .700rem;
 }
 
-.custom-select:not(.custom-select-sm) {
-    height: calc(3.05rem + 2px);
-    min-height: 100%;
-    padding-top: .700rem;
-    padding-bottom: .700rem;
-}
-
-    .custom-select:not(.custom-select-sm).border-0 {
-        height: calc(3.00rem + 2px);
-    }
-
-.col-form-label-sm {
-    font-size: 13px;
-}
-
-.custom-select-sm {
-    padding-left: 5px !important;
-    font-size: 14px;
-}
 
 /*.custom-select:not(.custom-select-sm).border-0{height:3.00rem;}*/
 .form-control:focus, .custom-select:focus {
@@ -4051,7 +4032,7 @@ select.form-control:not([size]):not([multiple]):not(.form-control-sm) {
 }
 
 .btn {
-    padding: .750rem 2.5rem;
+    padding: .450rem 2.5rem;
     -webkit-transition: all 0.5s ease;
     transition: all 0.5s ease;
 }

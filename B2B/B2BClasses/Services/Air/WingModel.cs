@@ -70,6 +70,7 @@ namespace B2BClasses.Services.Air
 
     public class mdlSegment
     {
+        public int Id { get; set; }
         public mdlAirline Airline { get; set; }
         public mdlAirport Origin { get; set; }
         public mdlAirport Destination { get; set; }

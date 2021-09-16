@@ -482,6 +482,7 @@ namespace B2BClasses.Services.Air
                         FlightNumber = q.fD?.fN ?? string.Empty,
                         OperatingCarrier = q.oB?.code ?? string.Empty,
                     },
+                    Id=q.id,
                     ArrivalTime = q.at,
                     DepartureTime = q.dt,
                     Duration = q.duration,
@@ -952,6 +953,7 @@ namespace B2BClasses.Services.Air
 
         public class Si
         {
+            public int id { get; set; }
             public Fd fD { get; set; }
             public int stops { get; set; }
             public So[] so { get; set; }

@@ -259,7 +259,7 @@ namespace B2bApplication.Controllers
                     List<string> eml = new List<string>();
                     eml.Add(mdl.emails);
                     List<mdlPaymentInfos> pi = new List<mdlPaymentInfos>();
-                    pi.Add(new mdlPaymentInfos() { amount = mdl.FareQuotResponse[i].TotalPriceInfo.TotalFare });
+                    pi.Add(new mdlPaymentInfos() { amount = mdl.FareQuotResponse[i].TotalPriceInfo.TotalFare+mdl.OtherCharge+mdl.InsuranceCharge+mdl.Convenience-mdl.CouponAmount });
                     string bookid = mdl.FareQuotResponse[i].BookingId;
                     mdlBookingRequest mdlReq = new mdlBookingRequest()
                     {
@@ -316,7 +316,7 @@ namespace B2bApplication.Controllers
             return View(mdlres);
         }
 
-
+      
         private async Task<mdlPackageSearch> GetPackageData(mdlPackageSearch mdl, IBooking booking)
         {
             if (mdl == null)
