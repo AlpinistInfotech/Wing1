@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -191,7 +192,19 @@ namespace B2bApplication.Controllers
             mdl.BookingRequestDefaultData();
             return View(mdl);
         }
-
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> checkMpin(string mpin)
+        {
+            string CustomerMPin = _currentUsers.MPin ?? "0000";
+            if (CustomerMPin != mpin)
+            {
+                return Json("invalid");
+            }
+            else
+            {
+                return Json("success");
+            }
+        }
         [AcceptVerbs("Get", "Post")]
         [ValidateAntiForgeryToken]
         [Authorize(policy: nameof(enmDocumentMaster.Flight))]
@@ -199,6 +212,12 @@ namespace B2bApplication.Controllers
         {
             mdlFlighBook mdlres = new mdlFlighBook() { FareQuotResponse = new List<mdlFareQuotResponse>(), IsSucess = new List<bool>(), BookingId = new List<string>() };
             bool IsPriceChanged = false;
+            //for (int ti = 0; ti < mdl.travellerInfo.Count(); ti++)
+            //{
+
+            //    mdl.travellerInfo[ti].ssrBaggageInfoslist.Add(new mdlSSRS() { code = mdl.travellerInfo[ti].ssrBaggageInfos.code, key = mdl.travellerInfo[ti].ssrBaggageInfos.key });
+            //}
+
             if (!(mdl == null || mdl.FareQuoteRequest == null))
             {
                 var s = JsonConvert.SerializeObject(mdl);
@@ -217,20 +236,12 @@ namespace B2bApplication.Controllers
                     return RedirectToAction("NewFlightReview");
                 }
 
-                string CustomerMPin = _currentUsers.MPin ?? "0000";
-                if (CustomerMPin != mdl.Mpin)
-                {
-                    TempData["mdl_"] = s;
-                    TempData["MessageType"] = (int)enmMessageType.Error;
-                    TempData["Message"] = _setting.GetErrorMessage(enmMessage.MpinNotMatch);
-                    return RedirectToAction("NewFlightReview");
-                }
+               
 
-                await mdl.LoadFareQuotationAsync(_currentUsers.CustomerId, _booking, _markup, _context);
+                //await mdl.LoadFareQuotationAsync(_currentUsers.CustomerId, _booking, _markup, _context);
                 IsPriceChanged = mdl.FareQuotResponse.Any(p => p.IsPriceChanged);
                 if (IsPriceChanged)
                 {
-
                     TempData["mdl_"] = s;
                     TempData["MessageType"] = (int)enmMessageType.Warning;
                     TempData["Message"] = _setting.GetErrorMessage(enmMessage.FlightPriceChanged);
@@ -259,8 +270,9 @@ namespace B2bApplication.Controllers
                     List<string> eml = new List<string>();
                     eml.Add(mdl.emails);
                     List<mdlPaymentInfos> pi = new List<mdlPaymentInfos>();
-                    pi.Add(new mdlPaymentInfos() { amount = mdl.FareQuotResponse[i].TotalPriceInfo.TotalFare+mdl.OtherCharge+mdl.InsuranceCharge+mdl.Convenience-mdl.CouponAmount });
-                    string bookid = mdl.FareQuotResponse[i].BookingId;
+                    pi.Add(new mdlPaymentInfos() { amount = mdl.FareQuotResponse[i].TotalPriceInfo.TotalFare+mdl.OtherCharge});
+                    string bookid = mdl.FareQuotResponse[i].BookingId;                    
+                    
                     mdlBookingRequest mdlReq = new mdlBookingRequest()
                     {
                         TraceId = mdl.FareQuoteRequest.TraceId,
@@ -282,6 +294,7 @@ namespace B2bApplication.Controllers
                         ViewBag.SaveStatus = (int)enmMessageType.Warning;
                         ViewBag.Message = Result.Error.Message;
                     }
+                   
 
                 }
             }

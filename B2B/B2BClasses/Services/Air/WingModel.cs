@@ -371,6 +371,10 @@ namespace B2BClasses.Services.Air
         public mdlSSRS ssrMealInfos { get; set; }
         public mdlSSRS ssrSeatInfos { get; set; }
         public mdlSSRS ssrExtraServiceInfos { get; set; }
+        public List<mdlSSRS> ssrBaggageInfoslist { get; set; }
+        public List<mdlSSRS> ssrMealInfoslist { get; set; }
+        public List<mdlSSRS> ssrSeatInfoslist { get; set; }
+        public List<mdlSSRS> ssrExtraServiceInfoslist { get; set; }
     }
     public class mdlPaymentInfos
     {
@@ -389,8 +393,8 @@ namespace B2BClasses.Services.Air
 
     public class mdlSSRS
     {
+        public string code { get; set; }
         public string key { get; set; }
-        public string value { get; set; }
     }
 
     public class mdlBookingResponse

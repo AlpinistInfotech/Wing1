@@ -34,7 +34,7 @@ namespace B2bApplication.Models
         public mdlGstInfo gstInfo { get; set; }        
         public mdlFareQuoteCondition FareQuoteCondition{ get; set; }
 
-        
+        public string bookingid { get; set; }
         [DataType( DataType.EmailAddress) ]
         public string emails { get; set; }
         [DataType(DataType.PhoneNumber)]
@@ -237,6 +237,7 @@ namespace B2bApplication.Models
         public List<mdlFareQuotResponse> FareQuotResponse { get; set; }
         public List<bool> IsSucess { get; set; }
         public List<string> BookingId { get; set; }
+        public List<string> PNR { get; set; }
         public List<mdlTravellerinfo> travellerInfo { get; set; }
         public mdlDeliveryinfo deliveryInfo { get; set; }
     }
