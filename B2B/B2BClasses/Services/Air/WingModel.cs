@@ -365,6 +365,9 @@ namespace B2BClasses.Services.Air
         public enmPassengerType passengerType { get; set; }
         public DateTime? dob { get; set; }
         public string pNum { get; set; }
+        public string bookingclass { get; set; }
+        public string cabinclass { get; set; }
+        public string farebasis { get; set; }
         public DateTime PassportExpiryDate { get; set; }
         public DateTime PassportIssueDate { get; set; }
         public mdlSSRS ssrBaggageInfos { get; set; }
@@ -380,8 +383,6 @@ namespace B2BClasses.Services.Air
     {
         public double amount { get; set; }
     }
-
-
     public class mdlGstInfo
     {
         public string gstNumber { get; set; }
@@ -395,6 +396,7 @@ namespace B2BClasses.Services.Air
     {
         public string code { get; set; }
         public string key { get; set; }
+        public string desc { get; set; }
     }
 
     public class mdlBookingResponse

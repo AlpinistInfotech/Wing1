@@ -79,9 +79,19 @@ namespace B2bApplication
             });
 
             services.AddScoped<IAuthorizationHandler, AccessRightHandler>();
+            services.AddDistributedMemoryCache();
 
-
-            services.AddControllersWithViews();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromHours(3);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+            services.AddMemoryCache();
+            services.AddSession();
+            services.AddMvc(options => options.EnableEndpointRouting = false);
+            services.AddControllersWithViews().AddSessionStateTempDataProvider();
+         
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -123,7 +133,8 @@ namespace B2bApplication
                 CheckConsentNeeded= context => true
             };
             app.UseCookiePolicy(cookiePolicyOptions);
-
+            app.UseSession();
+            app.UseMvc();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

@@ -1253,7 +1253,7 @@ namespace B2BClasses.Services.Air
                         ServiceProvider = enmServiceProvider.TripJack,
                         TraceId = request.TraceId,
                         BookingId = ServiceProvider + "_" + mdl.bookingId,
-                        ResponseStatus = 1,
+                        ResponseStatus = 1,                        
                         IsPriceChanged = mdl.alerts?.Any(p => p.oldFare != p.newFare) ?? false,
                         Error = new mdlError()
                         {

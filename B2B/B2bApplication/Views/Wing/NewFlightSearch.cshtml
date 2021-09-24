@@ -157,7 +157,117 @@
             </div><!-- Flights Search end -->
         </div>
     </div>
-    <div id="lstflight"></div>
+
+    <!-- Content
+        ============================================= -->
+    <div id="content2" style="display:none;">
+        <section class="container">
+
+            <div class="row">
+                <aside class="col-md-3">
+                    <div class="bg-white shadow-md rounded p-3">
+                        <h3 class="text-5">Filter</h3>
+                        <hr class="mx-n3">
+                        <div class="accordion accordion-alternate style-2 mt-n3" id="toggleAlternate">
+                            <div class="card">
+                                <div class="card-header" id="stops">
+                                    <h5 class="mb-0">
+                                        <a href="#" data-toggle="collapse" data-target="#togglestops" aria-expanded="true" aria-controls="togglestops">No. of Stops</a>
+                                    </h5>
+                                </div>
+                                <div id="togglestops" class="collapse show" aria-labelledby="stops">
+                                    <div class="card-body">
+                                        <div class="custom-control custom-checkbox"  id="divnonstop" style="display:none">
+                                            <input type="checkbox" id="nonstop" name="stop" value="1" onclick="checkfilter(this)" class="custom-control-input">
+                                            <label class="custom-control-label" for="nonstop">
+                                                Non Stop (<span id="nonstopcnt"></span>)
+                                            </label>
+                                        </div>
+
+                                        <div class="custom-control custom-checkbox" id="divonestop" style="display:none">
+                                            <input type="checkbox" id="1stop" value="2" name="stop" onclick="checkfilter(this)" class="custom-control-input">
+                                            <label class="custom-control-label" for="1stop">1 Stop (<span id="onestopcnt"></span>)</label>
+                                        </div>
+
+                                        <div class="custom-control custom-checkbox" id="divmultistop" style="display:none">
+                                            <input type="checkbox" id="2stop" value="3" name="stop" onclick="checkfilter(this)" class="custom-control-input">
+                                            <label class="custom-control-label" for="2stop">1+ Stop (<span id="multistopcnt"></span>)</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header" id="departureTime">
+                                    <h5 class="mb-0"> <a href="#" class="collapse" data-toggle="collapse" data-target="#toggleDepartureTime" aria-expanded="true" aria-controls="toggleDepartureTime">Departure Time</a> </h5>
+                                </div>
+                                <div id="toggleDepartureTime" class="collapse show" aria-labelledby="departureTime">
+                                    <div class="card-body">
+                                        <div class="custom-control custom-checkbox clearfix">
+                                            <input type="checkbox" id="earlymorning" name="departureTime" onclick="checkfilter(this)" value="earlymorning" class="custom-control-input">
+                                            <label class="custom-control-label" for="earlymorning">Early Morning</label>
+                                            <small class="text-muted float-right">12am - 8am</small>
+                                        </div>
+                                        <div class="custom-control custom-checkbox clearfix">
+                                            <input type="checkbox" id="morning" name="departureTime" onclick="checkfilter(this)" value="morning" class="custom-control-input">
+                                            <label class="custom-control-label" for="morning">Morning</label>
+                                            <small class="text-muted float-right">8am - 12pm</small>
+                                        </div>
+                                        <div class="custom-control custom-checkbox clearfix">
+                                            <input type="checkbox" id="midday" name="departureTime" onclick="checkfilter(this)" value="midday" class="custom-control-input">
+                                            <label class="custom-control-label" for="midday">Mid-Day</label>
+                                            <small class="text-muted float-right">12pm - 4pm</small>
+                                        </div>
+                                        <div class="custom-control custom-checkbox clearfix">
+                                            <input type="checkbox" id="evening" name="departureTime" onclick="checkfilter(this)" value="evening" class="custom-control-input">
+                                            <label class="custom-control-label" for="evening">Evening</label>
+                                            <small class="text-muted float-right">4pm - 8pm</small>
+                                        </div>
+                                        <div class="custom-control custom-checkbox clearfix">
+                                            <input type="checkbox" id="night" name="departureTime" onclick="checkfilter(this)" value="night" class="custom-control-input">
+                                            <label class="custom-control-label" for="night">Night</label>
+                                            <small class="text-muted float-right">8pm - 12am</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                    <div class="card-header" id="price">
+                                        <h5 class="mb-0">
+                                            <a href="#" class="collapse" data-toggle="collapse" data-target="#togglePrice" aria-expanded="true" aria-controls="togglePrice">Price</a>
+                                        </h5>
+                                    </div>
+                                    <div id="togglePrice" class="collapse show" aria-labelledby="price">
+                                        <div class="card-body">
+                                            <p>
+                                                <input id="amount" type="text" readonly class="form-control border-0 bg-transparent p-0">
+                                            </p>
+                                            <div id="slider-range"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <div class="card">
+                                <div class="card-header" id="airlines">
+                                    <h5 class="mb-0"> <a href="#" class="collapse" data-toggle="collapse" data-target="#toggleAirlines" aria-expanded="true" aria-controls="toggleAirlines">Airlines</a> </h5>
+                                </div>
+                                <div id="toggleAirlines" class="collapse show" aria-labelledby="airlines">
+                                    <div class="card-body">
+                                        <div id="divairlines"></div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+
+                <div id="lstflight" class="col-md-9 mt-4 mt-md-0"></div>
+            </div>
+        </section>
+    </div>
+    <!-- Content end -->
+
 
 
 </div>
@@ -168,18 +278,18 @@
         <img src="/images/loading.gif" alt="ajaxload" />
     </div>
 </div>
-<script src="/js/flightfilter.js"></script>
+
 <script src="/js/moment.min.js"></script>
 <script src="/js/daterangepicker.js"></script>
 
 <script>
     $(function () {
         'use strict';
-       
+
         // Depart Date
         $('#DepartureDt').daterangepicker({
             singleDatePicker: true,
-            autoApply: true,            
+            autoApply: true,
             minDate: moment(),
             autoUpdateInput: false,
         }, function (chosen_date) {
@@ -274,7 +384,7 @@
                 async: true,
                 url: "/Wing/NewFlightSearch",
                 data: allFormData,
-                dataType: "html",
+                dataType: "json",
                 beforeSend: function () {
                     $('#ajaxloading').show();
                 },
@@ -284,21 +394,129 @@
                     $("#ajaxloading").hide();
                 },
                 success: function (data) {
-                    if (data != "no record") {
+                    debugger;
+                    if (data.error == 0) {
+                        $('#content2').show();
                         $('#lstflight').empty();
-                        $('#lstflight').html(data); // data came back ok, so display it
+                        $('#lstflight').html(data.partialView); // data came back ok, so display it
+                        if (data.nonstopcnt > 0)
+                            $('#divnonstop').show();
+                        else
+                            $('#divnonstop').hide();
+                        if (data.onestopcnt > 0)
+                            $('#divonestop').show();
+                        else
+                            $('#divonestop').hide();
+                        if (data.multistopcnt > 0)
+                            $('#divmultistop').show();
+                        else
+                            $('#divmultistop').hide();
+                        $('#nonstopcnt').html(data.nonstopcnt);
+                        $('#onestopcnt').html(data.onestopcnt);
+                        $('#multistopcnt').html(data.multistopcnt);
+                        //slider range
+                        // Slider Range (jQuery UI)
+                        $("#slider-range").slider({
+                            range: true,
+                            min: data.minamt,
+                            max: data.maxamt,
+                            values: [data.minamt, data.maxamt],
+                            slide: function (event, ui) {
+                                $("#amount").val(data.currency + ui.values[0] + " - " + data.currency + ui.values[1]);
+                            }
+                        });
+                        $("#amount").val(data.currency + $("#slider-range").slider("values", 0) +
+                            " - " + data.currency + $("#slider-range").slider("values", 1));
+                    
+                        var strairlines = "";
+                        $.each(data.airlines, function (propName, propVal) {
+                            strairlines = strairlines + '<div class="custom-control custom-checkbox">' +
+                                '<input type = "checkbox" id ="' + propVal + '" name ="airlines" value ="' + propVal + '" class="custom-control-input" onclick = "checkfilter(this)" >' +
+                                '<label class="custom-control-label" for="' + propVal + '">' + propVal + '</label></div >';
+                        });
+                        $('#divairlines').empty();
+                        $('#divairlines').html(strairlines);
                     }
                     else {
-                        toastr.warning("No data found");
+                         toastr.warning("No data found");
+                         }
                     }
-                }
-            });
+                    });
+                     }
+
+
+                      });
+// Slider Range (jQuery UI)
+    
+    function checkfilter(obj) {
+        debugger;
+    var dataid = $(obj).attr("data-id");
+    var datavalue = $(obj).attr("data-value");
+var airline = new Array()
+$("input[name='airlines']:checked").each(function () {
+airline.push($(this).val());
+});
+var stoparr = new Array()
+$("input[name='stop']:checked").each(function () {
+stoparr.push($(this).val());
+});
+var deptimearr = new Array()
+$("input[name='departureTime']:checked").each(function () {
+deptimearr.push($(this).val());
+});
+    var url = "/Wing/OnewayFlightSearchfilter";
+    if ($("input:radio[name='FlightSearchWraper.JourneyType']:checked").val() == "1") {
+        url = "/Wing/OnewayFlightSearchfilter";
+    }
+    else {
+        url = "/Wing/RoundwayFlightSearchfilter";
+    }
+jQuery.ajax({
+type: "GET",
+async: true,
+    url: url,
+data: { "stop": stoparr, "airline": airline, "deptimearr": deptimearr, "sortname": dataid, "sortvalue": datavalue },
+dataType: "html",
+traditional: true,
+beforeSend: function () {
+$('#ajaxloading').show();
+},
+complete: function () {
+
+// Hide image container
+$("#ajaxloading").hide();
+},
+success: function (data) {
+debugger;
+if (data !== 'no found') {
+$('#lstflight').empty();
+    $('#lstflight').html(data); // data came back ok, so display it
+    $('#iarrival').removeClass('fas fa-long-arrow-alt-down fas fa-long-arrow-alt-up');
+    $('#iduration').removeClass('fas fa-long-arrow-alt-down fas fa-long-arrow-alt-up');
+    $('#iairline').removeClass('fas fa-long-arrow-alt-down fas fa-long-arrow-alt-up');
+    $('#ideparture').removeClass('fas fa-long-arrow-alt-down fas fa-long-arrow-alt-up');
+    $('#iprice').removeClass('fas fa-long-arrow-alt-down fas fa-long-arrow-alt-up');
+    $('#iarrival2').removeClass('fas fa-long-arrow-alt-down fas fa-long-arrow-alt-up');
+    $('#iduration2').removeClass('fas fa-long-arrow-alt-down fas fa-long-arrow-alt-up');
+    $('#iairline2').removeClass('fas fa-long-arrow-alt-down fas fa-long-arrow-alt-up');
+    $('#ideparture2').removeClass('fas fa-long-arrow-alt-down fas fa-long-arrow-alt-up');
+    $('#iprice2').removeClass('fas fa-long-arrow-alt-down fas fa-long-arrow-alt-up');
+    if (datavalue == 'asc') {
+            $('#spn' + dataid).attr('data-value', 'desc');
+            $('#i' + dataid).removeClass('fas fa-long-arrow-alt-up').addClass('fas fa-long-arrow-alt-down');
         }
-
-
-    });
-
-
+        else {
+            $('#spn' + dataid).attr('data-value', 'asc');
+            $('#i' + dataid).removeClass('fas fa-long-arrow-alt-down').addClass('fas fa-long-arrow-alt-up');
+        }
+    
+}
+else {
+toastr.warning("No data found");
+}
+}
+});
+}
 
 
 </script>

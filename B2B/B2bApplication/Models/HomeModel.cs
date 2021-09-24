@@ -198,6 +198,9 @@ namespace B2bApplication.Models
                                 passengerType = enmPassengerType.Adult,
                                 FirstName = string.Empty,
                                 LastName = string.Empty,
+                                cabinclass=md.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT.CabinClass.ToString(),
+                                bookingclass = md.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT.ClassOfBooking.ToString(),
+                                farebasis = md.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT.FareBasis.ToString()
                             });
                         }
                         for (int i = 0; i < md.SearchQuery.ChildCount; i++)
@@ -208,6 +211,9 @@ namespace B2bApplication.Models
                                 passengerType = enmPassengerType.Child,
                                 FirstName = string.Empty,
                                 LastName = string.Empty,
+                                cabinclass = md.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD.CabinClass.ToString(),
+                                bookingclass = md.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD.ClassOfBooking.ToString(),
+                                farebasis = md.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.CHILD.FareBasis.ToString()
                             });
                         }
                         for (int i = 0; i < md.SearchQuery.InfantCount; i++)
@@ -218,6 +224,9 @@ namespace B2bApplication.Models
                                 passengerType = enmPassengerType.Infant,
                                 FirstName = string.Empty,
                                 LastName = string.Empty,
+                                cabinclass = md.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.INFANT.CabinClass.ToString(),
+                                bookingclass = md.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.INFANT.ClassOfBooking.ToString(),
+                                farebasis = md.Results?.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.INFANT.FareBasis.ToString()
                             });
                         }
 

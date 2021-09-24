@@ -102,7 +102,7 @@
                                     <h2 class="text-6 mb-3 mb-sm-4">Confirm Flight Details</h2>
                                     <hr class="mx-n3 mx-sm-n4 mb-4">
                                     @{int cnt = 0;}
-
+                                    @{int bagcnt = 0;}
                                     @foreach (var md in Model.FareQuotResponse)
                                     {
 
@@ -284,18 +284,18 @@
                                                                                         <img class="img-fluid" alt="" src="~/AirlinesLogo/@(tripinfo?.FirstOrDefault()?.Airline?.Code).png">
                                                                                         @tripinfo.FirstOrDefault().Origin.CityName➝@tripinfo.LastOrDefault().Destination.CityName
                                                                                         <br />
-                                                                                        <span id="spnselcount">0</span> of @Model.travellerInfo.Count Selected
+                                                                                        <span id="spnselcount-@cnt">0</span> of @Model.travellerInfo.Count Selected
                                                                                         <br />
                                                                                         Included Check-in baggage per person - @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CheckingBaggage ?? "-")
                                                                                         <br />
-                                                                                        <span id="spnerrmorebag" class="text-danger"></span>
+                                                                                        <span id="spnerrmorebag-@cnt" class="text-danger"></span>
                                                                                     </div>
                                                                                     <div class="col-12">
 
                                                                                         <hr />
                                                                                     </div>
                                                                                     <div style="height:300px;width:100%; overflow:auto">
-                                                                                        @{int bagcnt = 0;}
+
                                                                                         <input type="hidden" id="hid_isbagadded" />
                                                                                         @foreach (var ml in tripinfo[i].sinfo?.BAGGAGE)
                                                                                         {
@@ -315,18 +315,18 @@
                                                                                                         <input type="hidden" id="hid_bagamt-@bagcnt" value="@ml.amount" />
                                                                                                     </div>
                                                                                                     <div class="col-6 col-sm-3 text-left time-info bag-@bagcnt">
-                                                                                                        <button type="button" style="padding:.40rem 1.5rem!important;" onclick="additionalbag('@ml.code','@ml.desc',@ml.amount,@tripinfo[i].Id,@Model.travellerInfo.Count,@bagcnt)" class="btn btn-outline-primary">
+                                                                                                        <button type="button" style="padding:.40rem 1.5rem!important;" onclick="additionalbag('@ml.code','@ml.desc',@ml.amount,@tripinfo[i].Id,@Model.travellerInfo.Count,@bagcnt,@cnt)" class="btn btn-outline-primary">
                                                                                                             <span id="spnbtn-@bagcnt">+ Add</span>
                                                                                                         </button>
                                                                                                     </div>
                                                                                                     <div class="col-6 col-sm-3 text-left time-info spinner-@bagcnt" style="display:none;">
                                                                                                         <div class="qty input-group">
                                                                                                             <div class="input-group-prepend">
-                                                                                                                <button type="button" id="btndecrease-@bagcnt" class="btn bg-light-4" data-value="decrease" onclick="removebag('@ml.code','@ml.desc',@ml.amount,@tripinfo[i].Id,@Model.travellerInfo.Count,@bagcnt)" data-target="#addbag-@bagcnt" data-toggle="spinner">-</button>
+                                                                                                                <button type="button" id="btndecrease-@bagcnt" class="btn bg-light-4" data-value="decrease" onclick="removebag('@ml.code','@ml.desc',@ml.amount,@tripinfo[i].Id,@Model.travellerInfo.Count,@bagcnt,@cnt)" data-target="#addbag-@bagcnt" data-toggle="spinner">-</button>
                                                                                                             </div>
                                                                                                             <input type="text" data-ride="spinner" id="addbag-@bagcnt" class="qty-spinner form-control" value="1" readonly="">
                                                                                                             <div class="input-group-append">
-                                                                                                                <button type="button" id="btnincrease-@bagcnt" class="btn bg-light-4 btnincrease" data-value="increase" onclick="additionalbag('@ml.code','@ml.desc',@ml.amount,@tripinfo[i].Id,@Model.travellerInfo.Count,@bagcnt)" data-target="#addbag-@bagcnt" data-toggle="spinner">+</button>
+                                                                                                                <button type="button" id="btnincrease-@bagcnt" class="btn bg-light-4 btnincrease" data-value="increase" onclick="additionalbag('@ml.code','@ml.desc',@ml.amount,@tripinfo[i].Id,@Model.travellerInfo.Count,@bagcnt,@cnt)" data-target="#addbag-@bagcnt" data-toggle="spinner">+</button>
                                                                                                             </div>
                                                                                                         </div>
                                                                                                     </div>
@@ -467,7 +467,11 @@
                                         <input type="hidden" asp-for="travellerInfo[i].ssrBaggageInfos.key" value="Bag Out First with 1 Bag" />
                                         <input type="hidden" asp-for="travellerInfo[i].ssrBaggageInfoslist[0].code" />
                                         <input type="hidden" asp-for="travellerInfo[i].ssrBaggageInfoslist[0].key" />
+                                        <input type="hidden" asp-for="travellerInfo[i].ssrBaggageInfoslist[0].desc" />
                                         <input type="hidden" asp-for="travellerInfo[i].passengerType" />
+                                        <input type="hidden" asp-for="travellerInfo[i].cabinclass" />
+                                        <input type="hidden" asp-for="travellerInfo[i].bookingclass" />
+                                        <input type="hidden" asp-for="travellerInfo[i].farebasis" />
                                         if (Model.travellerInfo[i].passengerType == enmPassengerType.Adult)
                                         {
                                             adcnt++;
@@ -940,7 +944,7 @@
     });
 
      function calculateamount(bagamt,mealamt,incamt,convamt,discamt) {
-
+         debugger;
          var totbagamt = 0;
         var totconvamt = 0;
         var totincamt = 0;
@@ -975,7 +979,8 @@
          }
         else {
             totmealamt = parseFloat(mealamt);
-        }
+         }
+         $('#mealtotamt').val(totmealamt);
         if (spanbagtotal != '' && parseFloat(spanbagtotal) >= 0) {
             totbagamt = parseFloat(spanbagtotal) + parseFloat(bagamt);
          }
@@ -983,13 +988,14 @@
             totbagamt = parseFloat(bagamt);
         }
         $('#spnbagtotal').html("@nfi.NumberFormat.CurrencySymbol"+" "+totbagamt);
-        var othcharge =0 ;
-         if ($('#OtherCharge').val() != '') {
-             othcharge = parseFloat($('#OtherCharge').val());
-            }
-            if (parseFloat(othcharge) >= 0) {
+         $('#bagtotamt').val(totbagamt);
+         var othcharge = 0;
+         //if ($('#OtherCharge').val() != '') {
+         //    othcharge = parseFloat($('#OtherCharge').val());
+         //   }
+          /*  if (parseFloat(othcharge) >= 0) {*/
                 othcharge = othcharge + totbagamt+totmealamt;
-            }
+            //}
             $('#spnothcharge').html("@nfi.NumberFormat.CurrencySymbol"+" "+othcharge);
         $('#OtherCharge').val(othcharge);
         $('#InsuranceCharge').val(totincamt);
@@ -998,18 +1004,18 @@
         $('#spndiscountamt').html("@nfi.NumberFormat.CurrencySymbol" + " " + totdiscamt);
 
            var totfare = $('#NetFare').val();
-            totfare = (parseFloat(totfare) + parseFloat(totbagamt)+parseFloat(totincamt)+parseFloat(totconvamt))-parseFloat(totdiscamt);
+         totfare = (parseFloat(totfare) + parseFloat(bagamt) + parseFloat(mealamt)+parseFloat(incamt)+parseFloat(convamt))-parseFloat(discamt);
 
             $('#spntotamt').html("@nfi.NumberFormat.CurrencySymbol"+" "+totfare);
             $('#NetFare').val(totfare);
 
     }
 
-    function additionalbag(bagcode,bagdesc, bagamt, segcode, totalbag,bagcnt) {
+    function additionalbag(bagcode,bagdesc, bagamt, segcode, totalbag,bagcnt,cnt) {
 
         var addedbagcnt = 0;
-        if ($('#spnselcount').text() != '') {
-            addedbagcnt = parseFloat($('#spnselcount').text());
+        if ($('#spnselcount-'+cnt).text() != '') {
+            addedbagcnt = parseFloat($('#spnselcount-' + cnt).text());
         }
         var spincnt = $('#addbag-' + bagcnt).val();
         if (parseInt(spincnt) == 0) {
@@ -1027,10 +1033,10 @@
             $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfos.key']").val(segcode);
             $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfoslist[0].code']").val(bagcode);
             $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfoslist[0].key']").val(segcode);
-
+            $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfoslist[0].desc']").val(bagdesc);
             addedbagcnt = addedbagcnt + 1;
 
-            $('#spnselcount').html(addedbagcnt);
+            $('#spnselcount-' + cnt).html(addedbagcnt);
           //  $('#hid_baginfokey-' + cnt).val(segcode);
            // $('#hid_baginfoval-' + cnt).val(bagcode);
             calculateamount(bagamt, 0, 0, 0, 0)
@@ -1048,15 +1054,15 @@
         else {
 
            // $('#addbag-' + bagcnt).val(addedbagcnt);
-            $('#spnerrmorebag').html('You do not add more than '+totalbag+' bag.');
+            $('#spnerrmorebag-'+cnt).html('You do not add more than '+totalbag+' bag.');
         }
     }
     function removebag(bagcode, bagdesc, bagamt, segcode, totalbag,bagcnt) {
         debugger;
 
         var addedbagcnt = 0;
-        if ($('#spnselcount').text() != '') {
-            addedbagcnt = parseFloat($('#spnselcount').text());
+        if ($('#spnselcount-' + cnt).text() != '') {
+            addedbagcnt = parseFloat($('#spnselcount-' + cnt).text());
         }
         addedbagcnt = addedbagcnt - 1;
         //var hidbaginfo = $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfos.code']").val();
@@ -1071,9 +1077,9 @@
             $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfos.key']").val('');
             $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfoslist[0].code']").val('');
             $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfoslist[0].key']").val('');
-
+            $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfoslist[0].desc']").val('');
             $('.btnincrease').removeAttr('disabled');
-            $('#spnselcount').html(addedbagcnt);
+            $('#spnselcount-' + cnt).html(addedbagcnt);
             //  $('#hid_baginfokey-' + cnt).val(segcode);
             // $('#hid_baginfoval-' + cnt).val(bagcode);
             calculateamount(-bagamt, 0, 0, 0, 0)
@@ -1089,7 +1095,7 @@
             }
         }
         else {
-            $('#spnerrmorebag').html('You do not add more than ' + totalbag + ' bag.');
+            $('#spnerrmorebag-'+cnt).html('You do not add more than ' + totalbag + ' bag.');
         }
     }
 </script>
