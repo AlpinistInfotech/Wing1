@@ -396,7 +396,7 @@ namespace B2BClasses.Services.Air
     {
         public string code { get; set; }
         public string key { get; set; }
-        public string desc { get; set; }
+       // public string desc { get; set; }
     }
 
     public class mdlBookingResponse

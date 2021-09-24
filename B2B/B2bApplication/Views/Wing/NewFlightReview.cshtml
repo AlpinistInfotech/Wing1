@@ -467,11 +467,15 @@
                                         <input type="hidden" asp-for="travellerInfo[i].ssrBaggageInfos.key" value="Bag Out First with 1 Bag" />
                                         <input type="hidden" asp-for="travellerInfo[i].ssrBaggageInfoslist[0].code" />
                                         <input type="hidden" asp-for="travellerInfo[i].ssrBaggageInfoslist[0].key" />
-                                        <input type="hidden" asp-for="travellerInfo[i].ssrBaggageInfoslist[0].desc" />
+                                      
                                         <input type="hidden" asp-for="travellerInfo[i].passengerType" />
                                         <input type="hidden" asp-for="travellerInfo[i].cabinclass" />
                                         <input type="hidden" asp-for="travellerInfo[i].bookingclass" />
                                         <input type="hidden" asp-for="travellerInfo[i].farebasis" />
+
+                                        <input type="hidden" asp-for="travellerInfo[i].ssrMealInfoslist[0].code" />
+                                        <input type="hidden" asp-for="travellerInfo[i].ssrMealInfoslist[0].key" />
+                                       
                                         if (Model.travellerInfo[i].passengerType == enmPassengerType.Adult)
                                         {
                                             adcnt++;

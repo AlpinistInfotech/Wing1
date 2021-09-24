@@ -17,146 +17,147 @@
 <!-- Content============================================= -->
 <div id="content">
 
-    <div class="bg-primary pt-4 pb-5">
+    <div class="bg-light pt-4 pb-5">
         <div class="container">
-
-            <!-- Flights Search============================================= -->
-            <div class="bg-white shadow-md rounded px-4 pt-4 pb-3">
-                <h2 class="text-4 mb-3">Book Domestic and International Flights</h2>
-                <form id="bookingFlight" action="/Wing/NewFlightSearch" method="post">
-                    @Html.AntiForgeryToken()
-                    <div asp-validation-summary="All" class="text-danger"></div>
-                    <div class="mb-3">
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input id="oneway" asp-for="FlightSearchWraper.JourneyType" class="custom-control-input" value="1" checked="" type="radio">
-                            <label class="custom-control-label" for="oneway">One Way</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input id="roundtrip" asp-for="FlightSearchWraper.JourneyType" class="custom-control-input" value="2" type="radio">
-                            <label class="custom-control-label" for="roundtrip">Round Trip</label>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-md-6 col-lg-2 form-group">
-                            <select id="OriginFrom" asp-for="FlightSearchWraper.From" class="select2 form-control" data-placeholder="From">
-                                @foreach (var d in Model.Airports)
-                                {
-                                    <option value="@d.AirportCode">@(d.AirportCode), @d.CityName, @d.CountryCode  </option>
-                                }
-                            </select>
-                        </div>
-                        <div class="col-md-6 col-lg-2 form-group">
-                            <select id="OriginTo" asp-for="FlightSearchWraper.To" class="select2 form-control" data-placeholder="To">
-                                @foreach (var d in Model.Airports)
-                                {
-                                    <option value="@d.AirportCode">@(d.AirportCode), @d.CityName, @d.CountryCode </option>
-                                }
-                            </select>
-                        </div>
-                        <div class="col-md-6 col-lg-2 form-group ddate">
-                            <input id="DepartureDt" asp-for="FlightSearchWraper.DepartureDt" autocomplete="off" type="text" class="form-control datepicker" placeholder="Depart Date">
-                            <span class="icon-inside"><i class="far fa-calendar-alt"></i></span>
-                            <span class="was-validated text-danger" id="spndepdate"></span>
-                        </div>
-                        <div class="col-md-6 col-lg-2 form-group rdate" style="display:none;">
-                            <input id="ReturnDt" asp-for="FlightSearchWraper.ReturnDt" autocomplete="off" type="text" class="form-control datepicker" placeholder="Return Date">
-                            <span class="icon-inside"><i class="far fa-calendar-alt"></i></span>
-                            <p class="was-validated text-danger" id="spnretdate"></p>
-                        </div>
-                        <div class="col-md-6 col-lg-2 travellers-class form-group">
-                            <input type="text" id="flightTravellersClass" class="travellers-class-input form-control" name="flight-travellers-class" placeholder="Travellers, Class" readonly="" onkeypress="return false;">
-                            <span class="icon-inside"><i class="fas fa-caret-down"></i></span>
-                            <p class="was-validated text-danger" id="spnfliclass"></p>
-                            <div class="travellers-dropdown">
-                                <div class="row align-items-center">
-                                    <div class="col-sm-7">
-                                        <p class="mb-sm-0">Adults <small class="text-muted">(12+ yrs)</small></p>
-                                    </div>
-                                    <div class="col-sm-5">
-                                        <div class="qty input-group">
-                                            <div class="input-group-prepend">
-                                                <button type="button" class="btn bg-light-4" data-value="decrease" data-target="#Adult" data-toggle="spinner">-</button>
-                                            </div>
-                                            <input type="text" data-ride="spinner" id="Adult" asp-for="FlightSearchWraper.AdultCount" class="qty-spinner form-control" value="1" readonly="">
-                                            <div class="input-group-append">
-                                                <button type="button" class="btn bg-light-4" data-value="increase" data-target="#Adult" data-toggle="spinner">+</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr class="my-2">
-                                <div class="row align-items-center">
-                                    <div class="col-sm-7">
-                                        <p class="mb-sm-0">Children <small class="text-muted">(2-12 yrs)</small></p>
-                                    </div>
-                                    <div class="col-sm-5">
-                                        <div class="qty input-group">
-                                            <div class="input-group-prepend">
-                                                <button type="button" class="btn bg-light-4" data-value="decrease" data-target="#Child" data-toggle="spinner">-</button>
-                                            </div>
-                                            <input type="text" data-ride="spinner" id="Child" asp-for="FlightSearchWraper.ChildCount" class="qty-spinner form-control" value="0" readonly="">
-                                            <div class="input-group-append">
-                                                <button type="button" class="btn bg-light-4" data-value="increase" data-target="#Child" data-toggle="spinner">+</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr class="my-2">
-                                <div class="row align-items-center">
-                                    <div class="col-sm-7">
-                                        <p class="mb-sm-0">Infants <small class="text-muted">(Below 2 yrs)</small></p>
-                                    </div>
-                                    <div class="col-sm-5">
-                                        <div class="qty input-group">
-                                            <div class="input-group-prepend">
-                                                <button type="button" class="btn bg-light-4" data-value="decrease" data-target="#Infant" data-toggle="spinner">-</button>
-                                            </div>
-                                            <input type="text" data-ride="spinner" id="Infant" asp-for="FlightSearchWraper.InfantCount" class="qty-spinner form-control" value="0" readonly="">
-                                            <div class="input-group-append">
-                                                <button type="button" class="btn bg-light-4" data-value="increase" data-target="#Infant" data-toggle="spinner">+</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr class="mt-2">
-                                <div class="mb-3">
-                                    <div class="custom-control custom-radio">
-                                        <input id="flightClassAll" asp-for="FlightSearchWraper.CabinClass" class="flight-class custom-control-input" value="AllClasses" checked="" type="radio">
-                                        <label class="custom-control-label" for="flightClassAll">All Class</label>
-                                    </div>
-                                    <div class="custom-control custom-radio">
-                                        <input id="flightClassEconomic" asp-for="FlightSearchWraper.CabinClass" class="flight-class custom-control-input" value="Economy" checked="" type="radio">
-                                        <label class="custom-control-label" for="flightClassEconomic">Economic</label>
-                                    </div>
-                                    <div class="custom-control custom-radio">
-                                        <input id="flightClassPremiumEconomic" asp-for="FlightSearchWraper.CabinClass" class="flight-class custom-control-input" value="PREMIUM_ECONOMY" type="radio">
-                                        <label class="custom-control-label" for="flightClassPremiumEconomic">Premium Economic</label>
-                                    </div>
-                                    <div class="custom-control custom-radio">
-                                        <input id="flightClassBusiness" asp-for="FlightSearchWraper.CabinClass" class="flight-class custom-control-input" value="BUSINESS" type="radio">
-                                        <label class="custom-control-label" for="flightClassBusiness">Business</label>
-                                    </div>
-                                    <div class="custom-control custom-radio">
-                                        <input id="flightClassPremiumBusiness" asp-for="FlightSearchWraper.CabinClass" class="flight-class custom-control-input" value="PremiumBusiness" type="radio">
-                                        <label class="custom-control-label" for="flightClassPremiumBusiness">Premium Business</label>
-                                    </div>
-                                    <div class="custom-control custom-radio">
-                                        <input id="flightClassFirstClass" class="flight-class custom-control-input" value="FIRST" type="radio">
-                                        <label class="custom-control-label" for="flightClassFirstClass">First Class</label>
-                                    </div>
-                                </div>
-                                <button class="btn btn-primary btn-block submit-done" type="button">Done</button>
+            <div class="bg-white shadow-md rounded p-3">
+                <!-- Flights Search============================================= -->
+                <div class="bg-white shadow-md rounded px-4 pt-4 pb-3">
+                    <h2 class="text-4 mb-3">Book Domestic and International Flights</h2>
+                    <form id="bookingFlight" action="/Wing/NewFlightSearch" method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="mb-3">
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input id="oneway" asp-for="FlightSearchWraper.JourneyType" class="custom-control-input" value="1" checked="" type="radio">
+                                <label class="custom-control-label" for="oneway">One Way</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input id="roundtrip" asp-for="FlightSearchWraper.JourneyType" class="custom-control-input" value="2" type="radio">
+                                <label class="custom-control-label" for="roundtrip">Round Trip</label>
                             </div>
                         </div>
-                        <div class="col-md-6 col-lg-2 form-group">
+                        <div class="form-row">
+                            <div class="col-md-6 col-lg-2 form-group">
+                                <select id="OriginFrom" asp-for="FlightSearchWraper.From" class="select2 form-control" data-placeholder="From">
+                                    @foreach (var d in Model.Airports)
+                                    {
+                                        <option value="@d.AirportCode">@(d.AirportCode), @d.CityName, @d.CountryCode  </option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-6 col-lg-2 form-group">
+                                <select id="OriginTo" asp-for="FlightSearchWraper.To" class="select2 form-control" data-placeholder="To">
+                                    @foreach (var d in Model.Airports)
+                                    {
+                                        <option value="@d.AirportCode">@(d.AirportCode), @d.CityName, @d.CountryCode </option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-6 col-lg-2 form-group ddate">
+                                <input id="DepartureDt" asp-for="FlightSearchWraper.DepartureDt" autocomplete="off" type="text" class="form-control datepicker" placeholder="Depart Date">
+                                <span class="icon-inside"><i class="far fa-calendar-alt"></i></span>
+                                <span class="was-validated text-danger" id="spndepdate"></span>
+                            </div>
+                            <div class="col-md-6 col-lg-2 form-group rdate" style="display:none;">
+                                <input id="ReturnDt" asp-for="FlightSearchWraper.ReturnDt" autocomplete="off" type="text" class="form-control datepicker" placeholder="Return Date">
+                                <span class="icon-inside"><i class="far fa-calendar-alt"></i></span>
+                                <p class="was-validated text-danger" id="spnretdate"></p>
+                            </div>
+                            <div class="col-md-6 col-lg-2 travellers-class form-group">
+                                <input type="text" id="flightTravellersClass" class="travellers-class-input form-control" name="flight-travellers-class" placeholder="Travellers, Class" readonly="" onkeypress="return false;">
+                                <span class="icon-inside"><i class="fas fa-caret-down"></i></span>
+                                <p class="was-validated text-danger" id="spnfliclass"></p>
+                                <div class="travellers-dropdown">
+                                    <div class="row align-items-center">
+                                        <div class="col-sm-7">
+                                            <p class="mb-sm-0">Adults <small class="text-muted">(12+ yrs)</small></p>
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <div class="qty input-group">
+                                                <div class="input-group-prepend">
+                                                    <button type="button" class="btn bg-light-4" data-value="decrease" data-target="#Adult" data-toggle="spinner">-</button>
+                                                </div>
+                                                <input type="text" data-ride="spinner" id="Adult" asp-for="FlightSearchWraper.AdultCount" class="qty-spinner form-control" value="1" readonly="">
+                                                <div class="input-group-append">
+                                                    <button type="button" class="btn bg-light-4" data-value="increase" data-target="#Adult" data-toggle="spinner">+</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="my-2">
+                                    <div class="row align-items-center">
+                                        <div class="col-sm-7">
+                                            <p class="mb-sm-0">Children <small class="text-muted">(2-12 yrs)</small></p>
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <div class="qty input-group">
+                                                <div class="input-group-prepend">
+                                                    <button type="button" class="btn bg-light-4" data-value="decrease" data-target="#Child" data-toggle="spinner">-</button>
+                                                </div>
+                                                <input type="text" data-ride="spinner" id="Child" asp-for="FlightSearchWraper.ChildCount" class="qty-spinner form-control" value="0" readonly="">
+                                                <div class="input-group-append">
+                                                    <button type="button" class="btn bg-light-4" data-value="increase" data-target="#Child" data-toggle="spinner">+</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="my-2">
+                                    <div class="row align-items-center">
+                                        <div class="col-sm-7">
+                                            <p class="mb-sm-0">Infants <small class="text-muted">(Below 2 yrs)</small></p>
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <div class="qty input-group">
+                                                <div class="input-group-prepend">
+                                                    <button type="button" class="btn bg-light-4" data-value="decrease" data-target="#Infant" data-toggle="spinner">-</button>
+                                                </div>
+                                                <input type="text" data-ride="spinner" id="Infant" asp-for="FlightSearchWraper.InfantCount" class="qty-spinner form-control" value="0" readonly="">
+                                                <div class="input-group-append">
+                                                    <button type="button" class="btn bg-light-4" data-value="increase" data-target="#Infant" data-toggle="spinner">+</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="mt-2">
+                                    <div class="mb-3">
+                                        <div class="custom-control custom-radio">
+                                            <input id="flightClassAll" asp-for="FlightSearchWraper.CabinClass" class="flight-class custom-control-input" value="AllClasses" checked="" type="radio">
+                                            <label class="custom-control-label" for="flightClassAll">All Class</label>
+                                        </div>
+                                        <div class="custom-control custom-radio">
+                                            <input id="flightClassEconomic" asp-for="FlightSearchWraper.CabinClass" class="flight-class custom-control-input" value="Economy" checked="" type="radio">
+                                            <label class="custom-control-label" for="flightClassEconomic">Economic</label>
+                                        </div>
+                                        <div class="custom-control custom-radio">
+                                            <input id="flightClassPremiumEconomic" asp-for="FlightSearchWraper.CabinClass" class="flight-class custom-control-input" value="PREMIUM_ECONOMY" type="radio">
+                                            <label class="custom-control-label" for="flightClassPremiumEconomic">Premium Economic</label>
+                                        </div>
+                                        <div class="custom-control custom-radio">
+                                            <input id="flightClassBusiness" asp-for="FlightSearchWraper.CabinClass" class="flight-class custom-control-input" value="BUSINESS" type="radio">
+                                            <label class="custom-control-label" for="flightClassBusiness">Business</label>
+                                        </div>
+                                        <div class="custom-control custom-radio">
+                                            <input id="flightClassPremiumBusiness" asp-for="FlightSearchWraper.CabinClass" class="flight-class custom-control-input" value="PremiumBusiness" type="radio">
+                                            <label class="custom-control-label" for="flightClassPremiumBusiness">Premium Business</label>
+                                        </div>
+                                        <div class="custom-control custom-radio">
+                                            <input id="flightClassFirstClass" class="flight-class custom-control-input" value="FIRST" type="radio">
+                                            <label class="custom-control-label" for="flightClassFirstClass">First Class</label>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary btn-block submit-done" type="button">Done</button>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-2 form-group">
 
-                            <button class="btn btn-primary btn-block" id="btnflightsearch" type="button">Search</button>
+                                <button class="btn btn-primary btn-block" id="btnflightsearch" type="button">Search</button>
+                            </div>
                         </div>
-                    </div>
-                </form>
-            </div><!-- Flights Search end -->
+                    </form>
+                </div><!-- Flights Search end -->
+            </div>
+            </div>
         </div>
-    </div>
 
     <!-- Content
         ============================================= -->
