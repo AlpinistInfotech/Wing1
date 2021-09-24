@@ -146,13 +146,14 @@ namespace B2bApplication.Controllers
             {
                 if (mdl.FlightSearchWraper.JourneyType == enmJourneyType.OneWay)
                 {
-                    foreach (var some in mdl.searchResponse.Results.FirstOrDefault().ToList())
-                    {
-                        some.traceid = mdl.searchResponse.TraceId;
-                    }
+                    //foreach (var some in mdl.searchResponse.Results.FirstOrDefault().ToList())
+                    //{
+                    //    some.traceid = mdl.searchResponse.TraceId;
+                    //}
 
                     //mdl.searchResponse.Results.FirstOrDefault().FirstOrDefault().traceid = mdl.searchResponse?.TraceId;
                     var res = mdl.searchResponse?.Results.FirstOrDefault().OrderBy(x => x.TotalPriceList?.FirstOrDefault().TotalPrice).ToList();
+                    
                     int nonstopcnt = res.Where(x => x.Segment.Count() == 1).Count();
                     int onestopcnt = res.Where(x => x.Segment.Count() == 2).Count();
                     int multistopcnt = res.Where(x => x.Segment.Count() > 2).Count();
@@ -165,7 +166,7 @@ namespace B2bApplication.Controllers
 
                     PartialViewResult partialViewResult = PartialView("_NewFlightResult", res);
                     string viewContent = ConvertViewToString(this.ControllerContext, partialViewResult, _viewEngine);
-                    return Json(new { searchtype = 1, error = 0, PartialView = viewContent, nonstopcnt = nonstopcnt, onestopcnt = onestopcnt, multistopcnt = multistopcnt, airlines = airlines, maxamt = maxamt, minamt = minamt, currency = currencysym });
+                    return Json(new { searchtype = 1, error = 0, PartialView = viewContent, nonstopcnt = nonstopcnt, onestopcnt = onestopcnt, multistopcnt = multistopcnt, airlines = airlines, maxamt = maxamt, minamt = minamt, currency = currencysym,traceid= mdl.searchResponse.TraceId});
                     // return PartialView("_NewFlightResult", res);
                 }
                 else
@@ -202,7 +203,7 @@ namespace B2bApplication.Controllers
 
                     PartialViewResult partialViewResult = PartialView("_NewReturnFlightResult", res);
                     string viewContent = ConvertViewToString(this.ControllerContext, partialViewResult, _viewEngine);
-                    return Json(new { searchtype = 2, error = 0, PartialView = viewContent, nonstopcnt = nonstopcnt, onestopcnt = onestopcnt, multistopcnt = multistopcnt, airlines = airlines.Distinct(), maxamt = maxamt, minamt = minamt, currency = currencysym });
+                    return Json(new { searchtype = 2, error = 0, PartialView = viewContent, nonstopcnt = nonstopcnt, onestopcnt = onestopcnt, multistopcnt = multistopcnt, airlines = airlines.Distinct(), maxamt = maxamt, minamt = minamt, currency = currencysym, traceid = mdl.searchResponse.TraceId });
                     //return PartialView("_NewReturnFlightResult", res);
                 }
             }
@@ -610,8 +611,29 @@ namespace B2bApplication.Controllers
             return PartialView("_NewReturnFlightResult", sres);
 
         }
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> ClearOnewayFlightSearchfilter()
+        {
+            List<mdlSearchResult> serch = new List<mdlSearchResult>();
 
+            if (HttpContext.Session.GetObjectFromJson<List<mdlSearchResult>>("flight") != null)
+            {
+                serch = HttpContext.Session.GetObjectFromJson<List<mdlSearchResult>>("flight");
+            }
+            return PartialView("_NewFlightResult", serch);
+        }
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> ClearRoundwayFlightSearchfilter()
+        {
+            mdlSearchResponse sres = new mdlSearchResponse();
 
+            if (HttpContext.Session.GetObjectFromJson<mdlSearchResponse>("flight") != null)
+            {
+                sres = HttpContext.Session.GetObjectFromJson<mdlSearchResponse>("flight");
+
+            }
+            return PartialView("_NewFlightResult", sres);
+        }
         [AcceptVerbs("Get")]
         [Authorize(policy: nameof(enmDocumentMaster.Flight))]
         public async Task<IActionResult> NewFlightReviewAsync()

@@ -241,6 +241,10 @@ namespace B2BClasses.Services.Air
         public double TaxAndFees { get; set; }
         public double BaseFare { get; set; }
         public double TotalFare { get; set; }
+        public double othercharge { get; set; }
+        public double convincecharge { get; set; }
+        public double discount { get; set; }
+        public double insurance { get; set; }
     }
 
     public class mdlFareQuoteCondition
@@ -396,7 +400,7 @@ namespace B2BClasses.Services.Air
     {
         public string code { get; set; }
         public string key { get; set; }
-       // public string desc { get; set; }
+        public string desc { get; set; }
     }
 
     public class mdlBookingResponse

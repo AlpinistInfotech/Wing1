@@ -42,12 +42,12 @@
                                                 <div class="custom-control custom-radio custom-control-inline mr-1">
                                                     @if (cnt == 1)
                                                     {
-                                                        <input id="departure-flight-@cnt" name="departure-flight" onclick="onwardflightdetails(@cnt)" checked class="custom-control-input" type="radio">
+                                                        <input id="departure-flight-@cnt" name="departure-flight" value="@item.TotalPriceList?.FirstOrDefault().ResultIndex" onclick="onwardflightdetails(@cnt)" checked class="custom-control-input" type="radio">
                                                     
                                                     }
                                                     else
                                                     {
-                                                        <input id="departure-flight-@cnt" name="departure-flight" onclick="onwardflightdetails(@cnt)" class="custom-control-input" type="radio">
+                                                        <input id="departure-flight-@cnt" value="@item.TotalPriceList?.FirstOrDefault().ResultIndex" name="departure-flight" onclick="onwardflightdetails(@cnt)" class="custom-control-input" type="radio">
                                                     }
                                                     <label class="custom-control-label" for="departure-flight-@cnt"></label>
                                                 </div>
@@ -374,12 +374,12 @@
                                                 <div class="custom-control custom-radio custom-control-inline mr-1">
                                                     @if (rcnt == 1)
                                                     {
-                                                        <input id="return-flight-@cnt" name="return-flight" onclick="returnflightdetails(@cnt,@rcnt)" class="custom-control-input" checked type="radio">
+                                                        <input id="return-flight-@cnt" value="@item.TotalPriceList?.FirstOrDefault().ResultIndex" name="return-flight" onclick="returnflightdetails(@cnt,@rcnt)" class="custom-control-input" checked type="radio">
                                                        
                                                     }
                                                     else
                                                     {
-                                                        <input id="return-flight-@cnt" name="return-flight" onclick="returnflightdetails(@cnt,@rcnt)" class="custom-control-input" type="radio">
+                                                        <input id="return-flight-@cnt" value="@item.TotalPriceList?.FirstOrDefault().ResultIndex" name="return-flight" onclick="returnflightdetails(@cnt,@rcnt)" class="custom-control-input" type="radio">
                                                     }
                                                     <label class="custom-control-label" for="return-flight-@cnt"></label>
                                                 </div>
@@ -391,38 +391,7 @@
                                             </div>
                                             <div class="col-6 col-sm col-lg-3 text-center time-info">
                                                 <span id="flight-dtime-@cnt">@item.Segment.FirstOrDefault()?.DepartureTime.ToString("HH:mm")</span>
-                                                @{ string deptime = "";
-                                                    TimeSpan now = item.Segment.FirstOrDefault().DepartureTime.TimeOfDay;
-                                                    TimeSpan emornstart = TimeSpan.Parse("00:00"); // 12 AM
-                                                    TimeSpan emornend = TimeSpan.Parse("08:00");   // 8 AM
-                                                    TimeSpan mornstart = TimeSpan.Parse("08:01"); // 12 AM
-                                                    TimeSpan mornend = TimeSpan.Parse("12:00");   // 8 AM
-                                                    TimeSpan midstart = TimeSpan.Parse("12:01"); // 12 AM
-                                                    TimeSpan midend = TimeSpan.Parse("16:00");   // 8 AM
-                                                    TimeSpan evenstart = TimeSpan.Parse("16:01"); // 12 AM
-                                                    TimeSpan evenend = TimeSpan.Parse("20:00");   // 8 AM
-                                                    TimeSpan nigtstart = TimeSpan.Parse("20:01"); // 12 AM
-                                                    TimeSpan nigtend = TimeSpan.Parse("23:59");   // 8 AM
-                                                    if (now >= emornstart && now <= emornend)
-                                                    {
-                                                        deptime = "earlymorning";
-                                                    }
-                                                    else if (now >= mornstart && now <= mornend)
-                                                    {
-                                                        deptime = "morning";
-                                                    }
-                                                    else if (now >= midstart && now <= midend)
-                                                    {
-                                                        deptime = "midday";
-                                                    }
-                                                    else if (now >= evenstart && now <= evenend)
-                                                    {
-                                                        deptime = "evening";
-                                                    }
-                                                    else { deptime = "night"; }
-                                                }
-                                                <input type="hidden" value="@deptime" id="hidflighttime" class="deptimefil" />
-                                                @if (item.Segment.Count > 1)
+                                                 @if (item.Segment.Count > 1)
                                                 {<small class="text-muted d-none d-sm-block spnstop">@(item.Segment.Count - 1) Stop</small><small>
                                                         via
                                                         @{string depvia = ""; int segcnt = 0; }
@@ -450,8 +419,8 @@
                                             </div>
                                             <div class="col-12 col-sm col-lg-3 text-center text-sm-right text-dark text-3 price">
                                                 @(item.TotalPriceList?.FirstOrDefault().TotalPrice.ToString("C", _currentuser.cultureInfo))
-                                                <input type="hidden" value=" @item.TotalPriceList?.FirstOrDefault().TotalPrice" id="flight-price-@cnt" />
-                                                <input type="hidden" value=" @item.TotalPriceList?.FirstOrDefault().ResultIndex" id="return-flightid-@rcnt" />
+                                                <input type="hidden" value="@item.TotalPriceList?.FirstOrDefault().TotalPrice" id="flight-price-@cnt" />
+                                                <input type="hidden" value="@item.TotalPriceList?.FirstOrDefault().ResultIndex" id="return-flightid-@rcnt" />
                                             </div>
                                             <div class="col col-sm-auto col-lg-3 ml-auto text-0 text-center text-sm-right">
                                                 <a data-toggle="modal" data-target="#flight-@cnt" href="">Flight Details</a>
@@ -717,7 +686,7 @@
                                     </small>
                                 </div>
                                 <div class="col-12 col-md-6 text-center mt-2 mt-md-0 btn-book">
-                                    <button class="btn btn-sm btn-primary px-sm-2 px-lg-3" name='bookFlight' >
+                                    <button class="btn btn-sm btn-primary px-sm-2 px-lg-3" name='bookFlight'>
                                         <i class="fas fa-shopping-cart d-block d-lg-none"></i>
                                         <span class="d-none d-lg-block">Book</span>
                                     </button>
@@ -752,7 +721,7 @@
         if (myArr.length > 0) {
             var totprice = parseFloat(price) + parseFloat($('#flight-price-' + myArr[2]).val());
 
-            $('#flight-tprice').html(totprice.toFixed(2));
+            $('#flight-tprice').html(parseFloat(totprice).toFixed(2));
         }
     }
     function onwardflightdetails(obj) {
@@ -774,19 +743,31 @@
         if (myArr.length > 0) {
             var totprice = parseFloat(price) + parseFloat($('#flight-price-' + myArr[2]).val());
 
-            $('#flight-tprice').html(totprice.toFixed(2));
+            $('#flight-tprice').html(parseFloat(totprice).toFixed(2));
         }
     }
+
+
     $("button[name='bookFlight']").click(function () {
         debugger;
-        var resultIndex1 = $('#FareQuoteRequestResultIndex1').val();
-        var resultIndex2 = $('#FareQuoteRequestResultIndex2').val();
-        if (resultIndex1 == '') {
-            $('#FareQuoteRequestResultIndex1').val($('#onward-flightid-1').val());
+        var resultInde1 = $("input[name='departure-flight']:checked").val();
+        if (resultInde1 == null || resultInde1 == undefined) {
+            alert('Select Flight');
+            return;
         }
-        if (resultIndex2 == '') {
-            resultindex2 = $('#return-flightid-1').val();
-            $('#FareQuoteRequestResultIndex2').val($('#return-flightid-1').val());
+        else {
+            resultInde = resultInde1;
+            $("#FareQuoteRequestResultIndex1").val(resultInde1);
+        }
+
+        var resultInde2 = $("input[name='return-flight']:checked").val();
+        if ($("#JourneyType").val() == 2 && (resultInde2 == null || resultInde2 == undefined)) {
+            alert('Select Retrurn Flight');
+            return;
+        }
+        else {
+            $("#FareQuoteRequestResultIndex2").val(resultInde2);
+            resultInde = resultInde1 + "," + resultInde2;
         }
         $("#frmFlightReview").submit();
     });

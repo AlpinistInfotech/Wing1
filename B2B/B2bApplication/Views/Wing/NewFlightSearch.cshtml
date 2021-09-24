@@ -154,7 +154,8 @@
                             </div>
                         </div>
                     </form>
-                </div><!-- Flights Search end -->
+                </div>
+    <!-- Flights Search end -->
             </div>
             </div>
         </div>
@@ -167,7 +168,11 @@
             <div class="row">
                 <aside class="col-md-3">
                     <div class="bg-white shadow-md rounded p-3">
-                        <h3 class="text-5">Filter</h3>
+                        <div class="row">
+                            <div class="col-sm-6">  <h3 class="text-5">Filter</h3></div>
+                            <div class="col-sm-6 text-right"> <a onclick="clearfilter()"><b>Clear All</b></a> </div>
+                        </div>
+                      
                         <hr class="mx-n3">
                         <div class="accordion accordion-alternate style-2 mt-n3" id="toggleAlternate">
                             <div class="card">
@@ -415,6 +420,7 @@
                         $('#nonstopcnt').html(data.nonstopcnt);
                         $('#onestopcnt').html(data.onestopcnt);
                         $('#multistopcnt').html(data.multistopcnt);
+                        $('#FareQuoteRequestTraceId').val(data.traceid);
                         //slider range
                         // Slider Range (jQuery UI)
                         $("#slider-range").slider({
@@ -517,7 +523,64 @@ toastr.warning("No data found");
 }
 }
 });
-}
+    }
+
+    function clearfilter() {
+        debugger;
+        $("input[name='airlines']:checkbox").prop('checked', false);
+        $("input[name='stop']:checkbox").prop('checked', false);
+        $("input[name='departureTime']:checkbox").prop('checked', false);
+      
+        var url = "/Wing/ClearOnewayFlightSearchfilter";
+        if ($("input:radio[name='FlightSearchWraper.JourneyType']:checked").val() == "1") {
+            url = "/Wing/ClearOnewayFlightSearchfilter";
+        }
+        else {
+            url = "/Wing/ClearRoundwayFlightSearchfilter";
+        }
+        
+        jQuery.ajax({
+            type: "GET",
+            async: true,
+            url: url,           
+            dataType: "html",
+            traditional: true,
+            beforeSend: function () {
+                $('#ajaxloading').show();
+            },
+            complete: function () {
+                // Hide image container
+                $("#ajaxloading").hide();
+            },
+            success: function (data) {
+                debugger;
+                if (data !== 'no found') {
+                    $('#lstflight').empty();
+                    $('#lstflight').html(data); // data came back ok, so display it
+                    $('#iarrival').removeClass('fas fa-long-arrow-alt-down fas fa-long-arrow-alt-up');
+                    $('#iduration').removeClass('fas fa-long-arrow-alt-down fas fa-long-arrow-alt-up');
+                    $('#iairline').removeClass('fas fa-long-arrow-alt-down fas fa-long-arrow-alt-up');
+                    $('#ideparture').removeClass('fas fa-long-arrow-alt-down fas fa-long-arrow-alt-up');
+                    $('#iprice').removeClass('fas fa-long-arrow-alt-down fas fa-long-arrow-alt-up');
+                    $('#iarrival2').removeClass('fas fa-long-arrow-alt-down fas fa-long-arrow-alt-up');
+                    $('#iduration2').removeClass('fas fa-long-arrow-alt-down fas fa-long-arrow-alt-up');
+                    $('#iairline2').removeClass('fas fa-long-arrow-alt-down fas fa-long-arrow-alt-up');
+                    $('#ideparture2').removeClass('fas fa-long-arrow-alt-down fas fa-long-arrow-alt-up');
+                    $('#iprice2').removeClass('fas fa-long-arrow-alt-down fas fa-long-arrow-alt-up');
+                   
+
+                }
+                else {
+                    toastr.warning("No data found");
+                }
+            }
+            
+        }).fail(function ($xhr) {
+            var data = $xhr.responseJSON;
+            console.log(data);
+            alert(data);
+        });
+    }
 
 
 </script>
