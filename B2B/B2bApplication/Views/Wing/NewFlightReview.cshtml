@@ -66,29 +66,11 @@
             <div asp-validation-summary="All" class="text-danger"></div>
 
             <input type="hidden" asp-for="FareQuoteRequest.TraceId" />
-
             @for (int i = 0; i < (Model.FareQuoteRequest?.ResultIndex?.Count() ?? 0); i++)
             {
                 <input type="hidden" asp-for="FareQuoteRequest.ResultIndex[i]" />
             }
-            @for (int i = 0; i < (Model.FareQuotResponse?.Count() ?? 0); i++)
-            {
-                <input type="hidden" asp-for="FareQuotResponse[i].BookingId" />
-                <input type="hidden" asp-for="FareQuotResponse[i].Destination" />
-                <input type="hidden" asp-for="FareQuotResponse[i].Error.Code" />
-                <input type="hidden" asp-for="FareQuotResponse[i].Error.Message" />
-                <input type="hidden" asp-for="FareQuotResponse[i].IsPriceChanged" />
-                <input type="hidden" asp-for="FareQuotResponse[i].Origin" />
-                <input type="hidden" asp-for="FareQuotResponse[i].TraceId" />
-                for (int j = 0; j < Model.FareQuotResponse[i].Results?.Count; j++)
-                {
-                    <input type="hidden" asp-for="FareQuotResponse[i].Results[j]" />
-                }
-                <input type="hidden" asp-for="FareQuotResponse[i].TotalPriceInfo.TotalFare" />
-                <input type="hidden" asp-for="FareQuotResponse[i].TotalPriceInfo.BaseFare" />
-                <input type="hidden" asp-for="FareQuotResponse[i].TotalPriceInfo.TaxAndFees" />
 
-            }
             <input type="hidden" asp-for="NetFare" />
 
             @if (Model.FareQuotResponse.FirstOrDefault()?.Results != null)
@@ -106,8 +88,40 @@
                                     @{int mealcnt = 0;}
                                     @foreach (var md in Model.FareQuotResponse)
                                     {
-                                        cnt++;
 
+
+                                        {
+
+
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].BookingId" />
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].Destination" />
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].Error.Code" />
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].Error.Message" />
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].IsPriceChanged" />
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].Origin" />
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].TraceId" />
+                                            for (int j = 0; j < md.Results?.Count; j++)
+                                            {
+                                                for (int k = 0; k < md.Results[j].Count; k++)
+                                                {
+                                                    <input type="hidden" asp-for="FareQuotResponse[cnt].Results[j][k].Segment" />
+                                                    <input type="hidden" asp-for="FareQuotResponse[cnt].Results[j][k].ServiceProvider" />
+                                                    <input type="hidden" asp-for="FareQuotResponse[cnt].Results[j][k].TotalPriceList" />
+                                                    <input type="hidden" asp-for="FareQuotResponse[cnt].Results[j][k].traceid" />
+                                                }
+
+                                            }
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].TotalPriceInfo.TotalFare" />
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].TotalPriceInfo.BaseFare" />
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].TotalPriceInfo.TaxAndFees" />
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].TotalPriceInfo.othercharge" />
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].TotalPriceInfo.convincecharge" />
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].TotalPriceInfo.discount" />
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].TotalPriceInfo.insurance" />
+
+
+                                        }
+                                        cnt++;
                                         var tripinfo = md.Results.FirstOrDefault()?.FirstOrDefault()?.Segment;
                                         @if (tripinfo != null)
                                         {
@@ -342,7 +356,19 @@
                                                                             </div>
 
                                                                             <div class="modal-footer">
-                                                                                <button type="button" class="btn btn-primary" data-dismiss="modal">Done</button>
+                                                                                <div  class="col-md-12">
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-6">
+                                                                                            <span>Added to total fare</span><br />
+                                                                                            <h4 id="totaddedbagamt-@cnt">0</h4>
+                                                                                        </div>
+                                                                                        <div class="col-md-6 text-right">
+                                                                                            <button type="button" class="btn btn-primary" data-dismiss="modal">Done</button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                
+                                                                                
 
                                                                             </div>
                                                                         </div>
@@ -393,9 +419,9 @@
                                                                                     <div style="height:300px;width:100%; overflow:auto">
 
                                                                                         <input type="hidden" id="hid_ismealadded" />
-                                                                                       
-                                                                                            @foreach (var ml in tripinfo[i].sinfo?.MEAL)
-                                                                                            {
+
+                                                                                        @foreach (var ml in tripinfo[i].sinfo?.MEAL)
+                                                                                        {
 
                                                                                             <div class="col-12">
                                                                                                 <div class="row">
@@ -432,9 +458,9 @@
                                                                                                 </div>
                                                                                                 <hr />
                                                                                             </div>
-                                                                                                mealcnt++;
-                                                                                            }
-                                                                                       
+                                                                                            mealcnt++;
+                                                                                        }
+
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -541,7 +567,8 @@
                                         }
                                     }
 
-                                    <div class="alert alert-info mt-4"> <span class="badge badge-info">NOTE:</span> This is a special fare given by the airline. Airlines cancellation charges do apply. </div>
+                                    <div class="alert alert-info mt-4"> 
+                                    <span class="badge badge-info">NOTE:</span> This is a special fare given by the airline. Airlines cancellation charges do apply. </div>
 
 
                                     <h2 class="text-6 mb-3 mt-5">Traveller Details - <span class="text-3"><a data-toggle="modal" data-target="#login-signup" href="#" title="Login / Sign up">Login</a> to book faster</span></h2>
@@ -1036,19 +1063,24 @@
         });
     });
 
-     function calculateamount(bagamt,mealamt,incamt,convamt,discamt) {
+     function calculateamount(bagamt,mealamt,incamt,convamt,discamt,cnt) {
          debugger;
          var totbagamt = 0;
+         var totbagamtbyresponse = 0;
         var totconvamt = 0;
         var totincamt = 0;
         var totdiscamt = 0;
-        var totmealamt = 0;
+         var totmealamt = 0;
+         var totmelamtbyresponse = 0;
 
         var spanbagtotal = $('#bagtotamt').val();
         var spanmealtotal = $('#mealtotamt').val();
         var spaninctotal = $('#InsuranceCharge').val();
         var spandisctotal = $('#CouponAmount').val();
-        var spanconvtotal = $('#Convenience').val();
+         var spanconvtotal = $('#Convenience').val();
+
+         var addedbagtotamt = $('#totaddedbagamt-' + cnt).val();
+         var addedmealtotamt = $('#totaddedmealamt-' + cnt).val();
          if (spaninctotal != '' && parseFloat(spaninctotal) >= 0) {
              totincamt = parseFloat(spaninctotal) + parseFloat(incamt);
          }
@@ -1073,14 +1105,29 @@
         else {
             totmealamt = parseFloat(mealamt);
          }
+
+         if (addedmealtotamt != '' && parseFloat(addedmealtotamt) >= 0) {
+             totmelamtbyresponse = parseFloat(addedmealtotamt) + parseFloat(addedmealtotamt);
+         }
+         else {
+             totmelamtbyresponse = parseFloat(mealamt);
+         }
+
          $('#mealtotamt').val(totmealamt);
          $('#spnmealtotal').html("@nfi.NumberFormat.CurrencySymbol" + " " + totmealamt.toFixed(2));
-        if (spanbagtotal != '' && parseFloat(spanbagtotal) >= 0) {
+         
+         if (spanbagtotal != '' && parseFloat(spanbagtotal) >= 0) {
             totbagamt = parseFloat(spanbagtotal) + parseFloat(bagamt);
          }
         else {
             totbagamt = parseFloat(bagamt);
-        }
+         }
+         if (addedbagtotamt != '' && parseFloat(addedbagtotamt) >= 0) {
+             totbagamtbyresponse = parseFloat(addedbagtotamt) + parseFloat(bagamt);
+         }
+         else {
+             totbagamtbyresponse = parseFloat(bagamt);
+         }
          $('#spnbagtotal').html("@nfi.NumberFormat.CurrencySymbol" + " " + totbagamt.toFixed(2));
 
          $('#bagtotamt').val(totbagamt);
@@ -1093,11 +1140,14 @@
             //}
          $('#spnothcharge').html("@nfi.NumberFormat.CurrencySymbol" + " " + othcharge.toFixed(2));
          $('#OtherCharge').val(othcharge.toFixed(2));
+         $("input[name='FareQuotResponse[" + cnt + "].TotalPriceInfo.othercharge']").val((totbagamtbyresponse + totmelamtbyresponse).toFixed(2));
          $('#InsuranceCharge').val(totincamt.toFixed(2));
+         $("input[name='FareQuotResponse[" + cnt + "].TotalPriceInfo.insurance']").val(totincamt.toFixed(2));
          $('#spninsuranceamt').html("@nfi.NumberFormat.CurrencySymbol" + " " + totincamt.toFixed(2));
          $('#spnconvenamt').html("@nfi.NumberFormat.CurrencySymbol" + " " + totconvamt.toFixed(2));
+         $("input[name='FareQuotResponse[" + cnt + "].TotalPriceInfo.convincecharge']").val(totconvamt.toFixed(2));
          $('#spndiscountamt').html("@nfi.NumberFormat.CurrencySymbol" + " " + totdiscamt.toFixed(2));
-
+         $("input[name='FareQuotResponse[" + cnt + "].TotalPriceInfo.discount']").val(totdiscamt.toFixed(2));
            var totfare = $('#NetFare').val();
          totfare = (parseFloat(totfare) + parseFloat(bagamt) + parseFloat(mealamt)+parseFloat(incamt)+parseFloat(convamt))-parseFloat(discamt);
 
@@ -1107,10 +1157,13 @@
     }
 
     function additionalbag(bagcode,bagdesc, bagamt, segcode, totalbag,bagcnt,cnt) {
-
-        var addedbagcnt = 0;
+        debugger;
+        var addedbagcnt = 0,addedbagamt=0;
         if ($('#spnselcount-'+cnt).text() != '') {
             addedbagcnt = parseFloat($('#spnselcount-' + cnt).text());
+        }
+        if ($('#totaddedbagamt-' + cnt).text() != '') {
+            addedbagamt = parseFloat($('#totaddedbagamt-' + cnt).text());
         }
         var spincnt = $('#addbag-' + bagcnt).val();
         if (parseInt(spincnt) == 0) {
@@ -1130,11 +1183,12 @@
             $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfoslist[0].key']").val(segcode);
             $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfoslist[0].desc']").val(bagdesc);
             addedbagcnt = addedbagcnt + 1;
-
+            addedbagamt = addedbagamt + bagamt;
             $('#spnselcount-' + cnt).html(addedbagcnt);
+            $('#totaddedbagamt-' + cnt).html(addedbagamt);
           //  $('#hid_baginfokey-' + cnt).val(segcode);
            // $('#hid_baginfoval-' + cnt).val(bagcode);
-            calculateamount(bagamt, 0, 0, 0, 0)
+            calculateamount(bagamt, 0, 0, 0, 0,cnt)
             if (addedbagcnt > 0) {
                 $('.bag-' + bagcnt).hide();
                 $('.spinner-' + bagcnt).show();
@@ -1155,16 +1209,21 @@
     function removebag(bagcode, bagdesc, bagamt, segcode, totalbag,bagcnt,cnt) {
         debugger;
 
-        var addedbagcnt = 0;
+        var addedbagcnt = 0, addedbagamt=0;
         if ($('#spnselcount-' + cnt).text() != '') {
             addedbagcnt = parseFloat($('#spnselcount-' + cnt).text());
         }
+        if ($('#totaddedbagamt-' + cnt).text() != '') {
+            addedbagamt = parseFloat($('#totaddedbagamt-' + cnt).text());
+        }
         addedbagcnt = addedbagcnt - 1;
+        addedbagamt = addedbagamt - bagamt;
         //var hidbaginfo = $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfos.code']").val();
         //var elems = [{
         //    code: bagcode,
         //    desc: bagdesc
         //}];
+        $('#totaddedbagamt-' + cnt).html(addedbagamt);
         $('#spnselcount-' + cnt).html(addedbagcnt);
         if (addedbagcnt < totalbag) {
             var cnt = addedbagcnt;
@@ -1177,7 +1236,7 @@
 
             //  $('#hid_baginfokey-' + cnt).val(segcode);
             // $('#hid_baginfoval-' + cnt).val(bagcode);
-            calculateamount(-bagamt, 0, 0, 0, 0)
+            calculateamount(-bagamt, 0, 0, 0, 0,cnt)
             var spincnt = $('#addbag-' + bagcnt).val();
             if (parseInt(spincnt) <= 1) {
                 $('#addbag-' + bagcnt).val('1');
@@ -1222,7 +1281,7 @@
             $('#spnselmealcount-' + cnt).html(addedmealcnt);
             //  $('#hid_baginfokey-' + cnt).val(segcode);
             // $('#hid_baginfoval-' + cnt).val(bagcode);
-            calculateamount(0, bagamt, 0, 0, 0)
+            calculateamount(0, bagamt, 0, 0, 0,cnt)
             if (addedmealcnt > 0) {
                 $('.meal-' + bagcnt).hide();
                 $('.spinnermeal-' + bagcnt).show();
@@ -1265,7 +1324,7 @@
 
             //  $('#hid_baginfokey-' + cnt).val(segcode);
             // $('#hid_baginfoval-' + cnt).val(bagcode);
-            calculateamount(0, -bagamt, 0, 0, 0)
+            calculateamount(0, -bagamt, 0, 0, 0,cnt)
             var spincnt = $('#addmeal-' + bagcnt).val();
             if (parseInt(spincnt) <= 1) {
                 $('#addmeal-' + bagcnt).val('1');
