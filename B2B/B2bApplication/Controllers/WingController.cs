@@ -697,14 +697,56 @@ namespace B2bApplication.Controllers
                 {
                    mdl.FareQuotResponse[i].Results = sres.FareQuotResponse[i].Results;
                 }
-               
-            
             }
-            //for (int ti = 0; ti < mdl.travellerInfo.Count(); ti++)
-            //{
 
-            //    mdl.travellerInfo[ti].ssrBaggageInfoslist.Add(new mdlSSRS() { code = mdl.travellerInfo[ti].ssrBaggageInfos.code, key = mdl.travellerInfo[ti].ssrBaggageInfos.key });
-            //}
+            for (int ti = 0; ti < mdl.travellerInfo.Count(); ti++)
+            {
+                if(mdl.travellerInfo[ti].ssrBaggageInfoslist!=null)
+                {
+                    foreach (var item in mdl.travellerInfo[ti].ssrBaggageInfoslist)
+                    {
+                        if(string.IsNullOrEmpty(item.key) && string.IsNullOrEmpty(item.code))
+                        {
+                            mdl.travellerInfo[ti].ssrBaggageInfoslist.Remove(item);                            
+                        }
+                        break;
+                    }
+                }
+                if (mdl.travellerInfo[ti].ssrMealInfoslist != null)
+                {
+                    foreach (var item in mdl.travellerInfo[ti].ssrMealInfoslist)
+                    {
+                        if (string.IsNullOrEmpty(item.key) && string.IsNullOrEmpty(item.code))
+                        {
+                            mdl.travellerInfo[ti].ssrMealInfoslist.Remove(item);
+                        }
+                        break;
+                    }
+                }
+                if (mdl.travellerInfo[ti].ssrSeatInfoslist != null)
+                {
+                    foreach (var item in mdl.travellerInfo[ti].ssrSeatInfoslist)
+                    {
+                        if (string.IsNullOrEmpty(item.key) && string.IsNullOrEmpty(item.code))
+                        {
+                            mdl.travellerInfo[ti].ssrSeatInfoslist.Remove(item);
+                        }
+                        break;
+                    }
+                }
+                if (mdl.travellerInfo[ti].ssrExtraServiceInfoslist != null)
+                {
+                    foreach (var item in mdl.travellerInfo[ti].ssrExtraServiceInfoslist)
+                    {
+                        if (string.IsNullOrEmpty(item.key) && string.IsNullOrEmpty(item.code))
+                        {
+                            mdl.travellerInfo[ti].ssrExtraServiceInfoslist.Remove(item);
+                        }
+                        break;
+                    }
+                }
+                //mdl.travellerInfo[ti].ssrBaggageInfoslist.Add(new mdlSSRS() { code = mdl.travellerInfo[ti].ssrBaggageInfos.code, key = mdl.travellerInfo[ti].ssrBaggageInfos.key });
+            }
 
             if (!(mdl == null || mdl.FareQuoteRequest == null))
             {

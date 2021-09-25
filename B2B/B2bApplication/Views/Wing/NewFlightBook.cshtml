@@ -42,10 +42,10 @@
                                         <tr>
                                             <td valign="top" align="center">
                                                 <a href="#">
-                                                    <small>
+                                                    <h3>
                                                         <i class="fa fa-leaf"></i>
                                                         Veemaan
-                                                    </small>
+                                                    </h3>
                                                 </a>
                                             </td>
                                         </tr>
@@ -58,40 +58,60 @@
                             </td>
                         </tr>
 
+
+
+                        <tr>
+                            <td style="padding:0px 20px;">
+                                <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                                    <tbody>
+                                        <tr>
+                                            <td style="border:4px solid #eee; border-radius:4px; padding:25px 0px;">
+                                                <table width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td style="font-size:14px; padding:0px 25px;" width="50">
+                                                                <img alt="" src="booking-successful.png">
+                                                            </td>
+                                                            <td style="font-size:16px; font-weight:600; color:#777; line-height:26px; padding-right:20px;">
+
+                                                                <span style="font-size:13px;">Hi @_currentuser.Name,</span><br>
+                                                                @{int succnt = 0;}
+                                                                @foreach (var suc in Model.IsSucess)
+                                                                {
+                                                                    if (suc == true)
+                                                                    {
+                                                                        succnt = succnt + 1;
+                                                                    }
+                                                                }
+                                                                @if (Model.IsSucess.Count() == succnt)
+                                                                {
+                                                                    <span>   Congratulations! Your flight booking is</span>
+                                                                    <span style="color:#28a745;"> confirmed </span>
+                                                                }
+                                                                else if (succnt > 0)
+                                                                {
+                                                                    <span>   Congratulations! Your flight booking is</span>
+                                                                    <span style="color:#28a745;"> partial confirmed </span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span>   Sorry! Your flight booking is</span><span style="color:red;">not confirmed</span>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
                         @for (int i = 0; i < Model.FareQuotResponse.Count; i++)
                         {
                             var tripinfo = Model.FareQuotResponse[i].Results.FirstOrDefault()?.FirstOrDefault()?.Segment;
-
                             @if (tripinfo != null)
                             {
-                                <tr>
-                                    <td style="padding:0px 20px;">
-                                        <table width="100%" cellspacing="0" cellpadding="0" border="0">
-                                            <tbody>
-                                                <tr>
-                                                    <td style="border:4px solid #eee; border-radius:4px; padding:25px 0px;">
-                                                        <table width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
-                                                            <tbody>
-                                                                <tr>
-                                                                    <td style="font-size:14px; padding:0px 25px;" width="50">
-                                                                        <img alt="" src="booking-successful.png">
-                                                                    </td>
-                                                                    <td style="font-size:16px; font-weight:600; color:#777; line-height:26px; padding-right:20px;">
-                                                                        <span style="font-size:13px;">Hi @_currentuser.Name,</span><br>
-                                                                        Congratulations! Your flight booking is @if (Model.IsSucess[i])
-                                                                        {<span style="color:#28a745;">confirmed</span>}
-                                                                        else
-                                                                        {<span style="color:red;">not confirmed</span>}.
-                                                                    </td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                </tr>
                                 <tr>
                                     <td style="padding:20px;">
                                         <table border="0" cellpadding="0" cellspacing="0" width="100%">
