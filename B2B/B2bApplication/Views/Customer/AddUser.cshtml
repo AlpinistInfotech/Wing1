@@ -6,226 +6,238 @@
 
 @{
     ViewData["Title"] = enmDocumentMaster.UserMaster.GetDocumentDetails().Name;
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_newLayout.cshtml";
 }
+<div class="bg-primary pt-4 pb-5">
+    <div class="container">
+        <div class="bg-white shadow-md rounded p-3">
+            <div class="bg-white shadow-md rounded px-4 pt-4 pb-3">
+                <form action="@Url.Action()" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="All" class="text-danger"></div>
 
-<form action="@Url.Action()" method="post">
-    @Html.AntiForgeryToken();
-    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div id="user-profile-2" class="user-profile">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-10 col-md-offset-1">
+                                <div class="widget-box">
+                                    <div class="widget-header">
+                                        <h4 class="widget-title">Search Customer</h4>
+                                    </div>
+                                    <div class="widget-body">
+                                        <div class="widget-main">
+                                            <div class="row">
+                                                <div class="form-group col-md-6">
 
-    <div id="user-profile-2" class="user-profile">
-        <div class="row">
-            <div class="col-xs-12 col-md-10 col-md-offset-1">
-                <div class="widget-box">
-                    <div class="widget-header">
-                        <h4 class="widget-title">Search Customer</h4>
-                    </div>
-                    <div class="widget-body">
-                        <div class="widget-main">
-                            <div class="row">
-                                <div class="form-group col-md-6">
+                                                    <div class="row">
+                                                        <label for="Adult" class="col-sm-3" asp-for="CustomerId"></label>
+                                                        <div class="col-sm-9">
+                                                            <div class="form-group">
+                                                                <select asp-for="CustomerId" class="form-control select2" asp-items="ViewBag.CustomerCodeList">
+                                                                </select>
+                                                                <span asp-validation-for="CustomerId" class="text-danger"></span>
 
-                                    <div class="row">
-                                        <label for="Adult" class="col-sm-3" asp-for="CustomerId"></label>
-                                        <div class="col-sm-9">
-                                            <div class="form-group">
-                                                <select asp-for="CustomerId" class="form-control select2" asp-items="ViewBag.CustomerCodeList">
-                                                </select>
-                                                <span asp-validation-for="CustomerId" class="text-danger"></span>
-
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col-md-6">
+                                                    <button class="btn btn-app btn-primary ace-icon fas fa-sync-alt bigger-180" type="submit" name="submittype" value="LoadData">
+                                                        @*<i class="fas fa-sync-alt"></i>*@
+                                                        @*fa fa-refresh*@
+                                                    </button>
+                                                </div>
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group col-md-6">
-                                    <button class="btn btn-app btn-success ace-icon fa fa-refresh bigger-180" type="submit" name="submittype" value="LoadData">
-                                    </button>
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <!-- PAGE CONTENT BEGINS -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="UserName"></label>
+                                        <input asp-for="UserName" class="form-control" />
+                                        <span asp-validation-for="UserName" class="text-danger"></span>
+
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label asp-for="IsActive" class="col-sm-8 control-label"></label>
+                                        <div class="col-sm-4">
+                                            <label class="input-group-addon input-group-addon-custom">
+                                                <input id="chkIsActive" class="ace ace-switch" type="checkbox" asp-for="IsActive" />
+                                                <span class="lbl" data-lbl="Yes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;no"></span>
+                                            </label>
+                                            <span asp-validation-for="IsActive" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label asp-for="ForcePasswordChange" class="col-sm-8 control-label"></label>
+                                        <div class="col-sm-4">
+                                            <label class="input-group-addon input-group-addon-custom">
+                                                <input id="chkIsActive" class="ace ace-switch" type="checkbox" asp-for="ForcePasswordChange" />
+                                                <span class="lbl" data-lbl="Yes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;no"></span>
+                                            </label>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+
+                                        <label asp-for="Password"></label>
+                                        <input asp-for="Password" class="form-control" />
+                                        <span asp-validation-for="Password" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+
+                                        <label asp-for="ConfirmPassword"></label>
+                                        <input asp-for="ConfirmPassword" class="form-control" />
+                                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="Email"></label>
+                                        <input asp-for="Email" class="form-control" />
+                                        <span asp-validation-for="Email" class="text-danger"></span>
+
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+
+                                        <label asp-for="Phone"></label>
+                                        <input asp-for="Phone" class="form-control" />
+                                        <span asp-validation-for="Phone" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="Roles"></label>
+                                        <select id="selectIsAllCustomerType" asp-for="Roles" class="form-control select2" multiple asp-items="ViewBag._RoleMaster">
+                                        </select>
+                                        <span asp-validation-for="Roles" class="text-danger"></span>
+                                    </div>
                                 </div>
                             </div>
 
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="clearfix form-actions">
+                                        <div class="col-md-offset-3 col-md-9">
+                                            <button class="btn btn-primary" type="submit">
+                                                <i class="ace-icon fa fa-check bigger-110"></i>
+                                                Submit
+                                            </button>
+
+                                            &nbsp; &nbsp; &nbsp;
+                                            <button class="btn btn-primary" type="reset">
+                                                <i class="ace-icon fa fa-undo bigger-110"></i>
+                                                Reset
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" asp-for="UserId" />
+                            <input type="hidden" asp-for="Oldpassword" />
+
                         </div>
                     </div>
-                </div>
+
+                    <div class="card-body">
+                        <table id="dynamic-table" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Edit</th>
+                                    <th>Customer Name (Code)</th>
+                                    <th>User Name</th>
+                                    <th>Password</th>
+
+                                    <th>Email ID</th>
+                                    <th>Mobile No.</th>
+                                    <th>Status</th>
+                                    <th>Is Force Password Change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+
+                                @for (int i = 0; i < (ViewBag.UserMasters?.Count ?? 0); i++)
+                                {
+                                    <tr>
+                                        <td>
+                                            <a href="/Customer/AddUser/@ViewBag.UserMasters[i].Id" class="btn btn-info" data-toggle="tooltip" title="Edit Record !">
+                                                Edit
+                                            </a>
+                                        </td>
+                                        <td>@ViewBag.UserMasters[i].tblCustomerMaster.CustomerName (@ViewBag.UserMasters[i].tblCustomerMaster.Code)</td>
+                                        <td>@ViewBag.UserMasters[i].UserName</td>
+                                        <td>@ViewBag.UserMasters[i].Password</td>
+                                        <td>@ViewBag.UserMasters[i].Email</td>
+                                        <td>@ViewBag.UserMasters[i].Phone</td>
+
+                                        <td>@(ViewBag.UserMasters[i].IsActive==true?"Active":"DeActive")</td>
+                                        <td>@(ViewBag.UserMasters[i].ForcePasswordChange==true?"Yes":"No")</td>
+
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+
+
+
+                </form>
+            </div>
+               
             </div>
         </div>
-
-
-
-
-
-
-
-
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <!-- PAGE CONTENT BEGINS -->
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="UserName"></label>
-                        <input asp-for="UserName" class="form-control" />
-                        <span asp-validation-for="UserName" class="text-danger"></span>
-
-
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label asp-for="IsActive" class="col-sm-8 control-label"></label>
-                        <div class="col-sm-4">
-                            <label class="input-group-addon input-group-addon-custom">
-                                <input id="chkIsActive" class="ace ace-switch" type="checkbox" asp-for="IsActive" />
-                                <span class="lbl" data-lbl="Yes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;no"></span>
-                            </label>
-                            <span asp-validation-for="IsActive" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label asp-for="ForcePasswordChange" class="col-sm-8 control-label"></label>
-                        <div class="col-sm-4">
-                            <label class="input-group-addon input-group-addon-custom">
-                                <input id="chkIsActive" class="ace ace-switch" type="checkbox" asp-for="ForcePasswordChange" />
-                                <span class="lbl" data-lbl="Yes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;no"></span>
-                            </label>
-                        </div>
-
-
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="row">
-
-                <div class="col-md-6">
-                    <div class="form-group">
-
-                        <label asp-for="Password"></label>
-                        <input asp-for="Password" class="form-control" />
-                        <span asp-validation-for="Password" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="form-group">
-
-                        <label asp-for="ConfirmPassword"></label>
-                        <input asp-for="ConfirmPassword" class="form-control" />
-                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="Email"></label>
-                        <input asp-for="Email" class="form-control" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-
-
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="form-group">
-
-                        <label asp-for="Phone"></label>
-                        <input asp-for="Phone" class="form-control" />
-                        <span asp-validation-for="Phone" class="text-danger"></span>
-                    </div>
-                </div>
-
-            </div>
-
-
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="Roles"></label>
-                        <select id="selectIsAllCustomerType" asp-for="Roles" class="form-control select2" multiple asp-items="ViewBag._RoleMaster">
-                        </select>
-                        <span asp-validation-for="Roles" class="text-danger"></span>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="clearfix form-actions">
-                        <div class="col-md-offset-3 col-md-9">
-                            <button class="btn btn-info" type="submit">
-                                <i class="ace-icon fa fa-check bigger-110"></i>
-                                Submit
-                            </button>
-
-                            &nbsp; &nbsp; &nbsp;
-                            <button class="btn" type="reset">
-                                <i class="ace-icon fa fa-undo bigger-110"></i>
-                                Reset
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <input type="hidden" asp-for="UserId" />
-            <input type="hidden" asp-for="Oldpassword" />
-
-        </div>
-    </div>
-
-    <div class="card-body">
-            <table id="dynamic-table" class="table table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th>Edit</th>
-                        <th>Customer Name (Code)</th>
-                        <th>User Name</th>
-                        <th>Password</th>
-
-                        <th>Email ID</th>
-                        <th>Mobile No.</th>
-                        <th>Status</th>
-                        <th>Is Force Password Change</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-
-                    @for (int i = 0; i < (ViewBag.UserMasters?.Count ?? 0); i++)
-                    {
-                        <tr>
-                            <td>
-                                <a href="/Customer/AddUser/@ViewBag.UserMasters[i].Id" class="btn btn-info" data-toggle="tooltip" title="Edit Record !">
-                                    Edit
-                                </a>
-                            </td>
-                            <td>@ViewBag.UserMasters[i].tblCustomerMaster.CustomerName (@ViewBag.UserMasters[i].tblCustomerMaster.Code)</td>
-                            <td>@ViewBag.UserMasters[i].UserName</td>
-                            <td>@ViewBag.UserMasters[i].Password</td>
-                            <td>@ViewBag.UserMasters[i].Email</td>
-                            <td>@ViewBag.UserMasters[i].Phone</td>
-
-                            <td>@(ViewBag.UserMasters[i].IsActive==true?"Active":"DeActive")</td>
-                            <td>@(ViewBag.UserMasters[i].ForcePasswordChange==true?"Yes":"No")</td>
-
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-
-
-
-
-</form>
+    
+</div>
 @section Scripts {
     @(await Html.PartialAsync("_dateTableScriptPartial",8))
 

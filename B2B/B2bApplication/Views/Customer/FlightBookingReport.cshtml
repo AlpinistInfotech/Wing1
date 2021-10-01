@@ -2,226 +2,234 @@
 @using B2BClasses.Services.Enums
 @{
     ViewData["Title"] = enmDocumentMaster.Flight_Booking_Report.GetDocumentDetails().Name;
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_newLayout.cshtml";
 }
 
+<div class="content">
+    <div class="bg-primary pt-4 pb-5">
+        <div class="container">
+            <div class="bg-white shadow-md rounded p-3">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <form action="@Url.Action()" method="post">
+                            <div asp-validation-summary="All" class="text-danger"></div>
+                            @Html.AntiForgeryToken()
+                            <div class="widget-box">
+                                <div class="widget-header">
+                                    <h4 class="widget-title">@ViewData["Title"]</h4>
+                                    <div class="widget-toolbar">
+                                        <a href="#" data-action="collapse">
+                                            <i class="ace-icon fa fa-chevron-up"></i>
+                                        </a>
+                                    </div>
+                                </div>
 
-<div class="row">
-    <div class="col-md-12">
-        <!-- PAGE CONTENT BEGINS -->
-        <form action="@Url.Action()" method="post">
-            <div asp-validation-summary="All" class="text-danger"></div>
-            @Html.AntiForgeryToken()
-            <div class="widget-box">
-                <div class="widget-header">
-                    <h4 class="widget-title">@ViewData["Title"]</h4>
-                    <div class="widget-toolbar">
-                        <a href="#" data-action="collapse">
-                            <i class="ace-icon fa fa-chevron-up"></i>
-                        </a>
+                                <div class="widget-body">
+                                    <div class="widget-main">
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label asp-for="FromDt" class="col-sm-4 control-label"></label>
+                                                    <div class="col-sm-8">
+                                                        <div class="input-daterange input-group">
+                                                            <input type="text" class="input-sm form-control" id="DepartureDt" asp-for="FromDt" asp-format="{0:dd-MMM-yyyy}" autocomplete="off" />
+                                                            <span class="input-group-addon">
+                                                                <i class="fa fa-exchange"></i>
+                                                            </span>
+                                                            <input type="text" class="input-sm form-control" asp-for="ToDt" asp-format="{0:dd-MMM-yyyy}" autocomplete="off" />
+                                                        </div>
+                                                        <span asp-validation-for="FromDt" class="text-danger"></span>
+                                                        <span asp-validation-for="ToDt" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label asp-for="DateFliterType" class="col-sm-4 control-label"></label>
+                                                    <div class="col-sm-8">
+                                                        <select asp-for="DateFliterType" class="form-control select2">
+                                                            <option value="1"> Booking Date</option>
+                                                            <option value="2"> Travel Date</option>
+                                                        </select>
+                                                        <span asp-validation-for="DateFliterType" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label asp-for="bookingStatus" class="col-sm-4 control-label"></label>
+                                                    <div class="col-sm-8">
+                                                        <select asp-for="bookingStatus" class="form-control select2">
+                                                            <option value="@((int)enmBookingStatus.All)">All</option>
+                                                            <option value="@((int)enmBookingStatus.Pending)"> Pending</option>
+                                                            <option value="@((int)enmBookingStatus.Booked)"> Booked</option>
+                                                            <option value="@((int)enmBookingStatus.Refund)"> Refund</option>
+                                                            <option value="@((int)enmBookingStatus.PartialBooked)"> PartialBooked</option>
+                                                        </select>
+                                                        <span asp-validation-for="bookingStatus" class="text-danger"></span>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input type="submit" class="btn btn-primary" value="Load Data" />
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+
+                        </form>
                     </div>
                 </div>
 
-                <div class="widget-body">
-                    <div class="widget-main">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label asp-for="FromDt" class="col-sm-4 control-label"></label>
-                                    <div class="col-sm-8">
-                                        <div class="input-daterange input-group">
-                                            <input type="text" class="input-sm form-control" id="DepartureDt" asp-for="FromDt" asp-format="{0:dd-MMM-yyyy}" autocomplete="off" />
-                                            <span class="input-group-addon">
-                                                <i class="fa fa-exchange"></i>
-                                            </span>
-                                            <input type="text" class="input-sm form-control" asp-for="ToDt" asp-format="{0:dd-MMM-yyyy}" autocomplete="off" />
-                                        </div>
-                                        <span asp-validation-for="FromDt" class="text-danger"></span>
-                                        <span asp-validation-for="ToDt" class="text-danger"></span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label asp-for="DateFliterType" class="col-sm-4 control-label"></label>
-                                    <div class="col-sm-8">
-                                        <select asp-for="DateFliterType" class="form-control select2">
-                                            <option value="1"> Booking Date</option>
-                                            <option value="2"> Travel Date</option>
-                                        </select>
-                                        <span asp-validation-for="DateFliterType" class="text-danger"></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label asp-for="bookingStatus" class="col-sm-4 control-label"></label>
-                                    <div class="col-sm-8">
-                                        <select asp-for="bookingStatus" class="form-control select2">
-                                            <option value="@((int)enmBookingStatus.All)">All</option>
-                                            <option value="@((int)enmBookingStatus.Pending)"> Pending</option>
-                                            <option value="@((int)enmBookingStatus.Booked)"> Booked</option>
-                                            <option value="@((int)enmBookingStatus.Refund)"> Refund</option>
-                                            <option value="@((int)enmBookingStatus.PartialBooked)"> PartialBooked</option>
-                                        </select>
-                                        <span asp-validation-for="bookingStatus" class="text-danger"></span>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <input type="submit" class="btn btn-info" value="Load Data" />
-                            </div>
-
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="clearfix">
+                            <div class="pull-right tableTools-container"></div>
+                        </div>
+                        <div class="table-header">
+                            Results for "All Flight Booking"
                         </div>
 
+                        <!-- div.table-responsive -->
+                        <!-- div.dataTables_borderWrap -->
+                        <div>
+                            <table id="dynamic-table" class="table table-striped table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            View
+                                        </th>
+                                        <th>Booking Status</th>
+                                        <th>Customer</th>
+                                        <th>Journey Type</th>
+                                        <th>Segment</th>
+                                        <th>Airline(Flight Number)</th>
+                                        <th>Booking Date</th>
+                                        <th>Travel Date</th>
+                                        <th>Contact No</th>
+                                        <th>Email</th>
+                                        <th>Passenger</th>
+                                        <th>Net Fare</th>
+                                        <th>Customer Markup</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var md in Model.FBMs)
+                                    {
+                                        <tr>
+                                            <td class="center">
+                                                <div class="hidden-sm hidden-xs action-buttons">
+                                                    <a class="blue" href="/Customer/FlightBookingDetails?Id=@md.Id">
+                                                        <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                                    </a>
+                                                    @*<a class="green" href="/Home/WingMarkup/@md.Id">
+                                                            <i class="ace-icon fa fa-pencil bigger-130"></i>
+                                                        </a>*@
+                                                    <a class="red" href="/Customer/FlightBookingDetails?Id=@md.Id&ActiveTab=flightBookingDetails_CancelFlight">
+                                                        <i class="ace-icon fa fa-close bigger-130"></i>
+                                                    </a>
+                                                </div>
+
+                                                <div class="hidden-md hidden-lg">
+                                                    <div class="inline pos-rel">
+                                                        <button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
+                                                            <i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+                                                        </button>
+
+                                                        <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+                                                            <li>
+                                                                <a href="/Customer/FlightBookingDetails?Id=@md.Id" class="tooltip-info" data-rel="tooltip" title="View">
+                                                                    <span class="blue">
+                                                                        <i class="ace-icon fa fa-search-plus bigger-120"></i>
+                                                                    </span>
+                                                                </a>
+                                                            </li>
+
+                                                            @*<li>
+                                                                    <a href="/Home/WingMarkup/@md.Id" class="tooltip-success" data-rel="tooltip" title="Edit">
+                                                                        <span class="green">
+                                                                            <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
+                                                                        </span>
+                                                                    </a>
+                                                                </li>*@
+
+                                                            <li>
+                                                                <a href="/Customer/FlightBookingDetails?Id=@md.Id&ActiveTab=flightBookingDetails_CancelFlight" class="tooltip-error" data-rel="tooltip" title="Delete">
+                                                                    <span class="red">
+                                                                        <i class="ace-icon fa fa-close bigger-120"></i>
+                                                                    </span>
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+
+                                            <td>
+                                                <span class="label label-sm @(Model.GetLabelClass(md.BookingStatus))">@md.BookingStatus</span>
+
+                                            </td>
+                                            <td>
+                                                @md.CustomerName
+                                            </td>
+                                            <td>
+                                                @md.JourneyType
+                                            </td>
+                                            <td>
+                                                @string.Join(", ", md.tblFlightBookingSegmentMaster.OrderBy(p => p.SegmentDisplayOrder).Select(p => new { Segment = p.Origin + " " + p.Destination }).Select(p => p.Segment).Distinct())
+                                            </td>
+
+                                            <td>
+                                                @string.Join(", ", md.tblFlightBookingSegments.OrderBy(p => p.SegmentDisplayOrder).Select(p => new { Airline = p.Airline + " (" + p.AirlineCode + "-" + p.FlightNumber + ")" }).Select(p => p.Airline).Distinct())
+                                            </td>
+                                            <td>
+                                                @md.CreatedDt.ToString("dd-MMM-yyyy hh:mm tt")
+                                            </td>
+
+                                            <td>
+                                                @string.Join(", ", md.tblFlightBookingSegmentMaster.OrderBy(p => p.SegmentDisplayOrder).Select(p => new { TravelDt = p.TravelDt.ToString("dd-MMM-yyyy") }).Select(p => p.TravelDt).Distinct())
+                                            </td>
+                                            <td>
+                                                @md.ContactNo
+                                            </td>
+                                            <td>
+                                                @md.Email
+                                            </td>
+                                            <td>
+                                                @string.Join(", ", md.tblFlightBookingPassengerDetails.Select(p => new { Passenger = p.Title + " " + p.FirstName }).Select(p => p.Passenger).Distinct())
+                                            </td>
+                                            <td>
+                                                @md.tblFlightBookingFareDetails.Sum(p => p.NetFare)
+                                            </td>
+                                            <td>
+                                                @md.tblFlightBookingFareDetails.Sum(p => p.CustomerMarkup)
+                                            </td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
             </div>
-
-
-
-        </form>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-xs-12">
-        <div class="clearfix">
-            <div class="pull-right tableTools-container"></div>
-        </div>
-        <div class="table-header">
-            Results for "All Flight Booking"
-        </div>
-
-        <!-- div.table-responsive -->
-        <!-- div.dataTables_borderWrap -->
-        <div>
-            <table id="dynamic-table" class="table table-striped table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th>
-                            View
-                        </th>
-                        <th>Booking Status</th>
-                        <th>Customer</th>
-                        <th>Journey Type</th>
-                        <th>Segment</th>
-                        <th>Airline(Flight Number)</th>
-                        <th>Booking Date</th>
-                        <th>Travel Date</th>
-                        <th>Contact No</th>
-                        <th>Email</th>
-                        <th>Passenger</th>
-                        <th>Net Fare</th>
-                        <th>Customer Markup</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @foreach (var md in Model.FBMs)
-                    {
-                    <tr>
-                        <td class="center">
-                            <div class="hidden-sm hidden-xs action-buttons">
-                                <a class="blue" href="/Customer/FlightBookingDetails?Id=@md.Id">
-                                    <i class="ace-icon fa fa-search-plus bigger-130"></i>
-                                </a>
-                                @*<a class="green" href="/Home/WingMarkup/@md.Id">
-                                    <i class="ace-icon fa fa-pencil bigger-130"></i>
-                                </a>*@
-                                <a class="red" href="/Customer/FlightBookingDetails?Id=@md.Id&ActiveTab=flightBookingDetails_CancelFlight">
-                                    <i class="ace-icon fa fa-close bigger-130"></i>
-                                </a>
-                            </div>
-
-                            <div class="hidden-md hidden-lg">
-                                <div class="inline pos-rel">
-                                    <button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
-                                        <i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
-                                    </button>
-
-                                    <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
-                                        <li>
-                                            <a href="/Customer/FlightBookingDetails?Id=@md.Id" class="tooltip-info" data-rel="tooltip" title="View">
-                                                <span class="blue">
-                                                    <i class="ace-icon fa fa-search-plus bigger-120"></i>
-                                                </span>
-                                            </a>
-                                        </li>
-
-                                        @*<li>
-                                            <a href="/Home/WingMarkup/@md.Id" class="tooltip-success" data-rel="tooltip" title="Edit">
-                                                <span class="green">
-                                                    <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
-                                                </span>
-                                            </a>
-                                        </li>*@
-
-                                        <li>
-                                            <a href="/Customer/FlightBookingDetails?Id=@md.Id&ActiveTab=flightBookingDetails_CancelFlight" class="tooltip-error" data-rel="tooltip" title="Delete">
-                                                <span class="red">
-                                                    <i class="ace-icon fa fa-close bigger-120"></i>
-                                                </span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </td>
-
-
-                        <td>
-                            <span class="label label-sm @(Model.GetLabelClass(md.BookingStatus))">@md.BookingStatus</span>
-
-                        </td>
-                        <td>
-                            @md.CustomerName
-                        </td>
-                        <td>
-                            @md.JourneyType
-                        </td>
-                        <td>
-                            @string.Join(", ", md.tblFlightBookingSegmentMaster.OrderBy(p => p.SegmentDisplayOrder).Select(p => new { Segment = p.Origin + " " + p.Destination }).Select(p => p.Segment).Distinct())
-                        </td>
-
-                        <td>
-                            @string.Join(", ", md.tblFlightBookingSegments.OrderBy(p => p.SegmentDisplayOrder).Select(p => new { Airline = p.Airline + " (" + p.AirlineCode + "-" + p.FlightNumber + ")" }).Select(p => p.Airline).Distinct())
-                        </td>
-                        <td>
-                            @md.CreatedDt.ToString("dd-MMM-yyyy hh:mm tt")
-                        </td>
-
-                        <td>
-                            @string.Join(", ", md.tblFlightBookingSegmentMaster.OrderBy(p => p.SegmentDisplayOrder).Select(p => new { TravelDt = p.TravelDt.ToString("dd-MMM-yyyy") }).Select(p => p.TravelDt).Distinct())
-                        </td>
-                        <td>
-                            @md.ContactNo
-                        </td>
-                        <td>
-                            @md.Email
-                        </td>
-                        <td>
-                            @string.Join(", ", md.tblFlightBookingPassengerDetails.Select(p => new { Passenger = p.Title + " " + p.FirstName }).Select(p => p.Passenger).Distinct())
-                        </td>
-                        <td>
-                            @md.tblFlightBookingFareDetails.Sum(p => p.NetFare)
-                        </td>
-                        <td>
-                            @md.tblFlightBookingFareDetails.Sum(p => p.CustomerMarkup)
-                        </td>
-
-                    </tr>
-                    }
-                </tbody>
-            </table>
         </div>
     </div>
 </div>
-
-@section Scripts {    
+@section Scripts {
     @(await Html.PartialAsync("_dateTableScriptPartial",13))
 
     <script type="text/javascript">
