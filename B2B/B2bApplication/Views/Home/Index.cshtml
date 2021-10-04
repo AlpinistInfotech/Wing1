@@ -1,59 +1,69 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    //Added by DKS
+    Layout = "~/Views/Shared/_newLayout.cshtml";
 }
 
-<div class="row">
-    <div class="col-12 col-sm-6 col-md-3">
-        <div class="info-box">
-            <span class="info-box-icon bg-info1 elevation-1"><i class="ace-icon fa fa-search"></i></span>
-            <div class="info-box-content">
-                <span class="info-box-text"><small>Today</small> - Flight Search</span>
-                <span class="info-box-number">
-                    @(ViewBag.FlightSearch??0)
-                </span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
-        <!-- /.info-box -->
-    </div>
-    <!-- /.col -->
-    <div class="col-12 col-sm-6 col-md-3">
-        <div class="info-box mb-3">
-            <span class="info-box-icon bg-danger1 elevation-1"><i class="ace-icon fa fa-paper-plane"></i></span>
+<div class="content">
+    <div class="bg-primary pt-4 pb-5">
+        <div class="container">
+            <div class="bg-white shadow-md rounded p-3">
+                <div class="row">
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-info1 elevation-1"><i class="ace-icon fa fa-search"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text"><small>Today</small> - Flight Search</span>
+                                <span class="info-box-number">
+                                    @(ViewBag.FlightSearch??0)
+                                </span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="info-box mb-3">
+                            <span class="info-box-icon bg-danger1 elevation-1"><i class="ace-icon fa fa-paper-plane"></i></span>
 
-            <div class="info-box-content">
-                <span class="info-box-text"><small>Today</small> - Flight Book </span>
-                <span class="info-box-number">@(ViewBag.FlightBook??0)</span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
-        <!-- /.info-box -->
-    </div>
-    <div class="col-12 col-sm-6 col-md-3">
-        <div class="info-box">
-            <span class="info-box-icon bg-warning1 elevation-1"><i class="fa fa-search"></i></span>
-            <div class="info-box-content">
-                <span class="info-box-text"><small>Week</small> - Flight Search</span>
-                <span class="info-box-number">
-                    @(ViewBag.FlightSearchWeek ?? 0)
-                </span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
-        <!-- /.info-box -->
-    </div>
-    <!-- /.col -->
-    <div class="col-12 col-sm-6 col-md-3">
-        <div class="info-box mb-3">
-            <span class="info-box-icon bg-success1 elevation-1"><i class="ace-icon fa fa-paper-plane"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text"><small>Today</small> - Flight Book </span>
+                                <span class="info-box-number">@(ViewBag.FlightBook??0)</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-warning1 elevation-1"><i class="fa fa-search"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text"><small>Week</small> - Flight Search</span>
+                                <span class="info-box-number">
+                                    @(ViewBag.FlightSearchWeek ?? 0)
+                                </span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="info-box mb-3">
+                            <span class="info-box-icon bg-success1 elevation-1"><i class="ace-icon fa fa-paper-plane"></i></span>
 
-            <div class="info-box-content">
-                <span class="info-box-text"><small>Week</small> - Flight Book</span>
-                <span class="info-box-number">@(ViewBag.FlightBookWeek ?? 0)</span>
+                            <div class="info-box-content">
+                                <span class="info-box-text"><small>Week</small> - Flight Book</span>
+                                <span class="info-box-number">@(ViewBag.FlightBookWeek ?? 0)</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                    <!-- /.col -->
+                </div>
             </div>
-            <!-- /.info-box-content -->
         </div>
-        <!-- /.info-box -->
     </div>
-    <!-- /.col -->
 </div>

@@ -4,206 +4,215 @@
 @inject Microsoft.Extensions.Configuration.IConfiguration _configuration
 @{
     ViewData["Title"] = enmDocumentMaster.PackageReport.GetDocumentDetails().Name;
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_newLayout.cshtml";
     var HaveCreatepermission = false;
     @if (_CurrentUsers.HaveClaim(enmDocumentMaster.CreatePackage))
     {
         HaveCreatepermission = true;
     }
 }
+<div class="content">
+    <div class="bg-primary pt-4 pb-5">
+        <div class="container">
+            <div class="bg-white shadow-md rounded p-3">
 
+                <form action="@Url.Action()" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="All" class="text-danger"></div>
 
-<form action="@Url.Action()" method="post" enctype="multipart/form-data">
-    @Html.AntiForgeryToken()
-    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="widget-box">
+                        <div class="widget-header">
+                            <h4 class="widget-title">@ViewData["Title"]</h4>
+                            <div class="widget-toolbar">
+                                <a href="#" data-action="collapse">
+                                    <i class="ace-icon fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="widget-body">
+                            <div class="widget-main">
 
-    <div class="widget-box">
-        <div class="widget-header">
-            <h4 class="widget-title">@ViewData["Title"]</h4>
-            <div class="widget-toolbar">
-                <a href="#" data-action="collapse">
-                    <i class="ace-icon fa fa-chevron-up"></i>
-                </a>
-            </div>
-        </div>
-        <div class="widget-body">
-            <div class="widget-main">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-6 col-md-4">
+                                        <div class="form-group">
+                                            <label asp-for="FromDate" class="col-form-label"></label>
+                                            <input asp-for="FromDate" class="form-control" type="date" />
+                                            <span asp-validation-for="FromDate" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-4">
+                                        <div class="form-group">
+                                            <label asp-for="ToDate" class="col-form-label"></label>
+                                            <input asp-for="ToDate" class="form-control" type="date" />
+                                            <span asp-validation-for="ToDate" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-4">
+                                        <div class="form-group">
+                                            <button type="submit" name="submitdata" value="LoadData" class="btn btn-primary mybutton">Load Data</button> &nbsp;
+                                            @if (HaveCreatepermission)
+                                            {
+                                                <a href="@enmDocumentMaster.CreatePackage.GetDocumentDetails().ActionName" class="btn btn-primary mt-md-2">
+                                                    Create New
+                                                </a>
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </form>
+
 
                 <div class="row">
-                    <div class="col-xs-12 col-sm-6 col-md-4">
-                        <div class="form-group">
-                            <label asp-for="FromDate" class="col-form-label"></label>
-                            <input asp-for="FromDate" class="form-control" type="date" />
-                            <span asp-validation-for="FromDate" class="text-danger"></span>
+                    <div class="col-xs-12">
+                        <div class="clearfix">
+                            <div class="pull-right tableTools-container"></div>
                         </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-6 col-md-4">
-                        <div class="form-group">
-                            <label asp-for="ToDate" class="col-form-label"></label>
-                            <input asp-for="ToDate" class="form-control" type="date" />
-                            <span asp-validation-for="ToDate" class="text-danger"></span>
+                        <div class="table-header">
+                            Results for "All Markup"
                         </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-6 col-md-4">
-                        <div class="form-group">
-                            <button type="submit" name="submitdata" value="LoadData" class="btn btn-primary mybutton">Load Data</button> &nbsp;
-                            @if (HaveCreatepermission)
-                            {
-                                <a href="@enmDocumentMaster.CreatePackage.GetDocumentDetails().ActionName" class="btn btn-info">
-                                    Create New
-                                </a>
-                            }
 
+                        <!-- div.table-responsive -->
+                        <!-- div.dataTables_borderWrap -->
+                        <div>
+                            <table id="dynamic-table" class="table table-striped table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        @if (HaveCreatepermission)
+                                        {
+                                            <th>
+                                                Edit
+                                            </th>
+                                        }
+                                        <th>Package Name</th>
+                                        <th>LocationName</th>
+                                        <th>IsDomestic</th>
+                                        <th>ShortDescription</th>
+                                        <th>ThumbnailImage</th>
+                                        <th>EffectiveFromDt </th>
+                                        <th>EffectiveToDt </th>
+                                        <th>AdultPrice </th>
+                                        <th>ChildPrice</th>
+                                        <th>InfantPrice</th>
+                                        <th>IsActive</th>
+                                        <th>Last Modify Dt</th>
+                                        <th>Modify By</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var md in Model.Packagedata)
+                                    {
+                                        <tr>
+                                            @if (HaveCreatepermission)
+                                            {
+                                                <td class="center">
+                                                    <div class="hidden-sm hidden-xs action-buttons">
+                                                        @*<a class="blue" href="#">
+                                                                <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                                                            </a>*@
+                                                        <a class="green" href="@(enmDocumentMaster.CreatePackage.GetDocumentDetails().ActionName)/@md.PackageId">
+                                                            <i class="ace-icon fa fa-pencil bigger-130"></i>
+                                                        </a>
+                                                        @*<a class="red" href="/Home/WingMarkup/@md.Id">
+                                                                <i class="ace-icon fa fa-trash-o bigger-130"></i>
+                                                            </a>*@
+                                                    </div>
+
+                                                    <div class="hidden-md hidden-lg">
+                                                        <div class="inline pos-rel">
+                                                            <button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
+                                                                <i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+                                                            </button>
+
+                                                            <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+                                                                @*<li>
+                                                                        <a href="#" class="tooltip-info" data-rel="tooltip" title="View">
+                                                                            <span class="blue">
+                                                                                <i class="ace-icon fa fa-search-plus bigger-120"></i>
+                                                                            </span>
+                                                                        </a>
+                                                                    </li>*@
+
+                                                                <li>
+                                                                    <a href="@(enmDocumentMaster.CreatePackage.GetDocumentDetails().ActionName)/@md.PackageId" class="tooltip-success" data-rel="tooltip" title="Edit">
+                                                                        <span class="green">
+                                                                            <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
+                                                                        </span>
+                                                                    </a>
+                                                                </li>
+
+                                                                @*<li>
+                                                                        <a href="/Home/WingMarkup/@md.Id" class="tooltip-error" data-rel="tooltip" title="Delete">
+                                                                            <span class="red">
+                                                                                <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                                                                            </span>
+                                                                        </a>
+                                                                    </li>*@
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            }
+
+
+                                            <td>
+                                                @md.PackageName
+                                            </td>
+                                            <td>
+                                                @md.LocationName
+                                            </td>
+                                            <td>
+                                                @(md.IsDomestic?"Yes":"No")
+                                            </td>
+                                            <td>
+                                                @md.ShortDescription
+                                            </td>
+                                            <td>
+                                                <img src="@(_configuration["FileUpload:PackageFilePath"])/@md.ThumbnailImage" width="80" height="50" />
+                                            </td>
+                                            <td>
+                                                @md.EffectiveFromDt.ToString("dd-MMM-yyyy")
+                                            </td>
+                                            <td>
+                                                @md.EffectiveToDt.ToString("dd-MMM-yyyy")
+                                            </td>
+                                            <td>
+                                                @md.AdultPrice
+                                            </td>
+                                            <td>
+                                                @md.ChildPrice
+                                            </td>
+                                            <td>
+                                                @md.InfantPrice
+                                            </td>
+                                            <td>
+                                                @(md.IsActive?"Yes":"No")
+                                            </td>
+                                            <td>
+                                                @(md.ModifiedDt.HasValue? md.ModifiedDt.Value.ToString("dd-MMM-yyyy HH:MM"):"")
+                                            </td>
+                                            <td>
+                                                @md.ModifiedByName
+                                            </td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
 
-    </div>
-
-</form>
-
-
-<div class="row">
-    <div class="col-xs-12">
-        <div class="clearfix">
-            <div class="pull-right tableTools-container"></div>
-        </div>
-        <div class="table-header">
-            Results for "All Markup"
-        </div>
-
-        <!-- div.table-responsive -->
-        <!-- div.dataTables_borderWrap -->
-        <div>
-            <table id="dynamic-table" class="table table-striped table-bordered table-hover">
-                <thead>
-                    <tr>
-                        @if (HaveCreatepermission)
-                        {
-                            <th>
-                                Edit
-                            </th>
-                        }
-                        <th>Package Name</th>
-                        <th>LocationName</th>
-                        <th>IsDomestic</th>
-                        <th>ShortDescription</th>
-                        <th>ThumbnailImage</th>
-                        <th>EffectiveFromDt </th>
-                        <th>EffectiveToDt </th>
-                        <th>AdultPrice </th>
-                        <th>ChildPrice</th>
-                        <th>InfantPrice</th>
-                        <th>IsActive</th>
-                        <th>Last Modify Dt</th>
-                        <th>Modify By</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @foreach (var md in Model.Packagedata)
-                    {
-                        <tr>
-                            @if (HaveCreatepermission)
-                            {
-                                <td class="center">
-                                    <div class="hidden-sm hidden-xs action-buttons">
-                                        @*<a class="blue" href="#">
-                                                <i class="ace-icon fa fa-search-plus bigger-130"></i>
-                                            </a>*@
-                                        <a class="green" href="@(enmDocumentMaster.CreatePackage.GetDocumentDetails().ActionName)/@md.PackageId">
-                                            <i class="ace-icon fa fa-pencil bigger-130"></i>
-                                        </a>
-                                        @*<a class="red" href="/Home/WingMarkup/@md.Id">
-                                                <i class="ace-icon fa fa-trash-o bigger-130"></i>
-                                            </a>*@
-                                    </div>
-
-                                    <div class="hidden-md hidden-lg">
-                                        <div class="inline pos-rel">
-                                            <button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
-                                                <i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
-                                            </button>
-
-                                            <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
-                                                @*<li>
-                                                        <a href="#" class="tooltip-info" data-rel="tooltip" title="View">
-                                                            <span class="blue">
-                                                                <i class="ace-icon fa fa-search-plus bigger-120"></i>
-                                                            </span>
-                                                        </a>
-                                                    </li>*@
-
-                                                <li>
-                                                    <a href="@(enmDocumentMaster.CreatePackage.GetDocumentDetails().ActionName)/@md.PackageId" class="tooltip-success" data-rel="tooltip" title="Edit">
-                                                        <span class="green">
-                                                            <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
-                                                        </span>
-                                                    </a>
-                                                </li>
-
-                                                @*<li>
-                                                        <a href="/Home/WingMarkup/@md.Id" class="tooltip-error" data-rel="tooltip" title="Delete">
-                                                            <span class="red">
-                                                                <i class="ace-icon fa fa-trash-o bigger-120"></i>
-                                                            </span>
-                                                        </a>
-                                                    </li>*@
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </td>
-                            }
-
-
-                            <td>
-                                @md.PackageName
-                            </td>
-                            <td>
-                                @md.LocationName
-                            </td>
-                            <td>
-                                @(md.IsDomestic?"Yes":"No")
-                            </td>
-                            <td>
-                                @md.ShortDescription
-                            </td>
-                            <td>
-                                <img src="@(_configuration["FileUpload:PackageFilePath"])/@md.ThumbnailImage" width="80" height="50" />
-                            </td>
-                            <td>
-                                @md.EffectiveFromDt.ToString("dd-MMM-yyyy")
-                            </td>
-                            <td>
-                                @md.EffectiveToDt.ToString("dd-MMM-yyyy")
-                            </td>
-                            <td>
-                                @md.AdultPrice
-                            </td>
-                            <td>
-                                @md.ChildPrice
-                            </td>
-                            <td>
-                                @md.InfantPrice
-                            </td>
-                            <td>
-                                @(md.IsActive?"Yes":"No")
-                            </td>
-                            <td>
-                                @(md.ModifiedDt.HasValue? md.ModifiedDt.Value.ToString("dd-MMM-yyyy HH:MM"):"")
-                            </td>
-                            <td>
-                                @md.ModifiedByName
-                            </td>
-
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
     </div>
 </div>
 @section Scripts {
