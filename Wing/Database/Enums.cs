@@ -123,7 +123,9 @@ namespace Database
     public enum enmUserType
     {
         Consolidator=1,
-        Employee=2
+        Employee=2,
+        B2B=4,
+        B2C=8
     }
 
     public enum enmMessageType
@@ -135,10 +137,18 @@ namespace Database
     }
     public enum enmApprovalType : byte
     {
+        Pending = 0,
         Approved = 1,
         Rejected = 2,
-        InProcessing = 4,
-        Pending = 8,
+        InProcessing = 3,        
+    }
+    public enum enmProcessStatus : byte
+    {
+        Pending = 0,
+        Completed = 1,
+        InProcessing = 2,
+        Hold = 3,
+        
     }
 
     public enum enmIsKycUpdated
@@ -213,5 +223,18 @@ namespace Database
         ByDateFilter=3,
         ByApproved=4,
         ByReject=5
+    }
+
+    public enum enmIncentiveTransactionType
+    { 
+        PushIncentive=1,
+        DipatchIncentive=2,
+        HoldIncenitve=3,
+        UnHoldIncentive=4,
+        AdjustIncentive=5,
+        TransferToWallet=6,
+        ReturnFromWallet = 7,
+        ReturnIncentive=8
+
     }
 }
