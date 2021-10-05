@@ -103,5 +103,24 @@ namespace Database.DB
         [ConcurrencyCheck]
         public byte[] RowVersion { get; set; }
     }
+    public class tblPaymentRequestIdentity
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Sno { get; set; }
+        public int CountryId { get; set; }
+        public int YearId { get; set; }
+        public int MonthId { get; set; }
+        public int PaymentCounter { get; set; }
+        [Timestamp]
+        [ConcurrencyCheck]
+        public byte[] RowVersion { get; set; }
+    }
+
+
+    
+
+
+
 
 }

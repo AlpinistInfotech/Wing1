@@ -70,18 +70,7 @@ namespace Database.DB
         public DateTime EffectiveToDt { get; set; } = DateTime.Now;
     }
 
-    public class tblUsersWalletAmount
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public ulong Sno { get; set; }
-        public ulong UserId { get; set; }
-        public int CustomerId { get; set; }
-        public double WalletAmount { get; set; }
-        [ConcurrencyCheck]
-        [Timestamp]
-        public byte[] RowVersion { get; set; }
-    }
+    
 
 
 

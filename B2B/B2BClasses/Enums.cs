@@ -86,7 +86,6 @@ namespace B2BClasses.Services.Enums
         OnMealServices = 8,
         OnSeatServices=16,
         OnExtraService=32
-
     }
 
     public enum enmMessage
