@@ -74,6 +74,7 @@ namespace Database.DB
         public byte[] RowVersion { get; set; }
     }
 
+    
     public class tblBookingIdentity
     {
         [Key]

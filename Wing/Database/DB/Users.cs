@@ -36,12 +36,11 @@ namespace Database.DB
         public int OrgId { get; set; }
     }
 
-    public class tblOrganisation:d_ApprovedBy
+    public class tblCustomer:d_ApprovedBy
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public ulong OrgId { get; set; }
-        public ulong UserId { get; set; }
+        public int CustomerId { get; set; }
         [MaxLength(256)]
         public string OrganisationName { get; set; }// It is the OTP for Validating Email and Password 
         [MaxLength(32)]
@@ -52,12 +51,11 @@ namespace Database.DB
         public string PhoneNumber { get; set; }
         [MaxLength(128)]
         public string OrgLogo { get; set; }
-        public DateTime GenrationDt { get; set; }
-        public DateTime ExpiryDt { get; set; }
+        public DateTime EffectiveFromDt { get; set; } = DateTime.Now;
+        public DateTime EffectiveToDt { get; set; } = DateTime.Now;
     }
 
-
-
+    
     public class tblUserOTPValidation
     {
         [Key]
@@ -67,9 +65,9 @@ namespace Database.DB
         [MaxLength(256)]
         public string SecurityStamp { get; set; }// It is the OTP for Validating Email and Password 
         [MaxLength(32)]
-        public string SecurityStampValue { get; set; }        
-        public DateTime GenrationDt { get; set; }
-        public DateTime ExpiryDt { get; set; }
+        public string SecurityStampValue { get; set; }
+        public DateTime EffectiveFromDt { get; set; } = DateTime.Now;
+        public DateTime EffectiveToDt { get; set; } = DateTime.Now;
     }
 
     public class tblUsersWalletAmount
@@ -78,7 +76,7 @@ namespace Database.DB
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public ulong Sno { get; set; }
         public ulong UserId { get; set; }
-        public int OrgId { get; set; }
+        public int CustomerId { get; set; }
         public double WalletAmount { get; set; }
         [ConcurrencyCheck]
         [Timestamp]
@@ -150,6 +148,7 @@ namespace Database.DB
         [MaxLength(64)]
         public string Latitude { get; set; }
         public bool IsDelfault { get; set; }
+        public bool IsDeleted { get; set; }
     }
 
 
@@ -162,6 +161,7 @@ namespace Database.DB
         public ulong Nid { get; set; }
         public int CurrencyId { get; set; }
         public bool IsDefault { get; set; }
+        public bool IsDeleted { get; set; }
     }
 
     public class tblDistributorCultureInfo : d_ModifiedBy
@@ -174,6 +174,7 @@ namespace Database.DB
         [MaxLength(8)]
         public string CultureInfo { get; set; }
         public bool IsDefault { get; set; }
+        public bool IsDeleted { get; set; }
     }
 
     public class tblDistributorBanks : d_ModifiedBy
@@ -193,6 +194,7 @@ namespace Database.DB
         [MaxLength(128)]
         public string FilePath { get; set; }
         public bool IsDefault { get; set; }
+        public bool IsDeleted { get; set; }
     }
 
     public class tblPan : d_ModifiedBy
@@ -208,6 +210,7 @@ namespace Database.DB
         public string NameOnPan { get; set; }
         [MaxLength(128)]
         public string FilePath { get; set; }
+        public bool IsDeleted { get; set; }
 
     }
 
@@ -225,6 +228,7 @@ namespace Database.DB
         public string NameOnDocument { get; set; }
         [MaxLength(128)]
         public string FilePath { get; set; }
+        public bool IsDeleted { get; set; }
 
     }
 
