@@ -4259,3 +4259,27 @@ select.form-control:not([size]):not([multiple]):not(.form-control-sm) {
         border-radius: 50%;
         width: 105px;
     }
+.form-radio input:checked + label span {
+    color: #ff656a;
+    border: 2px solid #ff656a;
+}
+
+.form-radio input + label span {
+    font-weight: 500;
+}
+
+.form-radio input + label span {
+    padding: 7px 10px;
+    display: block;
+    border: 2px solid #222;
+    align-items: center;
+    -moz-align-items: center;
+    -webkit-align-items: center;
+    -o-align-items: center;
+    -ms-align-items: center;
+    justify-content: center;
+    -moz-justify-content: center;
+    -webkit-justify-content: center;
+    -o-justify-content: center;
+    -ms-justify-content: center;
+}

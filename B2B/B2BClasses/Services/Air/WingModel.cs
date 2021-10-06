@@ -42,13 +42,6 @@ namespace B2BClasses.Services.Air
         public int Code { get; set; }
         public string Message { get; set; }
     }
-    public class Error
-    {
-        public string errCode { get; set; }
-        public string message { get; set; }
-        public string details { get; set; }
-    }
-
     public class mdlSearchResponse
     {
         public int ResponseStatus { get; set; }
@@ -91,7 +84,7 @@ namespace B2BClasses.Services.Air
         public bool IsFreeMeel { get; set; }
         public double Convenience { get; set; }
         public mdlSsrInfo sinfo { get; set; }
-      
+
     }
     public class mdlSsrInfo
     {
@@ -100,7 +93,7 @@ namespace B2BClasses.Services.Air
         public SsrInformation[] MEAL { get; set; }
         public SsrInformation[] EXTRASERVICES { get; set; }
 
-       
+
     }
     public class SsrInformation
     {
@@ -189,6 +182,21 @@ namespace B2BClasses.Services.Air
         public double SSRP { get; set; }
         public double WingMarkup { get; set; }
         public double WingDiscount { get; set; }
+        //for tbo
+        public string Currency { get; set; }
+        public double Tax { get; set; }
+        public double YQTax { get; set; }
+        public double AdditionalTxnFeePub { get; set; }
+        public double AdditionalTxnFeeOfrd { get; set; }
+        public double OtherCharges { get; set; }
+        public double Discount { get; set; }
+        public double PublishedFare { get; set; }
+        public double OfferedFare { get; set; }
+        public double TdsOnCommission { get; set; }
+        public double TdsOnPLB { get; set; }
+        public double TdsOnIncentive { get; set; }
+        public double ServiceFee { get; set; }
+
     }
 
     public class mdlSSRP
@@ -226,6 +234,7 @@ namespace B2BClasses.Services.Air
         public bool IsPriceChanged { get; set; }
         public mdlError Error { get; set; }
         public string TraceId { get; set; }
+        public string TokenId { get; set; }
         public string BookingId { get; set; }
         public string Origin { get; set; }
         public string Destination { get; set; }
@@ -233,7 +242,8 @@ namespace B2BClasses.Services.Air
         public mdlTotalPriceInfo TotalPriceInfo { get; set; }
         public mdlFlightSearchWraper SearchQuery { get; set; }
         public mdlFareQuoteCondition FareQuoteCondition { get; set; }
-        
+        public string userip { get; set; }
+
     }
 
     public class mdlTotalPriceInfo
@@ -249,6 +259,7 @@ namespace B2BClasses.Services.Air
 
     public class mdlFareQuoteCondition
     {
+        public bool IsLCC { get; set; }
         public bool IsHoldApplicable { get; set; }
         public mdlDobCondition dob { get; set; }
         public mdlPassportCondition PassportCondition { get; set; }
@@ -280,7 +291,7 @@ namespace B2BClasses.Services.Air
     public class mdlFareRuleRequest : mdlFareQuotRequest
     {
         public string id { get; set; }
-        public string flowType { get; set;}
+        public string flowType { get; set; }
     }
     public class mdlFareRuleResponseWraper
     {
@@ -347,7 +358,11 @@ namespace B2BClasses.Services.Air
     public class mdlBookingRequest
     {
         public string TraceId { get; set; }
+        public string TokenId { get; set; }
+        public string userip { get; set; }
+        public string resultindex { get; set; }
         public string BookingId { get; set; }
+        public bool IsLCC { get; set; }
         public List<mdlTravellerinfo> travellerInfo { get; set; }
         public mdlDeliveryinfo deliveryInfo { get; set; }
         public mdlGstInfo gstInfo { get; set; }
@@ -355,6 +370,7 @@ namespace B2BClasses.Services.Air
 
     }
 
+   
     public class mdlDeliveryinfo
     {
         public List<string> emails { get; set; }
@@ -374,7 +390,7 @@ namespace B2BClasses.Services.Air
         public string farebasis { get; set; }
         public DateTime PassportExpiryDate { get; set; }
         public DateTime PassportIssueDate { get; set; }
-        public mdlSSRS ssrBaggageInfos { get; set; }
+        public mdlSSRS Baggage { get; set; }
         public mdlSSRS ssrMealInfos { get; set; }
         public mdlSSRS ssrSeatInfos { get; set; }
         public mdlSSRS ssrExtraServiceInfos { get; set; }
@@ -382,6 +398,46 @@ namespace B2BClasses.Services.Air
         public List<mdlSSRS> ssrMealInfoslist { get; set; }
         public List<mdlSSRS> ssrSeatInfoslist { get; set; }
         public List<mdlSSRS> ssrExtraServiceInfoslist { get; set; }
+        //for tbo
+        public string Gender { get; set; }
+        public string passportNum { get; set; }
+        public string address1 { get; set; }
+        public string address2 { get; set; }
+        public string city { get; set; }
+        public string countrycode { get; set; }
+        public string countryname { get; set; }
+        public string cellcountrycode { get; set; }
+        public string nationality { get; set; }
+        public bool IsLeadPax { get; set; }
+        public string FFAirlineCode { get; set; }
+        public string FFNumber { get; set; }
+        public int PaxType { get; set; }
+        public mdlfare Fare { get; set; }
+    }
+
+
+    public class mdlfare
+    {
+        public double BaseFare { get; set; }
+        public double Tax { get; set; }
+        public double TransactionFee { get; set; }
+        public double YQTax { get; set; }
+        public double AdditionalTxnFeeOfrd { get; set; }
+        public double AdditionalTxnFeePub { get; set; }
+        public double AirTransFee { get; set; }
+        public double OtherCharges { get; set; }
+        public double Discount { get; set; }
+        public double PublishedFare { get; set; }
+        public double OfferedFare { get; set; }
+        public double TdsOnCommission { get; set; }
+        public double TdsOnPLB { get; set; }
+        public double TdsOnIncentive { get; set; }
+        public double ServiceFee { get; set; }
+        public double TotalBaggageCharges { get; set; }
+        public double TotalMealCharges { get; set; }
+        public double TotalSeatCharges { get; set; }
+
+        public double TotalSpecialServiceCharges { get; set; }
     }
     public class mdlPaymentInfos
     {
@@ -406,6 +462,7 @@ namespace B2BClasses.Services.Air
     public class mdlBookingResponse
     {
         public string bookingId { get; set; }
+        public string PNR { get; set; }
         public mdlError Error { get; set; }
         public mdlMetainfo metaInfo { get; set; }
         public int ResponseStatus { get; set; }
@@ -417,7 +474,7 @@ namespace B2BClasses.Services.Air
     {
         public bool success { get; set; }
         public int httpStatus { get; set; }
-        public string  message { get; set; }
+        public string message { get; set; }
     }
 
     public class mdlMetainfo
@@ -452,7 +509,7 @@ namespace B2BClasses.Services.Air
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        
+
     }
 
 
@@ -462,10 +519,10 @@ namespace B2BClasses.Services.Air
     }
 
 
-    public class mdlFlightCancellationChargeResponse 
+    public class mdlFlightCancellationChargeResponse
     {
         public string bookingId { get; set; }
-        public List< mdlCancelCharges> trips { get; set; }
+        public List<mdlCancelCharges> trips { get; set; }
         public mdlStatus status { get; set; }
         public mdlError Error { get; set; }
         public int ResponseStatus { get; set; }
@@ -479,10 +536,10 @@ namespace B2BClasses.Services.Air
         public DateTime departureDate { get; set; }
         public string[] flightNumbers { get; set; }
         public string[] airlines { get; set; }
-        public mdlAmendmentinfo amendmentInfo { get; set; }        
+        public mdlAmendmentinfo amendmentInfo { get; set; }
     }
 
-    public class mdlAmendmentinfo: mdlTravellerBasicInfo
+    public class mdlAmendmentinfo : mdlTravellerBasicInfo
     {
         public mdlRefundAmount ADULT { get; set; }
         public mdlRefundAmount CHILD { get; set; }
@@ -504,7 +561,7 @@ namespace B2BClasses.Services.Air
         public string amendmentStatus { get; set; }
         public double amendmentCharges { get; set; }
         public double refundableamount { get; set; }
-        public List< mdlCancelTrip> trips { get; set; }
+        public List<mdlCancelTrip> trips { get; set; }
         public mdlStatus status { get; set; }
         public mdlMetainfo metaInfo { get; set; }
         public mdlError Error { get; set; }
@@ -519,7 +576,7 @@ namespace B2BClasses.Services.Air
         public string date { get; set; }
         public string[] flightNumbers { get; set; }
         public string[] airlines { get; set; }
-        public List< mdlCancelTraveller> travellers { get; set; }
+        public List<mdlCancelTraveller> travellers { get; set; }
     }
 
     public class mdlCancelTraveller

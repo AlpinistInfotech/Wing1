@@ -115,7 +115,8 @@ namespace B2bApplication.Models
                         IsPassportExpiryDate = FareQuotResponse.Any(p => p.FareQuoteCondition?.PassportCondition?.IsPassportExpiryDate ?? false),
                         isPassportIssueDate = FareQuotResponse.Any(p => p.FareQuoteCondition?.PassportCondition?.isPassportIssueDate ?? false),
                         isPassportRequired = FareQuotResponse.Any(p => p.FareQuoteCondition?.PassportCondition?.isPassportRequired ?? false),
-                    }
+                    },
+                    IsLCC=FareQuoteCondition?.IsLCC?? false,
                 };
             }
 
