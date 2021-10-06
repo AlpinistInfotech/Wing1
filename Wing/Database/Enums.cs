@@ -20,6 +20,15 @@ namespace Database
         FIRST = 6
     }
 
+    public enum enmMarkupApplicability
+    {
+        OnTicket = 1,
+        OnPassenger = 2,
+        OnBaggageServices = 4,
+        OnMealServices = 8,
+        OnSeatServices = 16,
+        OnExtraService = 32
+    }
 
     public enum enmPreferredDepartureTime
     {
@@ -41,7 +50,14 @@ namespace Database
     }
 
 
-
+    public enum enmBankTransactionType
+    {
+        None = 0,
+        UPI = 1,
+        NEFT = 2,
+        RTGS = 3,
+        CHEQUE = 4
+    }
     public enum enmCustomerType
     {
         Admin = 1,
@@ -117,13 +133,16 @@ namespace Database
         Flight = 1,
         Bus = 2,
         Train =3,
-        Hotel=4
+        Hotel=4,
+        HolidayPackage=5
     }
 
     public enum enmUserType
     {
         Consolidator=1,
-        Employee=2
+        Employee=2,
+        B2B=4,
+        B2C=8
     }
 
     public enum enmMessageType
@@ -134,11 +153,20 @@ namespace Database
         Info = 4,
     }
     public enum enmApprovalType : byte
-    {
+    {        
+        Pending = 0,
         Approved = 1,
         Rejected = 2,
-        InProcessing = 4,
-        Pending = 8,
+        InProcessing = 3,
+        Initiated=4
+    }
+    public enum enmProcessStatus : byte
+    {
+        Pending = 0,
+        Completed = 1,
+        InProcessing = 2,
+        Hold = 3,
+        
     }
 
     public enum enmIsKycUpdated
@@ -213,5 +241,66 @@ namespace Database
         ByDateFilter=3,
         ByApproved=4,
         ByReject=5
+    }
+
+    public enum enmIncentiveTransactionType
+    { 
+        PushIncentive=1,
+        DipatchIncentive=2,
+        HoldIncenitve=3,
+        UnHoldIncentive=4,
+        AdjustIncentive=5,
+        TransferToWallet=6,
+        ReturnFromWallet = 7,
+        ReturnIncentive=8
+
+    }
+
+    public enum enmPaymentRequestType
+    {        
+        WalletRecharge = 1,
+        CreditRequest = 2,
+        IncentiveTransferToWallet = 3,
+        IncentiveReturnFromWallet = 4,
+    }
+    public enum enmTransactionType
+    {
+        FlightTicketBook = 1,
+        HotelTicketBook = 2,
+        BusesBook = 3,
+        TaxiBook = 4,
+        TrainTicketBook = 5,
+        PackageBook = 10,
+        IncentiveTransferToWallet = 11,
+        IncentiveReturnFromWallet = 12,
+        WalletAmountUpdate = 100,
+        PaymentGatewayAmountUpdate = 101,
+        OnCreditUpdate = 102,
+    }
+
+    public enum enmNotificationType
+    {
+        Flight = 1,
+        Bus = 2,
+        Train = 3,
+        Hotel = 4,
+        HolidayPackage = 5,
+        
+        PanStatusChange=101,
+        BankStatusChange = 102,
+        NomineeStatusChange = 103,
+        IdentityStatusChange = 104,
+
+        WalletMinBalenceAlert = 111,
+        PaymentRequestStatusChange=112
+    }
+    public enum enmNotificationMode
+    {
+        Application=1,
+        SMS=2,
+        Email=3,
+        MobilePush=4,
+        DesktopPush = 5,
+
     }
 }
