@@ -660,13 +660,13 @@ namespace B2bApplication.Controllers
         [Authorize(policy: nameof(enmDocumentMaster.Flight))]
         public async Task<IActionResult> NewFlightReview(mdlFlightReview mdl)
         {
-
             if (mdl == null)
             {
                 mdl = new mdlFlightReview();
             }
             await mdl.LoadFareQuotationAsync(_currentUsers.CustomerId, _booking, _markup, _context);
             mdl.BookingRequestDefaultData();
+            
             HttpContext.Session.SetObjectAsJson("flightreview", mdl);
             return View(mdl);
         }
@@ -766,8 +766,6 @@ namespace B2bApplication.Controllers
                     return RedirectToAction("NewFlightReview");
                 }
 
-
-
                 //await mdl.LoadFareQuotationAsync(_currentUsers.CustomerId, _booking, _markup, _context);
                 IsPriceChanged = mdl.FareQuotResponse.Any(p => p.IsPriceChanged);
                 if (IsPriceChanged)
@@ -795,23 +793,120 @@ namespace B2bApplication.Controllers
                 //if Price not chnage then Book the Flight
                 for (int i = 0; i < mdl.FareQuotResponse.Count(); i++)
                 {
-                    List<string> cont = new List<string>();
-                    cont.Add(mdl.contacts);
-                    List<string> eml = new List<string>();
-                    eml.Add(mdl.emails);
-                    List<mdlPaymentInfos> pi = new List<mdlPaymentInfos>();
-                    pi.Add(new mdlPaymentInfos() { amount = mdl.FareQuotResponse[i].TotalPriceInfo.TotalFare + mdl.OtherCharge });
-                    string bookid = mdl.FareQuotResponse[i].BookingId;
-
-                    mdlBookingRequest mdlReq = new mdlBookingRequest()
+                    
+                    if (mdl.FareQuotResponse[i].ServiceProvider == enmServiceProvider.TBO)
                     {
-                        TraceId = mdl.FareQuoteRequest.TraceId,
-                        BookingId = bookid,
-                        travellerInfo = mdl.travellerInfo,
-                        deliveryInfo = new mdlDeliveryinfo() { contacts = cont, emails = eml },
-                        gstInfo = mdl.gstInfo,
-                        paymentInfos = pi
-                    };
+                        mdlBookingRequest mdlReq = new mdlBookingRequest();
+                        mdlReq.BookingId = mdl.FareQuotResponse[i].BookingId;
+                        mdlReq.TraceId = mdl.FareQuotResponse[i].TraceId;
+                        mdlReq.TokenId = mdl.FareQuotResponse[i].TokenId;
+                        mdlReq.userip = mdl.FareQuotResponse[i].userip;
+                        mdlReq.IsLCC = mdl.FareQuoteCondition.IsLCC;
+                       if(mdl.FareQuoteRequest.ResultIndex != null)
+                        {
+                            string[] reindx = mdl.FareQuoteRequest.ResultIndex[0].Split('_');
+                            if(reindx.Length>0)
+                            mdlReq.resultindex = reindx[1];
+                        }
+                        //  mdlReq.travellerInfo = mdl.travellerInfo;
+                        List<mdlTravellerinfo> pi = new List<mdlTravellerinfo>();
+                        foreach (var item in mdl.travellerInfo)
+                        {
+                            var pxtype = 1;
+                            if (item.passengerType == enmPassengerType.Adult)
+                                pxtype = 1;
+                            else if (item.passengerType == enmPassengerType.Child)
+                                pxtype = 2;
+                            else
+                                pxtype = 0;
+                            pi.Add(new mdlTravellerinfo
+                            {
+                                address1 = item.address1,
+                                address2 = item.address2,
+                                cellcountrycode = "+91",
+                                countrycode = "IN",
+                                countryname="INDIA",
+                                city = "Delhi",                                
+                                dob = item.dob,                                
+                                FFAirlineCode = item.FFAirlineCode,
+                                FFNumber = item.FFNumber,
+                                FirstName = item.FirstName,
+                                Gender = item.Gender,                                
+                                IsLeadPax = item.IsLeadPax,
+                                LastName = item.LastName,
+                                nationality = "IN",
+                                passengerType = item.passengerType,
+                               PaxType= pxtype,
+                                Title = item.Title,
+                                ssrBaggageInfoslist = item.ssrBaggageInfoslist,
+                                ssrExtraServiceInfoslist = item.ssrExtraServiceInfoslist,
+                                ssrMealInfoslist = item.ssrMealInfoslist,
+                                ssrSeatInfoslist = item.ssrSeatInfoslist,
+                                Fare = (new mdlfare {
+                                AdditionalTxnFeeOfrd= mdl.FareQuotResponse[i].Results[0][0].TotalPriceList[0].ADULT.FareComponent.AdditionalTxnFeeOfrd,
+                                    AdditionalTxnFeePub = mdl.FareQuotResponse[i].Results[0][0].TotalPriceList[0].ADULT.FareComponent.AdditionalTxnFeePub,
+                                    AirTransFee = 0,
+                                    BaseFare = mdl.FareQuotResponse[i].Results[0][0].TotalPriceList[0].ADULT.FareComponent.BaseFare,
+                                    Discount = mdl.FareQuotResponse[i].Results[0][0].TotalPriceList[0].ADULT.FareComponent.Discount,
+                                    OfferedFare = mdl.FareQuotResponse[i].Results[0][0].TotalPriceList[0].ADULT.FareComponent.OfferedFare,
+                                    OtherCharges = mdl.FareQuotResponse[i].Results[0][0].TotalPriceList[0].ADULT.FareComponent.OtherCharges,
+                                    PublishedFare = mdl.FareQuotResponse[i].Results[0][0].TotalPriceList[0].ADULT.FareComponent.PublishedFare,
+                                    ServiceFee = mdl.FareQuotResponse[i].Results[0][0].TotalPriceList[0].ADULT.FareComponent.ServiceFee,
+                                    Tax = mdl.FareQuotResponse[i].Results[0][0].TotalPriceList[0].ADULT.FareComponent.Tax,
+                                    TdsOnCommission = mdl.FareQuotResponse[i].Results[0][0].TotalPriceList[0].ADULT.FareComponent.TdsOnCommission,
+                                    TdsOnIncentive = mdl.FareQuotResponse[i].Results[0][0].TotalPriceList[0].ADULT.FareComponent.TdsOnIncentive,
+                                    TdsOnPLB = mdl.FareQuotResponse[i].Results[0][0].TotalPriceList[0].ADULT.FareComponent.TdsOnPLB,
+                                    TransactionFee =0,
+                                    YQTax = mdl.FareQuotResponse[i].Results[0][0].TotalPriceList[0].ADULT.FareComponent.YQTax,
+                                })
+                            }) ;
+                        }
+                        mdlReq.travellerInfo = pi;
+                        
+                        List<string> cont = new List<string>();
+                        cont.Add(mdl.contacts);
+                        List<string> eml = new List<string>();
+                        eml.Add(mdl.emails);
+                        List<mdlPaymentInfos> pinfo = new List<mdlPaymentInfos>();
+                        pinfo.Add(new mdlPaymentInfos() { amount = mdl.FareQuotResponse[i].TotalPriceInfo.TotalFare + mdl.OtherCharge });
+                        
+                        mdlReq.deliveryInfo = new mdlDeliveryinfo() { contacts = cont, emails = eml };
+                        mdlReq.gstInfo = mdl.gstInfo;
+                        mdlReq.paymentInfos = pinfo;
+                        var Result = await _booking.BookingAsync(mdlReq);
+                       
+                        mdlres.FareQuotResponse.Add(mdl.FareQuotResponse[i]);
+                        mdlres.IsSucess.Add(Result.ResponseStatus == 1 ? true : false);
+                        mdlres.BookingId.Add(Result.ResponseStatus == 1 ? Result.bookingId : Result.Error.Message);
+                        mdlres.PNR.Add(Result.ResponseStatus == 1 ? Result.PNR : Result.Error.Message);
+                        mdlres.travellerInfo = mdl.travellerInfo;
+                        mdlres.deliveryInfo = mdlReq.deliveryInfo;
+                        if (!(Result.ResponseStatus == 1))
+                        {
+                            ViewBag.SaveStatus = (int)enmMessageType.Warning;
+                            ViewBag.Message = Result.Error.Message;
+                        }
+
+                    }
+                    else
+                    {
+                        mdlBookingRequest mdlReq = new mdlBookingRequest();
+                        List<string> cont = new List<string>();
+                        cont.Add(mdl.contacts);
+                        List<string> eml = new List<string>();
+                        eml.Add(mdl.emails);
+                        List<mdlPaymentInfos> pi = new List<mdlPaymentInfos>();
+                        pi.Add(new mdlPaymentInfos() { amount = mdl.FareQuotResponse[i].TotalPriceInfo.TotalFare + mdl.OtherCharge });
+                        string bookid = mdl.FareQuotResponse[i].BookingId;
+                        
+                            mdlReq.TraceId = mdl.FareQuoteRequest.TraceId;
+                            mdlReq.BookingId = bookid;
+                            mdlReq.travellerInfo = mdl.travellerInfo;
+                        mdlReq.deliveryInfo = new mdlDeliveryinfo() { contacts = cont, emails = eml };
+                            mdlReq.gstInfo = mdl.gstInfo;
+                            mdlReq.paymentInfos = pi;
+                      
+                   
                     var Result = await _booking.BookingAsync(mdlReq);
                   
                     mdlres.FareQuotResponse.Add(mdl.FareQuotResponse[i]);
@@ -824,7 +919,7 @@ namespace B2bApplication.Controllers
                         ViewBag.SaveStatus = (int)enmMessageType.Warning;
                         ViewBag.Message = Result.Error.Message;
                     }
-
+                    }
 
                 }
             }

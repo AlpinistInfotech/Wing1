@@ -145,7 +145,7 @@
                                                             }
                                                             else
                                                             {
-                                                                <button class="btn btn-sm btn-primary" name='bookFlight' disabled onclick="booking('@totalpricelist.ResultIndex')">
+                                                                <button class="btn btn-sm btn-primary" name='bookFlight' onclick="nobooking('@totalpricelist.ResultIndex')">
                                                                     <i class="fas fa-shopping-cart d-block d-lg-none"></i>
                                                                     <span class="d-none d-lg-block">Book</span>
                                                                 </button>
@@ -253,7 +253,7 @@
                                                                         }
                                                                         else
                                                                         {
-                                                                            <button class="btn btn-sm btn-primary" name='bookFlight' disabled onclick="booking('@totp.ResultIndex')">
+                                                                            <button class="btn btn-sm btn-primary" name='bookFlight' disabled onclick="nobooking('@totp.ResultIndex')">
                                                                                 <i class="fas fa-shopping-cart d-block d-lg-none"></i>
                                                                                 <span class="d-none d-lg-block">Book</span>
                                                                             </button>
@@ -403,11 +403,15 @@
 <!-- Content end -->
 
 <script>
+    function nobooking(obj) {
+        toastr.warning('No seat remaining!');
+    }
     function booking(obj) {
+        debugger;
         var resultInde = '';
         var resultInde1 = obj;
         if (resultInde1 == null || resultInde1 == undefined) {
-            alert('Select Flight');
+            toastr.info('Select Flight');
             return;
         }
         else {
@@ -415,7 +419,7 @@
             $("#FareQuoteRequestResultIndex1").val(resultInde1);
         }
         var resultInde2 = '';
-        //var traceid = $('#hid_traceid').val();
+        var traceid = $('#FareQuoteRequestTraceId').val();
         //$("#FareQuoteRequestTraceId").val(traceid);
         $("#FareQuoteRequestResultIndex2").val(resultInde2);
         resultInde = resultInde1 + "," + resultInde2;
