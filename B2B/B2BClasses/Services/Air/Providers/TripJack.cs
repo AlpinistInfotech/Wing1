@@ -1632,7 +1632,6 @@ namespace B2BClasses.Services.Air
             };
             return mdl;
         }
-
         private async Task<mdlBookingResponse> BookingFromTripJacAsync(mdlBookingRequest request)
         {
             mdlBookingResponse mdlS = null;
@@ -1683,7 +1682,7 @@ namespace B2BClasses.Services.Air
                 mdlS = new mdlBookingResponse()
                 {
                     ResponseStatus = 100,
-                    Error = new mdlError()
+                   Error = new mdlError()
                     {
                         Code = 100,
                         Message = data.errors[0].message ?? "Unable to Process",

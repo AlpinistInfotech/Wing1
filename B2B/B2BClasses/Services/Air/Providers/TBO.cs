@@ -126,7 +126,7 @@ namespace B2BClasses.Services.Air
             //Add Provider Previx in Result index
             int tboid = (int)enmServiceProvider.TBO;
             if (response.Results != null)
-            {                
+            {
                 response.Results?.ForEach(p =>
                 {
                     p.ForEach(q => q.TotalPriceList.ForEach(r => r.ResultIndex = "" + tboid + "_" + r.ResultIndex));
@@ -196,10 +196,10 @@ namespace B2BClasses.Services.Air
             }
             else
             {
-                mdl.Error = new Error()
+                mdl.Error = new mdlError()
                 {
-                    ErrorCode = 1,
-                    ErrorMessage = "Invalid Login",
+                    Code = 1,
+                    Message = "Invalid Login",
                 };
             }
 
@@ -208,12 +208,221 @@ namespace B2BClasses.Services.Air
 
 
 
-
-        public Task<mdlBookingResponse> BookingAsync(mdlBookingRequest request)
+        #region***********Booking***********************
+        private BookingRequest BookingRequestMap(mdlBookingRequest request)
         {
-            throw new NotImplementedException();
+            List<Baggage> bagg = new List<Baggage>();
+            for (int i = 0; i < request.travellerInfo.Count; i++)
+            {
+
+            }
+            BookingRequest mdl = new BookingRequest()
+            {
+                ResultIndex = request.resultindex,
+                TraceId = request.TraceId,
+                TokenId = request.TokenId,
+                EndUserIp = request.userip,
+
+                Passengers = request.travellerInfo.Select(p => new Passengers
+                {
+                    Title = p.Title,
+                    FirstName = p.FirstName,
+                    LastName = p.LastName,
+                    DateOfBirth = p.dob,
+                    Gender = p.Gender,
+                    PassportExpiry = p.PassportExpiryDate,
+                    PassportNo = p.passportNum ?? "",
+                    GSTCompanyAddress = request?.gstInfo?.address ?? "",
+                    GSTCompanyContactNumber = request?.gstInfo?.mobile ?? "",
+                    GSTCompanyEmail = request?.gstInfo?.email ?? "",
+                    GSTCompanyName = request?.gstInfo?.registeredName ?? "",
+                    GSTNumber = request?.gstInfo?.gstNumber ?? "",
+                    AddressLine1 = p.address1 ?? "",
+                    AddressLine2 = p.address2 ?? "",
+                    City = p.city,
+                    CountryCode = p.countrycode,
+                    CountryName = p.countryname,
+                    CellCountryCode = p.cellcountrycode,
+                    Nationality = p.nationality,
+                    ContactNo = request.deliveryInfo.contacts.FirstOrDefault(),
+                    Email = request.deliveryInfo.emails.FirstOrDefault(),
+                    IsLeadPax = true,
+                    PaxType = p.PaxType,                    
+                    Bag = new Baggage { Code = p.ssrBaggageInfoslist[0].code, Description = p.ssrBaggageInfoslist[0].desc },
+                    Baglst=bagg.Add(new Baggage() { Code = p.ssrBaggageInfoslist[0].code, Description = p.ssrBaggageInfoslist[0].desc,Price=0 }),
+                    Seat = new Seats { Code = p.ssrBaggageInfoslist[0].code, Description = p.ssrBaggageInfoslist[0].desc },
+                    Meal = new MealDynamic { Code = p.ssrBaggageInfoslist[0].code, Description = p.ssrBaggageInfoslist[0].desc },
+                    Fare = p.Fare,
+
+                }).ToArray(),
+
+            };
+            return mdl;
+        }
+        public async Task<mdlBookingResponse> BookingAsync(mdlBookingRequest request)
+        {
+            if (request.IsLCC == false)
+            {
+                return await BookingFromTboAsync(request);
+            }
+            else
+            {
+                return await TicketFromTboAsync(request);
+            }
+        }
+        private async Task<mdlBookingResponse> BookingFromTboAsync(mdlBookingRequest request)
+        {
+            int MaxLoginAttempt = 1, LoginAttempt = 0;
+            mdlBookingResponse mdlS = null;
+            BookingResponse mdl = null;
+            //set the Upper case in pax type
+
+            string tboUrl = _config["TBO:API:Book"];
+        StartSendRequest:
+            //Load tokken ID 
+            var TokenDetails = _context.tblTboTokenDetails.OrderByDescending(p => p.GenrationDt).FirstOrDefault();
+            if (TokenDetails == null)
+            {
+                var AuthenticateResponse = await LoginAsync();
+                if (AuthenticateResponse.Status == 1 && LoginAttempt < MaxLoginAttempt)
+                {
+                    LoginAttempt++;
+                    goto StartSendRequest;
+                }
+            }
+            var breq = BookingRequestMap(request);
+            string jsonString = System.Text.Json.JsonSerializer.Serialize(breq);
+            var HaveResponse = GetResponse(jsonString, tboUrl);
+            if (HaveResponse.Code == 0)
+            {
+                mdl = (JsonConvert.DeserializeObject<BookingResponse>(HaveResponse.Message));
+            }
+
+            if (mdl != null)
+            {
+                if (mdl.status.success)//success
+                {
+                    mdlS = new mdlBookingResponse()
+                    {
+                        bookingId = mdl.bookingId,
+                        Error = new mdlError()
+                        {
+                            Code = 0,
+                            Message = ""
+                        },
+                        ResponseStatus = 1,
+
+                    };
+                }
+                else
+                {
+                    mdlS = new mdlBookingResponse()
+                    {
+                        ResponseStatus = 3,
+                        Error = new mdlError()
+                        {
+                            Code = 12,
+                            Message = mdl.error?.FirstOrDefault()?.Errormessage ?? "",
+                        }
+                    };
+                }
+
+            }
+            else
+            {
+                dynamic data = JObject.Parse(HaveResponse.Message);
+                mdlS = new mdlBookingResponse()
+                {
+                    ResponseStatus = 100,
+                    Error = new mdlError()
+                    {
+                        Code = 100,
+                        Message = data.errors[0].message ?? "Unable to Process",
+                    }
+                };
+            }
+
+            return mdlS;
         }
 
+        private async Task<mdlBookingResponse> TicketFromTboAsync(mdlBookingRequest request)
+        {
+            int MaxLoginAttempt = 1, LoginAttempt = 0;
+            mdlBookingResponse mdlS = null;
+            BookingResponse mdl = null;
+            //set the Upper case in pax type
+
+            string tboUrl = _config["TBO:API:Ticket"];
+        StartSendRequest:
+            //Load tokken ID 
+            var TokenDetails = _context.tblTboTokenDetails.OrderByDescending(p => p.GenrationDt).FirstOrDefault();
+            if (TokenDetails == null)
+            {
+                var AuthenticateResponse = await LoginAsync();
+                if (AuthenticateResponse.Status == 1 && LoginAttempt < MaxLoginAttempt)
+                {
+                    LoginAttempt++;
+                    goto StartSendRequest;
+                }
+            }
+            var breq = BookingRequestMap(request);
+            string jsonString = System.Text.Json.JsonSerializer.Serialize(breq);
+            var HaveResponse = GetResponse(jsonString, tboUrl);
+            if (HaveResponse.Code == 0)
+            {
+                mdl = (JsonConvert.DeserializeObject<BookingResponse>(HaveResponse.Message));
+            }
+
+            if (mdl != null)
+            {
+                if (mdl.status.success)//success
+                {
+                    mdlS = new mdlBookingResponse()
+                    {
+                        bookingId = mdl.bookingId,
+                        Error = new mdlError()
+                        {
+                            Code = 0,
+                            Message = ""
+                        },
+                        ResponseStatus = 1,
+
+                    };
+                }
+                else
+                {
+                    mdlS = new mdlBookingResponse()
+                    {
+                        ResponseStatus = 3,
+                        Error = new mdlError()
+                        {
+                            Code = 12,
+                            Message = mdl.error?.FirstOrDefault()?.Errormessage ?? "",
+                        }
+                    };
+                }
+
+            }
+            else
+            {
+                dynamic data = JObject.Parse(HaveResponse.Message);
+                mdlS = new mdlBookingResponse()
+                {
+                    ResponseStatus = 100,
+                    Error = new mdlError()
+                    {
+                        Code = 100,
+                        Message = data.errors[0].message ?? "Unable to Process",
+                    }
+                };
+            }
+
+            return mdlS;
+        }
+
+
+
+        #endregion
         public Task<mdlFlightCancellationChargeResponse> CancelationChargeAsync(mdlCancellationRequest request)
         {
             throw new NotImplementedException();
@@ -242,7 +451,7 @@ namespace B2BClasses.Services.Air
         {
             public int Status { get; set; }
             public string TokenId { get; set; }
-            public Error Error { get; set; }
+            public mdlError Error { get; set; }
             public Member Member { get; set; }
         }
 
@@ -280,14 +489,20 @@ namespace B2BClasses.Services.Air
         {
             public int ResponseStatus { get; set; }
             public bool IsPriceChanged { get; set; }
-            public Error Error { get; set; }
+            public mdlError Error { get; set; }
             public string TraceId { get; set; }
             public string Origin { get; set; }
             public string Destination { get; set; }
             public SearchResult Results { get; set; }
             public string bookingId { get; set; }
+            public string TokenId { get; set; }
         }
-
+        public class Error
+        {
+            public string ErrorCode { get; set; }
+            public string Errormessage { get; set; }
+            public string details { get; set; }
+        }
         #endregion
         #region fare rule
         public class FareRuleRequest : FareQuotRequest
@@ -301,7 +516,7 @@ namespace B2BClasses.Services.Air
 
         public class FareRuleResponse
         {
-            public Error Error { get; set; }
+            public mdlError Error { get; set; }
             public Farerule[] FareRules { get; set; }
             public int ResponseStatus { get; set; }
             public string TraceId { get; set; }
@@ -321,14 +536,13 @@ namespace B2BClasses.Services.Air
 
         private async Task<mdlFareQuotResponse> FareQuoteFromTboAsync(mdlFareQuotRequest request)
         {
-
             int MaxLoginAttempt = 1, LoginAttempt = 0;
             mdlFareQuotResponse mdlS = null;
             FareQuotResponse mdl = null;
             FareQuotResponseWraper mdlTemp = null;
 
             string tboUrl = _config["TBO:API:FareQuote"];
-            StartSendRequest:
+        StartSendRequest:
             //Load tokken ID 
             var TokenDetails = _context.tblTboTokenDetails.OrderByDescending(p => p.GenrationDt).FirstOrDefault();
             if (TokenDetails == null)
@@ -390,8 +604,11 @@ namespace B2BClasses.Services.Air
                     {
                         ServiceProvider = enmServiceProvider.TBO,
                         TraceId = mdl.TraceId,
+                        TokenId = TokenDetails.TokenId,
+                        userip = GetIPAddress(),
                         BookingId = ServiceProvider + "_" + mdl.bookingId,
                         ResponseStatus = 1,
+
                         Error = new mdlError()
                         {
                             Code = 0,
@@ -406,6 +623,7 @@ namespace B2BClasses.Services.Air
                             BaseFare = mdl.Results?.Fare?.BaseFare ?? 0,
                             TaxAndFees = mdl.Results?.Fare?.Tax ?? 0,
                             TotalFare = mdl.Results?.Fare?.PublishedFare ?? 0,
+
                         },
                         SearchQuery = new Models.mdlFlightSearchWraper()
                         {
@@ -432,6 +650,7 @@ namespace B2BClasses.Services.Air
                                 IsGstApplicable = mdl.Results?.GSTAllowed ?? true,
                             },
                             IsHoldApplicable = mdl.Results?.IsHoldAllowed ?? false,
+                            IsLCC = mdl.Results?.IsLCC ?? false,
                             PassportCondition = new mdlPassportCondition()
                             {
                                 IsPassportExpiryDate = false,
@@ -449,8 +668,8 @@ namespace B2BClasses.Services.Air
                         ResponseStatus = 3,
                         Error = new mdlError()
                         {
-                            Code = mdl.Error.ErrorCode,
-                            Message = mdl.Error.ErrorMessage,
+                            Code = mdl.Error.Code,
+                            Message = mdl.Error.Message,
                         }
                     };
                 }
@@ -584,8 +803,8 @@ namespace B2BClasses.Services.Air
                     {
                         Error = new mdlError()
                         {
-                            Code = mdl.Error.ErrorCode,
-                            Message = mdl.Error.ErrorMessage,
+                            Code = mdl.Error.Code,
+                            Message = mdl.Error.Message,
                         },
                         tboFareRule = mdlFareRules.ToArray(),
                         ResponseStatus = mdl.ResponseStatus
@@ -600,8 +819,8 @@ namespace B2BClasses.Services.Air
                         ResponseStatus = 3,
                         Error = new mdlError()
                         {
-                            Code = mdl.Error.ErrorCode,
-                            Message = mdl.Error.ErrorMessage,
+                            Code = mdl.Error.Code,
+                            Message = mdl.Error.Message,
                         }
                     };
                 }
@@ -639,6 +858,7 @@ namespace B2BClasses.Services.Air
 
 
         #region *******************Search Function***************************
+        //create in a static class
 
         private mdlSearchResult SearchResultMap(SearchResult sr, string ResultType, string TraceId, List<mdlSearchResult> srr)
         {
@@ -646,10 +866,26 @@ namespace B2BClasses.Services.Air
             mdlSearchResult mdls = new mdlSearchResult();
             List<mdlSegment> lmseg = new List<mdlSegment>();
             mdlTotalpricelist TotalPriceList = new mdlTotalpricelist();
-            
+            mdlFareRule mfr = new mdlFareRule();
+            mdlFarePolicy fr = new mdlFarePolicy();
+            mdlAllPOlicy cancelpolicy = new mdlAllPOlicy();
+            mdlAllPOlicy penaltypolicy = new mdlAllPOlicy();
             List<mdlTotalpricelist> tplist = new List<mdlTotalpricelist>();
+            if (sr.PenaltyCharges != null)
+            {
+                //Cancellation policy
+                cancelpolicy.policyInfo = sr.PenaltyCharges.CancellationCharge;
+                fr.CANCELLATION = cancelpolicy;
+                //datechange policy
+                penaltypolicy.policyInfo = sr.PenaltyCharges.ReissueCharge;
+                fr.DATECHANGE = penaltypolicy;
+                mfr.fr = fr;
+
+            }
+
             if (srr.Count > 0)
             {
+
                 for (int j = 0; j < srr.Count; j++)
                 {
                     if (srr[j].Segment != null)
@@ -669,6 +905,20 @@ namespace B2BClasses.Services.Air
                                         TaxAndFees = sr.FareBreakdown[i].Tax + sr.FareBreakdown[i].YQTax + sr.FareBreakdown[i].AdditionalTxnFeeOfrd + sr.FareBreakdown[i].AdditionalTxnFeePub + sr.FareBreakdown[i].PGCharge + sr.FareBreakdown[i].SupplierReissueCharges,
                                         TotalFare = sr.FareBreakdown[i].Tax + sr.FareBreakdown[i].BaseFare + sr.FareBreakdown[i].YQTax + sr.FareBreakdown[i].AdditionalTxnFeeOfrd + sr.FareBreakdown[i].AdditionalTxnFeePub + sr.FareBreakdown[i].PGCharge + sr.FareBreakdown[i].SupplierReissueCharges,
                                         NetFare = sr.FareBreakdown[i].Tax + sr.FareBreakdown[i].BaseFare + sr.FareBreakdown[i].YQTax + sr.FareBreakdown[i].AdditionalTxnFeeOfrd + sr.FareBreakdown[i].AdditionalTxnFeePub + sr.FareBreakdown[i].PGCharge + sr.FareBreakdown[i].SupplierReissueCharges,
+                                        //for tbo only
+                                        Tax = sr.FareBreakdown[i].Tax,
+                                        YQTax = sr.FareBreakdown[i].YQTax,
+                                        AdditionalTxnFeeOfrd = sr.FareBreakdown[i].AdditionalTxnFeeOfrd,
+                                        AdditionalTxnFeePub = sr.FareBreakdown[i].AdditionalTxnFeePub,
+                                        Currency = sr.FareBreakdown[i].Currency,
+                                        Discount = sr.Fare.Discount,
+                                        OtherCharges = sr.Fare.OtherCharges,
+                                        OfferedFare = sr.Fare.OfferedFare,
+                                        PublishedFare = sr.Fare.PublishedFare,
+                                        ServiceFee = sr.Fare.ServiceFee,
+                                        TdsOnCommission = sr.Fare.TdsOnCommission,
+                                        TdsOnIncentive = sr.Fare.TdsOnIncentive,
+                                        TdsOnPLB = sr.Fare.TdsOnPLB,
                                     };
 
                                     TotalPriceList.ADULT.BaggageInformation = new mdlBaggageInformation()
@@ -678,7 +928,7 @@ namespace B2BClasses.Services.Air
                                     };
                                     TotalPriceList.ADULT.CabinClass = sr.Segments[0][0].CabinClass;
                                     TotalPriceList.ADULT.ClassOfBooking = sr.Segments[0][0].Airline.FareClass;
-                                    TotalPriceList.ADULT.FareBasis = string.Empty;
+                                    TotalPriceList.ADULT.FareBasis = sr.FareRules.FirstOrDefault()?.FareBasisCode;
                                     TotalPriceList.ADULT.IsFreeMeel = false;
                                     TotalPriceList.ADULT.RefundableType = sr.IsRefundable == true ? 1 : 0;
                                     TotalPriceList.ADULT.SeatRemaing = sr.Segments[0][0].NoOfSeatAvailable;
@@ -694,6 +944,20 @@ namespace B2BClasses.Services.Air
                                         TaxAndFees = sr.FareBreakdown[i].Tax + sr.FareBreakdown[i].YQTax + sr.FareBreakdown[i].AdditionalTxnFeeOfrd + sr.FareBreakdown[i].AdditionalTxnFeePub + sr.FareBreakdown[i].PGCharge + sr.FareBreakdown[i].SupplierReissueCharges,
                                         TotalFare = sr.FareBreakdown[i].Tax + sr.FareBreakdown[i].BaseFare + sr.FareBreakdown[i].YQTax + sr.FareBreakdown[i].AdditionalTxnFeeOfrd + sr.FareBreakdown[i].AdditionalTxnFeePub + sr.FareBreakdown[i].PGCharge + sr.FareBreakdown[i].SupplierReissueCharges,
                                         NetFare = sr.FareBreakdown[i].Tax + sr.FareBreakdown[i].BaseFare + sr.FareBreakdown[i].YQTax + sr.FareBreakdown[i].AdditionalTxnFeeOfrd + sr.FareBreakdown[i].AdditionalTxnFeePub + sr.FareBreakdown[i].PGCharge + sr.FareBreakdown[i].SupplierReissueCharges,
+                                        //for tbo only
+                                        Tax = sr.Fare.Tax,
+                                        YQTax = sr.Fare.YQTax,
+                                        AdditionalTxnFeeOfrd = sr.Fare.AdditionalTxnFeeOfrd,
+                                        AdditionalTxnFeePub = sr.Fare.AdditionalTxnFeePub,
+                                        Currency = sr.Fare.Currency,
+                                        Discount = sr.Fare.Discount,
+                                        OtherCharges = sr.Fare.OtherCharges,
+                                        OfferedFare = sr.Fare.OfferedFare,
+                                        PublishedFare = sr.Fare.PublishedFare,
+                                        ServiceFee = sr.Fare.ServiceFee,
+                                        TdsOnCommission = sr.Fare.TdsOnCommission,
+                                        TdsOnIncentive = sr.Fare.TdsOnIncentive,
+                                        TdsOnPLB = sr.Fare.TdsOnPLB,
                                     };
 
                                     TotalPriceList.CHILD.BaggageInformation = new mdlBaggageInformation()
@@ -703,7 +967,7 @@ namespace B2BClasses.Services.Air
                                     };
                                     TotalPriceList.CHILD.CabinClass = sr.Segments[0][0].CabinClass;
                                     TotalPriceList.CHILD.ClassOfBooking = sr.Segments[0][0].Airline.FareClass;
-                                    TotalPriceList.CHILD.FareBasis = string.Empty;
+                                    TotalPriceList.CHILD.FareBasis = sr.FareRules.FirstOrDefault()?.FareBasisCode; ;
                                     TotalPriceList.CHILD.IsFreeMeel = false;
                                     TotalPriceList.CHILD.RefundableType = sr.IsRefundable == true ? 1 : 0;
                                     TotalPriceList.CHILD.SeatRemaing = sr.Segments[0][0].NoOfSeatAvailable;
@@ -719,6 +983,20 @@ namespace B2BClasses.Services.Air
                                         TaxAndFees = sr.FareBreakdown[i].Tax + sr.FareBreakdown[i].YQTax + sr.FareBreakdown[i].AdditionalTxnFeeOfrd + sr.FareBreakdown[i].AdditionalTxnFeePub + sr.FareBreakdown[i].PGCharge + sr.FareBreakdown[i].SupplierReissueCharges,
                                         TotalFare = sr.FareBreakdown[i].Tax + sr.FareBreakdown[i].BaseFare + sr.FareBreakdown[i].YQTax + sr.FareBreakdown[i].AdditionalTxnFeeOfrd + sr.FareBreakdown[i].AdditionalTxnFeePub + sr.FareBreakdown[i].PGCharge + sr.FareBreakdown[i].SupplierReissueCharges,
                                         NetFare = sr.FareBreakdown[i].Tax + sr.FareBreakdown[i].BaseFare + sr.FareBreakdown[i].YQTax + sr.FareBreakdown[i].AdditionalTxnFeeOfrd + sr.FareBreakdown[i].AdditionalTxnFeePub + sr.FareBreakdown[i].PGCharge + sr.FareBreakdown[i].SupplierReissueCharges,
+                                        //for tbo only
+                                        Tax = sr.Fare.Tax,
+                                        YQTax = sr.Fare.YQTax,
+                                        AdditionalTxnFeeOfrd = sr.Fare.AdditionalTxnFeeOfrd,
+                                        AdditionalTxnFeePub = sr.Fare.AdditionalTxnFeePub,
+                                        Currency = sr.Fare.Currency,
+                                        Discount = sr.Fare.Discount,
+                                        OtherCharges = sr.Fare.OtherCharges,
+                                        OfferedFare = sr.Fare.OfferedFare,
+                                        PublishedFare = sr.Fare.PublishedFare,
+                                        ServiceFee = sr.Fare.ServiceFee,
+                                        TdsOnCommission = sr.Fare.TdsOnCommission,
+                                        TdsOnIncentive = sr.Fare.TdsOnIncentive,
+                                        TdsOnPLB = sr.Fare.TdsOnPLB,
                                     };
 
                                     TotalPriceList.INFANT.BaggageInformation = new mdlBaggageInformation()
@@ -728,7 +1006,7 @@ namespace B2BClasses.Services.Air
                                     };
                                     TotalPriceList.INFANT.CabinClass = sr.Segments[0][0].CabinClass;
                                     TotalPriceList.INFANT.ClassOfBooking = sr.Segments[0][0].Airline.FareClass;
-                                    TotalPriceList.INFANT.FareBasis = string.Empty;
+                                    TotalPriceList.INFANT.FareBasis = sr.FareRules.FirstOrDefault()?.FareBasisCode; ;
                                     TotalPriceList.INFANT.IsFreeMeel = false;
                                     TotalPriceList.INFANT.RefundableType = sr.IsRefundable == true ? 1 : 0;
                                     TotalPriceList.INFANT.SeatRemaing = sr.Segments[0][0].NoOfSeatAvailable;
@@ -747,7 +1025,7 @@ namespace B2BClasses.Services.Air
 
                 }
             }
-            
+
             if (isflightmatched == false)
             {
                 mdls.ServiceProvider = enmServiceProvider.TBO;
@@ -796,8 +1074,9 @@ namespace B2BClasses.Services.Air
                         },
                         CabinClass = p.CabinClass,
                         ClassOfBooking = p.Airline.FareClass,
-                        FareBasis = string.Empty,
+                        FareBasis = sr.FareRules.FirstOrDefault()?.FareBasisCode,
                         IsFreeMeel = false,
+
                         RefundableType = sr.IsRefundable == true ? 1 : 0,
                         SeatRemaing = p.NoOfSeatAvailable,
                     }).ToList());
@@ -806,7 +1085,7 @@ namespace B2BClasses.Services.Air
                 TotalPriceList.fareIdentifier = string.Empty;
                 TotalPriceList.sri = string.Empty;
                 TotalPriceList.msri = null;
-               
+
                 for (int i = 0; i < sr.FareBreakdown.Count(); i++)
                 {
                     if (i == 0)
@@ -819,8 +1098,22 @@ namespace B2BClasses.Services.Air
                             TaxAndFees = sr.FareBreakdown[i].Tax + sr.FareBreakdown[i].YQTax + sr.FareBreakdown[i].AdditionalTxnFeeOfrd + sr.FareBreakdown[i].AdditionalTxnFeePub + sr.FareBreakdown[i].PGCharge + sr.FareBreakdown[i].SupplierReissueCharges,
                             TotalFare = sr.FareBreakdown[i].Tax + sr.FareBreakdown[i].BaseFare + sr.FareBreakdown[i].YQTax + sr.FareBreakdown[i].AdditionalTxnFeeOfrd + sr.FareBreakdown[i].AdditionalTxnFeePub + sr.FareBreakdown[i].PGCharge + sr.FareBreakdown[i].SupplierReissueCharges,
                             NetFare = sr.FareBreakdown[i].Tax + sr.FareBreakdown[i].BaseFare + sr.FareBreakdown[i].YQTax + sr.FareBreakdown[i].AdditionalTxnFeeOfrd + sr.FareBreakdown[i].AdditionalTxnFeePub + sr.FareBreakdown[i].PGCharge + sr.FareBreakdown[i].SupplierReissueCharges,
+                            //for tbo only
+                            Tax = sr.FareBreakdown[i].Tax,
+                            YQTax = sr.FareBreakdown[i].YQTax,
+                            AdditionalTxnFeeOfrd = sr.FareBreakdown[i].AdditionalTxnFeeOfrd,
+                            AdditionalTxnFeePub = sr.FareBreakdown[i].AdditionalTxnFeePub,
+                            Currency = sr.FareBreakdown[i].Currency,
+                            Discount = sr.Fare.Discount,
+                            OtherCharges = sr.Fare.OtherCharges,
+                            OfferedFare = sr.Fare.OfferedFare,
+                            PublishedFare = sr.Fare.PublishedFare,
+                            ServiceFee = sr.Fare.ServiceFee,
+                            TdsOnCommission = sr.Fare.TdsOnCommission,
+                            TdsOnIncentive = sr.Fare.TdsOnIncentive,
+                            TdsOnPLB = sr.Fare.TdsOnPLB,
                         };
-                       
+
                         TotalPriceList.ADULT.BaggageInformation = new mdlBaggageInformation()
                         {
                             CabinBaggage = sr.Segments[0][0].CabinBaggage,
@@ -828,11 +1121,11 @@ namespace B2BClasses.Services.Air
                         };
                         TotalPriceList.ADULT.CabinClass = sr.Segments[0][0].CabinClass;
                         TotalPriceList.ADULT.ClassOfBooking = sr.Segments[0][0].Airline.FareClass;
-                        TotalPriceList.ADULT.FareBasis = string.Empty;
+                        TotalPriceList.ADULT.FareBasis = sr.FareRules?.FirstOrDefault()?.FareBasisCode;
                         TotalPriceList.ADULT.IsFreeMeel = false;
                         TotalPriceList.ADULT.RefundableType = sr.IsRefundable == true ? 1 : 0;
                         TotalPriceList.ADULT.SeatRemaing = sr.Segments[0][0].NoOfSeatAvailable;
-                      
+
                     }
                     if (i == 1)
                     {
@@ -844,8 +1137,22 @@ namespace B2BClasses.Services.Air
                             TaxAndFees = sr.FareBreakdown[i].Tax + sr.FareBreakdown[i].YQTax + sr.FareBreakdown[i].AdditionalTxnFeeOfrd + sr.FareBreakdown[i].AdditionalTxnFeePub + sr.FareBreakdown[i].PGCharge + sr.FareBreakdown[i].SupplierReissueCharges,
                             TotalFare = sr.FareBreakdown[i].Tax + sr.FareBreakdown[i].BaseFare + sr.FareBreakdown[i].YQTax + sr.FareBreakdown[i].AdditionalTxnFeeOfrd + sr.FareBreakdown[i].AdditionalTxnFeePub + sr.FareBreakdown[i].PGCharge + sr.FareBreakdown[i].SupplierReissueCharges,
                             NetFare = sr.FareBreakdown[i].Tax + sr.FareBreakdown[i].BaseFare + sr.FareBreakdown[i].YQTax + sr.FareBreakdown[i].AdditionalTxnFeeOfrd + sr.FareBreakdown[i].AdditionalTxnFeePub + sr.FareBreakdown[i].PGCharge + sr.FareBreakdown[i].SupplierReissueCharges,
+                            //for tbo only
+                            Tax = sr.FareBreakdown[i].Tax,
+                            YQTax = sr.FareBreakdown[i].YQTax,
+                            AdditionalTxnFeeOfrd = sr.FareBreakdown[i].AdditionalTxnFeeOfrd,
+                            AdditionalTxnFeePub = sr.FareBreakdown[i].AdditionalTxnFeePub,
+                            Currency = sr.FareBreakdown[i].Currency,
+                            Discount = sr.Fare.Discount,
+                            OtherCharges = sr.Fare.OtherCharges,
+                            OfferedFare = sr.Fare.OfferedFare,
+                            PublishedFare = sr.Fare.PublishedFare,
+                            ServiceFee = sr.Fare.ServiceFee,
+                            TdsOnCommission = sr.Fare.TdsOnCommission,
+                            TdsOnIncentive = sr.Fare.TdsOnIncentive,
+                            TdsOnPLB = sr.Fare.TdsOnPLB,
                         };
-                       
+
                         TotalPriceList.CHILD.BaggageInformation = new mdlBaggageInformation()
                         {
                             CabinBaggage = sr.Segments[0][0].CabinBaggage,
@@ -853,11 +1160,11 @@ namespace B2BClasses.Services.Air
                         };
                         TotalPriceList.CHILD.CabinClass = sr.Segments[0][0].CabinClass;
                         TotalPriceList.CHILD.ClassOfBooking = sr.Segments[0][0].Airline.FareClass;
-                        TotalPriceList.CHILD.FareBasis = string.Empty;
+                        TotalPriceList.CHILD.FareBasis = sr.FareRules?.FirstOrDefault()?.FareBasisCode;
                         TotalPriceList.CHILD.IsFreeMeel = false;
                         TotalPriceList.CHILD.RefundableType = sr.IsRefundable == true ? 1 : 0;
                         TotalPriceList.CHILD.SeatRemaing = sr.Segments[0][0].NoOfSeatAvailable;
-                        
+
                     }
                     if (i == 2)
                     {
@@ -869,8 +1176,22 @@ namespace B2BClasses.Services.Air
                             TaxAndFees = sr.FareBreakdown[i].Tax + sr.FareBreakdown[i].YQTax + sr.FareBreakdown[i].AdditionalTxnFeeOfrd + sr.FareBreakdown[i].AdditionalTxnFeePub + sr.FareBreakdown[i].PGCharge + sr.FareBreakdown[i].SupplierReissueCharges,
                             TotalFare = sr.FareBreakdown[i].Tax + sr.FareBreakdown[i].BaseFare + sr.FareBreakdown[i].YQTax + sr.FareBreakdown[i].AdditionalTxnFeeOfrd + sr.FareBreakdown[i].AdditionalTxnFeePub + sr.FareBreakdown[i].PGCharge + sr.FareBreakdown[i].SupplierReissueCharges,
                             NetFare = sr.FareBreakdown[i].Tax + sr.FareBreakdown[i].BaseFare + sr.FareBreakdown[i].YQTax + sr.FareBreakdown[i].AdditionalTxnFeeOfrd + sr.FareBreakdown[i].AdditionalTxnFeePub + sr.FareBreakdown[i].PGCharge + sr.FareBreakdown[i].SupplierReissueCharges,
+                            //for tbo only
+                            Tax = sr.FareBreakdown[i].Tax,
+                            YQTax = sr.FareBreakdown[i].YQTax,
+                            AdditionalTxnFeeOfrd = sr.FareBreakdown[i].AdditionalTxnFeeOfrd,
+                            AdditionalTxnFeePub = sr.FareBreakdown[i].AdditionalTxnFeePub,
+                            Currency = sr.FareBreakdown[i].Currency,
+                            Discount = sr.Fare.Discount,
+                            OtherCharges = sr.Fare.OtherCharges,
+                            OfferedFare = sr.Fare.OfferedFare,
+                            PublishedFare = sr.Fare.PublishedFare,
+                            ServiceFee = sr.Fare.ServiceFee,
+                            TdsOnCommission = sr.Fare.TdsOnCommission,
+                            TdsOnIncentive = sr.Fare.TdsOnIncentive,
+                            TdsOnPLB = sr.Fare.TdsOnPLB,
                         };
-                       
+
                         TotalPriceList.INFANT.BaggageInformation = new mdlBaggageInformation()
                         {
                             CabinBaggage = sr.Segments[0][0].CabinBaggage,
@@ -882,8 +1203,13 @@ namespace B2BClasses.Services.Air
                         TotalPriceList.INFANT.IsFreeMeel = false;
                         TotalPriceList.INFANT.RefundableType = sr.IsRefundable == true ? 1 : 0;
                         TotalPriceList.INFANT.SeatRemaing = sr.Segments[0][0].NoOfSeatAvailable;
-                         
+
                     }
+                    TotalPriceList.FareRule = new mdlFareRuleResponse()
+                    {
+
+                        FareRule = mfr
+                    };
                 }
                 tplist.Add(TotalPriceList);
                 mdls.Segment = lmseg;
@@ -1043,7 +1369,7 @@ namespace B2BClasses.Services.Air
             request.EndUserIp = GetIPAddress();
         StartSendRequest:
             //Load tokken ID 
-            var TokenDetails = _context.tblTboTokenDetails.OrderByDescending(p => p.GenrationDt).FirstOrDefault();
+            var TokenDetails = _context.tblTboTokenDetails.Where(p => p.GenrationDt.AddHours(23) >= DateTime.Now).OrderByDescending(p => p.GenrationDt).FirstOrDefault();
             if (TokenDetails == null)
             {
                 var AuthenticateResponse = await LoginAsync();
@@ -1080,8 +1406,8 @@ namespace B2BClasses.Services.Air
                         ResponseStatus = 3,
                         Error = new mdlError()
                         {
-                            Code = mdl.Error.ErrorCode,
-                            Message = mdl.Error.ErrorMessage,
+                            Code = mdl.Error.Code,
+                            Message = mdl.Error.Message,
                         }
                     };
                 }
@@ -1153,8 +1479,8 @@ namespace B2BClasses.Services.Air
                         ResponseStatus = 3,
                         Error = new mdlError()
                         {
-                            Code = mdl.Error.ErrorCode,
-                            Message = mdl.Error.ErrorMessage,
+                            Code = mdl.Error.Code,
+                            Message = mdl.Error.Message,
                         }
                     };
                 }
@@ -1550,18 +1876,14 @@ namespace B2BClasses.Services.Air
         public class SearchResponse
         {
             public int ResponseStatus { get; set; }
-            public Error Error { get; set; }
+            public mdlError Error { get; set; }
             public string TraceId { get; set; }
             public string Origin { get; set; }
             public string Destination { get; set; }
             public SearchResult[][] Results { get; set; }
         }
 
-        public class Error
-        {
-            public int ErrorCode { get; set; }
-            public string ErrorMessage { get; set; }
-        }
+
 
         public class SearchResult
         {
@@ -1635,8 +1957,8 @@ namespace B2BClasses.Services.Air
 
         public class Penaltycharges
         {
-            public dynamic ReissueCharge { get; set; }
-            public dynamic CancellationCharge { get; set; }
+            public string ReissueCharge { get; set; }
+            public string CancellationCharge { get; set; }
         }
 
         public class Farebreakdown
@@ -1649,9 +1971,11 @@ namespace B2BClasses.Services.Air
             public Taxbreakup[] TaxBreakUp { get; set; }
             public double YQTax { get; set; }
             public double AdditionalTxnFeeOfrd { get; set; }
+            public double AdditionalTxnFee { get; set; }
             public double AdditionalTxnFeePub { get; set; }
             public double PGCharge { get; set; }
             public double SupplierReissueCharges { get; set; }
+
         }
 
 
@@ -1730,9 +2054,197 @@ namespace B2BClasses.Services.Air
             public DateTime ReturnDate { get; set; }
         }
 
+        #region *****************Booking Request classes *************************
+
+        public class BookingRequest
+        {
+            public string ResultIndex { get; set; }
+            public string TraceId { get; set; }
+            public string TokenId { get; set; }
+            public string EndUserIp { get; set; }
+            public Passengers[] Passengers { get; set; }
+
+        }
+
+        public class PaymentInfos
+        {
+            public double amount { get; set; }
+        }
+        public class Passengers
+        {
+            public string Title { get; set; }
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+            public int PaxType { get; set; }
+            public DateTime? DateOfBirth { get; set; }
+            public Baggage Bag { get; set; }
+            public MealDynamic Meal { get; set; }
+            public Seats Seat { get; set; }
+            public List<Baggage> Baglst { get; set; }
+            public List<MealDynamic> Meallst { get; set; }
+            public List<Seats> Seatlst { get; set; }
+
+            //for tbo
+            public string Gender { get; set; }
+            public string GSTCompanyAddress { get; set; }
+            public string GSTCompanyContactNumber { get; set; }
+            public string GSTCompanyName { get; set; }
+            public string GSTNumber { get; set; }
+            public string GSTCompanyEmail { get; set; }
+            public string PassportNo { get; set; }
+            public DateTime PassportExpiry { get; set; }
+            public DateTime PassportIssue { get; set; }
+            public string AddressLine1 { get; set; }
+            public string AddressLine2 { get; set; }
+            public string City { get; set; }
+            public string CountryCode { get; set; }
+            public string CountryName { get; set; }
+            public string CellCountryCode { get; set; }
+            public string Nationality { get; set; }
+            public bool IsLeadPax { get; set; }
+            public string FFAirlineCode { get; set; }
+            public string FFNumber { get; set; }
+            public string ContactNo { get; set; }
+            public string Email { get; set; }
+            public mdlfare Fare { get; set; }
+        }
+        public class Baggage
+        {
+            public int WayType { get; set; }
+            public string Code { get; set; }
+            public string Description { get; set; }
+            public string Weight { get; set; }
+            public string Currency { get; set; }
+            public decimal Price { get; set; }
+            public string Origin { get; set; }
+            public string Destination { get; set; }
+            public string AirlineCode { get; set; }
+            public string FlightNumber { get; set; }
+        }
+        public class MealDynamic
+        {
+            public int WayType { get; set; }
+            public string Code { get; set; }
+            public string Description { get; set; }
+            public string Quantity { get; set; }
+            public string Currency { get; set; }
+            public decimal Price { get; set; }
+            public string Origin { get; set; }
+            public string Destination { get; set; }
+            public string AirlineCode { get; set; }
+            public string FlightNumber { get; set; }
+        }
+        public class Seats
+        {
+            public string SeatWayType { get; set; }
+            public string Code { get; set; }
+            public string Description { get; set; }
+            public string CraftType { get; set; }
+            public string AvailablityType { get; set; }
+            public string Currency { get; set; }
+            public decimal Price { get; set; }
+            public string Origin { get; set; }
+            public string Destination { get; set; }
+            public string AirlineCode { get; set; }
+            public string FlightNumber { get; set; }
+            public string RowNo { get; set; }
+            public string SeatNo { get; set; }
+            public string SeatType { get; set; }
+            public string Compartment { get; set; }
+            public string Deck { get; set; }
+
+        }
+        public class Deliveryinfo
+        {
+            public List<string> emails { get; set; }
+            public List<string> contacts { get; set; }
+        }
+
+        public class Travellerinfo
+        {
+            public string ti { get; set; }
+            public string fN { get; set; }
+            public string lN { get; set; }
+            public string pt { get; set; }
+            public string dob { get; set; }
+            public string pNum { get; set; }
+            public string eD { get; set; }
+            public string pid { get; set; }
+            public List<mdlSSRS> ssrBaggageInfos { get; set; }
+            public List<mdlSSRS> ssrMealInfos { get; set; }
+            public List<mdlSSRS> ssrSeatInfos { get; set; }
+            public List<mdlSSRS> ssrExtraServiceInfos { get; set; }
+        }
 
 
+        public class GstInfo
+        {
+            public string gstNumber { get; set; }
+            public string email { get; set; }
+            public string registeredName { get; set; }
+            public string mobile { get; set; }
+            public string address { get; set; }
+        }
 
+        public class SSRS
+        {
+            public string key { get; set; }
+            public string value { get; set; }
+        }
+
+
+        public class BookingResponse
+        {
+            public string bookingId { get; set; }
+            public string TraceId { get; set; }
+            public string ResponseStatus { get; set; }
+            public Response Response { get; set; }
+            public Status status { get; set; }
+            public Metainfo metaInfo { get; set; }
+            public Error[] error { get; set; }
+        }
+        public class Response
+        {
+            public string BookingId { get; set; }
+            public string PNR { get; set; }
+            public string SSRDenied { get; set; }
+            public string SSRMessage { get; set; }
+            public string Status { get; set; }
+            public bool IsPriceChanged { get; set; }
+            public bool IsTimeChanged { get; set; }
+            public FlightItinerary FlightItinerary { get; set; }
+        }
+        public class FlightItinerary
+        {
+            public int BookingId { get; set; }
+            public string PNR { get; set; }
+            public bool IsDomestic { get; set; }
+            public string Source { get; set; }
+            public string Origin { get; set; }
+            public string Destination { get; set; }
+            public string AirlineCode { get; set; }
+            public string ValidatingAirlineCode { get; set; }
+            public string AirlineRemarks { get; set; }
+            public bool IsLCC { get; set; }
+            public bool NonRefundable { get; set; }
+            public string FareType { get; set; }
+            public string InvoiceNo { get; set; }
+            public DateTime InvoiceCreatedOn { get; set; }
+            public string GSTCompanyAddress { get; set; }
+            public string GSTCompanyContactNumber { get; set; }
+            public string GSTCompanyName { get; set; }
+            public string GSTNumber { get; set; }
+            public string GSTCompanyEmail { get; set; }
+            public string TicketStatus { get; set; }
+            public string Message { get; set; }
+            public string Nationality { get; set; }
+            public Fare Fare { get; set; }
+            public Passengers Passenger { get; set; }
+
+        }
+
+
+        #endregion
 
 
         #endregion

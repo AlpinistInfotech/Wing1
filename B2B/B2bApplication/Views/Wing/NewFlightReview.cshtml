@@ -83,23 +83,32 @@
                                 <div class="bg-white shadow-md rounded p-3 p-sm-4 confirm-details">
                                     <h2 class="text-6 mb-3 mb-sm-4">Confirm Flight Details</h2>
                                     <hr class="mx-n3 mx-sm-n4 mb-4">
+                                    <input type="hidden" asp-for="FareQuoteCondition.IsLCC" />
                                     @{int cnt = 0;}
                                     @{int bagcnt = 0;}
                                     @{int mealcnt = 0;}
                                     @foreach (var md in Model.FareQuotResponse)
                                     {
-
-
                                         {
-
-
                                             <input type="hidden" asp-for="FareQuotResponse[cnt].BookingId" />
+
                                             <input type="hidden" asp-for="FareQuotResponse[cnt].Destination" />
+
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].ServiceProvider" />
+
                                             <input type="hidden" asp-for="FareQuotResponse[cnt].Error.Code" />
+
                                             <input type="hidden" asp-for="FareQuotResponse[cnt].Error.Message" />
+
                                             <input type="hidden" asp-for="FareQuotResponse[cnt].IsPriceChanged" />
+
                                             <input type="hidden" asp-for="FareQuotResponse[cnt].Origin" />
+
                                             <input type="hidden" asp-for="FareQuotResponse[cnt].TraceId" />
+
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].TokenId" />
+
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].userip" />
                                             for (int j = 0; j < md.Results?.Count; j++)
                                             {
                                                 for (int k = 0; k < md.Results[j].Count; k++)
@@ -356,7 +365,7 @@
                                                                             </div>
 
                                                                             <div class="modal-footer">
-                                                                                <div  class="col-md-12">
+                                                                                <div class="col-md-12">
                                                                                     <div class="row">
                                                                                         <div class="col-md-6">
                                                                                             <span>Added to total fare</span><br />
@@ -367,8 +376,8 @@
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
-                                                                                
-                                                                                
+
+
 
                                                                             </div>
                                                                         </div>
@@ -550,7 +559,7 @@
 
                                                                         </div>
                                                                         <div class="tab-pane fade" id="fifth" role="tabpanel" aria-labelledby="fifth-tab">
-                                                                            Cancellation Fee: @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.FareRule.FareRule?.fr?.DATECHANGE?.policyInfo.Replace("__nls__", ""))
+                                                                            Datechange Fee: @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.FareRule.FareRule?.fr?.DATECHANGE?.policyInfo.Replace("__nls__", ""))
 
                                                                         </div>
                                                                     </div>
@@ -567,8 +576,9 @@
                                         }
                                     }
 
-                                    <div class="alert alert-info mt-4"> 
-                                    <span class="badge badge-info">NOTE:</span> This is a special fare given by the airline. Airlines cancellation charges do apply. </div>
+                                    <div class="alert alert-info mt-4">
+                                        <span class="badge badge-info">NOTE:</span> This is a special fare given by the airline. Airlines cancellation charges do apply.
+                                    </div>
 
 
                                     <h2 class="text-6 mb-3 mt-5">Traveller Details - <span class="text-3"><a data-toggle="modal" data-target="#login-signup" href="#" title="Login / Sign up">Login</a> to book faster</span></h2>
@@ -589,11 +599,11 @@
                                     @{ int adcnt = 0, cdcnt = 0, ifcnt = 0; }
                                     @for (int i = 0; i < Model.travellerInfo.Count; i++)
                                     {
-                                        <input type="hidden" asp-for="travellerInfo[i].ssrBaggageInfos.code" value="BOF1" />
-                                        <input type="hidden" asp-for="travellerInfo[i].ssrBaggageInfos.key" value="Bag Out First with 1 Bag" />
+
                                         <input type="hidden" asp-for="travellerInfo[i].ssrBaggageInfoslist[0].code" />
                                         <input type="hidden" asp-for="travellerInfo[i].ssrBaggageInfoslist[0].key" />
                                         <input type="hidden" asp-for="travellerInfo[i].ssrBaggageInfoslist[0].desc" />
+
 
                                         <input type="hidden" asp-for="travellerInfo[i].ssrMealInfoslist[0].code" />
                                         <input type="hidden" asp-for="travellerInfo[i].ssrMealInfoslist[0].key" />
@@ -648,6 +658,32 @@
                                             </div>
                                             <div class="col-sm-5 form-group">
                                                 <input class="form-control input_lname" asp-for="travellerInfo[i].LastName" placeholder="Enter Last Name" type="text">
+                                            </div>
+                                            <div class="col-sm-6 form-group">
+                                                <div class="form-radio">
+                                                    <h5>Address Type*</h5>
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 col-md-4">
+                                                            <input type="radio" asp-for="travellerInfo[i].Gender" value="1" id="rdbmale" checked="checked">
+                                                            <label for="rdbmale">
+                                                                <span>Male</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-4 col-md-4">
+                                                            <input type="radio" asp-for="travellerInfo[i].Gender" value="2" id="rdbfemale">
+                                                            <label for="rdbfemale">
+                                                                <span>Female</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-4 col-md-4">
+                                                            <input type="radio" asp-for="travellerInfo[i].Gender" value="3" id="rdbother">
+                                                            <label for="rdbother">
+                                                                <span>Other</span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                             </div>
                                             @if (Model.travellerInfo[i].passengerType == enmPassengerType.Adult && Model.FareQuoteCondition.dob.adobr == true)
                                             {
@@ -1115,7 +1151,7 @@
 
          $('#mealtotamt').val(totmealamt);
          $('#spnmealtotal').html("@nfi.NumberFormat.CurrencySymbol" + " " + totmealamt.toFixed(2));
-         
+
          if (spanbagtotal != '' && parseFloat(spanbagtotal) >= 0) {
             totbagamt = parseFloat(spanbagtotal) + parseFloat(bagamt);
          }
@@ -1177,8 +1213,8 @@
 
         if (addedbagcnt < totalbag) {
 
-            $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfos.code']").val(bagcode);
-            $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfos.key']").val(segcode);
+            //$("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfos.code']").val(bagcode);
+            //$("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfos.key']").val(segcode);
             $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfoslist[0].code']").val(bagcode);
             $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfoslist[0].key']").val(segcode);
             $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfoslist[0].desc']").val(bagdesc);
@@ -1227,8 +1263,8 @@
         $('#spnselcount-' + cnt).html(addedbagcnt);
         if (addedbagcnt < totalbag) {
             var cnt = addedbagcnt;
-            $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfos.code']").val('');
-            $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfos.key']").val('');
+            //$("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfos.code']").val('');
+            //$("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfos.key']").val('');
             $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfoslist[0].code']").val('');
             $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfoslist[0].key']").val('');
             $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfoslist[0].desc']").val('');
@@ -1263,16 +1299,11 @@
         if (parseInt(spincnt) == 0) {
             $('#addmeal-' + bagcnt).val('1');
         }
-        var hidbaginfo = $("input[name='travellerInfo[" + addedmealcnt + "].ssrMealInfos.code']").val();
-        var elems = [{
-            code: bagcode,
-            desc: bagdesc
-        }];
 
         if (addedmealcnt < totalbag) {
 
-            $("input[name='travellerInfo[" + addedmealcnt + "].ssrMealInfos.code']").val(bagcode);
-            $("input[name='travellerInfo[" + addedmealcnt + "].ssrMealInfos.key']").val(segcode);
+           // $("input[name='travellerInfo[" + addedmealcnt + "].ssrMealInfos.code']").val(bagcode);
+           // $("input[name='travellerInfo[" + addedmealcnt + "].ssrMealInfos.key']").val(segcode);
             $("input[name='travellerInfo[" + addedmealcnt + "].ssrMealInfoslist[0].code']").val(bagcode);
             $("input[name='travellerInfo[" + addedmealcnt + "].ssrMealInfoslist[0].key']").val(segcode);
             $("input[name='travellerInfo[" + addedmealcnt + "].ssrMealInfoslist[0].desc']").val(bagdesc);
@@ -1300,7 +1331,6 @@
         }
     }
     function removemeal(bagcode, bagdesc, bagamt, segcode, totalbag, bagcnt, cnt) {
-        debugger;
 
         var addedbagcnt = 0;
         if ($('#spnselmealcount-' + cnt).text() != '') {
@@ -1315,8 +1345,8 @@
         $('#spnselmealcount-' + cnt).html(addedbagcnt);
         if (addedbagcnt < totalbag) {
             var cnt = addedbagcnt;
-            $("input[name='travellerInfo[" + addedbagcnt + "].ssrMealInfos.code']").val('');
-            $("input[name='travellerInfo[" + addedbagcnt + "].ssrMealInfos.key']").val('');
+           // $("input[name='travellerInfo[" + addedbagcnt + "].ssrMealInfos.code']").val('');
+            //$("input[name='travellerInfo[" + addedbagcnt + "].ssrMealInfos.key']").val('');
             $("input[name='travellerInfo[" + addedbagcnt + "].ssrMealInfoslist[0].code']").val('');
             $("input[name='travellerInfo[" + addedbagcnt + "].ssrMealInfoslist[0].key']").val('');
             $("input[name='travellerInfo[" + addedbagcnt + "].ssrMealInfoslist[0].desc']").val('');
