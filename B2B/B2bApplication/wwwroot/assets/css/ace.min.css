@@ -5725,14 +5725,15 @@ button.btn:active {
     }
 
 .btn-primary, .btn-primary.focus, .btn-primary:focus {
-    background-color: #428BCA !important;
-    border-color: #428BCA
+    background-color: #ef6614 !important;
+    border-color: #ef6614
 }
 
 
+
     .btn-primary.focus:hover, .btn-primary:active:hover, .btn-primary:focus:active, .btn-primary:focus:hover, .btn-primary:hover, .open > .btn-primary.dropdown-toggle, .open > .btn-primary.dropdown-toggle.focus, .open > .btn-primary.dropdown-toggle:active, .open > .btn-primary.dropdown-toggle:focus, .open > .btn-primary.dropdown-toggle:hover {
-        background-color: #1B6AAA !important;
-        border-color: #428BCA
+        background-color: #FB792C !important;
+        border-color: #FB792C
     }
 
     .btn-primary.no-border:active, .btn-primary.no-border:hover {
@@ -12585,9 +12586,13 @@ tr.detail-row {
     color: #CF7
 }
 
-.login-box .toolbar {
+/*.login-box .toolbar {
     background: #5090C1;
     border-top: 2px solid #597597
+}*/
+.login-box .toolbar {
+    background: #ef6614;
+    border-top: 2px solid #ef6614
 }
 
     .login-box .toolbar > div {
