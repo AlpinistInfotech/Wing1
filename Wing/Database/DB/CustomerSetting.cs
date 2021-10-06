@@ -126,4 +126,21 @@ namespace Database.DB
         public bool SendDeviceNotification { get; set; }
     }
 
+    public class tblCustomerFlightClassOfBooking:d_ModifiedBy
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]        
+        public int CustomerId { get; set; }
+        public bool EnableAllClasses{ get; set; }    
+    }
+
+    public class tblCustomerFlightClassOfBookingDetails
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Sno { get; set; }
+        public int CustomerId { get; set; }
+        public int  BookingClassId{ get; set; }
+    }
+
 }
