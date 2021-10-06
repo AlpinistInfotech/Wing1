@@ -467,6 +467,10 @@ namespace B2BClasses.Services.Air
         public mdlMetainfo metaInfo { get; set; }
         public int ResponseStatus { get; set; }
         public mdlStatus status { get; set; }
+        
+    }
+    public class mdlTBOBookingResponse
+    {
 
     }
 
