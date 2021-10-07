@@ -212,51 +212,112 @@ namespace B2BClasses.Services.Air
         private BookingRequest BookingRequestMap(mdlBookingRequest request)
         {
             List<Baggage> bagg = new List<Baggage>();
+            Baggage bg = new Baggage();
+            Passengers ps = new Passengers();
+            BookingRequest mdl = new BookingRequest();
+            List<Passengers> pslst = new List<Passengers>();
+            mdl.ResultIndex = request.resultindex;
+            mdl.TraceId = request.TraceId;
+            mdl.TokenId = request.TokenId;
+            mdl.EndUserIp = request.userip;
             for (int i = 0; i < request.travellerInfo.Count; i++)
             {
-
-            }
-            BookingRequest mdl = new BookingRequest()
-            {
-                ResultIndex = request.resultindex,
-                TraceId = request.TraceId,
-                TokenId = request.TokenId,
-                EndUserIp = request.userip,
-
-                Passengers = request.travellerInfo.Select(p => new Passengers
+                var p = request.travellerInfo[i];
+                ps.Title = p.Title;
+                ps.FirstName = p.FirstName;
+                ps.LastName = p.LastName;
+                ps.DateOfBirth = p.dob;
+                ps.Gender = p.Gender;
+                ps.PassportExpiry = p.PassportExpiryDate;
+                ps.PassportNo = p.passportNum ?? "";
+                ps.GSTCompanyAddress = request?.gstInfo?.address ?? "";
+                ps.GSTCompanyContactNumber = request?.gstInfo?.mobile ?? "";
+                ps.GSTCompanyEmail = request?.gstInfo?.email ?? "";
+                ps.GSTCompanyName = request?.gstInfo?.registeredName ?? "";
+                ps.GSTNumber = request?.gstInfo?.gstNumber ?? "";
+                ps.AddressLine1 = p.address1 ?? "Delhi";
+                ps.AddressLine2 = p.address2 ?? "";
+                ps.City = p.city;
+                ps.CountryCode = p.countrycode;
+                ps.CountryName = p.countryname;
+                ps.CellCountryCode = p.cellcountrycode;
+                ps.Nationality = p.nationality;
+                ps.ContactNo = request.deliveryInfo.contacts.FirstOrDefault();
+                ps.Email = request.deliveryInfo.emails.FirstOrDefault();
+                ps.IsLeadPax = true;
+                ps.PaxType = p.PaxType;
+                if (p.ssrBaggageInfoslist != null)
                 {
-                    Title = p.Title,
-                    FirstName = p.FirstName,
-                    LastName = p.LastName,
-                    DateOfBirth = p.dob,
-                    Gender = p.Gender,
-                    PassportExpiry = p.PassportExpiryDate,
-                    PassportNo = p.passportNum ?? "",
-                    GSTCompanyAddress = request?.gstInfo?.address ?? "",
-                    GSTCompanyContactNumber = request?.gstInfo?.mobile ?? "",
-                    GSTCompanyEmail = request?.gstInfo?.email ?? "",
-                    GSTCompanyName = request?.gstInfo?.registeredName ?? "",
-                    GSTNumber = request?.gstInfo?.gstNumber ?? "",
-                    AddressLine1 = p.address1 ?? "",
-                    AddressLine2 = p.address2 ?? "",
-                    City = p.city,
-                    CountryCode = p.countrycode,
-                    CountryName = p.countryname,
-                    CellCountryCode = p.cellcountrycode,
-                    Nationality = p.nationality,
-                    ContactNo = request.deliveryInfo.contacts.FirstOrDefault(),
-                    Email = request.deliveryInfo.emails.FirstOrDefault(),
-                    IsLeadPax = true,
-                    PaxType = p.PaxType,                    
-                    Bag = new Baggage { Code = p.ssrBaggageInfoslist[0].code, Description = p.ssrBaggageInfoslist[0].desc },
-                    //Baglst=bagg.Add(new Baggage() { Code = p.ssrBaggageInfoslist[0].code, Description = p.ssrBaggageInfoslist[0].desc,Price=0 }),
-                    Seat = new Seats { Code = p.ssrBaggageInfoslist[0].code, Description = p.ssrBaggageInfoslist[0].desc },
-                    Meal = new MealDynamic { Code = p.ssrBaggageInfoslist[0].code, Description = p.ssrBaggageInfoslist[0].desc },
-                    Fare = p.Fare,
+                    if (p.ssrBaggageInfoslist.Count > 0)
+                    {
+                        ps.Bag = new Baggage { Code = p.ssrBaggageInfoslist[0].code, Description = p.ssrBaggageInfoslist[0].desc };
+                        bagg.Add(ps.Bag);
+                        ps.Baggage = bagg;
+                    }
+                }
+                if (p.ssrSeatInfoslist != null)
+                {
+                    if (p.ssrSeatInfoslist.Count > 0)
+                    {
+                        ps.Sit = new Seats { Code = p.ssrSeatInfoslist[0].code, Description = p.ssrSeatInfoslist[0].desc };
+                        ps.Seat.Add(ps.Sit);
+                    }
+                }
+                if (p.ssrMealInfoslist != null)
+                {
+                    if (p.ssrMealInfoslist.Count > 0)
+                    {
+                        ps.Mels = new MealDynamic { Code = p.ssrMealInfoslist[0].code, Description = p.ssrMealInfoslist[0].desc };
+                        ps.MealDynamic.Add(ps.Mels);
+                    }
+                }
+                ps.Fare = p.Fare;
+                pslst.Add(ps);
+                
+            }
+            mdl.Passengers = pslst;
+            var itemToRemove = mdl.Passengers.Single(r => r.Baggage == null);
+           
+            //BookingRequest mdl = new BookingRequest()
+            //{
+            //    ResultIndex = request.resultindex,
+            //    TraceId = request.TraceId,
+            //    TokenId = request.TokenId,
+            //    EndUserIp = request.userip,
 
-                }).ToArray(),
+            //    Passengers = request.travellerInfo.Select(p => new Passengers
+            //    {
+            //        Title = p.Title,
+            //        FirstName = p.FirstName,
+            //        LastName = p.LastName,
+            //        DateOfBirth = p.dob,
+            //        Gender = p.Gender,
+            //        PassportExpiry = p.PassportExpiryDate,
+            //        PassportNo = p.passportNum ?? "",
+            //        GSTCompanyAddress = request?.gstInfo?.address ?? "",
+            //        GSTCompanyContactNumber = request?.gstInfo?.mobile ?? "",
+            //        GSTCompanyEmail = request?.gstInfo?.email ?? "",
+            //        GSTCompanyName = request?.gstInfo?.registeredName ?? "",
+            //        GSTNumber = request?.gstInfo?.gstNumber ?? "",
+            //        AddressLine1 = p.address1 ?? "",
+            //        AddressLine2 = p.address2 ?? "",
+            //        City = p.city,
+            //        CountryCode = p.countrycode,
+            //        CountryName = p.countryname,
+            //        CellCountryCode = p.cellcountrycode,
+            //        Nationality = p.nationality,
+            //        ContactNo = request.deliveryInfo.contacts.FirstOrDefault(),
+            //        Email = request.deliveryInfo.emails.FirstOrDefault(),
+            //        IsLeadPax = true,
+            //        PaxType = p.PaxType,                    
+            //        Bag = new Baggage { Code = p.ssrBaggageInfoslist[0].code, Description = p.ssrBaggageInfoslist[0].desc },
+            //        Seat = new Seats { Code = p.ssrBaggageInfoslist[0].code, Description = p.ssrBaggageInfoslist[0].desc },
+            //        Meal = new MealDynamic { Code = p.ssrBaggageInfoslist[0].code, Description = p.ssrBaggageInfoslist[0].desc },
+            //        Fare = p.Fare,
 
-            };
+            //    }).ToArray(),
+
+            //};
             return mdl;
         }
         public async Task<mdlBookingResponse> BookingAsync(mdlBookingRequest request)
@@ -278,7 +339,7 @@ namespace B2BClasses.Services.Air
             //set the Upper case in pax type
 
             string tboUrl = _config["TBO:API:Book"];
-        StartSendRequest:
+            StartSendRequest:
             //Load tokken ID 
             var TokenDetails = _context.tblTboTokenDetails.OrderByDescending(p => p.GenrationDt).FirstOrDefault();
             if (TokenDetails == null)
@@ -292,19 +353,22 @@ namespace B2BClasses.Services.Air
             }
             var breq = BookingRequestMap(request);
             string jsonString = System.Text.Json.JsonSerializer.Serialize(breq);
-            var HaveResponse = GetResponse(jsonString, tboUrl);
+            string tempjson = RemoveNullProperties(JObject.Parse(jsonString));
+            var HaveResponse = GetResponse(tempjson, tboUrl);
             if (HaveResponse.Code == 0)
             {
+               // dynamic data = JObject.Parse(HaveResponse.Message);
                 mdl = (JsonConvert.DeserializeObject<BookingResponse>(HaveResponse.Message));
             }
 
             if (mdl != null)
             {
-                if (mdl.status.success)//success
+                if (mdl.Response.ResponseStatus=="1")//success
                 {
                     mdlS = new mdlBookingResponse()
                     {
-                        bookingId = mdl.bookingId,
+                        bookingId = mdl.Response.Response.BookingId,
+                        PNR = mdl.Response.Response.PNR,
                         Error = new mdlError()
                         {
                             Code = 0,
@@ -322,7 +386,7 @@ namespace B2BClasses.Services.Air
                         Error = new mdlError()
                         {
                             Code = 12,
-                            Message = mdl.error?.FirstOrDefault()?.Errormessage ?? "",
+                            Message = mdl.Response.error.Errormessage ?? "",
                         }
                     };
                 }
@@ -353,6 +417,8 @@ namespace B2BClasses.Services.Air
             //set the Upper case in pax type
 
             string tboUrl = _config["TBO:API:Ticket"];
+            if (tboUrl == null)
+                tboUrl = "http://api.tektravels.com/BookingEngineService_Air/AirService.svc/rest/Ticket";
         StartSendRequest:
             //Load tokken ID 
             var TokenDetails = _context.tblTboTokenDetails.OrderByDescending(p => p.GenrationDt).FirstOrDefault();
@@ -367,19 +433,30 @@ namespace B2BClasses.Services.Air
             }
             var breq = BookingRequestMap(request);
             string jsonString = System.Text.Json.JsonSerializer.Serialize(breq);
-            var HaveResponse = GetResponse(jsonString, tboUrl);
+          string tempjson=  RemoveNullProperties(JObject.Parse(jsonString));
+            var HaveResponse = GetResponse(tempjson, tboUrl);
             if (HaveResponse.Code == 0)
             {
-                mdl = (JsonConvert.DeserializeObject<BookingResponse>(HaveResponse.Message));
+                //var parsed = JObject.Parse(HaveResponse.Message);
+                // JToken token = data["Response"];
+                //JObject jo = new JObject();
+                //int cnt = token.Count();
+                //var str = token[1].ToString();
+                //mdl.Response= parsed.SelectToken("Response.Response").Value<Response>();
+                //mdl.ResponseStatus= parsed.SelectToken("Response.ResponseStatus").Value<string>();
+                //mdl.TraceId = parsed.SelectToken("Response.TraceId").Value<string>();
+                 mdl = (JsonConvert.DeserializeObject<BookingResponse>(HaveResponse.Message));
+               // dynamic config = System.Text.Json.JsonSerializer.Deserialize<ExpandoObject>(HaveResponse.Message);
             }
 
             if (mdl != null)
             {
-                if (mdl.status.success)//success
+                if (mdl.Response.ResponseStatus=="1")//success
                 {
                     mdlS = new mdlBookingResponse()
                     {
-                        bookingId = mdl.bookingId,
+                        bookingId = mdl.Response.Response.BookingId,
+                        PNR=mdl.Response.Response.PNR,
                         Error = new mdlError()
                         {
                             Code = 0,
@@ -397,7 +474,7 @@ namespace B2BClasses.Services.Air
                         Error = new mdlError()
                         {
                             Code = 12,
-                            Message = mdl.error?.FirstOrDefault()?.Errormessage ?? "",
+                            Message = mdl.Response.error.Errormessage ?? "",
                         }
                     };
                 }
@@ -421,7 +498,29 @@ namespace B2BClasses.Services.Air
         }
 
 
+        public string RemoveNullProperties(JObject jObject)
+        {
+            int cnt= jObject.Count;
+            JToken token = jObject["Passengers"];
 
+            JObject jo = new JObject();
+            jo = token.Last() as JObject;
+            //IList<string> propertyNames = jObject.Properties().Select(p => p.Name).ToList();
+            //foreach (string fieldId in propertyNames)
+            //{
+
+            //}
+            var propertiesToRemove = (from property in jo.Properties() where property.Value.Type == JTokenType.Null select property.Name).ToList();
+            foreach (var property in propertiesToRemove)
+            {
+                if(property=="Baggage" || property == "Mels" || property == "Seat" || property == "MealDynamic" || property == "Seats" || property == "Bag" || property == "Mel" || property == "Sit")
+                jo.Remove(property);
+            }
+            //jObject["Passengers"] = jo;
+            var str = jObject.ToString();
+            //var temp= Newtonsoft.Json.JsonConvert.SerializeObject(jObject);
+            return str;
+        }
         #endregion
         public Task<mdlFlightCancellationChargeResponse> CancelationChargeAsync(mdlCancellationRequest request)
         {
@@ -2062,7 +2161,7 @@ namespace B2BClasses.Services.Air
             public string TraceId { get; set; }
             public string TokenId { get; set; }
             public string EndUserIp { get; set; }
-            public Passengers[] Passengers { get; set; }
+            public List<Passengers> Passengers { get; set; }
 
         }
 
@@ -2078,11 +2177,11 @@ namespace B2BClasses.Services.Air
             public int PaxType { get; set; }
             public DateTime? DateOfBirth { get; set; }
             public Baggage Bag { get; set; }
-            public MealDynamic Meal { get; set; }
-            public Seats Seat { get; set; }
-            public List<Baggage> Baglst { get; set; }
-            public List<MealDynamic> Meallst { get; set; }
-            public List<Seats> Seatlst { get; set; }
+            public MealDynamic Mels { get; set; }
+            public Seats Sit { get; set; }
+            public List<Baggage> Baggage { get; set; }
+            public List<MealDynamic> MealDynamic { get; set; }
+            public List<Seats> Seat { get; set; }
 
             //for tbo
             public string Gender { get; set; }
@@ -2195,16 +2294,24 @@ namespace B2BClasses.Services.Air
 
         public class BookingResponse
         {
+            public response Response { get; set; }
+        }
+        public class response
+        {
             public string bookingId { get; set; }
             public string TraceId { get; set; }
-            public string ResponseStatus { get; set; }
-            public Response Response { get; set; }
+            public string ResponseStatus { get; set; }            
             public Status status { get; set; }
+            public string Status { get; set; }
             public Metainfo metaInfo { get; set; }
-            public Error[] error { get; set; }
+            public Error error { get; set; }
+            public Response Response { get; set; }
         }
         public class Response
         {
+            public string TraceId { get; set; }
+            public string ResponseStatus { get; set; }
+            public Response response { get; set; }
             public string BookingId { get; set; }
             public string PNR { get; set; }
             public string SSRDenied { get; set; }
@@ -2239,7 +2346,7 @@ namespace B2BClasses.Services.Air
             public string Message { get; set; }
             public string Nationality { get; set; }
             public Fare Fare { get; set; }
-            public Passengers Passenger { get; set; }
+            public List<Passengers> Passenger { get; set; }
 
         }
 

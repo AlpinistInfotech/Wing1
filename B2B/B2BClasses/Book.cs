@@ -434,6 +434,13 @@ namespace B2BClasses
         {
 
             var tm = _context.tblFlightBookingMaster.Where(p => p.Id == mdlRq.TraceId).FirstOrDefault();
+            if(tm==null)
+            {
+                var gettraceid = _context.tblFlightBookingProviderTraceId.Where(p => p.ProviderTraceId == mdlRq.TraceId).Select(x=>x.TraceId).FirstOrDefault();
+                tm = _context.tblFlightBookingMaster.Where(p => p.Id == gettraceid).FirstOrDefault();
+                mdlRq.TraceId = gettraceid;
+            }
+            
             tm.ContactNo = (mdlRq.deliveryInfo?.contacts.FirstOrDefault() ?? string.Empty);
             tm.Email = (mdlRq.deliveryInfo?.emails.FirstOrDefault() ?? string.Empty);
             tm.BookingStatus = bookingStatus;
@@ -501,8 +508,6 @@ namespace B2BClasses
             return await _context.tblActiveSerivceProvider.Where(p => p.IsEnabled).Select(p => p.ServiceProvider).ToListAsync();
         }
 
-
-
         private IWingFlight GetFlightObject(enmServiceProvider serviceProvider)
         {
             switch (serviceProvider)
@@ -510,7 +515,7 @@ namespace B2BClasses
                 case enmServiceProvider.TBO:
                     return _tbo;
                 case enmServiceProvider.TripJack:
-                    return _tripJack;
+                    return null;
             }
             return null;
         }

@@ -668,6 +668,7 @@ namespace B2bApplication.Controllers
             mdl.BookingRequestDefaultData();
             
             HttpContext.Session.SetObjectAsJson("flightreview", mdl);
+            
             return View(mdl);
         }
         [AcceptVerbs("Get", "Post")]
@@ -789,14 +790,14 @@ namespace B2bApplication.Controllers
                 {
                     await customerWallet.DeductBalanceAsync(DateTime.Now, mdl.NetFare, enmTransactionType.FlightTicketBook, mdl.FareQuoteRequest.TraceId);
                 }
-
+                mdlBookingRequest mdlReq = new mdlBookingRequest();
                 //if Price not chnage then Book the Flight
                 for (int i = 0; i < mdl.FareQuotResponse.Count(); i++)
                 {
                     
                     if (mdl.FareQuotResponse[i].ServiceProvider == enmServiceProvider.TBO)
                     {
-                        mdlBookingRequest mdlReq = new mdlBookingRequest();
+                        
                         mdlReq.BookingId = mdl.FareQuotResponse[i].BookingId;
                         mdlReq.TraceId = mdl.FareQuotResponse[i].TraceId;
                         mdlReq.TokenId = mdl.FareQuotResponse[i].TokenId;
@@ -890,7 +891,7 @@ namespace B2bApplication.Controllers
                     }
                     else
                     {
-                        mdlBookingRequest mdlReq = new mdlBookingRequest();
+                       
                         List<string> cont = new List<string>();
                         cont.Add(mdl.contacts);
                         List<string> eml = new List<string>();

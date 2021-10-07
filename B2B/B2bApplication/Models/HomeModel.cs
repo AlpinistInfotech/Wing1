@@ -116,7 +116,7 @@ namespace B2bApplication.Models
                         isPassportIssueDate = FareQuotResponse.Any(p => p.FareQuoteCondition?.PassportCondition?.isPassportIssueDate ?? false),
                         isPassportRequired = FareQuotResponse.Any(p => p.FareQuoteCondition?.PassportCondition?.isPassportRequired ?? false),
                     },
-                    IsLCC=FareQuoteCondition?.IsLCC?? false,
+                    IsLCC= FareQuotResponse.All(p => p.FareQuoteCondition?.IsLCC ?? false),
                 };
             }
 
