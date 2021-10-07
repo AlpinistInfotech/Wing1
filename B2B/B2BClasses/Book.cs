@@ -515,7 +515,7 @@ namespace B2BClasses
                 case enmServiceProvider.TBO:
                     return _tbo;
                 case enmServiceProvider.TripJack:
-                    return null;
+                    return _tripJack;
             }
             return null;
         }

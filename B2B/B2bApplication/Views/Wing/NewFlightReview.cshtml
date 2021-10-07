@@ -148,7 +148,7 @@
                                                         <div class="col-12 mt-1 d-block d-md-none"></div>
                                                         <div class="col-6 col-sm col-md-auto text-3 date">@tripinfo.FirstOrDefault().DepartureTime.ToString("ddd, dd-MMM-yyyy")</div>
                                                         <div class="col-6 col-sm col-md-auto text-right order-sm-1">
-                                                            <a class="text-1" data-toggle="modal" data-target="#fare-rules-@cnt" href="">Fare Rules</a>
+                                                            <a class="text-1" data-toggle="modal" data-target="#fare-rules-@cnt" href=""><b>Fare Rules</b></a>
                                                         </div>
                                                         <div class="col col-md-auto text-center ml-auto order-sm-0">
                                                             @if (md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT.RefundableType == 0)
@@ -555,11 +555,11 @@
                                                                             </div>
                                                                         </div>
                                                                         <div class="tab-pane fade" id="fourth" role="tabpanel" aria-labelledby="fourth-tab">
-                                                                            Cancellation Fee: @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.FareRule.FareRule?.fr?.CANCELLATION?.policyInfo.Replace("__nls__", ""))
+                                                                            Cancellation Fee: @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.FareRule.FareRule?.fr?.CANCELLATION?.policyInfo?.Replace("__nls__", ""))
 
                                                                         </div>
                                                                         <div class="tab-pane fade" id="fifth" role="tabpanel" aria-labelledby="fifth-tab">
-                                                                            Datechange Fee: @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.FareRule.FareRule?.fr?.DATECHANGE?.policyInfo.Replace("__nls__", ""))
+                                                                            Datechange Fee: @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.FareRule.FareRule?.fr?.DATECHANGE?.policyInfo?.Replace("__nls__", ""))
 
                                                                         </div>
                                                                     </div>
@@ -661,7 +661,7 @@
                                             </div>
                                             <div class="col-sm-6 form-group">
                                                 <div class="form-radio">
-                                                    <h5>Address Type*</h5>
+                                                    <h5>Gender*</h5>
                                                     <div class="row mb-3">
                                                         <div class="col-4 col-md-4">
                                                             <input type="radio" asp-for="travellerInfo[i].Gender" value="1" id="rdbmale" checked="checked">

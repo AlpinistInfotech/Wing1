@@ -689,7 +689,7 @@ namespace B2bApplication.Controllers
         [Authorize(policy: nameof(enmDocumentMaster.Flight))]
         public async Task<IActionResult> NewFlightBook(mdlFlightReview mdl, [FromServices] ICustomerWallet customerWallet)
         {
-            mdlFlighBook mdlres = new mdlFlighBook() { FareQuotResponse = new List<mdlFareQuotResponse>(), IsSucess = new List<bool>(), BookingId = new List<string>() };
+            mdlFlighBook mdlres = new mdlFlighBook() { FareQuotResponse = new List<mdlFareQuotResponse>(), IsSucess = new List<bool>(), BookingId = new List<string>(), PNR = new List<string>() };
             bool IsPriceChanged = false;
             if (HttpContext.Session.GetObjectFromJson<mdlFlightReview>("flightreview") != null)
             {

@@ -3,7 +3,37 @@
 @using Newtonsoft.Json
 <!-- Content
         ============================================= -->
+<style>
 
+    .fli-list-flight_details__info::before {
+        content: '';
+        width: 150%;
+        border-top: 1px solid #c00f0f;
+        position: absolute;
+        top: 50%;
+        left: -25%;
+    }
+
+    .flight_details__infoSctn {
+        padding: 1px 0px;
+        background-color: #fff;
+        border-radius: 100px;
+        position: relative;
+    }
+
+    .fli-list-flight_details__info {
+        background: #fff;
+        border-radius: 100px;
+        color: #5c5c5c;
+        text-align: center;
+        border: 1px solid #c00f0f;
+        position: relative;
+        z-index: 1;
+        font-size: 14px;
+        width: 70%;
+        margin: 0 auto;
+    }
+</style>
 <div class="bg-white shadow-md rounded py-4">
     <div class="mx-3 mb-3 text-center">
         <h2 class="text-6 mb-4">@Model?.FirstOrDefault()?.Segment?.FirstOrDefault()?.Origin?.CityName <small class="mx-2">to</small>@Model?.FirstOrDefault()?.Segment?.LastOrDefault()?.Destination?.CityName</h2>
@@ -271,23 +301,40 @@
                                                             <div class="tab-content my-3" id="myTabContent-@cntacc">
                                                                 <div class="tab-pane fade show active" id="first-@cntacc" role="tabpanel" aria-labelledby="first-tab-@cntacc">
 
-                                                                    @foreach (var iti in item.Segment)
+                                                                    @for (int i = 0; i < item.Segment.Count; i++)
                                                                     {
+                                                                        if (i > 0)
+                                                                        {
+                                                                            <div class="fli-list-flight_details__info clearfix mb-4">
+                                                                                <div class="flight_details__infoSctn">
+
+                                                                                    <span>
+                                                                                        @{ TimeSpan? ts2 = item.Segment[i]?.DepartureTime - item.Segment[i - 1]?.ArrivalTime;
+                                                                                            string h2 = ts2.Value.Hours.ToString("00");
+                                                                                            string m2 = ts2.Value.Minutes.ToString("00");
+                                                                                        }
+                                                                                        Technical Stopover | @h2 h:@m2 m in @item.Segment[i]?.Origin?.CityName
+                                                                                    </span>
+
+                                                                                </div>
+
+                                                                            </div>
+                                                                        }
                                                                         <div class="row flex-row pt-4 px-md-4">
                                                                             <div class="col-12 col-sm-3 text-center d-lg-flex company-info">
                                                                                 <span class="align-middle">
-                                                                                    <img class="img-fluid" alt="" src="~/AirlinesLogo/@(iti?.Airline?.Code).png">
+                                                                                    <img class="img-fluid" alt="" src="~/AirlinesLogo/@(item.Segment[i]?.Airline?.Code).png">
                                                                                 </span> <span class="align-middle ml-lg-2">
-                                                                                    <span class="d-block text-1 text-dark">@(iti?.Airline?.Name)</span>
-                                                                                    <small class="text-muted d-block"> @(iti?.Airline?.FlightNumber)</small>
+                                                                                    <span class="d-block text-1 text-dark">@(item.Segment[i]?.Airline?.Name)</span>
+                                                                                    <small class="text-muted d-block"> @(item.Segment[i]?.Airline?.FlightNumber)</small>
                                                                                 </span>
                                                                             </div>
                                                                             <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
-                                                                                <span class="text-5 text-dark">@iti?.DepartureTime.ToString("HH:mm")</span>
-                                                                                <small class="text-muted d-block">@(iti?.Origin?.AirportName), @(iti?.Origin?.CityName)</small>
+                                                                                <span class="text-5 text-dark">@item.Segment[i]?.DepartureTime.ToString("HH:mm")</span>
+                                                                                <small class="text-muted d-block">@(item.Segment[i]?.Origin?.AirportName), @(item.Segment[i]?.Origin?.CityName)</small>
                                                                             </div>
                                                                             <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
-                                                                                @{ TimeSpan? ts = iti?.ArrivalTime - iti?.DepartureTime;
+                                                                                @{ TimeSpan? ts = item.Segment[i]?.ArrivalTime - item.Segment[i]?.DepartureTime;
                                                                                     int h = ts.Value.Hours;
                                                                                     int m = ts.Value.Minutes;
                                                                                     <span class="text-3 text-dark">@h.ToString("00") : @m.ToString("00")</span> }
@@ -296,11 +343,11 @@
                                                                                 <small class="text-muted d-block">Duration</small>
                                                                             </div>
                                                                             <div class="col-12 col-sm-3 text-center time-info mt-3 mt-sm-0">
-                                                                                <span class="text-5 text-dark">@iti?.ArrivalTime.ToString("HH:mm")</span>
-                                                                                <small class="text-muted d-block">@(iti?.Destination?.AirportName), @(iti?.Destination?.CityName)</small>
+                                                                                <span class="text-5 text-dark">@item.Segment[i]?.ArrivalTime.ToString("HH:mm")</span>
+                                                                                <small class="text-muted d-block">@(item.Segment[i]?.Destination?.AirportName), @(item.Segment[i]?.Destination?.CityName)</small>
                                                                             </div>
+
                                                                         </div>
-                                                                        <hr />
                                                                     }
 
 

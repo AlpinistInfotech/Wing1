@@ -320,6 +320,8 @@ namespace B2BClasses.Services.Air
             //};
             return mdl;
         }
+
+        
         public async Task<mdlBookingResponse> BookingAsync(mdlBookingRequest request)
         {
             if (request.IsLCC == false)
@@ -365,6 +367,112 @@ namespace B2BClasses.Services.Air
             {
                 if (mdl.Response.ResponseStatus=="1")//success
                 {
+                    //for nonlcc ticket booking
+                    List<Passport> passl = new List<Passport>();
+                    Passport pass = new Passport();
+                    BookingRequestNonLCC req = new BookingRequestNonLCC();
+                    req.IsPriceChangeAccepted = mdl.Response.Response.IsPriceChanged;
+                    req.PNR = mdl.Response.Response.PNR;
+                    req.TokenId = TokenDetails.TokenId;
+                    req.TraceId = mdl.Response.TraceId;
+                    if(!string.IsNullOrEmpty(mdl.Response.Response.BookingId))
+                    {
+                        req.BookingId = Convert.ToInt32(mdl.Response.Response.BookingId);
+                    }
+
+                    req.EndUserIp = request.userip;
+                    foreach (var item in mdl.Response.Response.FlightItinerary.Passenger)
+                    {
+                        pass.PaxId = item.PaxID;
+                        pass.PassportNo = item.PassportNo;
+                        pass.PassportExpiry = item.PassportExpiry;
+                        pass.DateOfBirth = item.DateOfBirth;
+                        passl.Add(pass);
+
+                    }
+                    req.Passport = passl;
+
+                    return await TicketNonLCCFromTboAsync(req);
+                    //mdlsn.Result
+                    //mdlS = new mdlBookingResponse()
+                    //{
+                    //    bookingId = mdl.Response.Response.BookingId,
+                    //    PNR = mdl.Response.Response.PNR,
+                    //    Error = new mdlError()
+                    //    {
+                    //        Code = 0,
+                    //        Message = ""
+                    //    },
+                    //    ResponseStatus = 1,
+
+                    //};
+                }
+                else
+                {
+                    mdlS = new mdlBookingResponse()
+                    {
+                        ResponseStatus = 3,
+                        Error = new mdlError()
+                        {
+                            Code = 12,
+                            Message = mdl.Response.error.Errormessage ?? "",
+                        }
+                    };
+                }
+
+            }
+            else
+            {
+                dynamic data = JObject.Parse(HaveResponse.Message);
+                mdlS = new mdlBookingResponse()
+                {
+                    ResponseStatus = 100,
+                    Error = new mdlError()
+                    {
+                        Code = 100,
+                        Message = data.errors[0].message ?? "Unable to Process",
+                    }
+                };
+            }
+
+            return mdlS;
+        }
+        private async Task<mdlBookingResponse> TicketNonLCCFromTboAsync(BookingRequestNonLCC request)
+        {
+            int MaxLoginAttempt = 1, LoginAttempt = 0;
+            mdlBookingResponse mdlS = null;
+            BookingResponse mdl = null;
+            //set the Upper case in pax type
+
+            string tboUrl = _config["TBO:API:Ticket"];
+            if (tboUrl == null)
+                tboUrl = "http://api.tektravels.com/BookingEngineService_Air/AirService.svc/rest/Ticket";
+            StartSendRequest:
+            //Load tokken ID 
+            var TokenDetails = _context.tblTboTokenDetails.OrderByDescending(p => p.GenrationDt).FirstOrDefault();
+            if (TokenDetails == null)
+            {
+                var AuthenticateResponse = await LoginAsync();
+                if (AuthenticateResponse.Status == 1 && LoginAttempt < MaxLoginAttempt)
+                {
+                    LoginAttempt++;
+                    goto StartSendRequest;
+                }
+            }
+            
+            string jsonString = System.Text.Json.JsonSerializer.Serialize(request);
+           // string tempjson = RemoveNullProperties(JObject.Parse(jsonString));
+            var HaveResponse = GetResponse(jsonString, tboUrl);
+            if (HaveResponse.Code == 0)
+            {
+                mdl = (JsonConvert.DeserializeObject<BookingResponse>(HaveResponse.Message));
+                // dynamic config = System.Text.Json.JsonSerializer.Deserialize<ExpandoObject>(HaveResponse.Message);
+            }
+
+            if (mdl != null)
+            {
+                if (mdl.Response.ResponseStatus == "1")//success
+                {
                     mdlS = new mdlBookingResponse()
                     {
                         bookingId = mdl.Response.Response.BookingId,
@@ -408,6 +516,7 @@ namespace B2BClasses.Services.Air
 
             return mdlS;
         }
+
 
         private async Task<mdlBookingResponse> TicketFromTboAsync(mdlBookingRequest request)
         {
@@ -2165,12 +2274,31 @@ namespace B2BClasses.Services.Air
 
         }
 
+        public class BookingRequestNonLCC
+        {
+            public int BookingId { get; set; }
+            public string PNR { get; set; }
+            public string TraceId { get; set; }
+            public string TokenId { get; set; }
+            public string EndUserIp { get; set; }
+            public bool IsPriceChangeAccepted { get; set; }
+            public List<Passport> Passport { get; set; }
+
+        }
+        public class Passport
+        {
+           public int PaxId { get; set; }
+           public string PassportNo { get; set; }
+            public DateTime PassportExpiry { get; set; }
+            public DateTime? DateOfBirth { get; set; }
+        }
         public class PaymentInfos
         {
             public double amount { get; set; }
         }
         public class Passengers
         {
+            public int PaxID { get; set; }
             public string Title { get; set; }
             public string FirstName { get; set; }
             public string LastName { get; set; }
@@ -2319,6 +2447,7 @@ namespace B2BClasses.Services.Air
             public string Status { get; set; }
             public bool IsPriceChanged { get; set; }
             public bool IsTimeChanged { get; set; }
+            public List<Passengers> Passenger { get; set; }
             public FlightItinerary FlightItinerary { get; set; }
         }
         public class FlightItinerary
