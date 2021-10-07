@@ -249,7 +249,7 @@ namespace B2BClasses.Services.Air
                     IsLeadPax = true,
                     PaxType = p.PaxType,                    
                     Bag = new Baggage { Code = p.ssrBaggageInfoslist[0].code, Description = p.ssrBaggageInfoslist[0].desc },
-                    Baglst=bagg.Add(new Baggage() { Code = p.ssrBaggageInfoslist[0].code, Description = p.ssrBaggageInfoslist[0].desc,Price=0 }),
+                    //Baglst=bagg.Add(new Baggage() { Code = p.ssrBaggageInfoslist[0].code, Description = p.ssrBaggageInfoslist[0].desc,Price=0 }),
                     Seat = new Seats { Code = p.ssrBaggageInfoslist[0].code, Description = p.ssrBaggageInfoslist[0].desc },
                     Meal = new MealDynamic { Code = p.ssrBaggageInfoslist[0].code, Description = p.ssrBaggageInfoslist[0].desc },
                     Fare = p.Fare,
