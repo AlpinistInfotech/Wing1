@@ -23,6 +23,7 @@
         $.ajax({ url: requestUrl }).done(function (data) {
             sessionStorage.setItem('_SideMenu', JSON.stringify(data));
             fncAddSideMenu(data)
+            $('.dropdown-toggle').dropdown();
         }).fail(function (jqXHR, exception) {
             // Our error logic here
             var msg = '';
@@ -46,6 +47,7 @@
     }
     else {
         fncAddSideMenu(sideMenutemp)
+        $('.dropdown-toggle').dropdown();
     }
 
 
