@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,5 +32,19 @@ namespace B2bApplication
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+       
+    }
+    public static class SessionExtensions
+    {
+        public static void SetObjectAsJson(this ISession session, string key, object value)
+        {
+            session.SetString(key, JsonConvert.SerializeObject(value));
+        }
+
+        public static T GetObjectFromJson<T>(this ISession session, string key)
+        {
+            var value = session.GetString(key);
+            return value == null ? default(T) : JsonConvert.DeserializeObject<T>(value);
+        }
     }
 }

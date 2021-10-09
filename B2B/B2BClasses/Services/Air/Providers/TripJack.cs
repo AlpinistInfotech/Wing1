@@ -482,6 +482,7 @@ namespace B2BClasses.Services.Air
                         FlightNumber = q.fD?.fN ?? string.Empty,
                         OperatingCarrier = q.oB?.code ?? string.Empty,
                     },
+                    Id=q.id,
                     ArrivalTime = q.at,
                     DepartureTime = q.dt,
                     Duration = q.duration,
@@ -952,6 +953,7 @@ namespace B2BClasses.Services.Air
 
         public class Si
         {
+            public int id { get; set; }
             public Fd fD { get; set; }
             public int stops { get; set; }
             public So[] so { get; set; }
@@ -1251,7 +1253,7 @@ namespace B2BClasses.Services.Air
                         ServiceProvider = enmServiceProvider.TripJack,
                         TraceId = request.TraceId,
                         BookingId = ServiceProvider + "_" + mdl.bookingId,
-                        ResponseStatus = 1,
+                        ResponseStatus = 1,                        
                         IsPriceChanged = mdl.alerts?.Any(p => p.oldFare != p.newFare) ?? false,
                         Error = new mdlError()
                         {
@@ -1599,8 +1601,7 @@ namespace B2BClasses.Services.Air
             {
                 paymentInfos = request.paymentInfos.Select(p => new PaymentInfos { amount = p.amount }).ToArray();
             }
-
-
+            
             BookingRequest mdl = new BookingRequest()
             {
                 bookingId = request.BookingId,
@@ -1620,10 +1621,10 @@ namespace B2BClasses.Services.Air
                     pid = p.PassportIssueDate.ToString("yyyy-MM-dd"),
                     pNum = p.pNum,
                     pt = p.passengerType.ToString().Trim().ToUpper(),
-                    ssrBaggageInfos = p.ssrBaggageInfos == null ? null : (new SSRS() { key = p.ssrBaggageInfos.key, value = p.ssrBaggageInfos.value }),
-                    ssrSeatInfos = p.ssrSeatInfos == null ? null : (new SSRS() { key = p.ssrSeatInfos.key, value = p.ssrSeatInfos.value }),
-                    ssrMealInfos = p.ssrMealInfos == null ? null : (new SSRS() { key = p.ssrMealInfos.key, value = p.ssrMealInfos.value }),
-                    ssrExtraServiceInfos = p.ssrExtraServiceInfos == null ? null : (new SSRS() { key = p.ssrExtraServiceInfos.key, value = p.ssrExtraServiceInfos.value }),
+                    ssrBaggageInfos = p.ssrBaggageInfoslist,
+                    ssrSeatInfos = p.ssrSeatInfoslist,
+                    ssrMealInfos = p.ssrMealInfoslist,
+                    ssrExtraServiceInfos = p.ssrExtraServiceInfoslist,
 
 
                 }).ToArray(),
@@ -1631,14 +1632,11 @@ namespace B2BClasses.Services.Air
             };
             return mdl;
         }
-
         private async Task<mdlBookingResponse> BookingFromTripJacAsync(mdlBookingRequest request)
         {
-
             mdlBookingResponse mdlS = null;
             BookingResponse mdl = null;
             //set the Upper case in pax type
-
 
             string tboUrl = _config["TripJack:API:Book"];
             string jsonString = System.Text.Json.JsonSerializer.Serialize(BookingRequestMap(request));
@@ -1684,7 +1682,7 @@ namespace B2BClasses.Services.Air
                 mdlS = new mdlBookingResponse()
                 {
                     ResponseStatus = 100,
-                    Error = new mdlError()
+                   Error = new mdlError()
                     {
                         Code = 100,
                         Message = data.errors[0].message ?? "Unable to Process",
@@ -1730,10 +1728,10 @@ namespace B2BClasses.Services.Air
             public string pNum { get; set; }
             public string eD { get; set; }
             public string pid { get; set; }
-            public SSRS ssrBaggageInfos { get; set; }
-            public SSRS ssrMealInfos { get; set; }
-            public SSRS ssrSeatInfos { get; set; }
-            public SSRS ssrExtraServiceInfos { get; set; }
+            public List<mdlSSRS> ssrBaggageInfos { get; set; }
+            public List<mdlSSRS> ssrMealInfos { get; set; }
+            public List<mdlSSRS> ssrSeatInfos { get; set; }
+            public List<mdlSSRS> ssrExtraServiceInfos { get; set; }
         }
 
 

@@ -86,7 +86,6 @@ namespace B2BClasses.Services.Enums
         OnMealServices = 8,
         OnSeatServices=16,
         OnExtraService=32
-
     }
 
     public enum enmMessage
@@ -245,7 +244,7 @@ namespace B2BClasses.Services.Enums
         [Document(enmDocumentType.Report | enmDocumentType.DisplayMenu, 1, "Dashboard", "Dashboard", "menu-icon fa fa-tachometer", "/Home/Index",IsAdminClaim =false)]
         Dashboard = 1,
         [Document(EnmModule: enmModule.Booking, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
-            DisplayOrder: 1, Name: "Flight", Description: "Flight", Icon: "fa fa-plane", ActionName: "/Home/FlightSearch", IsAdminClaim = false)]
+            DisplayOrder: 1, Name: "Flight", Description: "Flight", Icon: "fa fa-plane", ActionName: "/Wing/NewFlightSearch", IsAdminClaim = false)]
         Flight = 10,
         [Document(EnmModule: enmModule.Booking, DocumentType: enmDocumentType.Create | enmDocumentType.Update | enmDocumentType.DisplayMenu,
             DisplayOrder: 1, Name: "Hotel", Description: "Hotel", Icon: "fa fa-building", ActionName: "/Home/Hotel", IsAdminClaim = false)]

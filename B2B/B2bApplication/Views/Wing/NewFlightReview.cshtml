@@ -66,12 +66,13 @@
             <div asp-validation-summary="All" class="text-danger"></div>
 
             <input type="hidden" asp-for="FareQuoteRequest.TraceId" />
-            
             @for (int i = 0; i < (Model.FareQuoteRequest?.ResultIndex?.Count() ?? 0); i++)
             {
                 <input type="hidden" asp-for="FareQuoteRequest.ResultIndex[i]" />
             }
+
             <input type="hidden" asp-for="NetFare" />
+
             @if (Model.FareQuotResponse.FirstOrDefault()?.Results != null)
             {
                 <div class="row">
@@ -82,10 +83,53 @@
                                 <div class="bg-white shadow-md rounded p-3 p-sm-4 confirm-details">
                                     <h2 class="text-6 mb-3 mb-sm-4">Confirm Flight Details</h2>
                                     <hr class="mx-n3 mx-sm-n4 mb-4">
+                                    <input type="hidden" asp-for="FareQuoteCondition.IsLCC" />
                                     @{int cnt = 0;}
-
+                                    @{int bagcnt = 0;}
+                                    @{int mealcnt = 0;}
                                     @foreach (var md in Model.FareQuotResponse)
                                     {
+                                        {
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].BookingId" />
+
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].Destination" />
+
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].ServiceProvider" />
+
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].Error.Code" />
+
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].Error.Message" />
+
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].IsPriceChanged" />
+
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].Origin" />
+
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].TraceId" />
+
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].TokenId" />
+
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].userip" />
+                                            for (int j = 0; j < md.Results?.Count; j++)
+                                            {
+                                                for (int k = 0; k < md.Results[j].Count; k++)
+                                                {
+                                                    <input type="hidden" asp-for="FareQuotResponse[cnt].Results[j][k].Segment" />
+                                                    <input type="hidden" asp-for="FareQuotResponse[cnt].Results[j][k].ServiceProvider" />
+                                                    <input type="hidden" asp-for="FareQuotResponse[cnt].Results[j][k].TotalPriceList" />
+                                                    <input type="hidden" asp-for="FareQuotResponse[cnt].Results[j][k].traceid" />
+                                                }
+
+                                            }
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].TotalPriceInfo.TotalFare" />
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].TotalPriceInfo.BaseFare" />
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].TotalPriceInfo.TaxAndFees" />
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].TotalPriceInfo.othercharge" />
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].TotalPriceInfo.convincecharge" />
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].TotalPriceInfo.discount" />
+                                            <input type="hidden" asp-for="FareQuotResponse[cnt].TotalPriceInfo.insurance" />
+
+
+                                        }
                                         cnt++;
                                         var tripinfo = md.Results.FirstOrDefault()?.FirstOrDefault()?.Segment;
                                         @if (tripinfo != null)
@@ -104,13 +148,13 @@
                                                         <div class="col-12 mt-1 d-block d-md-none"></div>
                                                         <div class="col-6 col-sm col-md-auto text-3 date">@tripinfo.FirstOrDefault().DepartureTime.ToString("ddd, dd-MMM-yyyy")</div>
                                                         <div class="col-6 col-sm col-md-auto text-right order-sm-1">
-                                                            <a class="text-1" data-toggle="modal" data-target="#fare-rules-@cnt" href="">Fare Rules</a>
+                                                            <a class="text-1" data-toggle="modal" data-target="#fare-rules-@cnt" href=""><b>Fare Rules</b></a>
                                                         </div>
                                                         <div class="col col-md-auto text-center ml-auto order-sm-0">
-                                                            @if (tripinfo.FirstOrDefault().RefundableType == 0)
+                                                            @if (md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT.RefundableType == 0)
                                                             {
                                                                 <span class="badge badge-danger py-1 px-2 font-weight-normal text-1">Non Refundable</span> }
-                                                            else if (tripinfo.FirstOrDefault().RefundableType == 1)
+                                                            else if (md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT.RefundableType == 1)
                                                             {
                                                                 <span class="badge badge-success py-1 px-2 font-weight-normal text-1">Refundable</span> }
                                                             else
@@ -233,7 +277,216 @@
 
                                                             </div>
 
+                                                            <!-- Departure Flight Detail end -->
+                                                            @if (tripinfo[i].sinfo?.BAGGAGE != null)
+                                                            {
+                                                                <div class="alert alert-primary col-12 col-sm-12 mt-3 mt-s-0">
+                                                                    <div class="row">
+                                                                        <div class="col-9">
+                                                                            <span>
+                                                                                Add Extra check-in baggage:
+                                                                                <br />
+                                                                                <small>Add Extra check-in baggage to this trip at a discounted price</small>
+                                                                            </span>
+                                                                        </div>
+                                                                        <div class="col-3">
+                                                                            <button type="button" data-toggle="modal" data-target="#baggage-@cnt" class="btn fli_secondry_btn fast-forward-btn" id="btnbaggae-add-@cnt">+ ADD</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- Baggage (Modal Dialog) ============================================= -->
+                                                                <div id="baggage-@cnt" class="modal fade" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+                                                                    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                                <h5 class="modal-title">Add extra baggage</h5>
+                                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                                <div class="row">
+                                                                                    <div class="col-12 text-left mb-4">
+                                                                                        <img class="img-fluid" alt="" src="~/AirlinesLogo/@(tripinfo?.FirstOrDefault()?.Airline?.Code).png">
+                                                                                        @tripinfo.FirstOrDefault().Origin.CityName➝@tripinfo.LastOrDefault().Destination.CityName
+                                                                                        <br />
+                                                                                        <span id="spnselcount-@cnt">0</span> of @Model.travellerInfo.Count Selected
+                                                                                        <br />
+                                                                                        Included Check-in baggage per person - @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CheckingBaggage ?? "-")
+                                                                                        <br />
+                                                                                        <span id="spnerrmorebag-@cnt" class="text-danger"></span>
+                                                                                    </div>
+                                                                                    <div class="col-12">
+
+                                                                                        <hr />
+                                                                                    </div>
+                                                                                    <div style="height:300px;width:100%; overflow:auto">
+
+                                                                                        <input type="hidden" id="hid_isbagadded" />
+                                                                                        @foreach (var ml in tripinfo[i].sinfo?.BAGGAGE)
+                                                                                        {
+                                                                                            <div class="col-12">
+                                                                                                <div class="row">
+                                                                                                    <div class="col-6 col-sm-6 text-left time-info">
+                                                                                                        <span class="align-middle">
+                                                                                                            <img alt="" class="img-fluid" src="/images/baggage.png" style="height: 40px; max-width: 100%;">
+                                                                                                        </span>
+                                                                                                        <span class="align-middle ml-lg-2">
+                                                                                                            <span class="text-2 text-dark">Additional @ml.desc </span>
+                                                                                                            <input type="hidden" id="hid_bagcode-@bagcnt" value="@ml.code" />
+                                                                                                        </span>
+                                                                                                    </div>
+                                                                                                    <div class="col-6 col-sm-3 text-left time-info">
+                                                                                                        <span class="text-3 text-dark">₹ @ml.amount</span>
+                                                                                                        <input type="hidden" id="hid_bagamt-@bagcnt" value="@ml.amount" />
+                                                                                                    </div>
+                                                                                                    <div class="col-6 col-sm-3 text-left time-info bag-@bagcnt">
+                                                                                                        <button type="button" style="padding:.40rem 1.5rem!important;" onclick="additionalbag('@ml.code','@ml.desc',@ml.amount,@tripinfo[i].Id,@Model.travellerInfo.Count,@bagcnt,@cnt)" class="btn btn-outline-primary">
+                                                                                                            <span id="spnbtn-@bagcnt">+ Add</span>
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                    <div class="col-6 col-sm-3 text-left time-info spinner-@bagcnt" style="display:none;">
+                                                                                                        <div class="qty input-group">
+                                                                                                            <div class="input-group-prepend">
+                                                                                                                <button type="button" id="btndecrease-@bagcnt" class="btn bg-light-4" data-value="decrease" onclick="removebag('@ml.code','@ml.desc',@ml.amount,@tripinfo[i].Id,@Model.travellerInfo.Count,@bagcnt,@cnt)" data-target="#addbag-@bagcnt" data-toggle="spinner">-</button>
+                                                                                                            </div>
+                                                                                                            <input type="text" data-ride="spinner" id="addbag-@bagcnt" class="qty-spinner form-control" value="1" readonly="">
+                                                                                                            <div class="input-group-append">
+                                                                                                                <button type="button" id="btnincrease-@bagcnt" class="btn bg-light-4 btnincrease" data-value="increase" onclick="additionalbag('@ml.code','@ml.desc',@ml.amount,@tripinfo[i].Id,@Model.travellerInfo.Count,@bagcnt,@cnt)" data-target="#addbag-@bagcnt" data-toggle="spinner">+</button>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+
+                                                                                                </div>
+                                                                                                <hr />
+                                                                                            </div>
+                                                                                            bagcnt++;
+                                                                                        }
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div class="modal-footer">
+                                                                                <div class="col-md-12">
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-6">
+                                                                                            <span>Added to total fare</span><br />
+                                                                                            <h4 id="totaddedbagamt-@cnt">0</h4>
+                                                                                        </div>
+                                                                                        <div class="col-md-6 text-right">
+                                                                                            <button type="button" class="btn btn-primary" data-dismiss="modal">Done</button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+
+
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- Fare Rules end -->
+                                                            }
+
+                                                            <!-- Departure Flight Detail end -->
+                                                            @if (tripinfo[i].sinfo?.MEAL != null)
+                                                            {
+                                                                <div class="alert alert-primary col-12 col-sm-12 mt-3 mt-s-0">
+                                                                    <div class="row">
+                                                                        <div class="col-9">
+                                                                            <span>
+                                                                                Add Meals:
+                                                                                <br />
+                                                                                <small>Add meal to this trip at a discounted price</small>
+                                                                            </span>
+                                                                        </div>
+                                                                        <div class="col-3">
+                                                                            <button type="button" data-toggle="modal" data-target="#meal-@cnt" class="btn fli_secondry_btn fast-forward-btn" id="meal-add-@cnt">+ ADD</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- meal (Modal Dialog) ============================================= -->
+                                                                <div id="meal-@cnt" class="modal fade" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+                                                                    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                                <h5 class="modal-title">Add Meal</h5>
+                                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                                <div class="row">
+                                                                                    <div class="col-12 text-left mb-4">
+                                                                                        <img class="img-fluid" alt="" src="~/AirlinesLogo/@(tripinfo?.FirstOrDefault()?.Airline?.Code).png">
+                                                                                        @tripinfo.FirstOrDefault().Origin.CityName➝@tripinfo.LastOrDefault().Destination.CityName
+                                                                                        <br />
+                                                                                        <span id="spnselmealcount-@cnt">0</span> of @Model.travellerInfo.Count Selected
+                                                                                        <br />
+                                                                                        <span id="spnerrmoremeal-@cnt" class="text-danger"></span>
+                                                                                    </div>
+                                                                                    <div class="col-12">
+
+                                                                                        <hr />
+                                                                                    </div>
+                                                                                    <div style="height:300px;width:100%; overflow:auto">
+
+                                                                                        <input type="hidden" id="hid_ismealadded" />
+
+                                                                                        @foreach (var ml in tripinfo[i].sinfo?.MEAL)
+                                                                                        {
+
+                                                                                            <div class="col-12">
+                                                                                                <div class="row">
+                                                                                                    <div class="col-6 col-sm-6 text-left time-info">
+                                                                                                        <span class="align-middle">
+                                                                                                            <img alt="" class="img-fluid" src="/images/meal.png" style="height: 40px; max-width: 100%;">
+                                                                                                        </span>
+                                                                                                        <span class="align-middle ml-lg-2">
+                                                                                                            <span class="text-2 text-dark">Additional @ml.desc </span>
+                                                                                                            <input type="hidden" id="hid_bagcode-@mealcnt" value="@ml.code" />
+                                                                                                        </span>
+                                                                                                    </div>
+                                                                                                    <div class="col-6 col-sm-3 text-left time-info">
+                                                                                                        <span class="text-3 text-dark">₹ @ml.amount</span>
+                                                                                                        <input type="hidden" id="hid_bagamt-@mealcnt" value="@ml.amount" />
+                                                                                                    </div>
+                                                                                                    <div class="col-6 col-sm-3 text-left time-info meal-@mealcnt">
+                                                                                                        <button type="button" style="padding:.40rem 1.5rem!important;" onclick="additionalmeal('@ml.code','@ml.desc',@ml.amount,@tripinfo[i].Id,@Model.travellerInfo.Count,@mealcnt,@cnt)" class="btn btn-outline-primary">
+                                                                                                            <span id="spnbtn-@mealcnt">+ Add</span>
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                    <div class="col-6 col-sm-3 text-left time-info spinnermeal-@mealcnt" style="display:none;">
+                                                                                                        <div class="qty input-group">
+                                                                                                            <div class="input-group-prepend">
+                                                                                                                <button type="button" id="btnmealdecrease-@mealcnt" class="btn bg-light-4" data-value="decrease" onclick="removemeal('@ml.code','@ml.desc',@ml.amount,@tripinfo[i].Id,@Model.travellerInfo.Count,@mealcnt,@cnt)" data-target="#addmeal-@mealcnt" data-toggle="spinner">-</button>
+                                                                                                            </div>
+                                                                                                            <input type="text" data-ride="spinner" id="addmeal-@mealcnt" class="qty-spinner form-control" value="1" readonly="">
+                                                                                                            <div class="input-group-append">
+                                                                                                                <button type="button" id="btnmealincrease-@mealcnt" class="btn bg-light-4 btnincrease" data-value="increase" onclick="additionalmeal('@ml.code','@ml.desc',@ml.amount,@tripinfo[i].Id,@Model.travellerInfo.Count,@mealcnt,@cnt)" data-target="#addmeal-@mealcnt" data-toggle="spinner">+</button>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+
+                                                                                                </div>
+                                                                                                <hr />
+                                                                                            </div>
+                                                                                            mealcnt++;
+                                                                                        }
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div class="modal-footer">
+                                                                                <button type="button" class="btn btn-primary" data-dismiss="modal">Done</button>
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- Fare Rules end -->
+                                                            }
+
                                                         </div>
+
+
                                                     }
                                                     <!-- Fare Rules (Modal Dialog) ============================================= -->
                                                     <div id="fare-rules-@cnt" class="modal fade" role="dialog" aria-hidden="true">
@@ -302,11 +555,11 @@
                                                                             </div>
                                                                         </div>
                                                                         <div class="tab-pane fade" id="fourth" role="tabpanel" aria-labelledby="fourth-tab">
-                                                                            Cancellation Fee: @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.FareRule.FareRule?.fr?.CANCELLATION?.policyInfo.Replace("__nls__", ""))
+                                                                            Cancellation Fee: @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.FareRule.FareRule?.fr?.CANCELLATION?.policyInfo?.Replace("__nls__", ""))
 
                                                                         </div>
                                                                         <div class="tab-pane fade" id="fifth" role="tabpanel" aria-labelledby="fifth-tab">
-                                                                            Cancellation Fee: @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.FareRule.FareRule?.fr?.DATECHANGE?.policyInfo.Replace("__nls__", ""))
+                                                                            Datechange Fee: @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.FareRule.FareRule?.fr?.DATECHANGE?.policyInfo?.Replace("__nls__", ""))
 
                                                                         </div>
                                                                     </div>
@@ -319,92 +572,13 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Departure Flight Detail end -->
-                                            @if (Model.FareQuotResponse.FirstOrDefault().Results.FirstOrDefault()?.FirstOrDefault()?.Segment?.FirstOrDefault().sinfo?.BAGGAGE != null)
-                                            {
-                                                <div class="alert alert-primary mt-4">
-                                                    <div class="row">
-                                                        <div class="col-9">
-                                                            <span>
-                                                                Add Extra check-in baggage:
-                                                                <br />
-                                                                <small>Add Extra check-in baggage to this trip at a discounted price</small>
-                                                            </span>
-                                                        </div>
-                                                        <div class="col-3">
-                                                            <button type="button" data-toggle="modal" data-target="#baggage-@cnt" class="btn fli_secondry_btn fast-forward-btn">+ ADD</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- Baggage (Modal Dialog) ============================================= -->
-                                                <div id="baggage-@cnt" class="modal fade" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-                                                    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title">Add extra baggage</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <div class="row">
-                                                                    <div class="col-12 text-left mb-4">
-                                                                        <img class="img-fluid" alt="" src="~/AirlinesLogo/@(tripinfo?.FirstOrDefault()?.Airline?.Code).png">
-                                                                        @tripinfo.FirstOrDefault().Origin.CityName➝@tripinfo.LastOrDefault().Destination.CityName
-                                                                        <br />
-                                                                        <span id="spnselcount">0</span> of 1 Selected
-                                                                        <br />
-                                                                        Included Check-in baggage per person - @(md.Results.FirstOrDefault()?.FirstOrDefault()?.TotalPriceList?.FirstOrDefault()?.ADULT?.BaggageInformation?.CheckingBaggage ?? "-")
 
-                                                                    </div>
-                                                                    <div class="col-12">
-
-                                                                        <hr />
-                                                                    </div>
-                                                                    <div style="height:300px;width:100%; overflow:auto">
-                                                                        @{int bagcnt = 0;}
-                                                                        <input type="hidden" id="hid_isbagadded" />
-                                                                        @foreach (var ml in Model.FareQuotResponse.FirstOrDefault().Results.FirstOrDefault()?.FirstOrDefault()?.Segment?.FirstOrDefault().sinfo?.BAGGAGE)
-                                                                        {
-                                                                            bagcnt++;
-                                                                            <div class="col-12">
-                                                                                <div class="row">
-
-                                                                                    <div class="col-6 col-sm-6 text-left time-info">
-                                                                                        <span class="align-middle">
-                                                                                            <img alt="" class="img-fluid" src="/images/baggage.png" style="height: 40px; max-width: 100%;">
-                                                                                        </span>
-                                                                                        <span class="align-middle ml-lg-2">
-                                                                                            <span class="text-2 text-dark">Additional @ml.desc </span>
-                                                                                            <input type="hidden" id="hid_bagcode-@bagcnt" value="@ml.code" />
-                                                                                        </span>
-
-
-                                                                                    </div>
-                                                                                    <div class="col-6 col-sm-3 text-left time-info">
-
-                                                                                        <span class="text-3 text-dark">₹ @ml.amount</span>
-                                                                                        <input type="hidden" id="hid_bagamt-@bagcnt" value="@ml.amount" />
-                                                                                    </div>
-                                                                                    <div class="col-6 col-sm-3 text-left time-info">
-                                                                                        <button type="button" style="padding: .40rem 1.5rem!important;" onclick="bagadd('@ml.code',@ml.amount)" class="btn btn-outline-primary"><span id="spnbtn-@bagcnt">+ Add</span></button>
-                                                                                    </div>
-
-
-                                                                                </div>
-                                                                                <hr />
-                                                                            </div>
-                                                                        }
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- Fare Rules end -->
-                                            }
                                         }
                                     }
 
-                                    <div class="alert alert-info mt-4"> <span class="badge badge-info">NOTE:</span> This is a special fare given by the airline. Airlines cancellation charges do apply. </div>
+                                    <div class="alert alert-info mt-4">
+                                        <span class="badge badge-info">NOTE:</span> This is a special fare given by the airline. Airlines cancellation charges do apply.
+                                    </div>
 
 
                                     <h2 class="text-6 mb-3 mt-5">Traveller Details - <span class="text-3"><a data-toggle="modal" data-target="#login-signup" href="#" title="Login / Sign up">Login</a> to book faster</span></h2>
@@ -412,18 +586,35 @@
                                     <div class="form-row">
                                         <div class="col-sm-6 form-group">
                                             <label>Email</label>
-                                            <input type="email" class="form-control" id="BookingEmail" placeholder="Email" asp-for="emails">
+                                            <input type="email" class="form-control input_email" id="BookingEmail" placeholder="Email" asp-for="emails">
+                                            <span id="validate-email" class="text-danger"></span>
                                         </div>
                                         <div class="col-sm-6 form-group">
                                             <label>Phone</label>
-                                            <input type="number" class="form-control" id="BookingContact" placeholder="Contact" asp-for="contacts">
+                                            <input type="number" class="form-control input_phone" id="BookingContact" placeholder="Contact" asp-for="contacts">
+                                            <span id="validate-contact" class="text-danger"></span>
                                         </div>
                                     </div>
                                     <p class="text-info">Your booking details will be sent to this email address and mobile number.</p>
                                     @{ int adcnt = 0, cdcnt = 0, ifcnt = 0; }
                                     @for (int i = 0; i < Model.travellerInfo.Count; i++)
                                     {
+
+                                        <input type="hidden" asp-for="travellerInfo[i].ssrBaggageInfoslist[0].code" />
+                                        <input type="hidden" asp-for="travellerInfo[i].ssrBaggageInfoslist[0].key" />
+                                        <input type="hidden" asp-for="travellerInfo[i].ssrBaggageInfoslist[0].desc" />
+
+
+                                        <input type="hidden" asp-for="travellerInfo[i].ssrMealInfoslist[0].code" />
+                                        <input type="hidden" asp-for="travellerInfo[i].ssrMealInfoslist[0].key" />
+                                        <input type="hidden" asp-for="travellerInfo[i].ssrMealInfoslist[0].desc" />
+
+
                                         <input type="hidden" asp-for="travellerInfo[i].passengerType" />
+                                        <input type="hidden" asp-for="travellerInfo[i].cabinclass" />
+                                        <input type="hidden" asp-for="travellerInfo[i].bookingclass" />
+                                        <input type="hidden" asp-for="travellerInfo[i].farebasis" />
+
                                         if (Model.travellerInfo[i].passengerType == enmPassengerType.Adult)
                                         {
                                             adcnt++;
@@ -462,10 +653,37 @@
                                                 }
                                             </div>
                                             <div class="col-sm-5 form-group">
-                                                <input class="form-control" asp-for="travellerInfo[i].FirstName" placeholder="Enter First Name" type="text">
+                                                <input class="form-control input_fname" asp-for="travellerInfo[i].FirstName" placeholder="Enter First Name" type="text">
+
                                             </div>
                                             <div class="col-sm-5 form-group">
-                                                <input class="form-control" asp-for="travellerInfo[i].LastName" placeholder="Enter Last Name" type="text">
+                                                <input class="form-control input_lname" asp-for="travellerInfo[i].LastName" placeholder="Enter Last Name" type="text">
+                                            </div>
+                                            <div class="col-sm-6 form-group">
+                                                <div class="form-radio">
+                                                    <h5>Gender*</h5>
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 col-md-4">
+                                                            <input type="radio" asp-for="travellerInfo[i].Gender" value="1" id="rdbmale" checked="checked">
+                                                            <label for="rdbmale">
+                                                                <span>Male</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-4 col-md-4">
+                                                            <input type="radio" asp-for="travellerInfo[i].Gender" value="2" id="rdbfemale">
+                                                            <label for="rdbfemale">
+                                                                <span>Female</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-4 col-md-4">
+                                                            <input type="radio" asp-for="travellerInfo[i].Gender" value="3" id="rdbother">
+                                                            <label for="rdbother">
+                                                                <span>Other</span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                             </div>
                                             @if (Model.travellerInfo[i].passengerType == enmPassengerType.Adult && Model.FareQuoteCondition.dob.adobr == true)
                                             {
@@ -485,19 +703,7 @@
                                                     <input class="form-control datepicker" asp-for="travellerInfo[i].dob" placeholder="Enter Date of Birth" type="text">
                                                 </div>
                                             }
-                                            @if (Model.FareQuotResponse.FirstOrDefault().Results.FirstOrDefault()?.FirstOrDefault()?.Segment?.FirstOrDefault().sinfo?.MEAL.Count() > 0)
-                                            {
-                                                <div class="col-sm-6 form-group">
-                                                    <label for="meal">Meal</label>
-                                                    <select class="custom-select" id="meal" asp-for="travellerInfo[i].ssrMealInfos">
-                                                        <option value="">Select</option>
-                                                        @foreach (var ml in Model.FareQuotResponse.FirstOrDefault().Results.FirstOrDefault()?.FirstOrDefault()?.Segment?.FirstOrDefault().sinfo?.MEAL)
-                                                        {
-                                                            <option value="@ml.code">@ml.desc-@ml.amount</option>
-                                                        }
-                                                    </select>
-                                                </div>
-                                            }
+
                                         </div>
                                         @if (Model.FareQuoteCondition.PassportCondition?.isPassportRequired ?? false)
                                         {
@@ -578,7 +784,7 @@
                     </div>
 
                     <!-- Side Panel(Fare Details)
-            ============================================= -->
+                    ============================================= -->
                     <aside class="col-lg-4 mt-4 mt-lg-0">
                         <div class="bg-white shadow-md rounded p-3">
                             <h3 class="text-5 mb-3">Fare Details</h3>
@@ -590,13 +796,14 @@
                                         Adult(s) : @(Model.AdultCount) × @(Model.AdultBaseFare.ToString("C", nfi)) = @(Model.AdultTotalBaseFare.ToString("C", nfi))
                                     </small>
                                     @if (Model.ChildCount > 0)
-                                    {
+                                    {<br />
                                         <small class="text-muted">
                                             Child(s) : @(Model.ChildCount) x @(Model.ChildBaseFare.ToString("C", nfi)) = @(Model.ChildTotalBaseFare.ToString("C", nfi))
                                         </small>
                                     }
                                     @if (Model.InfantCount > 0)
                                     {
+                                        <br />
                                         <small class="text-muted">
                                             Infant(s) : @(Model.InfantCount) x @(Model.InfantBaseFare.ToString("C", nfi)) = @(Model.InfantTotalBaseFare.ToString("C", nfi))
                                         </small>
@@ -605,16 +812,57 @@
                                 </li>
                                 <li class="mb-2">Fee & Surcharge <span class="float-right text-4 font-weight-500 text-dark">@(Model.FeeSurcharge.ToString("C", nfi))</span></li>
 
-                                <li class="mb-2">Other Charge <span class="float-right text-4 font-weight-500 text-dark">@(Model.OtherCharge.ToString("C", nfi))</span></li>
-                                <li class="mb-2">Insurance <span class="float-right text-4 font-weight-500 text-dark">0</span></li>
+                                <li class="mb-2">
+                                    <i class="fa fa-plus-circle" data-toggle="collapse" href="#othcharge-@cnt" role="button" aria-expanded="false" aria-controls="othcharge-@cnt"></i>
+                                    Other Charge <span id="spnothcharge" class="float-right text-4 font-weight-500 text-dark">@(Model.OtherCharge.ToString("C", nfi))</span>
+                                    <input type="hidden" name="OtherCharge" id="OtherCharge" value="@Model.OtherCharge" />
+                                    <br />
+                                    <div class="col-12 col-sm-12 ml-auto btn-book">
+                                        <div class="collapse" id="othcharge-@cnt">
+                                            <div class="card card-body" style="padding:0rem!important;border:none!important;">
+                                                <div class="text-1" style="margin-right:-15px;">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <span class="text-muted">
+                                                                Meal(s) : <span id="spnmealtotal" class="float-right text-4 font-weight-500 text-dark">0</span>
+                                                                <input type="hidden" value="0" id="mealtotamt" />
+                                                            </span>
+                                                        </div>
+                                                        <div class="col-sm-12">
+                                                            <span class="text-muted">
+                                                                Baggage(s) :<span id="spnbagtotal" class="float-right text-4 font-weight-500 text-dark">0</span>
+                                                                <input type="hidden" value="0" id="bagtotamt" />
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </li>
+                                <li class="mb-2">
+                                    Insurance <span id="spninsuranceamt" class="float-right text-4 font-weight-500 text-dark">0</span>
+                                    <input type="hidden" name="InsuranceCharge" id="InsuranceCharge" value="@Model.InsuranceCharge" />
+                                </li>
                                 @if (Model.Convenience > 0)
                                 {
-                                    <li class="mb-2">Convenience <span class="float-right text-4 font-weight-500 text-dark">@(Model.Convenience.ToString("C", nfi))</span></li>
+                                    <li class="mb-2">
+                                        Convenience <span id="spnconvenamt" class="float-right text-4 font-weight-500 text-dark">@(Model.Convenience.ToString("C", nfi))</span>
+                                        <input type="hidden" name="Convenience" id="Convenience" value="@Model.Convenience" />
+                                    </li>
                                 }
-                                <li class="mb-2">Discount <span class="float-right text-4 font-weight-500 text-dark">0</span></li>
+                                <li class="mb-2">
+                                    Discount <span id="spndiscountamt" class="float-right text-4 font-weight-500 text-dark">0</span>
+                                    <input type="hidden" name="CouponAmount" id="CouponAmount" value="@Model.CouponAmount" />
+                                </li>
                             </ul>
 
-                            <div class="text-dark bg-light-4 text-4 font-weight-600 p-3"> Total Amount <span class="float-right text-6">@(Model.NetFare.ToString("C", nfi))</span> </div>
+                            <div class="text-dark bg-light-4 text-4 font-weight-600 p-3">
+                                Total Amount <span class="float-right text-6" id="spntotamt">@(Model.NetFare.ToString("C", nfi))</span>
+                                <input type="hidden" name="NetFare" id="NetFare" value="@Model.NetFare" />
+                            </div>
                             <h3 class="text-4 mb-3 mt-4">Promo Code</h3>
                             <div class="input-group form-group">
                                 <input class="form-control" placeholder="Promo Code" aria-label="Promo Code" type="text">
@@ -677,7 +925,7 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                             <button type="button" name="btnBookFlight" class="btn btn-secondary" data-dismiss="modal">Book Now</button>
                         </div>
                     </div>
@@ -704,12 +952,422 @@
                 $('#divgst').hide();
             }
         });
-        $("button[name='btnbook']").click(function () {
-            $('#popmpin').modal("show");
+        $('input:text.input_fname').on('keyup', function () {
+            if ($.trim($(this).val()) == '') {
+                $(this).css('border-color', 'red');
+                $(this).focus();
+            }
+            else {
+                $(this).css('border-color', '#d5d3d3');
+
+            }
         });
+        $('input:text.input_lname').on('keyup', function () {
+            if ($.trim($(this).val()) == '') {
+                $(this).css('border-color', 'red');
+                $(this).focus();
+            }
+            else {
+                $(this).css('border-color', '#d5d3d3');
+
+            }
+        });
+        $('input:text.input_email').on('keyup', function () {
+            if ($.trim($(this).val()) == '') {
+                $(this).css('border-color', 'red');
+                $(this).focus();
+            }
+            else {
+                $(this).css('border-color', '#d5d3d3');
+
+            }
+        });
+        $('input:text.input_phone').on('keyup', function () {
+            if ($.trim($(this).val()) == '') {
+                $(this).css('border-color', 'red');
+                $(this).focus();
+            }
+            else {
+                $(this).css('border-color', '#d5d3d3');
+
+            }
+        });
+        $("button[name='btnbook']").click(function () {
+            debugger;
+            var inputfname = true, invalidemail=true, inputlname = true, inputemail = true, inputcontact = true;
+            $('.input_fname').each(function () {
+                if ($.trim($(this).val()) == '') {
+                    $(this).css('border-color', 'red');
+                    $(this).focus();
+                    inputfname = false;
+
+                }
+            });
+
+            $('.input_lname').each(function () {
+                if ($.trim($(this).val()) == '') {
+                    $(this).css('border-color', 'red');
+                    $(this).focus();
+                    inputlname = false;
+
+                }
+            });
+            $('.input_email').each(function () {
+                if ($.trim($(this).val()) == '') {
+                    $(this).css('border-color', 'red');
+                    $(this).focus();
+                    inputemail = false;
+
+                }
+                if (IsEmail($.trim($(this).val())) == false) {
+                    $(this).css('border-color', 'red');
+                    $(this).focus();
+                    invalidemail = false;
+
+                }
+
+            });
+            $('.input_phone').each(function () {
+                if ($.trim($(this).val()) == '') {
+                    $(this).css('border-color', 'red');
+                    $(this).focus();
+                    inputcontact = false;
+                    return false;
+                }
+            });
+            if (inputfname == false) {
+                toastr.warning('Please enter first name!');
+            }
+            if (inputlname == false) {
+                toastr.warning('Please enter last name!');
+            }
+            if (inputemail == false) {
+                toastr.warning('Please enter email!');
+            }
+            if (invalidemail == false) {
+                toastr.warning('Please enter valid email!');
+            }
+            if (inputcontact == false) {
+                toastr.warning('Please enter contact number!');
+            }
+            if (inputfname == true && inputlname == true && inputcontact == true && inputemail == true && invalidemail == true) {
+                $('#popmpin').modal("show");
+            }
+            //
+        });
+        function IsEmail(email) {
+        var regex = /^([a-zA-Z0-9_\.\-\+])+\@@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        if(!regex.test(email)) {
+           return false;
+        }else{
+           return true;
+        }
+      }
         $("button[name='btnBookFlight']").click(function () {
-            $('#frmFlightBook').attr('action', '/Wing/NewFlightBook');
-            $("#frmFlightBook").submit();
+            var mp = $('#Mpin').val();
+            jQuery.ajax({
+
+                type: "POST",
+                async: true,
+                url: "/Wing/checkMpin",
+                data: {"mpin":mp},
+                dataType: "json",
+
+                beforeSend: function () {
+                    $('#ajaxloading').show();
+                },
+                complete: function () {
+
+                    // Hide image container
+                    $("#ajaxloading").hide();
+                },
+                success: function (data) {
+
+                    if (data == "success") {
+
+                        $('#frmFlightBook').attr('action', '/Wing/NewFlightBook');
+                        $("#frmFlightBook").submit();
+                    }
+                    else {
+                        $('#popmpin').modal("show");
+                        toastr.warning("Invalid mpin");
+                        $('#Mpin').focus();
+                    }
+                }
+            });
+
         });
     });
+
+     function calculateamount(bagamt,mealamt,incamt,convamt,discamt,cnt) {
+         debugger;
+         var totbagamt = 0;
+         var totbagamtbyresponse = 0;
+        var totconvamt = 0;
+        var totincamt = 0;
+        var totdiscamt = 0;
+         var totmealamt = 0;
+         var totmelamtbyresponse = 0;
+
+        var spanbagtotal = $('#bagtotamt').val();
+        var spanmealtotal = $('#mealtotamt').val();
+        var spaninctotal = $('#InsuranceCharge').val();
+        var spandisctotal = $('#CouponAmount').val();
+         var spanconvtotal = $('#Convenience').val();
+
+         var addedbagtotamt = $('#totaddedbagamt-' + cnt).val();
+         var addedmealtotamt = $('#totaddedmealamt-' + cnt).val();
+         if (spaninctotal != '' && parseFloat(spaninctotal) >= 0) {
+             totincamt = parseFloat(spaninctotal) + parseFloat(incamt);
+         }
+         else {
+             totincamt = parseFloat(incamt);
+         }
+        if (spandisctotal != '' && parseFloat(spandisctotal) >= 0) {
+            totdiscamt = parseFloat(spandisctotal) + parseFloat(discamt);
+         }
+        else {
+            totdiscamt = parseFloat(discamt);
+        }
+        if (spanconvtotal != '' && parseFloat(spanconvtotal) >= 0) {
+            totconvamt = parseFloat(spanconvtotal) + parseFloat(convamt);
+         }
+        else {
+            totconvamt = parseFloat(convamt);
+        }
+        if (spanmealtotal != '' && parseFloat(spanmealtotal) >= 0) {
+            totmealamt = parseFloat(spanmealtotal) + parseFloat(mealamt);
+         }
+        else {
+            totmealamt = parseFloat(mealamt);
+         }
+
+         if (addedmealtotamt != '' && parseFloat(addedmealtotamt) >= 0) {
+             totmelamtbyresponse = parseFloat(addedmealtotamt) + parseFloat(addedmealtotamt);
+         }
+         else {
+             totmelamtbyresponse = parseFloat(mealamt);
+         }
+
+         $('#mealtotamt').val(totmealamt);
+         $('#spnmealtotal').html("@nfi.NumberFormat.CurrencySymbol" + " " + totmealamt.toFixed(2));
+
+         if (spanbagtotal != '' && parseFloat(spanbagtotal) >= 0) {
+            totbagamt = parseFloat(spanbagtotal) + parseFloat(bagamt);
+         }
+        else {
+            totbagamt = parseFloat(bagamt);
+         }
+         if (addedbagtotamt != '' && parseFloat(addedbagtotamt) >= 0) {
+             totbagamtbyresponse = parseFloat(addedbagtotamt) + parseFloat(bagamt);
+         }
+         else {
+             totbagamtbyresponse = parseFloat(bagamt);
+         }
+         $('#spnbagtotal').html("@nfi.NumberFormat.CurrencySymbol" + " " + totbagamt.toFixed(2));
+
+         $('#bagtotamt').val(totbagamt);
+         var othcharge = 0;
+         //if ($('#OtherCharge').val() != '') {
+         //    othcharge = parseFloat($('#OtherCharge').val());
+         //   }
+          /*  if (parseFloat(othcharge) >= 0) {*/
+                othcharge = othcharge + totbagamt+totmealamt;
+            //}
+         $('#spnothcharge').html("@nfi.NumberFormat.CurrencySymbol" + " " + othcharge.toFixed(2));
+         $('#OtherCharge').val(othcharge.toFixed(2));
+         $("input[name='FareQuotResponse[" + cnt + "].TotalPriceInfo.othercharge']").val((totbagamtbyresponse + totmelamtbyresponse).toFixed(2));
+         $('#InsuranceCharge').val(totincamt.toFixed(2));
+         $("input[name='FareQuotResponse[" + cnt + "].TotalPriceInfo.insurance']").val(totincamt.toFixed(2));
+         $('#spninsuranceamt').html("@nfi.NumberFormat.CurrencySymbol" + " " + totincamt.toFixed(2));
+         $('#spnconvenamt').html("@nfi.NumberFormat.CurrencySymbol" + " " + totconvamt.toFixed(2));
+         $("input[name='FareQuotResponse[" + cnt + "].TotalPriceInfo.convincecharge']").val(totconvamt.toFixed(2));
+         $('#spndiscountamt').html("@nfi.NumberFormat.CurrencySymbol" + " " + totdiscamt.toFixed(2));
+         $("input[name='FareQuotResponse[" + cnt + "].TotalPriceInfo.discount']").val(totdiscamt.toFixed(2));
+           var totfare = $('#NetFare').val();
+         totfare = (parseFloat(totfare) + parseFloat(bagamt) + parseFloat(mealamt)+parseFloat(incamt)+parseFloat(convamt))-parseFloat(discamt);
+
+         $('#spntotamt').html("@nfi.NumberFormat.CurrencySymbol" + " " + totfare.toFixed(2));
+         $('#NetFare').val(totfare.toFixed(2));
+
+    }
+
+    function additionalbag(bagcode,bagdesc, bagamt, segcode, totalbag,bagcnt,cnt) {
+        debugger;
+        var addedbagcnt = 0,addedbagamt=0;
+        if ($('#spnselcount-'+cnt).text() != '') {
+            addedbagcnt = parseFloat($('#spnselcount-' + cnt).text());
+        }
+        if ($('#totaddedbagamt-' + cnt).text() != '') {
+            addedbagamt = parseFloat($('#totaddedbagamt-' + cnt).text());
+        }
+        var spincnt = $('#addbag-' + bagcnt).val();
+        if (parseInt(spincnt) == 0) {
+            $('#addbag-' + bagcnt).val('1');
+        }
+        var hidbaginfo = $("input[name='travellerInfo[" + addedbagcnt+"].ssrBaggageInfos.code']").val();
+        var elems = [{
+            code: bagcode,
+            desc:bagdesc
+        }];
+
+        if (addedbagcnt < totalbag) {
+
+            //$("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfos.code']").val(bagcode);
+            //$("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfos.key']").val(segcode);
+            $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfoslist[0].code']").val(bagcode);
+            $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfoslist[0].key']").val(segcode);
+            $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfoslist[0].desc']").val(bagdesc);
+            addedbagcnt = addedbagcnt + 1;
+            addedbagamt = addedbagamt + bagamt;
+            $('#spnselcount-' + cnt).html(addedbagcnt);
+            $('#totaddedbagamt-' + cnt).html(addedbagamt);
+          //  $('#hid_baginfokey-' + cnt).val(segcode);
+           // $('#hid_baginfoval-' + cnt).val(bagcode);
+            calculateamount(bagamt, 0, 0, 0, 0,cnt)
+            if (addedbagcnt > 0) {
+                $('.bag-' + bagcnt).hide();
+                $('.spinner-' + bagcnt).show();
+            }
+            if (totalbag == addedbagcnt) {
+                $('.btnincrease').attr('disabled', 'disabled');
+            }
+            else {
+                $('.btnincrease').removeAttr('disabled');
+            }
+        }
+        else {
+
+           // $('#addbag-' + bagcnt).val(addedbagcnt);
+            $('#spnerrmorebag-'+cnt).html('You do not add more than '+totalbag+' bag.');
+        }
+    }
+    function removebag(bagcode, bagdesc, bagamt, segcode, totalbag,bagcnt,cnt) {
+        debugger;
+
+        var addedbagcnt = 0, addedbagamt=0;
+        if ($('#spnselcount-' + cnt).text() != '') {
+            addedbagcnt = parseFloat($('#spnselcount-' + cnt).text());
+        }
+        if ($('#totaddedbagamt-' + cnt).text() != '') {
+            addedbagamt = parseFloat($('#totaddedbagamt-' + cnt).text());
+        }
+        addedbagcnt = addedbagcnt - 1;
+        addedbagamt = addedbagamt - bagamt;
+        //var hidbaginfo = $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfos.code']").val();
+        //var elems = [{
+        //    code: bagcode,
+        //    desc: bagdesc
+        //}];
+        $('#totaddedbagamt-' + cnt).html(addedbagamt);
+        $('#spnselcount-' + cnt).html(addedbagcnt);
+        if (addedbagcnt < totalbag) {
+            var cnt = addedbagcnt;
+            //$("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfos.code']").val('');
+            //$("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfos.key']").val('');
+            $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfoslist[0].code']").val('');
+            $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfoslist[0].key']").val('');
+            $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfoslist[0].desc']").val('');
+            $('.btnincrease').removeAttr('disabled');
+
+            //  $('#hid_baginfokey-' + cnt).val(segcode);
+            // $('#hid_baginfoval-' + cnt).val(bagcode);
+            calculateamount(-bagamt, 0, 0, 0, 0,cnt)
+            var spincnt = $('#addbag-' + bagcnt).val();
+            if (parseInt(spincnt) <= 1) {
+                $('#addbag-' + bagcnt).val('1');
+                $('.bag-' + bagcnt).show();
+                $('.spinner-' + bagcnt).hide();
+            }
+            else{
+                $('.bag-' + bagcnt).hide();
+                $('.spinner-' + bagcnt).show();
+            }
+        }
+        else {
+            $('#spnerrmorebag-'+cnt).html('You do not add more than ' + totalbag + ' bag.');
+        }
+    }
+
+    function additionalmeal(bagcode, bagdesc, bagamt, segcode, totalbag, bagcnt, cnt) {
+
+        var addedmealcnt = 0;
+        if ($('#spnselmealcount-' + cnt).text() != '') {
+            addedmealcnt = parseFloat($('#spnselmealcount-' + cnt).text());
+        }
+        var spincnt = $('#addmeal-' + bagcnt).val();
+        if (parseInt(spincnt) == 0) {
+            $('#addmeal-' + bagcnt).val('1');
+        }
+
+        if (addedmealcnt < totalbag) {
+
+           // $("input[name='travellerInfo[" + addedmealcnt + "].ssrMealInfos.code']").val(bagcode);
+           // $("input[name='travellerInfo[" + addedmealcnt + "].ssrMealInfos.key']").val(segcode);
+            $("input[name='travellerInfo[" + addedmealcnt + "].ssrMealInfoslist[0].code']").val(bagcode);
+            $("input[name='travellerInfo[" + addedmealcnt + "].ssrMealInfoslist[0].key']").val(segcode);
+            $("input[name='travellerInfo[" + addedmealcnt + "].ssrMealInfoslist[0].desc']").val(bagdesc);
+            addedmealcnt = addedmealcnt + 1;
+
+            $('#spnselmealcount-' + cnt).html(addedmealcnt);
+            //  $('#hid_baginfokey-' + cnt).val(segcode);
+            // $('#hid_baginfoval-' + cnt).val(bagcode);
+            calculateamount(0, bagamt, 0, 0, 0,cnt)
+            if (addedmealcnt > 0) {
+                $('.meal-' + bagcnt).hide();
+                $('.spinnermeal-' + bagcnt).show();
+            }
+            if (totalbag == addedbagcnt) {
+                $('.btnmealincrease').attr('disabled', 'disabled');
+            }
+            else {
+                $('.btnmealincrease').removeAttr('disabled');
+            }
+        }
+        else {
+
+            // $('#addbag-' + bagcnt).val(addedbagcnt);
+            $('#spnerrmoremeal-' + cnt).html('You do not add more than ' + totalbag + ' meal.');
+        }
+    }
+    function removemeal(bagcode, bagdesc, bagamt, segcode, totalbag, bagcnt, cnt) {
+
+        var addedbagcnt = 0;
+        if ($('#spnselmealcount-' + cnt).text() != '') {
+            addedbagcnt = parseFloat($('#spnselmealcount-' + cnt).text());
+        }
+        addedbagcnt = addedbagcnt - 1;
+        //var hidbaginfo = $("input[name='travellerInfo[" + addedbagcnt + "].ssrBaggageInfos.code']").val();
+        //var elems = [{
+        //    code: bagcode,
+        //    desc: bagdesc
+        //}];
+        $('#spnselmealcount-' + cnt).html(addedbagcnt);
+        if (addedbagcnt < totalbag) {
+            var cnt = addedbagcnt;
+           // $("input[name='travellerInfo[" + addedbagcnt + "].ssrMealInfos.code']").val('');
+            //$("input[name='travellerInfo[" + addedbagcnt + "].ssrMealInfos.key']").val('');
+            $("input[name='travellerInfo[" + addedbagcnt + "].ssrMealInfoslist[0].code']").val('');
+            $("input[name='travellerInfo[" + addedbagcnt + "].ssrMealInfoslist[0].key']").val('');
+            $("input[name='travellerInfo[" + addedbagcnt + "].ssrMealInfoslist[0].desc']").val('');
+            $('.btnmealincrease').removeAttr('disabled');
+
+            //  $('#hid_baginfokey-' + cnt).val(segcode);
+            // $('#hid_baginfoval-' + cnt).val(bagcode);
+            calculateamount(0, -bagamt, 0, 0, 0,cnt)
+            var spincnt = $('#addmeal-' + bagcnt).val();
+            if (parseInt(spincnt) <= 1) {
+                $('#addmeal-' + bagcnt).val('1');
+                $('.meal-' + bagcnt).show();
+                $('.spinnermeal-' + bagcnt).hide();
+            }
+            else {
+                $('.meal-' + bagcnt).hide();
+                $('.spinnermeal-' + bagcnt).show();
+            }
+        }
+        else {
+            $('#spnerrmoremeal-' + cnt).html('You do not add more than ' + totalbag + ' meal.');
+        }
+    }
 </script>

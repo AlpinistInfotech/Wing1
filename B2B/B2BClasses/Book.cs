@@ -22,6 +22,7 @@ namespace B2BClasses
         int UserId { get; set; }
 
         Task<mdlBookingResponse> BookingAsync(mdlBookingRequest mdlRq);
+       
         Task BookPackage(mdlPackageBook mdl, int CustomerId, ICustomerWallet customerWallet);
         Task<mdlFlightCancellationResponse> CancelationAsync(mdlCancellationRequest mdlRq, ICustomerWallet customerWallet);
         Task<mdlFlightCancellationChargeResponse> CancelationChargeAsync(mdlCancellationRequest mdlRq);
@@ -433,6 +434,13 @@ namespace B2BClasses
         {
 
             var tm = _context.tblFlightBookingMaster.Where(p => p.Id == mdlRq.TraceId).FirstOrDefault();
+            if(tm==null)
+            {
+                var gettraceid = _context.tblFlightBookingProviderTraceId.Where(p => p.ProviderTraceId == mdlRq.TraceId).Select(x=>x.TraceId).FirstOrDefault();
+                tm = _context.tblFlightBookingMaster.Where(p => p.Id == gettraceid).FirstOrDefault();
+                mdlRq.TraceId = gettraceid;
+            }
+            
             tm.ContactNo = (mdlRq.deliveryInfo?.contacts.FirstOrDefault() ?? string.Empty);
             tm.Email = (mdlRq.deliveryInfo?.emails.FirstOrDefault() ?? string.Empty);
             tm.BookingStatus = bookingStatus;
@@ -500,14 +508,12 @@ namespace B2BClasses
             return await _context.tblActiveSerivceProvider.Where(p => p.IsEnabled).Select(p => p.ServiceProvider).ToListAsync();
         }
 
-
-
         private IWingFlight GetFlightObject(enmServiceProvider serviceProvider)
         {
             switch (serviceProvider)
             {
                 case enmServiceProvider.TBO:
-                    return null;
+                    return _tbo;
                 case enmServiceProvider.TripJack:
                     return _tripJack;
             }
@@ -802,7 +808,29 @@ namespace B2BClasses
             return mdlRs;
         }
 
+        //public async Task<mdlBookingResponse> BookingTBOAsync(mdlBookingRequestTBO mdlRq, mdlBookingRequest mdlRq2)
+        //{
+        //    mdlBookingResponse mdlRs = new mdlBookingResponse();
+        //    var sp = (enmServiceProvider)Convert.ToInt32(mdlRq.BookingId?.Split("_").FirstOrDefault());
+        //    int index = mdlRq.BookingId?.IndexOf('_') ?? -1;
+        //    if (index >= 0)
+        //    {
+        //        mdlRq.BookingId = mdlRq.BookingId.Substring(index + 1);
+        //        IWingFlight wingflight = GetFlightObject(sp);
+        //        mdlRs = await wingflight.BookingTBOAsync(mdlRq);
 
+        //        if (mdlRs.ResponseStatus == 1)
+        //        {
+                   
+        //            CustomerPassengerDetailSave(mdlRq2, enmBookingStatus.Booked, sp, String.Empty);
+        //        }
+        //        else
+        //        {
+        //            CustomerPassengerDetailSave(mdlRq2, enmBookingStatus.Failed, sp, mdlRs.Error?.Message);
+        //        }
+        //    }
+        //    return mdlRs;
+        //}
 
 
         public async Task<mdlFlightCancellationResponse> CancelationAsync(mdlCancellationRequest mdlRq, ICustomerWallet customerWallet)

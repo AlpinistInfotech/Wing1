@@ -22,11 +22,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\B2BClasses\B2BClasses.csproj" />
+    <Folder Include="wwwroot\Upload\PaymentRequestFile\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\Upload\PaymentRequestFile\" />
+    <ProjectReference Include="..\B2BClasses\B2BClasses.csproj" />
   </ItemGroup>
 
 </Project>

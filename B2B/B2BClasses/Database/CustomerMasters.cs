@@ -332,7 +332,7 @@ namespace B2BClasses.Database
     
 
 
-    public class tblPaymentRequest
+    public class tblPaymentRequest 
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

@@ -2,16 +2,7 @@
     let webRootPath = localStorage.getItem('_rootpath');
     if (webRootPath == null) { webRootPath = ""; }
 
-    let tokkenData = JSON.parse(sessionStorage.getItem('_tokkenData'));
-    var currentDate = new Date();
-    if (tokkenData == null || Date.parse(tokkenData.expiryTime) < currentDate) {
-        let requestUrl = webRootPath + "/Account/GetTokken";// + currentApplication ;
-        $.ajax({ url: requestUrl }).done(function (data) {
-            
-            currentDate = currentDate.setHours(currentDate.getHours() + 2);            
-            sessionStorage.setItem('_tokkenData', JSON.stringify({ tokken: data, expiryTime: currentDate }));
-        });
-    }
+   
 
     let sideMenutemp = JSON.parse(sessionStorage.getItem('_SideMenu'));
     let currentApplication = sessionStorage.getItem('_CurrentApplication');
@@ -22,8 +13,8 @@
         let requestUrl = webRootPath + "/Home/GetMenu";// + currentApplication ;
         $.ajax({ url: requestUrl }).done(function (data) {
             sessionStorage.setItem('_SideMenu', JSON.stringify(data));
-            fncAddSideMenu(data)
-            $('.dropdown-toggle').dropdown();
+            fncAddSideMenu(data);
+           
         }).fail(function (jqXHR, exception) {
             // Our error logic here
             var msg = '';
@@ -47,7 +38,6 @@
     }
     else {
         fncAddSideMenu(sideMenutemp)
-        $('.dropdown-toggle').dropdown();
     }
 
 
@@ -70,17 +60,19 @@
         itemlink.href = linkname;
         if (isrootMenu) {
             if (menuname != "Dashboard") {
+                itemlink.classList.add("dropdown-item");
                 itemlink.classList.add("dropdown-toggle");
             }
         }
         else {
             itemlink.classList.add("dropdown-item");
             if (hastree) {
-                itemlink.classList.add("dropdown-toggle");                
+                itemlink.classList.add("dropdown-toggle");
             }
         }
 
         itemlink.appendChild(fncCreateMenuIcon(iconname));
+        
         //if (isrootMenu) {
         //    let itemSpan = document.createElement("span");
         //    itemSpan.classList.add("menu-text");
@@ -89,7 +81,7 @@
         //}
         //else
         {
-            itemlink.textContent = itemlink.textContent + menuname
+            itemlink.textContent = itemlink.textContent + menuname 
         }
 
         //if (hastree) {
@@ -200,9 +192,72 @@
             }
             
             panelSideMenu.appendChild(ModuleItem);
+           
         }
 
     }
+    /*---------------------------------------------------
+    Primary Menu
+----------------------------------------------------- */
 
+    // Dropdown show on hover
+    $('.primary-menu ul.navbar-nav li.dropdown, .login-signup ul.navbar-nav li.dropdown').on("mouseover", function () {
+        if ($(window).width() > 991) {
+            $(this).find('> .dropdown-menu').stop().slideDown('fast');
+            $(this).bind('mouseleave', function () {
+                $(this).find('> .dropdown-menu').stop().css('display', 'none');
+            });
+        }
+    });
+
+    // When dropdown going off to the out of the screen.
+    $('.primary-menu .dropdown-menu, .login-signup .dropdown-menu').each(function () {
+        var menu = $('#header .header-row').offset();
+        var dropdown = $(this).parent().offset();
+        var i = (dropdown.left + $(this).outerWidth()) - (menu.left + $('#header .header-row').outerWidth());
+        if (i > 0) {
+            $(this).css('margin-left', '-' + (i + 5) + 'px');
+        }
+    });
+    $(function () {
+        $(".dropdown li").on('mouseenter mouseleave', function (e) {
+            if ($(window).width() > 991) {
+                var elm = $('.dropdown-menu', this);
+                var off = elm.offset();
+                var l = off.left;
+                var w = elm.width();
+                var docW = $(window).width();
+                var isEntirelyVisible = (l + w + 30 <= docW);
+                if (!isEntirelyVisible) {
+                    $(elm).addClass('dropdown-menu-right');
+                    $(elm).parents('.dropdown:first').find('> a.dropdown-toggle > .arrow').addClass('arrow-right');
+                } else {
+                    $(elm).removeClass('dropdown-menu-right');
+                    $(elm).parents('.dropdown:first').find('> a.dropdown-toggle > .arrow').removeClass('arrow-right');
+                }
+            }
+        });
+    });
+
+    // Mobile Collapse Nav
+    $('.primary-menu .dropdown-toggle[href="#"], .primary-menu .dropdown-toggle[href!="#"] .arrow, .login-signup .dropdown-toggle[href="#"], .login-signup .dropdown-toggle[href!="#"] .arrow').on('click', function (e) {
+        if ($(window).width() < 991) {
+            e.preventDefault();
+            var $parentli = $(this).closest('li');
+            $parentli.siblings('li').find('.dropdown-menu:visible').slideUp();
+            $parentli.find('> .dropdown-menu').stop().slideToggle();
+            $parentli.siblings('li').find('a .arrow.open').toggleClass('open');
+            $parentli.find('> a .arrow').toggleClass('open');
+        }
+    });
+
+    // DropDown Arrow
+    $('.primary-menu, .login-signup').find('a.dropdown-toggle').append($('<i />').addClass('arrow'));
+
+    // Mobile Menu Button Icon
+    $('.navbar-toggler').on('click', function () {
+        $(this).toggleClass('open');
+    });
 
 });
+

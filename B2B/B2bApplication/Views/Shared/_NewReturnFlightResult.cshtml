@@ -3,133 +3,7 @@
 @using Newtonsoft.Json
 <!-- Content============================================= -->
 
-<div id="content">
-    <section class="container">
 
-        <div class="row">
-
-            <!-- Side Panel
-            ============================================= -->
-            <aside class="col-md-3">
-                <div class="bg-white shadow-md rounded p-3">
-                    <h3 class="text-5">Filter</h3>
-                    <hr class="mx-n3">
-                    <div class="accordion accordion-alternate style-2 mt-n3" id="toggleAlternate">
-                        <div class="card">
-                            <div class="card-header" id="stops">
-                                <h5 class="mb-0"> <a href="#" data-toggle="collapse" data-target="#togglestops" aria-expanded="true" aria-controls="togglestops">No. of Stops</a> </h5>
-                            </div>
-                            <div id="togglestops" class="collapse show" aria-labelledby="stops">
-                                <div class="card-body">
-                                    @{int nonstop = 0, nonstop1 = 0, nonstop2 = 0;
-                                        nonstop1 = Model.Results.FirstOrDefault().Where(x => x.Segment.Count() == 1).Count();
-                                        nonstop2 = Model.Results.LastOrDefault().Where(x => x.Segment.Count() == 1).Count();
-                                        nonstop = nonstop1 + nonstop2;
-                                        int onestop = 0, onestop1 = 0, onestop2 = 0;
-                                        onestop1 = Model.Results.FirstOrDefault().Where(x => x.Segment.Count() == 2).Count();
-                                        onestop2 = Model.Results.LastOrDefault().Where(x => x.Segment.Count() == 2).Count();
-                                        onestop = onestop1 + onestop2;
-                                        int multistop = 0, multistop1 = 0, multistop2 = 0;
-                                        multistop2 = Model.Results.LastOrDefault().Where(x => x.Segment.Count() > 2).Count();
-                                        multistop1 = Model.Results.FirstOrDefault().Where(x => x.Segment.Count() > 2).Count();
-                                        multistop = multistop1 + multistop2;}
-
-                                    @if (nonstop > 0)
-                                    {
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" id="nonstop" name="stop" value="Non Stop" onclick="checkfilter2()" class="custom-control-input">
-                                            <label class="custom-control-label" for="nonstop">
-                                                Non Stop (@nonstop)
-                                            </label>
-                                        </div>}
-                                    @if (onestop > 0)
-                                    {
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" id="1stop" value="1 Stop" name="stop" onclick="checkfilter2()" class="custom-control-input">
-                                            <label class="custom-control-label" for="1stop">1 Stop (@onestop)</label>
-                                        </div>}
-                                    @if (multistop > 0)
-                                    {
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" id="2stop" value="Many Stop" name="stop" onclick="checkfilter2()" class="custom-control-input">
-                                            <label class="custom-control-label" for="2stop">1+ Stop (@multistop)</label>
-                                        </div>}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header" id="departureTime">
-                                <h5 class="mb-0"> <a href="#" class="collapse" data-toggle="collapse" data-target="#toggleDepartureTime" aria-expanded="true" aria-controls="toggleDepartureTime">Departure Time</a> </h5>
-                            </div>
-                            <div id="toggleDepartureTime" class="collapse show" aria-labelledby="departureTime">
-                                <div class="card-body">
-                                    <div class="custom-control custom-checkbox clearfix">
-                                        <input type="checkbox" id="earlymorning" value="earlymorning" onclick="checkfilter2()" name="departureTime" class="custom-control-input">
-                                        <label class="custom-control-label" for="earlymorning">Early Morning</label>
-                                        <small class="text-muted float-right">12am - 8am</small>
-                                    </div>
-                                    <div class="custom-control custom-checkbox clearfix">
-                                        <input type="checkbox" id="morning" value="morning" name="departureTime" onclick="checkfilter2()" class="custom-control-input">
-                                        <label class="custom-control-label" for="morning">Morning</label>
-                                        <small class="text-muted float-right">8am - 12pm</small>
-                                    </div>
-                                    <div class="custom-control custom-checkbox clearfix">
-                                        <input type="checkbox" id="midday" value="midday" name="departureTime" onclick="checkfilter2()" class="custom-control-input">
-                                        <label class="custom-control-label" for="midday">Mid-Day</label>
-                                        <small class="text-muted float-right">12pm - 4pm</small>
-                                    </div>
-                                    <div class="custom-control custom-checkbox clearfix">
-                                        <input type="checkbox" id="evening" value="evening" name="departureTime" onclick="checkfilter2()" class="custom-control-input">
-                                        <label class="custom-control-label" for="evening">Evening</label>
-                                        <small class="text-muted float-right">4pm - 8pm</small>
-                                    </div>
-                                    <div class="custom-control custom-checkbox clearfix">
-                                        <input type="checkbox" id="night" value="night" name="departureTime" onclick="checkfilter2()" class="custom-control-input">
-                                        <label class="custom-control-label" for="night">Night</label>
-                                        <small class="text-muted float-right">8pm - 12am</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header" id="price">
-                                <h5 class="mb-0"> <a href="#" class="collapse" data-toggle="collapse" data-target="#togglePrice" aria-expanded="true" aria-controls="togglePrice">Price</a> </h5>
-                            </div>
-                            <div id="togglePrice" class="collapse show" aria-labelledby="price">
-                                <div class="card-body">
-                                    <p>
-                                        <input id="amount" type="text" readonly class="form-control border-0 bg-transparent p-0">
-                                    </p>
-                                    <div id="slider-range"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header" id="airlines">
-                                <h5 class="mb-0"> <a href="#" class="collapse" data-toggle="collapse" data-target="#toggleAirlines" aria-expanded="true" aria-controls="toggleAirlines">Airlines</a> </h5>
-                            </div>
-                            <div id="toggleAirlines" class="collapse show" aria-labelledby="airlines">
-                                <div class="card-body">
-                                    @foreach (var item in Model.Results[0].Select(x => x.Segment.FirstOrDefault()?.Airline?.Name).Distinct())
-                                    {
-
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" id="@item" value="@item" onclick="checkfilter2()" name="airlines" class="custom-control-input">
-                                            <label class="custom-control-label" for="@item">@item</label>
-                                        </div>
-
-
-                                    }
-
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </aside><!-- Side Panel end -->
-
-            <div class="col-md-9 mt-4 mt-md-0">
                 <div class="bg-white shadow-md rounded py-4">
                     <div class="row no-gutters">
 
@@ -145,10 +19,13 @@
                             </div>
                             <div class="text-1 bg-light-3 border border-left-0 py-2 px-3">
                                 <div class="form-row">
-                                    <div class="col col-sm col-lg-3 text-center d-none d-sm-block">Airline</div>
-                                    <div class="col-6 col-sm col-lg-3 text-center">Departure</div>
-                                    <div class="col-6 col-sm col-lg-3 text-center">Arrival</div>
-                                    <div class="col col-sm col-lg-3 text-right d-none d-sm-block">Price</div>
+                                    <div class="col col-sm-2 text-center">
+                                        <span class="d-none d-sm-block" style="cursor:default" id="spnairline" onclick="checkfilter(this)" data-id="airline" data-value="asc">Airline <i id="iairline"></i> </span>
+                                    </div>
+                                    <div class="col col-sm-2 text-center" style="cursor:default" id="spndeparture" onclick="checkfilter(this)" data-id="departure" data-value="asc">Departure <i id="ideparture"></i></div>
+                                    
+                                    <div class="col col-sm-2 text-center" style="cursor:default" id="spnarrival" onclick="checkfilter(this)" data-id="arrival" data-value="asc">Arrival <i id="iarrival"></i></div>
+                                    <div class="col col-sm-2 text-right" style="cursor:default" id="spnprice" onclick="checkfilter(this)" data-id="price" data-value="asc">Price <i id="iprice" class="fas fa-long-arrow-alt-down"></i></div>
                                 </div>
                             </div>
                             <div class="flight-list round-trip border-right">
@@ -165,12 +42,12 @@
                                                 <div class="custom-control custom-radio custom-control-inline mr-1">
                                                     @if (cnt == 1)
                                                     {
-                                                        <input id="departure-flight-@cnt" name="departure-flight" onclick="onwardflightdetails(@cnt)" checked class="custom-control-input" type="radio">
+                                                        <input id="departure-flight-@cnt" name="departure-flight" value="@item.TotalPriceList?.FirstOrDefault().ResultIndex" onclick="onwardflightdetails(@cnt)" checked class="custom-control-input" type="radio">
                                                     
                                                     }
                                                     else
                                                     {
-                                                        <input id="departure-flight-@cnt" name="departure-flight" onclick="onwardflightdetails(@cnt)" class="custom-control-input" type="radio">
+                                                        <input id="departure-flight-@cnt" value="@item.TotalPriceList?.FirstOrDefault().ResultIndex" name="departure-flight" onclick="onwardflightdetails(@cnt)" class="custom-control-input" type="radio">
                                                     }
                                                     <label class="custom-control-label" for="departure-flight-@cnt"></label>
                                                 </div>
@@ -473,10 +350,13 @@
                             </div>
                             <div class="text-1 bg-light-3 border border-right-0 border-left-0 py-2 px-3">
                                 <div class="form-row">
-                                    <div class="col col-sm col-lg-3 text-center d-none d-sm-block">Airline</div>
-                                    <div class="col-6 col-sm col-lg-3 text-center">Departure</div>
-                                    <div class="col-6 col-sm col-lg-3 text-center">Arrival</div>
-                                    <div class="col col-sm col-lg-3 text-right d-none d-sm-block">Price</div>
+                                    <div class="col col-sm-2 text-center">
+                                        <span class="d-none d-sm-block" id="spnairline" style="cursor:default" onclick="checkfilter(this)" data-id="airline2" data-value="asc">Airline <i id="iairline2"></i> </span>
+                                    </div>
+                                    <div class="col col-sm-2 text-center" id="spndeparture" style="cursor:default" onclick="checkfilter(this)" data-id="departure2" data-value="asc">Departure <i id="ideparture2"></i></div>
+
+                                    <div class="col col-sm-2 text-center" id="spnarrival" style="cursor:default" onclick="checkfilter(this)" data-id="arrival2" data-value="asc">Arrival <i id="iarrival2"></i></div>
+                                    <div class="col col-sm-2 text-right" id="spnprice" style="cursor:default" onclick="checkfilter(this)" data-id="price2" data-value="asc">Price <i id="iprice2" class="fas fa-long-arrow-alt-down"></i></div>
                                 </div>
                             </div>
                             <div class="flight-list round-trip border-left">
@@ -494,12 +374,12 @@
                                                 <div class="custom-control custom-radio custom-control-inline mr-1">
                                                     @if (rcnt == 1)
                                                     {
-                                                        <input id="return-flight-@cnt" name="return-flight" onclick="returnflightdetails(@cnt,@rcnt)" class="custom-control-input" checked type="radio">
+                                                        <input id="return-flight-@cnt" value="@item.TotalPriceList?.FirstOrDefault().ResultIndex" name="return-flight" onclick="returnflightdetails(@cnt,@rcnt)" class="custom-control-input" checked type="radio">
                                                        
                                                     }
                                                     else
                                                     {
-                                                        <input id="return-flight-@cnt" name="return-flight" onclick="returnflightdetails(@cnt,@rcnt)" class="custom-control-input" type="radio">
+                                                        <input id="return-flight-@cnt" value="@item.TotalPriceList?.FirstOrDefault().ResultIndex" name="return-flight" onclick="returnflightdetails(@cnt,@rcnt)" class="custom-control-input" type="radio">
                                                     }
                                                     <label class="custom-control-label" for="return-flight-@cnt"></label>
                                                 </div>
@@ -511,38 +391,7 @@
                                             </div>
                                             <div class="col-6 col-sm col-lg-3 text-center time-info">
                                                 <span id="flight-dtime-@cnt">@item.Segment.FirstOrDefault()?.DepartureTime.ToString("HH:mm")</span>
-                                                @{ string deptime = "";
-                                                    TimeSpan now = item.Segment.FirstOrDefault().DepartureTime.TimeOfDay;
-                                                    TimeSpan emornstart = TimeSpan.Parse("00:00"); // 12 AM
-                                                    TimeSpan emornend = TimeSpan.Parse("08:00");   // 8 AM
-                                                    TimeSpan mornstart = TimeSpan.Parse("08:01"); // 12 AM
-                                                    TimeSpan mornend = TimeSpan.Parse("12:00");   // 8 AM
-                                                    TimeSpan midstart = TimeSpan.Parse("12:01"); // 12 AM
-                                                    TimeSpan midend = TimeSpan.Parse("16:00");   // 8 AM
-                                                    TimeSpan evenstart = TimeSpan.Parse("16:01"); // 12 AM
-                                                    TimeSpan evenend = TimeSpan.Parse("20:00");   // 8 AM
-                                                    TimeSpan nigtstart = TimeSpan.Parse("20:01"); // 12 AM
-                                                    TimeSpan nigtend = TimeSpan.Parse("23:59");   // 8 AM
-                                                    if (now >= emornstart && now <= emornend)
-                                                    {
-                                                        deptime = "earlymorning";
-                                                    }
-                                                    else if (now >= mornstart && now <= mornend)
-                                                    {
-                                                        deptime = "morning";
-                                                    }
-                                                    else if (now >= midstart && now <= midend)
-                                                    {
-                                                        deptime = "midday";
-                                                    }
-                                                    else if (now >= evenstart && now <= evenend)
-                                                    {
-                                                        deptime = "evening";
-                                                    }
-                                                    else { deptime = "night"; }
-                                                }
-                                                <input type="hidden" value="@deptime" id="hidflighttime" class="deptimefil" />
-                                                @if (item.Segment.Count > 1)
+                                                 @if (item.Segment.Count > 1)
                                                 {<small class="text-muted d-none d-sm-block spnstop">@(item.Segment.Count - 1) Stop</small><small>
                                                         via
                                                         @{string depvia = ""; int segcnt = 0; }
@@ -570,8 +419,8 @@
                                             </div>
                                             <div class="col-12 col-sm col-lg-3 text-center text-sm-right text-dark text-3 price">
                                                 @(item.TotalPriceList?.FirstOrDefault().TotalPrice.ToString("C", _currentuser.cultureInfo))
-                                                <input type="hidden" value=" @item.TotalPriceList?.FirstOrDefault().TotalPrice" id="flight-price-@cnt" />
-                                                <input type="hidden" value=" @item.TotalPriceList?.FirstOrDefault().ResultIndex" id="return-flightid-@rcnt" />
+                                                <input type="hidden" value="@item.TotalPriceList?.FirstOrDefault().TotalPrice" id="flight-price-@cnt" />
+                                                <input type="hidden" value="@item.TotalPriceList?.FirstOrDefault().ResultIndex" id="return-flightid-@rcnt" />
                                             </div>
                                             <div class="col col-sm-auto col-lg-3 ml-auto text-0 text-center text-sm-right">
                                                 <a data-toggle="modal" data-target="#flight-@cnt" href="">Flight Details</a>
@@ -729,7 +578,7 @@
 
 
                 </div>
-            </div>
+           
 
             <!-- Selected Flight Fare
             ============================================= -->
@@ -837,7 +686,7 @@
                                     </small>
                                 </div>
                                 <div class="col-12 col-md-6 text-center mt-2 mt-md-0 btn-book">
-                                    <button class="btn btn-sm btn-primary px-sm-2 px-lg-3" name='bookFlight' >
+                                    <button class="btn btn-sm btn-primary px-sm-2 px-lg-3" name='bookFlight'>
                                         <i class="fas fa-shopping-cart d-block d-lg-none"></i>
                                         <span class="d-none d-lg-block">Book</span>
                                     </button>
@@ -850,83 +699,10 @@
             </div>
             <!-- Selected Flight Fare end -->
 
-        </div>
-    </section>
-</div>
-
-
-<!-- Content end -->
+       
 <script>
-    function checkfilter() {
-        var chknonstop = $("#nonstop").prop('checked');
-        var chkstop = $("#1stop").prop('checked');
-        var chkmultistop = $("#2stop").prop('checked');
-        var nonstop = "", onestop = "", multistop = "";
-        if (chknonstop == true || chkstop == true || chkmultistop == true) {
-            if (chknonstop == true) {
-                nonstop = 'Non Stop';
-            }
-            if (chkstop == true) {
-                onestop = '1 Stop';
-            }
-            if (chkmultistop == true) {
-                multistop = 'Multi Stop';
-            }
-            $('.flight-item').each(function () {
-                debugger;
-                let val = $(this).find(".spnstop").text();
-
-                if (val == nonstop || val == onestop) {
-                    $(this).show();
-                }
-                else if (chkmultistop == true) {
-                    if (val != "Non Stop" && val != "1 Stop") {
-                        $(this).show();
-                    }
-                    else {
-                        $(this).hide();
-                    }
-                }
-                else {
-                    $(this).hide();
-                }
-            });
-
-            $('.flight-item2').each(function () {
-                debugger;
-                let val2 = $(this).find(".spnstop2").text();
-
-                if (val2 == nonstop || val2 == onestop) {
-                    $(this).show();
-                }
-                else if (chkmultistop == true) {
-                    if (val2 != "Non Stop" && val2 != "1 Stop") {
-                        $(this).show();
-                    }
-                    else {
-                        $(this).hide();
-                    }
-                }
-                else {
-                    $(this).hide();
-                }
-            });
-        }
-        else {
-            $('.flight-item').each(function () {
-
-                $(this).show();
-
-            });
-            $('.flight-item2').each(function () {
-
-                $(this).show();
-
-            });
-        }
-    }
+   
     function returnflightdetails(obj,obj2) {
-
         $('#rflight-name').html($('#flight-name-' + obj).html());
         $('#rflight-no').html($('#flight-no-' + obj).html());
         $('#rflight-dtime').html($('#flight-dtime-' + obj).html());
@@ -945,7 +721,7 @@
         if (myArr.length > 0) {
             var totprice = parseFloat(price) + parseFloat($('#flight-price-' + myArr[2]).val());
 
-            $('#flight-tprice').html(totprice.toFixed(2));
+            $('#flight-tprice').html(parseFloat(totprice).toFixed(2));
         }
     }
     function onwardflightdetails(obj) {
@@ -967,19 +743,31 @@
         if (myArr.length > 0) {
             var totprice = parseFloat(price) + parseFloat($('#flight-price-' + myArr[2]).val());
 
-            $('#flight-tprice').html(totprice.toFixed(2));
+            $('#flight-tprice').html(parseFloat(totprice).toFixed(2));
         }
     }
+
+
     $("button[name='bookFlight']").click(function () {
         debugger;
-        var resultIndex1 = $('#FareQuoteRequestResultIndex1').val();
-        var resultIndex2 = $('#FareQuoteRequestResultIndex2').val();
-        if (resultIndex1 == '') {
-            $('#FareQuoteRequestResultIndex1').val($('#onward-flightid-1').val());
+        var resultInde1 = $("input[name='departure-flight']:checked").val();
+        if (resultInde1 == null || resultInde1 == undefined) {
+            alert('Select Flight');
+            return;
         }
-        if (resultIndex2 == '') {
-            resultindex2 = $('#return-flightid-1').val();
-            $('#FareQuoteRequestResultIndex2').val($('#return-flightid-1').val());
+        else {
+            resultInde = resultInde1;
+            $("#FareQuoteRequestResultIndex1").val(resultInde1);
+        }
+
+        var resultInde2 = $("input[name='return-flight']:checked").val();
+        if ($("#JourneyType").val() == 2 && (resultInde2 == null || resultInde2 == undefined)) {
+            alert('Select Retrurn Flight');
+            return;
+        }
+        else {
+            $("#FareQuoteRequestResultIndex2").val(resultInde2);
+            resultInde = resultInde1 + "," + resultInde2;
         }
         $("#frmFlightReview").submit();
     });

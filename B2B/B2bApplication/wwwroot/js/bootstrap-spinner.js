@@ -57,7 +57,7 @@
 
   Spinner.DEFAULTS = {
     step: 1,
-    min: 0,
+    min: 1,
     max: Infinity,
     precision: 0,
     strict: true

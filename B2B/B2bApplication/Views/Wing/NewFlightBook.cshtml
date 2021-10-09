@@ -42,7 +42,10 @@
                                         <tr>
                                             <td valign="top" align="center">
                                                 <a href="#">
-                                                    <img alt="" src="logo.png" style="padding-bottom: 0; display: inline !important;">
+                                                    <h3>
+                                                        <i class="fa fa-leaf"></i>
+                                                        Veemaan
+                                                    </h3>
                                                 </a>
                                             </td>
                                         </tr>
@@ -55,37 +58,60 @@
                             </td>
                         </tr>
 
+
+
+                        <tr>
+                            <td style="padding:0px 20px;">
+                                <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                                    <tbody>
+                                        <tr>
+                                            <td style="border:4px solid #eee; border-radius:4px; padding:25px 0px;">
+                                                <table width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td style="font-size:14px; padding:0px 25px;" width="50">
+                                                                <img alt="" src="booking-successful.png">
+                                                            </td>
+                                                            <td style="font-size:16px; font-weight:600; color:#777; line-height:26px; padding-right:20px;">
+
+                                                                <span style="font-size:13px;">Hi @_currentuser.Name,</span><br>
+                                                                @{int succnt = 0;}
+                                                                @foreach (var suc in Model.IsSucess)
+                                                                {
+                                                                    if (suc == true)
+                                                                    {
+                                                                        succnt = succnt + 1;
+                                                                    }
+                                                                }
+                                                                @if (Model.IsSucess.Count() == succnt)
+                                                                {
+                                                                    <span>   Congratulations! Your flight booking is</span>
+                                                                    <span style="color:#28a745;"> confirmed </span>
+                                                                }
+                                                                else if (succnt > 0)
+                                                                {
+                                                                    <span>   Congratulations! Your flight booking is</span>
+                                                                    <span style="color:#28a745;"> partial confirmed </span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span>   Sorry! Your flight booking is</span><span style="color:red;">not confirmed</span>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
                         @for (int i = 0; i < Model.FareQuotResponse.Count; i++)
                         {
                             var tripinfo = Model.FareQuotResponse[i].Results.FirstOrDefault()?.FirstOrDefault()?.Segment;
-
                             @if (tripinfo != null)
                             {
-                                <tr>
-                                    <td style="padding:0px 20px;">
-                                        <table width="100%" cellspacing="0" cellpadding="0" border="0">
-                                            <tbody>
-                                                <tr>
-                                                    <td style="border:4px solid #eee; border-radius:4px; padding:25px 0px;">
-                                                        <table width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
-                                                            <tbody>
-                                                                <tr>
-                                                                    <td style="font-size:14px; padding:0px 25px;" width="50">
-                                                                        <img alt="" src="booking-successful.png">
-                                                                    </td>
-                                                                    <td style="font-size:16px; font-weight:600; color:#777; line-height:26px; padding-right:20px;">
-                                                                        <span style="font-size:13px;">Hi @_currentuser.Name,</span><br>
-                                                                        Congratulations! Your flight booking is <span style="color:#28a745;">confirmed</span>.
-                                                                    </td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                </tr>
                                 <tr>
                                     <td style="padding:20px;">
                                         <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -128,7 +154,7 @@
                                                 <tr>
                                                     <td style="font-size:14px; line-height:20px;">
                                                         <span style="color:#909090">Booking Date:</span><br />
-                                                        <span style="color:#000000;display:inline-block">@Convert.ToDateTime(DateTime.Now).ToString("dd-MMM-yyyy"))</span>
+                                                        <span style="color:#000000;display:inline-block">@Convert.ToDateTime(DateTime.Now).ToString("dd-MMM-yyyy")</span>
                                                     </td>
                                                     <td style="font-size:14px; line-height:20px;">
                                                         <span style="color:#909090">Booking No:</span><br />
@@ -187,11 +213,9 @@
                                                             @tr?.Origin?.CityName (@tr?.Origin?.AirportName, @tr?.Origin?.AirportCode)<br />
                                                             <span style="font-size:14px; color:#111111;"> @tr?.DepartureTime.ToString("ddd, dd-MMM-yyyy"), @tr?.DepartureTime.ToString("HH:mm")</span><br />
 
-                                                            <span style="font-size:13px; color:#555555;"> Cabin Class: @tr.CabinClass -@tr.ClassOfBooking</span><br />
-
                                                         </td>
                                                         <td valign="top" style="border-right:1px solid #dddddd;border-bottom:1px solid #dddddd;padding:7px;line-height:22px;">
-                                                            @tr?.Destination?.CityName (@tr?.Destination?.AirportName, @tr?.Destination?.AirportCode) < br />
+                                                            @tr?.Destination?.CityName (@tr?.Destination?.AirportName, @tr?.Destination?.AirportCode) <br />
                                                             <span style="font-size:14px; color:#111111;"> @tr?.ArrivalTime.ToString("ddd, dd-MMM-yyyy"), @tr?.ArrivalTime.ToString("HH:mm")</span><br />
                                                             <span style="font-size:13px; color:#555555;"> Travel Time: @(TimeSpan.FromMinutes(tr.Duration).Hours)h : @(TimeSpan.FromMinutes(tr.Duration ).Minutes)m</span><br />
                                                         </td>
@@ -207,31 +231,88 @@
                                             </h3>
                                         </td>
                                     </tr>
-                                    
-                                        <tr>
-                                            <td class="tablepadding" style="padding:20px 20px 25px;">
-                                                <table class="" style="border-collapse:collapse;width:100%;border-top:1px solid #dddddd;border-left:1px solid #dddddd;">
-                                                    <thead>
+
+                                    <tr>
+                                        <td class="tablepadding" style="padding:20px 20px 25px;">
+                                            <table class="" style="border-collapse:collapse;width:100%;border-top:1px solid #dddddd;border-left:1px solid #dddddd;">
+                                                <thead>
+                                                    <tr>
+                                                        <td style="font-size:13px;border-right:1px solid #dddddd;border-bottom:1px solid #dddddd;background-color:#efefef;font-weight:bold;padding:7px;color:#777777"> Name </td>
+                                                        <td align="center" style="font-size:13px;border-right:1px solid #dddddd;border-bottom:1px solid #dddddd;background-color:#efefef;font-weight:bold;padding:7px;color:#777777">Fare Type</td>
+                                                        <td align="center" style="font-size:13px;border-right:1px solid #dddddd;border-bottom:1px solid #dddddd;background-color:#efefef;font-weight:bold;padding:7px;color:#777777">Add on Service</td>
+
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.travellerInfo)
+                                                    {
                                                         <tr>
-                                                            <td style="font-size:13px;border-right:1px solid #dddddd;border-bottom:1px solid #dddddd;background-color:#efefef;font-weight:bold;padding:7px;color:#777777"> Name </td>
-                                                            <td align="center" style="font-size:13px;border-right:1px solid #dddddd;border-bottom:1px solid #dddddd;background-color:#efefef;font-weight:bold;padding:7px;color:#777777">Confirmation</td>
-                                                            
+                                                            <td width="40%" valign="top" style="border-right:1px solid #dddddd;border-bottom:1px solid #dddddd;text-align:left;padding:7px;line-height:22px;">@item.Title @item.FirstName @item.LastName</td>
+                                                            <td width="20%" valign="top" align="center" style="border-right:1px solid #dddddd;border-bottom:1px solid #dddddd;padding:7px;line-height:22px;"> @item.cabinclass-@item.bookingclass </td>
+                                                            <td width="40%" valign="top" align="center" style="border-right:1px solid #dddddd;border-bottom:1px solid #dddddd;padding:7px;line-height:22px;">
+                                                                @if (item.ssrBaggageInfoslist != null)
+                                                                {
+                                                                    string strbag = "";
+                                                                    for (int b = 0; b < item.ssrBaggageInfoslist.Count(); b++)
+                                                                    {
+                                                                        if (b == 0)
+                                                                            strbag = strbag + item.ssrBaggageInfoslist[b].desc;
+                                                                        else
+                                                                            strbag = strbag + "," + item.ssrBaggageInfoslist[b].desc;
+                                                                    }
+                                                                    <span>@strbag</span>
+                                                                    <br />
+                                                                }
+                                                                @if (item.ssrMealInfoslist != null)
+                                                                {
+                                                                    string strmel = "";
+                                                                    for (int m = 0; m < item.ssrMealInfoslist.Count(); m++)
+                                                                    {
+                                                                        if (m == 0)
+                                                                            strmel = strmel + item.ssrMealInfoslist[m].desc;
+                                                                        else
+                                                                            strmel = strmel + "," + item.ssrMealInfoslist[m].desc;
+                                                                    }
+                                                                    <span>@strmel</span>
+                                                                    <br />
+                                                                }
+
+                                                                @if (item.ssrSeatInfoslist != null)
+                                                                {
+                                                                    string strmel = "";
+                                                                    for (int m = 0; m < item.ssrSeatInfoslist.Count(); m++)
+                                                                    {
+                                                                        if (m == 0)
+                                                                            strmel = strmel + item.ssrSeatInfoslist[m].desc;
+                                                                        else
+                                                                            strmel = strmel + "," + item.ssrSeatInfoslist[m].desc;
+                                                                    }
+                                                                    <span>@strmel</span>
+                                                                    <br />
+                                                                }
+                                                                @if (item.ssrExtraServiceInfoslist != null)
+                                                                {
+                                                                    string strmel = "";
+                                                                    for (int m = 0; m < item.ssrExtraServiceInfoslist.Count(); m++)
+                                                                    {
+                                                                        if (m == 0)
+                                                                            strmel = strmel + item.ssrExtraServiceInfoslist[m].desc;
+                                                                        else
+                                                                            strmel = strmel + "," + item.ssrExtraServiceInfoslist[m].desc;
+                                                                    }
+                                                                    <span>@strmel</span>
+                                                                    <br />
+                                                                }
+
+                                                            </td>
+
                                                         </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach (var item in Model.travellerInfo)
-                                                        {
-                                                        <tr>
-                                                            <td width="70%" valign="top" style="border-right:1px solid #dddddd;border-bottom:1px solid #dddddd;text-align:left;padding:7px;line-height:22px;">@item.Title @item.FirstName @item.LastName</td>
-                                                            <td width="30%" valign="top" align="center" style="border-right:1px solid #dddddd;border-bottom:1px solid #dddddd;padding:7px;line-height:22px;"> @Model.BookingId[i] </td>
-                                                            
-                                                        </tr>
-                                                        }
-                                                    </tbody>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+
 
 
                                     <!--Flight details end-->

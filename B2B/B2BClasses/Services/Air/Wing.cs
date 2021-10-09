@@ -15,6 +15,7 @@ namespace B2BClasses.Services.Air
         Task<mdlFareQuotResponse> FareQuoteAsync(mdlFareQuotRequest request);
         Task<mdlFareRuleResponse> FareRuleAsync(mdlFareRuleRequest request);
         Task<mdlBookingResponse> BookingAsync(mdlBookingRequest request);
+       
         Task<mdlFlightCancellationChargeResponse> CancelationChargeAsync(mdlCancellationRequest request);
         Task<mdlFlightCancellationResponse> CancellationAsync(mdlCancellationRequest request);
         Task<mdlCancelationDetails> CancelationDetailsAsync(string request);
