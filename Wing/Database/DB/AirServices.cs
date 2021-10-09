@@ -12,7 +12,7 @@ namespace Database.DB
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public enmMarkupApplicability Applicability { get; set; }        
+        public enmFlightSearvices Applicability { get; set; }        
         public bool IsAllProvider { get; set; }
         public bool IsAllCustomerType { get; set; }
         public bool IsAllCustomer { get; set; }
@@ -435,5 +435,126 @@ namespace Database.DB
 
 
     #endregion
+
+
+
+
+    public class tblFlightBookingMaster:d_ModifiedBy
+    {
+        [Key]
+        public string VisitorId { get; set; }
+        public int UserId { get; set; }
+        public int OrgId { get; set; }
+        public DateTime BookingDate { get; set; }
+        [MaxLength(64)]
+        public string PhoneNo { get; set; }
+        [MaxLength(128)]
+        public string EmailNo { get; set; }
+        public enmPaymentMode PaymentMode { get; set; }
+        public enmPaymentGateway GatewayId { get; set; }
+        public double BookingAmount { get; set; }
+        public double GatewayCharge { get; set; }
+        public double NetAmount { get; set; }
+    }
+
+    public class tblFlilghtBookingSearchDetails
+    {
+        [Key]
+        [MaxLength(64)]
+        public string BookingId { get; set; }
+        [MaxLength(128)]
+        public string ProviderBookingId { get; set; }
+        public enmServiceProvider ServiceProvider { get; set; }
+        public bool IncludeBaggageServices { get; set; }
+        public bool IncludeMealServices { get; set; }
+        public bool IncludeSeatServices { get; set; }
+        public enmJourneyType JourneyType { get; set; }
+        public int SearchCachingId { get; set; }
+        public bool CachingId { get; set; }
+        public double PurchaseAmount { get; set; }//Price at Which wing Purchase the ticket
+        public double IncentiveAmount { get; set; }//Incentive that We have to Distribute the Distributors
+        public double MarkupAmount { get; set; }//Wing Markup Amount
+        public double DiscountAmount { get; set; }//Discount Applied by Wing        
+        public double ConvenienceAmount { get; set; }
+        public double SaleAmount{ get; set; }
+        public double CustomerMarkupAmount{ get; set; }        
+        public double NetSaleAmount { get; set; }
+        public enmBookingStatus BookingStatus { get; set; }
+        [MaxLength(25)]
+        public string Remarks { get; set; }
+    }
+
+    public class tblFlightRefundStatusDetails:d_CreatedBy
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public string RefundId { get; set; }
+        public string BookingId { get; set; }
+        public enmServiceProvider ServiceProvider { get; set; }
+        public string ProviderBookingId { get; set; }
+        public double RefundAmount { get; set; }
+        public enmRefundStatus RefundStatus { get; set; }
+        [MaxLength(25)]
+        public string Remarks { get; set; }
+    }
+    
+
+    public class tblFlightPurchaseDetails
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Sno { get; set; }
+        public string BookingId { get; set; }
+        public enmFlightSearvices SearviceType { get; set; }
+        public string ServiceDetail { get; set; }
+        public double PurchaseAmount { get; set; }//Price at Which wing Purchase the ticket
+        public double IncentiveAmount { get; set; }//Incentive that We have to Distribute the Distributors
+        public double MarkupAmount { get; set; }//Wing Markup Amount
+        public double DiscountAmount { get; set; }//Discount Applied by Wing        
+        public double ConvenienceAmount { get; set; }
+        public double SaleAmount { get; set; }
+        public double CustomerMarkupAmount { get; set; }
+        public double NetSaleAmount { get; set; }
+    }
+
+    public class tblFlighBookingPassengerDetails
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Sno { get; set; }
+        public string BookingId { get; set; }
+        public enmPassengerType PassengerType { get; set; }
+        [MaxLength(16)]
+        public string Title { get; set; }
+        [MaxLength(64)]
+        public string FirstName { get; set; }
+        [MaxLength(64)]
+        public string LastName { get; set; }
+        public DateTime? DOB { get; set; }
+        [MaxLength(64)]
+        public string PassportNumber { get; set; }
+        public DateTime? PassportIssueDate { get; set; }
+        public DateTime? PassportExpiryDate { get; set; }
+    }
+
+    public class tblFlighRefundPassengerDetails
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Sno { get; set; }
+        public string RefundId { get; set; }
+        public enmPassengerType PassengerType { get; set; }
+        [MaxLength(16)]
+        public string Title { get; set; }
+        [MaxLength(64)]
+        public string FirstName { get; set; }
+        [MaxLength(64)]
+        public string LastName { get; set; }
+        public DateTime? DOB { get; set; }
+        [MaxLength(64)]
+        public string PassportNumber { get; set; }
+        public DateTime? PassportIssueDate { get; set; }
+        public DateTime? PassportExpiryDate { get; set; }
+    }
 
 }
