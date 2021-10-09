@@ -23,7 +23,27 @@ namespace Database.DB
         public DateTime SchduleDate { get; set; }
         public bool IsDisable { get; set; }
         public bool IsActive { get; set; }
+        public bool IsProcessed { get; set; }
     }
 
-    
+    public class tblPaymentGatewayProvider : d_ModifiedBy
+    {
+        [Key]
+        public enmPaymentGateway PaymentGatewayProvider { get; set; }
+        public bool IsEnabled { get; set; }
+    }
+
+    public class tblSchduleDisablePaymentGatewayProvider : d_ModifiedBy
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Sno { get; set; }        
+        public enmPaymentGateway PaymentGatewayProvider { get; set; }
+        public DateTime SchduleDate { get; set; }
+        public bool IsDisable { get; set; }
+        public bool IsActive { get; set; }
+        public bool IsProcessed { get; set; }
+    }
+
+
 }

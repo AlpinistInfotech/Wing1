@@ -137,7 +137,7 @@ namespace Database.DB
         public int Sno { get; set; }
         public int MonthYear { get; set; }
         public ulong Nid { get; set; }
-        public bool IsEnable { get; set; }
+        public bool IsEnable { get; set; }        
     }
 
     public class tblDispatchList
@@ -146,7 +146,7 @@ namespace Database.DB
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Sno { get; set; }
         public int MonthYear { get; set; }
-        public int Nid { get; set; }
+        public ulong Nid { get; set; }
         public double PrevTaxable { get; set; }
         public double Incentive { get; set; }
         public double TaxableAmount { get; set; }
@@ -161,10 +161,35 @@ namespace Database.DB
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Sno { get; set; }
-        public int Nid { get; set; }
+        public ulong Nid { get; set; }
         public int TransactionId { get; set; }
     }
 
-    
-    
+    public class tblFutureHoldIncentive :d_ModifiedBy
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Sno { get; set; }
+        public ulong Nid { get; set; }
+        public bool IsHold{ get; set; }
+    }
+    public class tblHoldIncentive : d_ModifiedBy
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int HoldId { get; set; }
+        public ulong Nid { get; set; }
+        public double  HoldAmount { get; set; }
+        public int MonthYear{ get; set; }        
+    }
+    public class tblReleaseIncentive : d_ModifiedBy
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int HoldId { get; set; }
+        public ulong Nid { get; set; }
+        public double ReleaseAmount { get; set; }
+        public int MonthYear { get; set; }
+    }
+
 }
