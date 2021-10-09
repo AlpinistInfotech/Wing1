@@ -210,10 +210,6 @@ namespace Database.DB
         public tblFlightMarkupMaster tblFlightMarkupMaster { get; set; }
     }
 
-
-
-
-
     public class tblFlightConvenience : DbWingCharge
     {
         [InverseProperty("tblFlightConvenience")]
@@ -355,6 +351,8 @@ namespace Database.DB
         public DateTime CreatedDt { get; set; }
         public DateTime ExpiredDt { get; set; }
         public bool IsDeleted { get; set; }
+        
+        public ICollection<tblFlightSearchResponse_Caching> tblFlightSearchResponse_Caching { get; set; }
     }
 
     public class tblFlightSearchResponse_Caching
@@ -363,10 +361,13 @@ namespace Database.DB
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ResponseId { get; set; }
         public enmServiceProvider ServiceProvider { get; set; }
-        public int CachingId { get; set; }        
+        [ForeignKey("tblFlightSearchRequest_Caching")] // Foreign Key here
+        public int? CachingId { get; set; }
+        public tblFlightSearchRequest_Caching tblFlightSearchRequest_Caching { get; set; }
         public double MinmumPrice { get; set; }
         [MaxLength(64)]
         public string ProviderTraceId { get; set; }
+        public ICollection<tblFlightSearchResponses_Caching> tblFlightSearchResponses_Caching { get; set; }
     }
 
     public class tblFlightSearchResponses_Caching
@@ -374,7 +375,12 @@ namespace Database.DB
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int IndexId { get; set; }
-        public int ResponseId { get; set; }        
+        [ForeignKey("tblFlightSearchResponse_Caching")] // Foreign Key here
+        public int? ResponseId { get; set; }
+        public tblFlightSearchResponse_Caching tblFlightSearchResponse_Caching { get; set; }
+        public ICollection<tblFlightSearchSegment_Caching> tblFlightSearchSegment_Caching { get; set; }
+        public ICollection<tblFlightFare_Caching> tblFlightFare_Caching { get; set; }
+
     }
 
 
@@ -383,7 +389,9 @@ namespace Database.DB
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int SegmentId { get; set; }
-        public int SearchIndexId { get; set; }
+        [ForeignKey("tblFlightSearchResponses_Caching")] // Foreign Key here
+        public int? SearchIndexId{ get; set; }
+        public tblFlightSearchResponses_Caching tblFlightSearchResponses_Caching { get; set; }
         public int AirlineId { get; set; }
         public int OriginAirportId { get; set; }
         public int DestinationAirportId { get; set; }
@@ -404,7 +412,9 @@ namespace Database.DB
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int FareId { get; set; }
-        public int SearchIndexId { get; set; }
+        [ForeignKey("tblFlightSearchResponses_Caching")] // Foreign Key here
+        public int? SearchIndexId { get; set; }
+        public tblFlightSearchResponses_Caching tblFlightSearchResponses_Caching { get; set; }
         [MaxLength(64)]
         public string ProviderFareDetailId { get; set; }
         [MaxLength(64)]
@@ -420,7 +430,10 @@ namespace Database.DB
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Sno { get; set; }
-        public int FareDetailId { get; set; }
+        [ForeignKey("tblFlightFare_Caching")] // Foreign Key here
+        public int? FareDetailId { get; set; }
+        public tblFlightFare_Caching tblFlightFare_Caching { get; set; }
+        
         public enmPassengerType PassengerType { get; set; }
         public double BaseFare { get; set; }
         public double Tax{ get; set; }        
@@ -432,16 +445,13 @@ namespace Database.DB
         public byte IsRefundable { get; set; }
     }
 
-
-
     #endregion
 
-
-
-
+    
     public class tblFlightBookingMaster:d_ModifiedBy
     {
         [Key]
+        [MaxLength(128)]
         public string VisitorId { get; set; }
         public int UserId { get; set; }
         public int OrgId { get; set; }
@@ -459,9 +469,12 @@ namespace Database.DB
 
     public class tblFlilghtBookingSearchDetails
     {
-        [Key]
-        [MaxLength(64)]
-        public string BookingId { get; set; }
+        [Key]        
+        public int BookingId { get; set; }
+        [ForeignKey("tblFlightBookingMaster")] // Foreign Key here
+        public string VisitorId { get; set; }
+        public tblFlightBookingMaster tblFlightBookingMaster { get; set; }
+
         [MaxLength(128)]
         public string ProviderBookingId { get; set; }
         public enmServiceProvider ServiceProvider { get; set; }
@@ -486,10 +499,13 @@ namespace Database.DB
 
     public class tblFlightRefundStatusDetails:d_CreatedBy
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public string RefundId { get; set; }
-        public string BookingId { get; set; }
+        [Key]        
+        [MaxLength(128)]
+        public int RefundId { get; set; }
+        [ForeignKey("tblFlilghtBookingSearchDetails")] // Foreign Key here
+        public int? BookingId { get; set; }
+        public tblFlilghtBookingSearchDetails tblFlilghtBookingSearchDetails { get; set; }
+        
         public enmServiceProvider ServiceProvider { get; set; }
         public string ProviderBookingId { get; set; }
         public double RefundAmount { get; set; }
@@ -504,6 +520,7 @@ namespace Database.DB
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Sno { get; set; }
+        [MaxLength(128)]
         public string BookingId { get; set; }
         public enmFlightSearvices SearviceType { get; set; }
         public string ServiceDetail { get; set; }
@@ -556,5 +573,6 @@ namespace Database.DB
         public DateTime? PassportIssueDate { get; set; }
         public DateTime? PassportExpiryDate { get; set; }
     }
+
 
 }

@@ -64,15 +64,15 @@ namespace Database.DB
         public byte[] RowVersion { get; set; }
     }
 
-    public class tblDispatchIdentity
-    {
-        [Key]
-        public int FiscalYearID { get; set; }
-        public int DispatchCounter { get; set; }
-        [Timestamp]
-        [ConcurrencyCheck]
-        public byte[] RowVersion { get; set; }
-    }
+    //public class tblDispatchIdentity
+    //{
+    //    [Key]
+    //    public int FiscalYearID { get; set; }
+    //    public int DispatchCounter { get; set; }
+    //    [Timestamp]
+    //    [ConcurrencyCheck]
+    //    public byte[] RowVersion { get; set; }
+    //}
 
     
     public class tblBookingIdentity
@@ -82,9 +82,23 @@ namespace Database.DB
         public int Sno { get; set; }
         public int CountryId { get; set; }
         public int YearId { get; set; }
-        public int WeekId { get; set; }
+        public int MonthId { get; set; }
         public enmBookingType BookingType { get; set; }
-        public int ProductCounter { get; set; }
+        public int IdentityCounter { get; set; }
+        [Timestamp]
+        [ConcurrencyCheck]
+        public byte[] RowVersion { get; set; }
+    }
+    public class tblRefundIdentity
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Sno { get; set; }
+        public int CountryId { get; set; }
+        public int YearId { get; set; }
+        public int MonthId { get; set; }
+        public enmBookingType BookingType { get; set; }
+        public int IdentityCounter { get; set; }
         [Timestamp]
         [ConcurrencyCheck]
         public byte[] RowVersion { get; set; }
