@@ -146,7 +146,7 @@ namespace Database.DB
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Sno { get; set; }
         public int MonthYear { get; set; }
-        public int Nid { get; set; }
+        public ulong Nid { get; set; }
         public double PrevTaxable { get; set; }
         public double Incentive { get; set; }
         public double TaxableAmount { get; set; }
@@ -161,7 +161,7 @@ namespace Database.DB
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Sno { get; set; }
-        public int Nid { get; set; }
+        public ulong Nid { get; set; }
         public int TransactionId { get; set; }
     }
 
