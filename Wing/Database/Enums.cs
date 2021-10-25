@@ -20,7 +20,7 @@ namespace Database
         FIRST = 6
     }
 
-    public enum enmMarkupApplicability
+    public enum enmFlightSearvices
     {
         OnTicket = 1,
         OnPassenger = 2,
@@ -43,10 +43,18 @@ namespace Database
     {
         Pending = 0,
         Booked = 1,
-        Refund = 2,
-        PartialBooked = 3,
-        Failed = 4,
-        All = 100,
+        Cancel = 2,
+        PendingAtPayment = 4,
+        
+    }
+
+    public enum enmRefundStatus
+    {
+        Pending = 0,
+        Settled = 1,
+        Initiated = 2,
+        Cancel = 4,
+        RefundReturned = 8,
     }
 
 
@@ -303,4 +311,15 @@ namespace Database
         DesktopPush = 5,
 
     }
+
+    public enum enmPaymentMode
+    {
+        Wallet=1,
+        PaymentGateway=2
+    }
+
+    public enum enmPaymentGateway
+    { 
+    }
+
 }
