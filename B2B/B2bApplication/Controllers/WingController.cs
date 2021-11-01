@@ -371,8 +371,6 @@ namespace B2bApplication.Controllers
 
                 }
             }
-
-
             return PartialView("_NewFlightResult", serch);
 
         }
