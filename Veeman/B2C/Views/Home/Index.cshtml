@@ -1,0 +1,543 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    //Added by DKS
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="banner-bg">
+    <div class="container">
+        <div class="search-engine-container mt-40 mb-40" ng-app="MyApp" ng-controller="MyController">
+
+            <div class="trip-type">
+                <ul>
+                    <li class="sel" id="o">One Way</li>
+                    <li id="r">Round Trip</li>
+                </ul>
+            </div>
+
+            <div style="width: 100%; float: left; position: relative;" >
+
+                <div class="depart-from">
+                    <label>From</label>
+                    <div class="dest-name">
+                        <ul>
+                            
+                            <li>
+                                <select id="destfrom">                                   
+                                    <option ng-repeat="customer in Customers.returnId" value="{{customer.airportCode}}">
+                                       {{customer.airportCode}}, {{customer.cityName}}, {{customer.countryCode}}
+                                    </option>
+                                </select>
+                            </li>
+                        </ul>
+                        
+
+                    </div>
+                    <div class="h-separator-l"></div>
+
+                </div>
+
+                <div class="going-to">
+                    <label>To</label>
+                    <div class="dest-name">
+                        <ul>
+                            <li>
+                                
+                                <select id="destto">
+                                   
+                                    <option ng-repeat="customer in Customers.returnId" value="{{customer.airportCode}}">
+                                        {{customer.airportCode}}, {{customer.cityName}}, {{customer.countryCode}}
+                                    </option>
+                                </select>
+
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="h-separator-r"></div>
+                </div>
+
+                <div class="departure">
+                    <label>Departure Date</label>
+
+                    <div class="date">
+                        <input type="text" value="02 Dec 20" class="datepicker" id="fromdate" />
+                    </div>
+
+                    <div class="h-separator-l"></div>
+                </div>
+                <div class="return">
+                    <label>Return Date</label>
+
+                    <div class="date">
+                        <input type="text" value="02 Dec 20" class="last datepicker" id="returndate" />
+                    </div>
+
+                    <div class="h-separator-r"></div>
+                </div>
+
+                <div class="separator"></div>
+            </div>
+
+            <div class="pl-0 pr-0 psg-rlt">
+                <div class="passenger">
+                    <label>Passenger(s)</label>
+                    <span>01</span>
+                </div>
+                <div class="passenger-bx">
+                    <div class="psg_main_dv">
+                        <div class="adl_col"><p>Adult</p><span>(12+ yrs)</span></div>
+                        <div class="cnt_col">
+                            <div class="plu-miss">
+                                <div class="mbtn">
+                                    <span class="minus_boxADt">-</span>
+                                </div>
+                                <div class="txt">
+                                    <input type="text" id="adquantity" name="adquantity" value="1" readonly="">
+                                </div>
+                                <div class="plbtn">
+                                    <span class="plus_box1">+</span>
+                                </div>
+                                <div class="clr"></div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="psg_main_dv">
+                        <div class="adl_col"><p>Child</p><span>(2-12 yrs)</span></div>
+                        <div class="cnt_col">
+                            <div class="plu-miss">
+                                <div class="mbtn">
+                                    <span class="minus_boxADt">-</span>
+                                </div>
+                                <div class="txt">
+                                    <input type="text" id="cdquantity" name="cdquantity" value="0" readonly="">
+                                </div>
+                                <div class="plbtn">
+                                    <span class="plus_box1">+</span>
+                                </div>
+                                <div class="clr"></div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="psg_main_dv">
+                        <div class="adl_col"><p>Infant</p><span>Before 2 yrs)</span></div>
+                        <div class="cnt_col">
+                            <div class="plu-miss">
+                                <div class="mbtn">
+                                    <span class="minus_boxADt">-</span>
+                                </div>
+                                <div class="txt">
+                                    <input type="text" id="inquantity" name="inquantity" value="0" readonly="">
+                                </div>
+                                <div class="plbtn">
+                                    <span class="plus_box1">+</span>
+                                </div>
+                                <div class="clr"></div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="psg_main_dv lst">
+                        <div class="adl_col"><p>Class</p></div>
+                        <div class="cnt_col">
+                            <select id="ddlcabin">
+                                <option>Economy</option>
+                                <option>Business</option>
+                                <option>First</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="psg-done">Done</button>
+                </div>
+                <div class="travel-type">
+                    <label>Travel Class</label>
+                    <span>Economy</span>
+
+
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="non-stop">
+                <label>
+                    <input type="checkbox"> Non stop flights only
+                </label>
+            </div>
+            <div class="mt-20">
+                <button ng-click="RedirectToURL()">Search Flights</button>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="container-fluid">
+    <div class="container">
+        <div class="saftydv">
+            <div class="saftyhd">
+                <h5>Safety <span>First</span></h5>
+                <h6>We Insure Your Safe Travel</h6>
+            </div>
+            <div class="covidrd">
+                <b>Read All Covid Updates before travel</b>
+                <span>We encourage all our customers to stay healthy and stay fit for travel.</span>
+            </div>
+            <img src="images/man-woman.png" />
+        </div>
+
+    </div>
+
+</section>
+
+<section class="container-fluid" id="demos">
+    <div class="container">
+
+        <div class="large-12 columns sldr">
+            <h1>Offers House</h1>
+            <div class="owl-carousel owl-theme">
+                <div class="item">
+                    <img src="images/1.png" />
+                </div>
+                <div class="item">
+                    <img src="images/2.png" />
+                </div>
+                <div class="item">
+                    <img src="images/3.png" />
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    <script>
+                $(document).ready(function () {
+                    $('.owl-carousel').owlCarousel({
+                        loop: true,
+                        margin: 1,
+                        responsiveClass: true,
+                        responsive: {
+                            0: {
+                                items: 1,
+                                nav: true
+                            },
+                            600: {
+                                items: 2,
+                                nav: false
+                            },
+                            1000: {
+                                items: 3,
+                                nav: true,
+                                loop: false,
+                                margin: 20
+                            }
+                        }
+                    })
+                })
+    </script>
+    
+
+</section>
+
+<section class="container">
+
+    <div class="customer-security">
+        <ul>
+            <li>
+                <img src="images/svg/covid-19.svg" />
+                <span>Lowest Prize Guaranteed</span>
+            </li>
+            <li>
+                <img src="images/svg/support.svg" />
+                <span>24 X 7 support, Always for you</span>
+            </li>
+            <li>
+                <img src="images/svg/covid-19.svg" />
+                <span>Covid-19 Support, Web Chck-in</span>
+            </li>
+        </ul>
+    </div>
+
+
+</section>
+
+<section class="container-fluid">
+    <div class="container">
+        <div class="routsdv mt-4">
+            <h2>Top Domestic Flight Routes</h2>
+            <ul class="routmenu">
+                <li class="active">New Delhi</li>
+                <li>Mumbai</li>
+                <li>Chennai</li>
+                <li>KolKata</li>
+            </ul>
+            <ul class="routdes">
+                <li>
+                    <h6>Delhi <img class="pln" src="images/svg/plan.svg" /> Kolkata</h6>
+                    <h5>
+                        <span>
+                            Fri, 15 Jan <br />
+                            Starting From
+                        </span>
+                        <b>
+                            <i class="fa fa-rupee"></i>2658
+                        </b>
+                    </h5>
+                </li>
+                <li>
+                    <h6>Delhi <img class="pln" src="images/svg/plan.svg" /> Kolkata</h6>
+                    <h5>
+                        <span>
+                            Fri, 15 Jan <br />
+                            Starting From
+                        </span>
+                        <b>
+                            <i class="fa fa-rupee"></i>2658
+                        </b>
+                    </h5>
+                </li>
+                <li>
+                    <h6>Delhi <img class="pln" src="images/svg/plan.svg" /> Kolkata</h6>
+                    <h5>
+                        <span>
+                            Fri, 15 Jan <br />
+                            Starting From
+                        </span>
+                        <b>
+                            <i class="fa fa-rupee"></i>2658
+                        </b>
+                    </h5>
+                </li>
+                <li>
+                    <h6>Delhi <img class="pln" src="images/svg/plan.svg" /> Kolkata</h6>
+                    <h5>
+                        <span>
+                            Fri, 15 Jan <br />
+                            Starting From
+                        </span>
+                        <b>
+                            <i class="fa fa-rupee"></i>2658
+                        </b>
+                    </h5>
+                </li>
+                <li>
+                    <h6>Delhi <img class="pln" src="images/svg/plan.svg" /> Kolkata</h6>
+                    <h5>
+                        <span>
+                            Fri, 15 Jan <br />
+                            Starting From
+                        </span>
+                        <b>
+                            <i class="fa fa-rupee"></i>2658
+                        </b>
+                    </h5>
+                </li>
+                <li>
+                    <h6>Delhi <img class="pln" src="images/svg/plan.svg" /> Kolkata</h6>
+                    <h5>
+                        <span>
+                            Fri, 15 Jan <br />
+                            Starting From
+                        </span>
+                        <b>
+                            <i class="fa fa-rupee"></i>2658
+                        </b>
+                    </h5>
+                </li>
+                <li>
+                    <h6>Delhi <img class="pln" src="images/svg/plan.svg" /> Kolkata</h6>
+                    <h5>
+                        <span>
+                            Fri, 15 Jan <br />
+                            Starting From
+                        </span>
+                        <b>
+                            <i class="fa fa-rupee"></i>2658
+                        </b>
+                    </h5>
+                </li>
+                <li>
+                    <h6>Delhi <img class="pln" src="images/svg/plan.svg" /> Kolkata</h6>
+                    <h5>
+                        <span>
+                            Fri, 15 Jan <br />
+                            Starting From
+                        </span>
+                        <b>
+                            <i class="fa fa-rupee"></i>2658
+                        </b>
+                    </h5>
+                </li>
+            </ul>
+
+        </div>
+
+    </div>
+
+</section>
+<section class="container-fluid">
+    <div class="container">
+        <div class="routsdv mt-4">
+            <h2>Top International Flight Routes</h2>
+            <ul class="routmenu">
+                <li class="active">New Delhi</li>
+                <li>Mumbai</li>
+                <li>Chennai</li>
+                <li>KolKata</li>
+            </ul>
+            <ul class="routdes">
+                <li>
+                    <h6>Delhi <img class="pln" src="images/svg/plan.svg" /> Dubai</h6>
+                    <h5>
+                        <span>
+                            Fri, 15 Jan <br />
+                            Starting From
+                        </span>
+                        <b>
+                            <i class="fa fa-rupee"></i>2658
+                        </b>
+                    </h5>
+                </li>
+                <li>
+                    <h6>Delhi <img class="pln" src="images/svg/plan.svg" /> London</h6>
+                    <h5>
+                        <span>
+                            Fri, 15 Jan <br />
+                            Starting From
+                        </span>
+                        <b>
+                            <i class="fa fa-rupee"></i>2658
+                        </b>
+                    </h5>
+                </li>
+                <li>
+                    <h6>Delhi <img class="pln" src="images/svg/plan.svg" /> Bangkok</h6>
+                    <h5>
+                        <span>
+                            Fri, 15 Jan <br />
+                            Starting From
+                        </span>
+                        <b>
+                            <i class="fa fa-rupee"></i>2658
+                        </b>
+                    </h5>
+                </li>
+                <li>
+                    <h6>Delhi <img class="pln" src="images/svg/plan.svg" /> Paris</h6>
+                    <h5>
+                        <span>
+                            Fri, 15 Jan <br />
+                            Starting From
+                        </span>
+                        <b>
+                            <i class="fa fa-rupee"></i>2658
+                        </b>
+                    </h5>
+                </li>
+                <li>
+                    <h6>Delhi <img class="pln" src="images/svg/plan.svg" /> Kolkata</h6>
+                    <h5>
+                        <span>
+                            Fri, 15 Jan <br />
+                            Starting From
+                        </span>
+                        <b>
+                            <i class="fa fa-rupee"></i>2658
+                        </b>
+                    </h5>
+                </li>
+                <li>
+                    <h6>Delhi <img class="pln" src="images/svg/plan.svg" /> Kolkata</h6>
+                    <h5>
+                        <span>
+                            Fri, 15 Jan <br />
+                            Starting From
+                        </span>
+                        <b>
+                            <i class="fa fa-rupee"></i>2658
+                        </b>
+                    </h5>
+                </li>
+                <li>
+                    <h6>Delhi <img class="pln" src="images/svg/plan.svg" /> Kolkata</h6>
+                    <h5>
+                        <span>
+                            Fri, 15 Jan <br />
+                            Starting From
+                        </span>
+                        <b>
+                            <i class="fa fa-rupee"></i>2658
+                        </b>
+                    </h5>
+                </li>
+                <li>
+                    <h6>Delhi <img class="pln" src="images/svg/plan.svg" /> Kolkata</h6>
+                    <h5>
+                        <span>
+                            Fri, 15 Jan <br />
+                            Starting From
+                        </span>
+                        <b>
+                            <i class="fa fa-rupee"></i>2658
+                        </b>
+                    </h5>
+                </li>
+            </ul>
+
+        </div>
+
+        <div class="app-box">
+            <h6>Download App Now to get better experience</h6>
+            <p>Get extra discount on mobile app</p>
+            <img src="images/app.png" />
+        </div>
+
+    </div>
+
+</section>
+
+<script>
+    var app = angular.module('MyApp', [])
+    app.controller('MyController', function ($scope, $http, $window) {
+        $scope.DefaultLabel = "Loading.....";
+        var post = $http({
+            method: "GET",
+            url: "http://103.208.201.116:8020/api/air/GetAirport/true/true",
+            dataType: 'json',
+            data: {},
+
+        });
+
+        post.success(function (data, status) {
+
+            $scope.DefaultLabel = "Please Select";
+            $scope.Customers = data;
+        });
+
+        post.error(function (data, status) {
+            $window.alert(data.Message);
+        });
+
+        $scope.RedirectToURL = function () {
+            debugger;
+            var from = $('#destfrom').find('option:selected').val();
+            var to = $('#destto').find('option:selected').val();
+            var triptype = $(".trip-type li.sel").attr('id');
+            var fdate = $('#fromdate').val();
+            var rdate = $('#todate').val();
+            var cc = $('#ddlcabin').find('option:selected').val();
+            var paxtype = 'A-' + $('#adquantity').val() + '_C-' + $('#cdquantity').val() + '_I-' + $('#inquantity').val();
+            if (triptype == 'o') {
+                var landingUrl = "/home/Searchresult?itinerary=" + from + '-' + to + '&ttype=' + triptype + '&fdate=' + fdate + '&paxtype=' + paxtype + '&cc=' + cc;
+              
+                $window.location.href = landingUrl;
+            }
+            else {
+                var landingUrl = "/home/Searchresult?itinerary=" + from + '-' + to + '&ttype=' + triptype + '&fdate=' + fdate +'&rdate='+rdate+ '&paxtype=' + paxtype + '&cc=' + cc;
+                alert(landingUrl);
+                $window.location.href = landingUrl;
+            }
+        };
+    });
+
+   
+</script>
