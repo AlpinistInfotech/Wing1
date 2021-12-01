@@ -142,9 +142,10 @@
                         <div class="adl_col"><p>Class</p></div>
                         <div class="cnt_col">
                             <select id="ddlcabin">
-                                <option>Economy</option>
-                                <option>Business</option>
-                                <option>First</option>
+                                <option value="Economy">Economy</option>
+                                <option value="Premium Economy">Premium Economy</option>
+                                <option value="Business">Business</option>
+                                <option value="First Class">First Class</option>
                             </select>
                         </div>
                     </div>
@@ -518,7 +519,7 @@
         });
 
         $scope.RedirectToURL = function () {
-            debugger;
+           
             var from = $('#destfrom').find('option:selected').val();
             var to = $('#destto').find('option:selected').val();
             var triptype = $(".trip-type li.sel").attr('id');
@@ -533,7 +534,7 @@
             }
             else {
                 var landingUrl = "/home/Searchresult?itinerary=" + from + '-' + to + '&ttype=' + triptype + '&fdate=' + fdate +'&rdate='+rdate+ '&paxtype=' + paxtype + '&cc=' + cc;
-                alert(landingUrl);
+               
                 $window.location.href = landingUrl;
             }
         };

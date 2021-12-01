@@ -1273,7 +1273,7 @@ background: linear-gradient(90deg, rgba(255,166,0,1) 0%, rgba(254,129,9,1) 35%, 
 .result-layer .air-time b,.result-layer .air-time strong{
   display: block;
   color: #333;
-  font-size: 18px;
+  font-size: 16px;
   text-align: center;
 }
 .result-layer .air-duration{
