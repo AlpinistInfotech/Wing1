@@ -30,14 +30,8 @@ $(function() {
 		$(this).parent('.select-btn').siblings('.option-price-bx').toggle();
 
 		});
+	
 		
-		$('.flight-detail-btn').on('click', function() {
-	   
-		$(this).parent('.select-btn').siblings('.flight-detail-bx').toggle();
-		$(this).parent('.select-btn').siblings('.option-price-bx').hide();
-		$(this).siblings('.hide-fare-btn').hide();
-		$(this).siblings('.morefare-btn').show();
-		});
 
 
 		$('.trip-type ul li').on('click', function() {

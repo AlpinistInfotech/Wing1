@@ -308,6 +308,13 @@
     </section>
 
     <script type="text/javascript">
+        $('.flight-detail-btn').on('click', function () {
+            debugger;
+            $(this).parent('.select-btn').siblings('.flight-detail-bx').toggle();
+            $(this).parent('.select-btn').siblings('.option-price-bx').hide();
+            $(this).siblings('.hide-fare-btn').hide();
+            $(this).siblings('.morefare-btn').show();
+        });
         var app = angular.module('MyApp', [])
         
         app.controller('MyController', function ($scope, $http, $window) {
@@ -417,8 +424,10 @@
                 post.success(function (data, status) {
                     debugger;
                     $scope.Flights = data;
-                    $scope.loading = false;                   
-                    $scope.results = data.returnId.results[0]; // red
+                    $scope.loading = false;
+                    
+                   // $scope.airlines = data.returnId.results[0]; // red
+                  
                 });
 
                 post.error(function (data, status) {
