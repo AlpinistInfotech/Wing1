@@ -15,22 +15,22 @@
                 </ul>
             </div>
 
-            <div style="width: 100%; float: left; position: relative;" >
+            <div style="width: 100%; float: left; position: relative;">
 
                 <div class="depart-from">
                     <label>From</label>
                     <div class="dest-name">
                         <ul>
-                            
+
                             <li>
-                                <select id="destfrom">                                   
+                                <select id="destfrom">
                                     <option ng-repeat="customer in Customers.returnId" value="{{customer.airportCode}}">
-                                       {{customer.airportCode}}, {{customer.cityName}}, {{customer.countryCode}}
+                                        {{customer.airportCode}}, {{customer.cityName}}, {{customer.countryCode}}
                                     </option>
                                 </select>
                             </li>
                         </ul>
-                        
+
 
                     </div>
                     <div class="h-separator-l"></div>
@@ -42,9 +42,9 @@
                     <div class="dest-name">
                         <ul>
                             <li>
-                                
+
                                 <select id="destto">
-                                   
+
                                     <option ng-repeat="customer in Customers.returnId" value="{{customer.airportCode}}">
                                         {{customer.airportCode}}, {{customer.cityName}}, {{customer.countryCode}}
                                     </option>
@@ -211,31 +211,31 @@
 
     </div>
     <script>
-                $(document).ready(function () {
-                    $('.owl-carousel').owlCarousel({
-                        loop: true,
-                        margin: 1,
-                        responsiveClass: true,
-                        responsive: {
-                            0: {
-                                items: 1,
-                                nav: true
-                            },
-                            600: {
-                                items: 2,
-                                nav: false
-                            },
-                            1000: {
-                                items: 3,
-                                nav: true,
-                                loop: false,
-                                margin: 20
-                            }
-                        }
-                    })
-                })
+        $(document).ready(function () {
+            $('.owl-carousel').owlCarousel({
+                loop: true,
+                margin: 1,
+                responsiveClass: true,
+                responsive: {
+                    0: {
+                        items: 1,
+                        nav: true
+                    },
+                    600: {
+                        items: 2,
+                        nav: false
+                    },
+                    1000: {
+                        items: 3,
+                        nav: true,
+                        loop: false,
+                        margin: 20
+                    }
+                }
+            })
+        })
     </script>
-    
+
 
 </section>
 
@@ -496,49 +496,53 @@
 
 </section>
 
-<script>
-    var app = angular.module('MyApp', [])
-    app.controller('MyController', function ($scope, $http, $window) {
-        $scope.DefaultLabel = "Loading.....";
-        var post = $http({
-            method: "GET",
-            url: "http://103.208.201.116:8020/api/air/GetAirport/true/true",
-            dataType: 'json',
-            data: {},
+@section Scripts {
+    <script>
 
+        var rootUrl = localStorage.getItem("rootUrl");
+        var app = angular.module('MyApp', [])
+        app.controller('MyController', function ($scope, $http, $window) {
+            $scope.DefaultLabel = "Loading.....";
+            var post = $http({
+                method: "GET",
+                url: rootUrl + "air/GetAirport/true/true",
+                dataType: 'json',
+                data: {},
+
+            });
+
+            post.success(function (data, status) {
+
+                $scope.DefaultLabel = "Please Select";
+                $scope.Customers = data;
+            });
+
+            post.error(function (data, status) {
+                $window.alert(data.Message);
+            });
+
+            $scope.RedirectToURL = function () {
+
+                var from = $('#destfrom').find('option:selected').val();
+                var to = $('#destto').find('option:selected').val();
+                var triptype = $(".trip-type li.sel").attr('id');
+                var fdate = $('#fromdate').val();
+                var rdate = $('#todate').val();
+                var cc = $('#ddlcabin').find('option:selected').val();
+                var paxtype = 'A-' + $('#adquantity').val() + '_C-' + $('#cdquantity').val() + '_I-' + $('#inquantity').val();
+                if (triptype == 'o') {
+                    var landingUrl = "/home/Searchresult?itinerary=" + from + '-' + to + '&ttype=' + triptype + '&fdate=' + fdate + '&paxtype=' + paxtype + '&cc=' + cc;
+
+                    $window.location.href = landingUrl;
+                }
+                else {
+                    var landingUrl = "/home/Searchresult?itinerary=" + from + '-' + to + '&ttype=' + triptype + '&fdate=' + fdate + '&rdate=' + rdate + '&paxtype=' + paxtype + '&cc=' + cc;
+
+                    $window.location.href = landingUrl;
+                }
+            };
         });
 
-        post.success(function (data, status) {
 
-            $scope.DefaultLabel = "Please Select";
-            $scope.Customers = data;
-        });
-
-        post.error(function (data, status) {
-            $window.alert(data.Message);
-        });
-
-        $scope.RedirectToURL = function () {
-           
-            var from = $('#destfrom').find('option:selected').val();
-            var to = $('#destto').find('option:selected').val();
-            var triptype = $(".trip-type li.sel").attr('id');
-            var fdate = $('#fromdate').val();
-            var rdate = $('#todate').val();
-            var cc = $('#ddlcabin').find('option:selected').val();
-            var paxtype = 'A-' + $('#adquantity').val() + '_C-' + $('#cdquantity').val() + '_I-' + $('#inquantity').val();
-            if (triptype == 'o') {
-                var landingUrl = "/home/Searchresult?itinerary=" + from + '-' + to + '&ttype=' + triptype + '&fdate=' + fdate + '&paxtype=' + paxtype + '&cc=' + cc;
-              
-                $window.location.href = landingUrl;
-            }
-            else {
-                var landingUrl = "/home/Searchresult?itinerary=" + from + '-' + to + '&ttype=' + triptype + '&fdate=' + fdate +'&rdate='+rdate+ '&paxtype=' + paxtype + '&cc=' + cc;
-               
-                $window.location.href = landingUrl;
-            }
-        };
-    });
-
-   
-</script>
+    </script>
+}

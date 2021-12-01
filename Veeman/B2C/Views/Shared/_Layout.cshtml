@@ -5,40 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - B2C</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="/css/style.css" rel="stylesheet">
-
-
-
-
     <link rel="stylesheet" href="/css/owl/docs.theme.min.css">
     <!-- Owl Stylesheets -->
     <link rel="stylesheet" href="/css/owl/owl.carousel.min.css">
-
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    @*<script src="/js/style.js"></script>*@
-    <script src="/js/custom.js"></script>
-    @*<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular-resource.min.js"></script>*@
-    <script>
-        $(function () {
-            $(".datepicker").datepicker();
-        });
-    </script>
-
-
-    <!-- javascript -->
-    <!-- <script src="js/owl/jquery.min.js"></script> -->
-    <script src="/js/owl/owl.carousel.js"></script>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular.min.js"></script>
-
+    
 </head>
 <body>
     <header>
@@ -157,6 +133,26 @@
             </div>
         </div>
     </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular.min.js"></script>
+    <script src="~/js/custom.js"></script>
+    <script src="/js/owl/owl.carousel.js"></script>
+    <script>
+        $(function () {
+            $(".datepicker").datepicker();
+        });        
+        localStorage.setItem('rootUrl','http://103.208.201.116:8020/api/');
+    </script>
+    <!-- javascript -->
+    <!-- <script src="js/owl/jquery.min.js"></script> -->
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+
+
 
 </body>
 </html>

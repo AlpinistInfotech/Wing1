@@ -181,7 +181,7 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                  
+
                     <select id="input3" ng-model="airlines" class="form-control">
                         <option value="">Airlines</option>
                         <option ng-repeat="flight in Flights.returnId.results[0]" value="{{flight.segment[0].airline.name}}">
@@ -307,7 +307,15 @@
         </div>
     </section>
 
+</div>
+
+
+
+@section Scripts {
     <script type="text/javascript">
+
+        var rootUrl = localStorage.getItem("rootUrl");
+
         $('.flight-detail-btn').on('click', function () {
             debugger;
             $(this).parent('.select-btn').siblings('.flight-detail-bx').toggle();
@@ -316,26 +324,25 @@
             $(this).siblings('.morefare-btn').show();
         });
         var app = angular.module('MyApp', [])
-        
+
         app.controller('MyController', function ($scope, $http, $window) {
             $scope.DefaultLabel = "Loading.....";
             var post = $http({
                 method: "GET",
-                url: "http://103.208.201.116:8020/api/air/GetAirport/true/true",
+                url: rootUrl + "air/GetAirport/true/true",
                 dataType: 'json',
                 data: {},
 
             });
-
             post.success(function (data, status) {
 
                 $scope.DefaultLabel = "Please Select";
                 $scope.Customers = data;
             });
-
             post.error(function (data, status) {
                 $window.alert(data.Message);
             });
+
             var queryString = new Array();
             if ($window.location.search.split('?').length > 1) {
 
@@ -346,8 +353,7 @@
                     queryString[key] = value;
                 }
             }
-            if (queryString["itinerary"] != null && queryString["ttype"] != null && queryString["paxtype"] != null && queryString["cc"] != null && queryString["fdate"] != null)
-            {
+            if (queryString["itinerary"] != null && queryString["ttype"] != null && queryString["paxtype"] != null && queryString["cc"] != null && queryString["fdate"] != null) {
                 var itinerary = queryString["itinerary"];
                 var from = itinerary.split('-')[0];
                 $scope.selecteddestfrom = from;
@@ -404,7 +410,7 @@
                 $scope.loading = true;
                 var post = $http({
                     method: "POST",
-                    url: "http://103.208.201.116:8020/api/air/SearchFlight/VMN",
+                    url: rootUrl + "air/SearchFlight/VMN",
                     dataType: 'json',
                     data: {
                         "From": from,
@@ -425,9 +431,9 @@
                     debugger;
                     $scope.Flights = data;
                     $scope.loading = false;
-                    
-                   // $scope.airlines = data.returnId.results[0]; // red
-                  
+
+                    // $scope.airlines = data.returnId.results[0]; // red
+
                 });
 
                 post.error(function (data, status) {
@@ -457,7 +463,7 @@
                 return parseInt(hours) + 'h:' + relmin + 'm';
             };
             $scope.RedirectToURL = function () {
-               
+
                 var from = $('#destfrom').find('option:selected').val();
                 var to = $('#destto').find('option:selected').val();
                 var triptype = $scope.ttype;
@@ -482,7 +488,7 @@
                 var output = [],
                     keys = [];
                 angular.forEach(collection, function (item) {
-                
+
                     var key = item[keyname];
                     if (keys.indexOf(key) === -1) {
                         keys.push(key);
@@ -493,8 +499,8 @@
             };
         });
         app.filter('airlinesFilter', [function ($filter) {
-            
-            return function (inputArray, airlines, departure,stop) {
+
+            return function (inputArray, airlines, departure, stop) {
                 debugger;
                 if (airlines == undefined) {
                     airlines = "";
@@ -509,11 +515,11 @@
                     return inputArray;
                 }
                 var data = [];
-                angular.forEach(inputArray, function (item) {                   
-                    
+                angular.forEach(inputArray, function (item) {
+
                     if (item.segment[0].airline.name.toLowerCase().indexOf(airlines.toLowerCase()) != -1) {
                         debugger;
-                       
+
                         if (departure != "" && stop != "") {
                             var stops = (item.segment.length - 1) + '-stop'.toLowerCase();
                             //if (stops == "0-stop") {
@@ -528,14 +534,14 @@
                             //}
                         }
                         else if (departure != "" && stop == "") {
-                           
+
                             if ((item.segment[0].origin.cityName.toLowerCase().indexOf(departure.toLowerCase()) != -1)) {
 
                                 data.push(item);
                             }
-                           // else {
+                            // else {
                             //    data.push(item);
-                           // }
+                            // }
                         }
                         else if (departure == "" && stop != "") {
                             var stops = (item.segment.length - 1) + '-stop'.toLowerCase();
@@ -559,4 +565,4 @@
             };
         }]);
     </script>
-</div>
+}
