@@ -180,67 +180,66 @@
                 <div class="col-md-8">
                     <select id="selsort" ng-model="sorting" class="form-control">
                         <option value="">None</option>
-                        <option value="pricelow">Price:- Low to High</option>
-                        <option value="pricehigh">Price:- High to Low</option>
-                        <option value="durationlow">Duration:- Low to High</option>
-                        <option value="durationhigh">Duration:- High to Low</option>
+                        <option value="totalPriceList[0].netFare">Price:- Low to High</option>
+                        <option value="-totalPriceList[0].netFare">Price:- High to Low</option>
+                       
                     </select>
 
                 </div>
             </div>
-           
-                <div class="col-md-9">
-                    <div class="col-md-2">
-                        Filter by
-                    </div>
-                    <div class="col-md-2">
-                        <select id="seldeparture" ng-model="stop" class="form-control">
-                            <option value="">All stop</option>
-                            <option ng-repeat="stop in stopage" value="{{stop}}">
-                                {{stop}}
-                            </option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label>Price</label>
-                        <slider-range min="0" max="{{maxfare}}" step="100" value-min="minfare" value-max="maxfare"></slider-range>
-                        <div class="col-md-6">
-                            <input type="number" ng-model="minfare" />
-                        </div>
-                        <div class="col-md-6">
-                         <input type="number" ng-model="maxfare" />
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <select id="seldeparture" ng-model="departure" class="form-control">
-                            <option value="" selected>departure</option>
-                            <option ng-repeat="dept in departurename" value="{{dept}}">
-                                {{dept}}
-                            </option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <select id="selduration" ng-model="duration" class="form-control">
-                            <option value="">Duration</option>
-                            <option value="Early Morning">Early Morning(03:01 AM-06:00 AM)</option>
-                            <option value="Morning">Morning(06:01 AM-12:00 AM)</option>
-                            <option value="Afternoon">Afternoon(02:01 PM-06:00 PM)</option>
-                            <option value="Evening">Evening(06:01 PM-09:00 PM)</option>
-                            <option value="Night">Night(09:01 PM-03:00 AM)</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
 
-                        <select id="input3" ng-model="airlines" class="form-control">
-                            <option value="">Airlines</option>
-                            <option ng-repeat="airl in airlinename" value="{{airl}}">
-                                {{airl}}
-                            </option>
-                        </select>
+            <div class="col-md-9">
+                <div class="col-md-2">
+                    Filter by
+                </div>
+                <div class="col-md-2">
+                    <select id="seldeparture" ng-model="stop" class="form-control">
+                        <option value="">All stop</option>
+                        <option ng-repeat="stop in stopage" value="{{stop}}">
+                            {{stop}}
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label>Price</label>
+                    <slider-range min="0" max="{{maxfare}}" step="100" value-min="minfare" value-max="maxfare"></slider-range>
+                    <div class="col-md-6 text-left" style="padding-left: 0 !important;">
+                        <label ng-model="minfare">{{minfare}}</label>
+                    </div>
+                    <div class="col-md-6 text-right"  style="padding-right:0 !important;">
+                        <label ng-model="maxfare">{{maxfare}}</label>
                     </div>
                 </div>
+                <div class="col-md-2">
+                    <select id="seldeparture" ng-model="departure" class="form-control">
+                        <option value="" selected>departure</option>
+                        <option ng-repeat="dept in departurename" value="{{dept}}">
+                            {{dept}}
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select id="selduration" ng-model="duration" class="form-control">
+                        <option value="">Duration</option>
+                        <option value="Early Morning">Early Morning(03:01 AM-06:00 AM)</option>
+                        <option value="Morning">Morning(06:01 AM-12:00 AM)</option>
+                        <option value="Afternoon">Afternoon(02:01 PM-06:00 PM)</option>
+                        <option value="Evening">Evening(06:01 PM-09:00 PM)</option>
+                        <option value="Night">Night(09:01 PM-03:00 AM)</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+
+                    <select id="input3" ng-model="airlines" class="form-control">
+                        <option value="">Airlines</option>
+                        <option ng-repeat="airl in airlinename" value="{{airl}}">
+                            {{airl}}
+                        </option>
+                    </select>
+                </div>
             </div>
-</section>
+        </div>
+    </section>
     <section class="result-container">
         <div class="container">
             <div class="col-md-9">
@@ -250,7 +249,7 @@
                     </div>
                     <h3><img src="/images/flight-icon.jpg" width="33" /> SELECT DEPARTING FLIGHT</h3>
                     <h4><b>{{selecteddestfrom}} to {{selecteddestto}}</b> | {{fromdate|date:'EEEE, MMMM d, y'}}</h4>
-                    <div class="result-layer col-md-12 pr-0 pl-0" ng-repeat="flight in Flights.returnId.results[0]|orderBy:'totalPriceList[0].netFare'| filter :airlines">
+                    <div class="result-layer col-md-12 pr-0 pl-0" ng-repeat="flight in Flights.returnId.results[0]|orderBy:sorting| filter :airlines|filter:departure|airlinesFilter:stop:duration:minfare:maxfare">
                         <div class="col-md-2 air-logo">
                             <img src="/images/airlines-logo/{{flight.segment[0].airline.name}}.png" width="45" />
                             <span>{{flight.segment[0].airline.name}} </span>
@@ -463,7 +462,7 @@
                     $scope.returndate = fdate;
                 }
 
-               
+
                 $scope.loading = true;
                 var post = $http({
                     method: "POST",
@@ -485,15 +484,34 @@
                 });
 
                 post.success(function (data, status) {
-                    debugger;
+                    
                     $scope.Flights = data;
                     $scope.loading = false;
+                   // $cookies.put('flightsearch', data);
+                    //flight.totalPriceList[0].netFare
+                    //$scope.minfare = Math.min.apply(Math, $scope.Flights.map(function (item) { return item.age; }));
+
+                    //$scope.maxfare = Math.max.apply(Math, $scope.Flights.map(function (item) { return item.age; }));
                     $scope.destfrom = from;
                     flightname = [];
                     originname = [];
                     stopss = [];
+                    var minp = 0;
+                    var maxp = 0;
                     angular.forEach(data.returnId.results[0], function (item) {
+                        
                         var flight = item.segment[0].airline.name;
+                        var price = item.totalPriceList[0].netFare;
+                        if (minp == 0) {
+                            minp = price;
+                        }
+                        if (price > maxp) {
+                            maxp = price;
+                        }
+                        if (price <minp) {
+                            minp = price;
+                        }
+                        
                         if (flightname.indexOf(flight) === -1) {
                             flightname.push(flight);
                         }
@@ -510,9 +528,12 @@
                             stopss.push(stop);
                         }
                     });
+                   
                     $scope.airlinename = flightname;
                     $scope.departurename = originname;
                     $scope.stopage = stopss;
+                    $scope.minfare = minp;
+                    $scope.maxfare = maxp;
                     //$scope.airlines2 = data.returnId.results[0][0].segment[0].airline.name; // red
 
                 });
@@ -584,36 +605,40 @@
             };
 
         });
-        app.filter('airlinesFilter', ['$filter', function ($filter) {
-            return function (inputArray, airlines, departure, stop,duration,price) {
-               
-                if (airlines == undefined) {
-                    airlines = "";
-                }
+        app.filter('airlinesFilter', ['$filter', function ($filter) {           
+           
+            return function (inputArray, stop, duration,minfare,maxfare) {
+                debugger;
+                //if (airlines == undefined) {
+                //    airlines = "";
+                //}
                 if (duration == undefined) {
                     duration = "";
                 }
-                if (departure == undefined) {
-                    departure = "";
-                }
+                //if (departure == undefined) {
+                //    departure = "";
+                //}
                 if (stop == undefined) {
                     stop = "";
                 }
-                if (price == undefined) {
-                    price = 0;
-                }
-                if ((!angular.isDefined(airlines) || airlines === '') && (!angular.isDefined(departure) || departure === '') && (!angular.isDefined(stop) || stop === '') && (!angular.isDefined(duration) || duration === '')) {
+                //if (price == undefined) {
+                //    price = 0;
+                //}
+                //if ((!angular.isDefined(airlines) || airlines === '') && (!angular.isDefined(departure) || departure === '') && (!angular.isDefined(stop) || stop === '') && (!angular.isDefined(duration) || duration === '')) {
+                //    return inputArray;
+                //}
+                if ((!angular.isDefined(stop) || stop === '') && (!angular.isDefined(duration) || duration === '') &&(maxfare==0)) {
                     return inputArray;
                 }
                 var data = [];
                 angular.forEach(inputArray, function (item) {
-                   
+                    debugger;
                     var stops = (item.segment.length - 1) + '-stop'.toLowerCase();
                     if (stops == "0-stop") {
                         stops = "non-stop"
                     }
-                    var dt = $filter('date')(item.segment[0].departureTime,'yyyy-MM-dd');
-                    var fromd = dt+"T03:00:00";
+                    var dt = $filter('date')(item.segment[0].departureTime, 'yyyy-MM-dd');
+                    var fromd = dt + "T03:00:00";
                     var tod = dt + "T06:00:00";
                     if (duration == 'Morning') {
                         var fromd = dt + "T06:01:00";
@@ -635,106 +660,37 @@
                         var fromd = dt + "T03:00:00";
                         var tod = dt + "T06:00:00";
                     }
-
+                    var farerul = (item.totalPriceList[0].netFare >= minfare && item.totalPriceList[0].netFare <= maxfare);
                     var durran = (item.segment[0].departureTime >= fromd && item.segment[0].departureTime <= tod);
-                    if (airlines != "" && departure != "" && stop != "") {
-                        if ((item.segment[0].airline.name.toLowerCase().indexOf(airlines.toLowerCase()) != -1) && (item.segment[0].origin.cityName.toLowerCase().indexOf(departure.toLowerCase()) != -1) && (stops.indexOf(stop.toLowerCase()) != -1)) {
-                            if (duration != "") {
-                                if (durran) {
-                                    data.push(item);
-                                }
-                            }
-                            else {
-                                data.push(item);
-                            }
-                        }
-                    }
-                    else if (airlines != "" && departure != "" && stop == "") {
-                        if ((item.segment[0].airline.name.toLowerCase().indexOf(airlines.toLowerCase()) != -1) && (item.segment[0].origin.cityName.toLowerCase().indexOf(departure.toLowerCase()) != -1)) {
-                            
-                            if (duration != "") {
-                                if (durran) {
-                                    data.push(item);
-                                }
-                            }
-                            else {
-                                data.push(item);
-                            }
-                        }
-                    }
-                    else if (airlines != "" && departure == "" && stop != "") {
-                        if ((item.segment[0].airline.name.toLowerCase().indexOf(airlines.toLowerCase()) != -1) && (stops.indexOf(stop.toLowerCase()) != -1)) {
-                            if (duration != "") {
-                                if (durran) {
-                                    data.push(item);
-                                }
-                            }
-                            else {
-                                data.push(item);
-                            }
-                        }
-                    }
-                    else if (airlines == "" && departure != "" && stop != "") {
-                        if ((item.segment[0].origin.cityName.toLowerCase().indexOf(departure.toLowerCase()) != -1) && (stops.indexOf(stop.toLowerCase()) != -1)) {
-                          
-                            if (duration != "") {
-                                if (durran) {
-                                    data.push(item);
-                                }
-                            }
-                            else {
-                                data.push(item);
-                            }
-                        }
-                    }
-                    else if (airlines != "" && departure == "" && stop == "") {
-                        if ((item.segment[0].airline.name.toLowerCase().indexOf(airlines.toLowerCase()) != -1)) {
-                           
-                            if (duration != "") {
-                                if (durran) {
-                                    data.push(item);
-                                }
-                            }
-                            else {
-                                data.push(item);
-                            }
-                        }
-                    }
-                    else if (airlines == "" && departure != "" && stop == "") {
-                        if ((item.segment[0].origin.cityName.toLowerCase().indexOf(departure.toLowerCase()) != -1)) {
-                          
-                            if (duration != "") {
-                                if (durran) {
-                                    data.push(item);
-                                }
-                            }
-                            else {
-                                data.push(item);
-                            }
-                        }
-                    }
-                    else if (airlines == "" && departure == "" && stop != "") {
-                        if ((stops.indexOf(stop.toLowerCase()) != -1)) {
-                           
-                            if (duration != "") {
-                                if (durran) {
-                                    data.push(item);
-                                }
-                            }
-                            else {
-                                data.push(item);
-                            }
-                        }
-                    }
-                    else {
-                        if (duration != "") {
-                            if (durran) {
-                                data.push(item);
-                            }
-                        }
-                        else {
+                    if (duration != "" && stop != "") {
+                        if ((stops.indexOf(stop.toLowerCase()) != -1) && durran == true && farerul==true) {
                             data.push(item);
                         }
+
+                    }
+
+                    else if (duration == "" && stop != "") {
+                        if ((stops.indexOf(stop.toLowerCase()) != -1) && farerul == true) {
+                            data.push(item);
+                        }
+
+                    }
+
+                    else if (duration != "" && stop == "") {
+                        if (durran == true && farerul == true) {
+                            data.push(item);
+                        }
+
+                    }
+
+
+
+
+                    else {
+                        if (farerul) {
+                            data.push(item);
+                        }
+
                     }
 
                 });
