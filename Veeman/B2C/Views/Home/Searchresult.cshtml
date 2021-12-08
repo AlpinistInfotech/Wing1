@@ -43,12 +43,12 @@
             <div class="search-box col-12">
                 <label class="modirdo">
                     One way
-                    <input type="radio" name="radio" ng-value="ttype" ng-checked="onetrip" />
+                    <input type="radio" name="radio" ng-model="ttype" ng-checked="(ttype == 'o')" value="o" />
                     <span class="checkmark"></span>
                 </label>
                 <label class="modirdo">
                     Round Trip
-                    <input type="radio" name="radio" ng-value="ttype" ng-checked="roundtrip" />
+                    <input type="radio" name="radio" ng-model="ttype" ng-checked="(ttype == 'r')" value="r" />
                     <span class="checkmark"></span>
                 </label>
                 <div class="search-form col-12">
@@ -241,12 +241,14 @@
         </div>
     </section>
     <section class="result-container">
-        <div class="container">
+        <div class="spinner" ng-show="loading">
+            <img src="/images/loading.gif" alt="ajaxload" />
+        </div>
+        <div class="container" ng-show="{{ttype=='o'}}">
+
             <div class="col-md-9">
                 <div class="select-dep onway col-md-12">
-                    <div class="spinner" ng-show="loading">
-                        <img src="/images/loading.gif" alt="ajaxload" />
-                    </div>
+                    
                     <h3><img src="/images/flight-icon.jpg" width="33" /> SELECT DEPARTING FLIGHT</h3>
                     <h4><b>{{selecteddestfrom}} to {{selecteddestto}}</b> | {{fromdate|date:'EEEE, MMMM d, y'}}</h4>
                     <div class="result-layer col-md-12 pr-0 pl-0" ng-repeat="flight in Flights.returnId.results[0]|orderBy:sorting| filter :airlines|filter:departure|airlinesFilter:stop:duration:minfare:maxfare">
@@ -341,10 +343,218 @@
                     </div>
                 </div>
 
+
+
             </div>
             <div class="col-md-3">
                 <img src="/images/hdfc-result-right.jpg" />
             </div>
+
+        </div>
+
+        <div class="container" ng-show="{{ttype=='r'}}">
+
+            <div class="col-md-12">
+
+                <div class="select-dep onway col-md-6">
+
+                    <h3><img src="/images/flight-icon.jpg" width="33" /> SELECT DEPARTING FLIGHT</h3>
+                    <h4><b>{{selecteddestfrom}} to {{selecteddestto}}</b> | {{fromdate|date:'EEEE, MMMM d, y'}}</h4>
+                    <div class="result-layer col-md-12 pr-0 pl-0" ng-repeat="flight in Flights.returnId.results[0]|orderBy:sorting| filter :airlines|filter:departure|airlinesFilter:stop:duration:minfare:maxfare">
+                        <div class="col-md-12 air-logo input-group">
+
+                            <img src="/images/airlines-logo/{{flight.segment[0].airline.name}}.png" width="25" />
+                            <b style="margin-left:10px;">{{flight.segment[0].airline.name}} ({{flight.segment[0].airline.code}}-{{flight.segment[0].airline.flightNumber}}) </b>
+
+                        </div>
+                        <div class="col-md-7 air-time">
+                            <div class="col-md-4">
+                                <b style="display:flex!important">{{flight.segment[0].departureTime | date:'hh:mm'}}</b>
+                                <span>{{flight.segment[0].origin.cityName}}</span>
+
+                            </div>
+                            <div class="col-md-4 air-duration pl-0 pr-0">
+                                <span>
+
+                                    {{diffDate(flight.segment[0].departureTime, flight.segment[flight.segment.length-1].arrivalTime) }}
+                                    <small ng-if="flight.segment.length>1"><i></i>{{flight.segment.length-1}}-stop<i></i></small>
+                                    <small ng-if="flight.segment.length<=1"><i></i>non-stop<i></i></small>
+                                    @*<small ng-if="flight.segment?.length >1"><i></i>{{flight.segment.length-1}}-stop<i></i></small>*@
+                                    @*<small *ngIf="flight.segment?.length <= 1"><i></i>non-stop<i></i></small>*@
+                                </span>
+                            </div>
+                            <div class="col-md-4">
+                                <b style="display:flex!important">{{flight.segment[flight.segment.length-1].arrivalTime | date:'hh:mm'}}</b>
+                                <span>{{flight.segment[flight.segment.length-1].destination.cityName}}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3 air-price">
+                            <b><i class="fa fa-rupee"></i>{{flight.totalPriceList[0].netFare}}</b>
+                        </div>
+                        <div class="col-md-2 select-btn">
+                            <input type="radio" name="oneflight" id="oneflight" /><br />
+
+                            <span class="flight-detail-btn" ng-click="display_item_form($event)">Flight Detail</span>
+                        </div>
+                        <div class="flight-detail-bx col-md-12" ng-repeat="flightlay in flight.segment">
+
+                            <div ng-show="{{$index>0}}">
+                                <div class="layover col-md-12">Stop Layover {{diffoverlay(flight.segment[$index-1].arrivalTime,flight.segment[$index].departureTime) }}</div>
+                                <div class="col-md-3 text-center air-logo">
+                                    <img src="/images/airlines-logo/{{flightlay.airline.name}}.png" width="45" />
+                                    <span>{{flightlay.airline.name}}</span>
+                                    <span>{{flightlay.airline.code}}-{{flightlay.airline.flightNumber}}</span>
+                                </div>
+                                <div class="col-md-9 air-time">
+                                    <div class="col-md-4">
+                                        <b>{{flightlay.departureTime| date:'hh:mm'}}</b>
+                                        <strong>{{flightlay.origin.cityName}}</strong>
+                                    </div>
+                                    <div class="col-md-4 air-duration pl-0 pr-0">
+                                        <span>
+                                            {{diffDate(flightlay.departureTime, flightlay.arrivalTime) }}
+                                            <small><i></i><i></i></small>
+                                        </span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <b>{{flightlay.arrivalTime| date:'hh:mm'}}</b>
+                                        <strong>{{flightlay.destination.cityName}}</strong>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div ng-show="{{$index==0}}">
+
+                                <div class="col-md-3 text-center air-logo">
+                                    <img src="/images/airlines-logo/{{flightlay.airline.name}}.png" width="45" />
+                                    <span>{{flightlay.airline.name}}</span>
+                                    <span>{{flightlay.airline.code}}-{{flightlay.airline.flightNumber}}</span>
+                                </div>
+                                <div class="col-md-9 air-time">
+                                    <div class="col-md-4">
+                                        <b>{{flightlay.departureTime| date:'hh:mm'}}</b>
+                                        <strong>{{flightlay.origin.cityName}}</strong>
+                                    </div>
+                                    <div class="col-md-4 air-duration pl-0 pr-0">
+                                        <span>
+                                            {{diffDate(flightlay.departureTime, flightlay.arrivalTime) }}
+                                            <small><i></i><i></i></small>
+                                        </span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <b>{{flightlay.arrivalTime| date:'hh:mm'}}</b>
+                                        <strong>{{flightlay.destination.cityName}}</strong>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="select-dep roundway col-md-6">
+
+                    <h3><img src="/images/flight-icon.jpg" width="33" /> SELECT RETURING FLIGHT</h3>
+                    <h4><b>{{selecteddestto}} to {{selecteddestfrom}}</b> | {{returndate|date:'EEEE, MMMM d, y'}}</h4>
+                    <div class="result-layer col-md-12 pr-0 pl-0" ng-repeat="flight in Flights.returnId.results[1]|orderBy:sorting| filter :airlines|filter:departure|airlinesFilter:stop:duration:minfare:maxfare">
+                        <div class="col-md-12 air-logo input-group">
+                          
+                                <img src="/images/airlines-logo/{{flight.segment[0].airline.name}}.png" width="25" />
+                                <b style="margin-left:10px;">{{flight.segment[0].airline.name}} ({{flight.segment[0].airline.code}}-{{flight.segment[0].airline.flightNumber}}) </b>
+                                             
+                        </div>
+                        <div class="col-md-7 air-time">
+                            <div class="col-md-4">
+                                <b style="display:flex!important">{{flight.segment[0].departureTime | date:'hh:mm'}}</b>
+                                <span>{{flight.segment[0].origin.cityName}}</span>
+
+                            </div>
+                            <div class="col-md-4 air-duration pl-0 pr-0">
+                                <span>
+
+                                    {{diffDate(flight.segment[0].departureTime, flight.segment[flight.segment.length-1].arrivalTime) }}
+                                    <small ng-if="flight.segment.length>1"><i></i>{{flight.segment.length-1}}-stop<i></i></small>
+                                    <small ng-if="flight.segment.length<=1"><i></i>non-stop<i></i></small>
+                                    @*<small ng-if="flight.segment?.length >1"><i></i>{{flight.segment.length-1}}-stop<i></i></small>*@
+                                    @*<small *ngIf="flight.segment?.length <= 1"><i></i>non-stop<i></i></small>*@
+                                </span>
+                            </div>
+                            <div class="col-md-4">
+                                <b style="display:flex!important">{{flight.segment[flight.segment.length-1].arrivalTime | date:'hh:mm'}}</b>
+                                <span>{{flight.segment[flight.segment.length-1].destination.cityName}}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3 air-price">
+                            <b><i class="fa fa-rupee"></i>{{flight.totalPriceList[0].netFare}}</b>
+                        </div>
+                        <div class="col-md-2 select-btn">
+                           <input type="radio" name="retflight" id="retflight" /><br />
+                           
+                            <span class="flight-detail-btn" ng-click="display_item_form($event)">Flight Detail</span>
+                        </div>
+                        <div class="flight-detail-bx col-md-12" ng-repeat="flightlay in flight.segment">
+
+                            <div ng-show="{{$index>0}}">
+                                <div class="layover col-md-12">Stop Layover {{diffoverlay(flight.segment[$index-1].arrivalTime,flight.segment[$index].departureTime) }}</div>
+                                <div class="col-md-3 text-center air-logo">
+                                    <img src="/images/airlines-logo/{{flightlay.airline.name}}.png" width="45" />
+                                    <span>{{flightlay.airline.name}}</span>
+                                    <span>{{flightlay.airline.code}}-{{flightlay.airline.flightNumber}}</span>
+                                </div>
+                                <div class="col-md-9 air-time">
+                                    <div class="col-md-4">
+                                        <b>{{flightlay.departureTime| date:'hh:mm'}}</b>
+                                        <strong>{{flightlay.origin.cityName}}</strong>
+                                    </div>
+                                    <div class="col-md-4 air-duration pl-0 pr-0">
+                                        <span>
+                                            {{diffDate(flightlay.departureTime, flightlay.arrivalTime) }}
+                                            <small><i></i><i></i></small>
+                                        </span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <b>{{flightlay.arrivalTime| date:'hh:mm'}}</b>
+                                        <strong>{{flightlay.destination.cityName}}</strong>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div ng-show="{{$index==0}}">
+
+                                <div class="col-md-3 text-center air-logo">
+                                    <img src="/images/airlines-logo/{{flightlay.airline.name}}.png" width="45" />
+                                    <span>{{flightlay.airline.name}}</span>
+                                    <span>{{flightlay.airline.code}}-{{flightlay.airline.flightNumber}}</span>
+                                </div>
+                                <div class="col-md-9 air-time">
+                                    <div class="col-md-4">
+                                        <b>{{flightlay.departureTime| date:'hh:mm'}}</b>
+                                        <strong>{{flightlay.origin.cityName}}</strong>
+                                    </div>
+                                    <div class="col-md-4 air-duration pl-0 pr-0">
+                                        <span>
+                                            {{diffDate(flightlay.departureTime, flightlay.arrivalTime) }}
+                                            <small><i></i><i></i></small>
+                                        </span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <b>{{flightlay.arrivalTime| date:'hh:mm'}}</b>
+                                        <strong>{{flightlay.destination.cityName}}</strong>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
         </div>
     </section>
     <section class="select-way">
@@ -373,11 +583,19 @@
     <script type="text/javascript">
 
         var rootUrl = localStorage.getItem("rootUrl");
-        var app = angular.module('MyApp', [])
+        var app = angular.module('MyApp', ['ngCookies'])
 
-        app.controller('MyController', function ($scope, $http, $window) {
+        app.controller('MyController', function ($scope, $http, $window, $cookieStore) {
+            var today = new Date();
+            var expiresValue = new Date(today);
+
+            //Set 'expires' option in 5 minute
+            expiresValue.setMinutes(today.getMinutes() + 5);
+           // $cookieStore.put('lastValue','123');
+          //  var value = $cookieStore.get("lastValue");
+          
             $scope.DefaultLabel = "Loading.....";
-            $scope.minfare = 2339;
+            $scope.minfare = 0;
             $scope.maxfare = 7399;
             var post = $http({
                 method: "GET",
@@ -387,9 +605,9 @@
 
             });
             post.success(function (data, status) {
-
                 $scope.DefaultLabel = "Please Select";
                 $scope.Customers = data;
+                $cookieStore.put('airports', data, { 'expires': expiresValue });
             });
             post.error(function (data, status) {
                 $window.alert(data.Message);
@@ -451,13 +669,13 @@
                     rdate = queryString["rdate"];
                     jtype = 2;
                     $scope.ttype = 'r';
-                    $scope.roundtrip = true;
-                    $scope.onetrip = false;
+                   // $scope.roundtrip = true;
+                   // $scope.onetrip = false;
                     $scope.returndate = rdate;
                 }
                 else {
-                    $scope.roundtrip = false;
-                    $scope.onetrip = true;
+                   // $scope.roundtrip = false;
+                   // $scope.onetrip = true;
                     $scope.ttype = 'o';
                     $scope.returndate = fdate;
                 }
@@ -484,7 +702,7 @@
                 });
 
                 post.success(function (data, status) {
-                    
+                    debugger;
                     $scope.Flights = data;
                     $scope.loading = false;
                    // $cookies.put('flightsearch', data);
@@ -584,12 +802,12 @@
                 return parseInt(hours) + 'h:' + relmin + 'm';
             };
             $scope.RedirectToURL = function () {
-
+                debugger;
                 var from = $('#destfrom').find('option:selected').val();
                 var to = $('#destto').find('option:selected').val();
-                var triptype = $scope.ttype;
+                var triptype = $("input[type='radio'][name='radio']:checked").val();
                 var fdate = $('#fromdate').val();
-                var rdate = $('#todate').val();
+                var rdate = $('#returndate').val();
                 var cc = $('#ddlcabin').find('option:selected').val();
                 var paxtype = 'A-' + $('#adquantity').val() + '_C-' + $('#cdquantity').val() + '_I-' + $('#inquantity').val();
                 if (triptype == 'o') {
@@ -608,7 +826,7 @@
         app.filter('airlinesFilter', ['$filter', function ($filter) {           
            
             return function (inputArray, stop, duration,minfare,maxfare) {
-                debugger;
+            
                 //if (airlines == undefined) {
                 //    airlines = "";
                 //}
@@ -632,7 +850,7 @@
                 }
                 var data = [];
                 angular.forEach(inputArray, function (item) {
-                    debugger;
+                   
                     var stops = (item.segment.length - 1) + '-stop'.toLowerCase();
                     if (stops == "0-stop") {
                         stops = "non-stop"

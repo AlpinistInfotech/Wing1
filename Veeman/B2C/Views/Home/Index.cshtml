@@ -60,7 +60,7 @@
                     <label>Departure Date</label>
 
                     <div class="date">
-                        <input type="text" value="02 Dec 20" class="datepicker" id="fromdate" />
+                        <input type="text" value="12/12/2021" class="datepicker" id="fromdate" />
                     </div>
 
                     <div class="h-separator-l"></div>
@@ -69,7 +69,7 @@
                     <label>Return Date</label>
 
                     <div class="date">
-                        <input type="text" value="02 Dec 20" class="last datepicker" id="returndate" />
+                        <input type="text" value="12/12/2021" class="last datepicker" id="returndate" />
                     </div>
 
                     <div class="h-separator-r"></div>
@@ -528,7 +528,7 @@
                 var to = $('#destto').find('option:selected').val();
                 var triptype = $(".trip-type li.sel").attr('id');
                 var fdate = $('#fromdate').val();
-                var rdate = $('#todate').val();
+                var rdate = $('#returndate').val();
                 var cc = $('#ddlcabin').find('option:selected').val();
                 var paxtype = 'A-' + $('#adquantity').val() + '_C-' + $('#cdquantity').val() + '_I-' + $('#inquantity').val();
                 if (triptype == 'o') {
