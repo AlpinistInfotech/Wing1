@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using B2C.Classes;
 using B2C.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -22,10 +23,14 @@ namespace B2C.Controllers
         {
             return View();
         }
-        public IActionResult Searchresult()
-        {
+        
+        
+        [Route("Searchresult/{Orign}/{Destination}/{TravelDt}")]
+        public IActionResult Searchresult(string Orign,string Destination,DateTime TravelDt,mdlFlightSearchRequest mdl)
+        {   
             return View();
         }
+
 
         public IActionResult Privacy()
         {
