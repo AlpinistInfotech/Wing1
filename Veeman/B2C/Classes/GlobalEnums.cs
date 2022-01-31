@@ -130,7 +130,14 @@ namespace B2C.Classes
         Infant = 3,
     }
 
-    
 
+    public enum enmCustomerType
+    {
+        None = 1,
+        MLM = 2,
+        B2B = 3,
+        B2C = 4,
+        InHouse = 5
+    }
 
 }
