@@ -24,4 +24,24 @@ namespace B2C.Models
         public string Password { get; set; }
 
     }
+
+    public class mdlLoginResponse
+    {
+        public ulong userId { get; set; }
+        public string normalizedName { get; set; } = string.Empty;
+        public int empId { get; set; }
+        public int customerId { get; set; }
+        public ulong distributorId { get; set; }
+        public enmCustomerType customerType { get; set; }
+        public int orgId { get; set; }
+        public string email { get; set; } = string.Empty;
+        public string phoneNumber { get; set; } = string.Empty;
+    }
+
+    public class mdlLoginResponseWraper
+    {
+        public string message { get; set; }
+        public enmMessageType messageType { get; set; }
+        public mdlLoginResponse returnId { get; set; }
+    }
 }
