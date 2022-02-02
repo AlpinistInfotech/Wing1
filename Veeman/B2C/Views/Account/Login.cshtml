@@ -1,0 +1,55 @@
+﻿@model B2C.Models.mdlLogin
+@{
+}
+
+
+<div class="col-md-6 col-lg-7 d-flex align-items-center">
+    <div class="card-body p-4 p-lg-5 text-black">
+
+        <form asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <input type="hidden" asp-for="CaptchaId">
+            <input type="hidden" asp-for="OrgCode">
+            <input type="hidden" asp-for="Longitute">
+            <input type="hidden" asp-for="Latitude">
+
+            <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Sign into your account</h5>
+
+            <div class="form-outline mb-4">
+                <input type="text" maxlength="20" min="4" asp-for="UserName" class="form-control form-control-lg" autofocus tabindex="1" />
+                <label class="form-label" for="form2Example17">User Name</label>
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+
+            <div class="form-outline mb-4">
+                <input type="password" asp-for="Password" class="form-control form-control-lg" tabindex="2" />
+                <label class="form-label" for="form2Example27">Password</label>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-4">
+                <div class="input-group-prepend">
+                    <img id="img-captcha" src="@Model.CaptchaImage" style="float: left;" class="mr-1" />
+                    <button id="btnimg_captcha_change" class="btn-warning btn"><span class="fas fa-sync"></span></button>
+                    <input type="text" asp-for="CaptchaValue" tabindex="3" class="form-control ml-md-1" placeholder="Captcha Code" id="CaptchaCode" maxlength="4" autocomplete="off" />
+                    <span asp-validation-for="CaptchaValue" class="text-danger"></span>
+
+                </div>
+            </div>
+
+
+            <button type="submit" class="width-35 pull-right btn btn-sm btn-primary">
+                <i class="ace-icon fa fa-key"></i>
+                <span class="bigger-110">Login</span>
+            </button>
+            <a class="small text-muted" id="forgotten_password" tabindex="5" href="#">Forgot password?</a>
+            <a class="small text-muted pull-right" id="forgotten_password" tabindex="5" href="#">Register New user</a>
+        </form>
+
+    </div>
+</div>
+
+<div class="toolbar clearfix">    
+
+</div>
+
+

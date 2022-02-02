@@ -28,6 +28,8 @@ namespace B2C
         {
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<ICurrentUsers>(ctx => new CurrentUser(ctx.GetRequiredService<IHttpContextAccessor>()));
+            services.AddScoped<IServerApi>(ctx => new ServerApi(ctx.GetRequiredService<IConfiguration>()));
+            services.AddScoped<IAccount>(ctx => new Account(ctx.GetRequiredService<IServerApi>()));
             services.AddControllersWithViews();
             
         }
