@@ -1,74 +1,77 @@
 ﻿@inject B2C.Classes.ICurrentUsers _currentuser
-
-<nav class="navbar navbar-inverse">
     <div class="container-fluid">
-        <div class="navbar-header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="/Home/Index"><img src="/images/logo.png" alt="VEEMAAN" title="VEEMAAN" /></a>
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/Home/Index"><img src="/images/logo.png" alt="VEEMAAN" title="VEEMAAN" /></a>
-        </div>
-        <div class="collapse navbar-collapse" id="myNavbar">
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="/Home/Index">Home</a></li>
-                <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Search<span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="/Home/Flight">Flight</a></li>
-                        <li><a href="/Home/Hotel">Hotel</a></li>
-                        <li><a href="/Home/Holiday-Package">Holiday Package</a></li>
-                    </ul>
-                </li>
+
+
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav">
+                    <li class="nav-item active"><a href="/Home/Index" class="nav-link">Home</a></li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button">Booking<span class="caret"></span></a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="/Home/Flight">Flight</a>
+                            <a class="dropdown-item" href="/Home/Hotel">Hotel </a>                            
+                            <a class="dropdown-item" href="/Home/Holiday-Package">Holiday Package</a>
+                        </div>
+                    </li>
+                    @if (User?.Identity?.IsAuthenticated ?? false)
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="/Transaction/Markup">Markup</a>
+                                <a class="dropdown-item" href="/Transaction/WalletRecharge">Wallet Recharge</a>
+                            </div>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">Report<span class="caret"></span></a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="/Report/Booking">Incentive </a>
+                                @if (_currentuser.CustomerType == B2C.Classes.enmCustomerType.MLM)
+                                {
+                                    <a class="dropdown-item" href="/MLM/Incentive">Incentive Report</a>
+                                    <a class="dropdown-item" href="/MLM/TeamBooking">Team Booking </a>
+                                }
+                                <a class="dropdown-item" href="/Report/Wallet">Wallet</a>
+                                <a class="dropdown-item" href="/Report/LoyaltyPoint">LoyaltyPoint</a>
+                            </div>
+                        </li>
+                    }
+
+                </ul>
                 @if (User?.Identity?.IsAuthenticated ?? false)
                 {
-            <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Report<span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    <li><a href="/Home/Flight">Booking </a></li>
-                    <li><a href="/Home/Hotel">Incentive </a></li>
-                    <li><a href="/Home/Holiday-Package">Distributor</a></li>
-                </ul>
-            </li>
-
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="nav-item  dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-user "></span> @_currentuser.Name</a>
+                            <div class="dropdown-menu login-drop">
+                                <a class="dropdown-item" href="/Account/ChangePassword">Change Password</a>
+                                <a class="dropdown-item" href="/Account/ChangeMpin">Change Mpin</a>
+                                <a class="dropdown-item" href="/Account/Profile">Profile</a>
+                            </div>
+                        </li>
+                        <li><a href="#"><span class="glyphicon glyphicon-log-out"></span>Signout</a></li>
+                    </ul>
                 }
                 else
                 {
-                    <li><a href="#">Sitemap</a></li>
-                    <li><a href="#">Web Checking</a></li>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="/Account/Login"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+                    </ul>
                 }
 
-            </ul>
-            @if (User?.Identity?.IsAuthenticated ?? false)
-            {
-        <ul class="nav navbar-nav navbar-right">
 
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-user "></span> @_currentuser.Name</a>
-                <ul class="dropdown-menu login-drop">
-                    <li>
-                        <input type="text" placeholder="UserName">
-                    </li>
-                    <li>
-                        <input type="text" placeholder="Password">
-                    </li>
-                    <li>
-                        <input type="submit" value="Login">
-                    </li>
-                </ul>
-            </li>
-            <li><a href="#"><span class="glyphicon glyphicon-log-out"></span>Signout</a></li>
-        </ul>
-            }
-            else
-            {
-        <ul class="nav navbar-nav navbar-right">
-            <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>            
-        </ul>
-            }
+            </div>
 
-        
-        </div>
+
+
+        </nav>
     </div>
-</nav>
