@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -27,9 +28,11 @@ namespace B2C
         public void ConfigureServices(IServiceCollection services)
         {
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddMemoryCache();
             services.AddScoped<ICurrentUsers>(ctx => new CurrentUser(ctx.GetRequiredService<IHttpContextAccessor>()));
             services.AddScoped<IServerApi>(ctx => new ServerApi(ctx.GetRequiredService<IConfiguration>()));
             services.AddScoped<IAccount>(ctx => new Account(ctx.GetRequiredService<IServerApi>()));
+            services.AddScoped<IFlightSearch>(ctx => new FlightSearch(ctx.GetRequiredService<IServerApi>(), ctx.GetRequiredService<IConfiguration>(), ctx.GetRequiredService<IMemoryCache>()));
             services.AddControllersWithViews();
             
         }

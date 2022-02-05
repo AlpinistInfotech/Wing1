@@ -82,21 +82,21 @@ namespace B2C.Models
         public string OperatingCarrier { get; set; }
     }
 
+    public class mdlAirportWraper
+    { 
+        public enmMessageType messageType { get; set; }
+        public string message{ get; set; }
+        public List<mdlAirport> returnId { get; set; }
+    }
+
     public class mdlAirport
-    {
-        
-        public string AirportCode { get; set; }
-        
-        public string AirportName { get; set; }
-        
-        public string Terminal { get; set; }
-        
-        public string CityCode { get; set; }
-        
-        public string CityName { get; set; }
-        
-        public string CountryCode { get; set; }
-        
+    {        
+        public string AirportCode { get; set; }        
+        public string AirportName { get; set; }        
+        public string Terminal { get; set; }        
+        public string CityCode { get; set; }        
+        public string CityName { get; set; }        
+        public string CountryCode { get; set; }        
         public string CountryName { get; set; }
     }
     public class mdlTotalpricelist

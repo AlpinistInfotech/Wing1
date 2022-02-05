@@ -42,7 +42,6 @@ namespace B2C.Controllers
             LoadCaptcha(ref mdl);
             return View(mdl);
         }
-
         [HttpPost]
         public async Task<IActionResult> LoginAsync(mdlLogin mdl, string? ReturnUrl)
         {

@@ -23,11 +23,13 @@
                         <ul>
 
                             <li>
-                                <select id="destfrom">
+
+                                <select name="Orign"  class="form-control select2" asp-items="@ViewBag.FromAirports"></select>
+                                @*<select id="destfrom">
                                     <option ng-repeat="customer in Customers.returnId" value="{{customer.airportCode}}">
                                         {{customer.airportCode}}, {{customer.cityName}}, {{customer.countryCode}}
                                     </option>
-                                </select>
+                                </select>*@
                             </li>
                         </ul>
 
@@ -43,12 +45,13 @@
                         <ul>
                             <li>
 
-                                <select id="destto">
+                                <select name="Destination" class="form-control select2" asp-items="@ViewBag.ToAirports"></select>
 
-                                    <option ng-repeat="customer in Customers.returnId" value="{{customer.airportCode}}">
-                                        {{customer.airportCode}}, {{customer.cityName}}, {{customer.countryCode}}
-                                    </option>
-                                </select>
+                                @*<select id="destto">
+            <option ng-repeat="customer in Customers.returnId" value="{{customer.airportCode}}">
+                {{customer.airportCode}}, {{customer.cityName}}, {{customer.countryCode}}
+            </option>
+        </select>*@
 
                             </li>
                         </ul>
