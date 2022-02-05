@@ -9,12 +9,6 @@ $(function() {
 	});
 	
 
-	$(".passenger, .travel-type, .psg-class").on("click", function() {
-		$(".passenger-bx").addClass("active");
-	  });
-	  $(".psg-done").on("click", function() {
-		  $(".passenger-bx").removeClass("active");
-	  });
 	  
 
 	  $('.morefare-btn').on('click', function() {
@@ -32,12 +26,10 @@ $(function() {
 		});
 	
 		
-
-
-		$('.trip-type ul li').on('click', function() {
-			$(this).addClass('sel').siblings().removeClass('sel');
-		});
-		$('.trip-type ul li:nth-child(2)').on('click', function() {
-			$('.return .date').css('opacity','1');
-		});
+		//$('.trip-type ul li').on('click', function() {
+		//	$(this).addClass('sel').siblings().removeClass('sel');
+		//});
+		//$('.trip-type ul li:nth-child(2)').on('click', function() {
+		//	$('.return .date').css('opacity','1');
+		//});
 });

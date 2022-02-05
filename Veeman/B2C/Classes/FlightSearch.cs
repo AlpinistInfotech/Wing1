@@ -63,16 +63,32 @@ namespace B2C.Classes
 
         public mdlSearchResponse Search(mdlFlightSearchRequest mdl,string Token)
         {
-            mdlSearchResponse returnData = new mdlSearchResponse();
-            string jsonString = JsonConvert.SerializeObject(mdl);
-            var responseData = _IServerApi.GetResponsePostMethod(jsonString, string.Format("Air/SearchFlight/{0}", _config["OrgCode"]), Token, "POST");
-            if (responseData.MessageType == enmMessageType.Success)
+            
+            string cacheKey =string.Concat( _config["Caching:FlightSearch:Name"],mdl.Orign,mdl.Destination,mdl.TravelDt,mdl.ReturnDt,mdl.CabinClass,mdl.JourneyType,mdl.AdultCount,mdl.ChildCount,mdl.InfantCount);
+            int AbsoluteExpiration = 3600, SlidingExpiration = 3600;
+            int.TryParse(_config["Caching:FlightSearch:AbsoluteExpiration"], out AbsoluteExpiration);
+            int.TryParse(_config["Caching:FlightSearch:SlidingExpiration"], out SlidingExpiration);
+            
+
+            if (!_memoryCache.TryGetValue(cacheKey, out mdlSearchResponse returnData))
             {
-                returnData = JsonConvert.DeserializeObject<mdlSearchResponse>(responseData.Message);
-            }
-            else
-            {
-                throw new Exception(responseData.Message);
+                string jsonString = JsonConvert.SerializeObject(mdl);
+                var responseData = _IServerApi.GetResponsePostMethod(jsonString, string.Format("Air/SearchFlight/{0}", _config["OrgCode"]), Token, "POST");
+                if (responseData.MessageType == enmMessageType.Success)
+                {
+                    returnData = JsonConvert.DeserializeObject<mdlSearchResponse>(responseData.Message);
+                    var cacheExpiryOptions = new MemoryCacheEntryOptions
+                    {
+                        AbsoluteExpiration = DateTime.Now.AddSeconds(AbsoluteExpiration),
+                        Priority = CacheItemPriority.Normal,
+                        SlidingExpiration = TimeSpan.FromSeconds(SlidingExpiration)
+                    };
+                    _memoryCache.Set(cacheKey, returnData, cacheExpiryOptions);
+                }
+                else
+                {
+                    throw new Exception(responseData.Message);
+                }
             }
             return returnData;
         }

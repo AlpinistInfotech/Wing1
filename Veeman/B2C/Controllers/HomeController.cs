@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace B2C.Controllers
 {
+    
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -48,23 +49,62 @@ namespace B2C.Controllers
 
         void ValidateFlightSearchRequest(mdlFlightSearchRequest request)
         {
+            DateTime CurrentDate = Convert.ToDateTime(DateTime.Now.ToString("dd-MMM-yyyy"));
+
             if (request == null)
             {
                 ModelState.AddModelError("", "Invalid data");
             }
             else
             {
-                if (request.Orign.Equals(request.Destination, StringComparison.OrdinalIgnoreCase)) ;
+                if (string.IsNullOrWhiteSpace( request.Orign))
+                {
+                    ModelState.AddModelError("", "Required Origin airport");
+                }
+                if (string.IsNullOrWhiteSpace(request.Destination))
+                {
+                    ModelState.AddModelError("", "Required Destination airport");
+                }
+                if (request.Orign.Equals(request.Destination, StringComparison.OrdinalIgnoreCase))
+                {
+                    ModelState.AddModelError("", "Origin and destination should be different");
+                }
+                if(request.TravelDt< CurrentDate)
+                {
+                    ModelState.AddModelError("",string.Format("Departure Date should be greater than {0}", CurrentDate.ToString("dd-MMM-yyyy")));
+                }
+                if (request.JourneyType == enmJourneyType.Return)
+                {
+                    if (request.TravelDt > request.ReturnDt)
+                    {
+                        ModelState.AddModelError("", string.Format("Departure Date should be less than Return Date"));
+                    }
+                }
+                if (request.AdultCount <= 0)
+                {
+                    ModelState.AddModelError("", string.Format("Adult Count should be greater then 0"));
+                }
+                if (request.ChildCount < 0)
+                {
+                    ModelState.AddModelError("", string.Format("Child Count should be greater then or equal to 0"));
+                }
+                if (request.InfantCount< 0)
+                {
+                    ModelState.AddModelError("", string.Format("Infant Count should be greater then or equal to 0"));
+                }
+                if (request.AdultCount+ request.ChildCount+ request.InfantCount>9)
+                {
+                    ModelState.AddModelError("", string.Format("upto 9 passenger can travel in single ticket"));
+                }
             }
         }
-
-
-        [Route("FlightSearch/{Orign}/{Destination}/{TravelDt}/{ReturnDt}/{CabinClass}/{JourneyType}/{AdultCount}/{ChildCount}/{InfantCount}")]
-        [Route("FlightSearch/{Orign}/{Destination}/{TravelDt}/{CabinClass}/{AdultCount}/{ChildCount}/{InfantCount}")]
+        [Route("/Home/FlightSearch/{Orign}/{Destination}/{TravelDt}/{ReturnDt}/{CabinClass}/{JourneyType}/{AdultCount}/{ChildCount}/{InfantCount}")]
+        [Route("/Home/FlightSearch/{Orign}/{Destination}/{TravelDt}/{CabinClass}/{AdultCount}/{ChildCount}/{InfantCount}")]
         public IActionResult FlightSearch(string Orign,string Destination,DateTime TravelDt, DateTime? ReturnDt=null ,
             enmCabinClass CabinClass=enmCabinClass.ECONOMY, int AdultCount=1, int ChildCount=0,int InfantCount=0,
             enmJourneyType JourneyType=enmJourneyType.OneWay)
         {
+            mdlSearchResponse mdl = new mdlSearchResponse();
             mdlFlightSearchRequest request = new mdlFlightSearchRequest() {
                 Orign = Orign,
                 Destination = Destination,
@@ -77,8 +117,16 @@ namespace B2C.Controllers
                 InfantCount= InfantCount
                
             };
-            
-            return View();
+            ValidateFlightSearchRequest(request);
+            if (ModelState.IsValid)
+            {
+                mdl = _flightSearch.Search(request, _currentUsers.Token);
+                if (mdl.ResponseStatus == enmMessageType.Error)
+                {
+                    ModelState.AddModelError("", mdl.Error.Message);
+                }
+            }
+            return View(mdl);
         }
 
 

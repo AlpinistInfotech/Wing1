@@ -6,12 +6,12 @@
 
 <section class="banner-bg">
     <div class="container">
-        <div class="search-engine-container mt-40 mb-40" ng-app="MyApp" ng-controller="MyController">
+        <div class="search-engine-container mt-40 mb-40">
 
             <div class="trip-type">
                 <ul>
-                    <li class="sel" id="o">One Way</li>
-                    <li id="r">Round Trip</li>
+                    <li class="sel" id="_rdoOneWay">One Way</li>
+                    <li id="_rdoRoundTrip">Round Trip</li>
                 </ul>
             </div>
 
@@ -21,19 +21,10 @@
                     <label>From</label>
                     <div class="dest-name">
                         <ul>
-
                             <li>
-
-                                <select name="Orign"  class="form-control select2" asp-items="@ViewBag.FromAirports"></select>
-                                @*<select id="destfrom">
-                                    <option ng-repeat="customer in Customers.returnId" value="{{customer.airportCode}}">
-                                        {{customer.airportCode}}, {{customer.cityName}}, {{customer.countryCode}}
-                                    </option>
-                                </select>*@
+                                <select id="ddlOrign" name="Orign"  class="form-control select2" asp-items="@ViewBag.FromAirports"></select>
                             </li>
                         </ul>
-
-
                     </div>
                     <div class="h-separator-l"></div>
 
@@ -44,15 +35,7 @@
                     <div class="dest-name">
                         <ul>
                             <li>
-
-                                <select name="Destination" class="form-control select2" asp-items="@ViewBag.ToAirports"></select>
-
-                                @*<select id="destto">
-            <option ng-repeat="customer in Customers.returnId" value="{{customer.airportCode}}">
-                {{customer.airportCode}}, {{customer.cityName}}, {{customer.countryCode}}
-            </option>
-        </select>*@
-
+                                <select id="ddlDestination" name="Destination" class="form-control select2" asp-items="@ViewBag.ToAirports"></select>
                             </li>
                         </ul>
                     </div>
@@ -72,7 +55,7 @@
                     <label>Return Date</label>
 
                     <div class="date">
-                        <input type="text" value="12/12/2021" class="last datepicker" id="returndate" />
+                        <input type="text" value="12/12/2021" class="datepicker last" id="returndate" />
                     </div>
 
                     <div class="h-separator-r"></div>
@@ -83,82 +66,87 @@
 
             <div class="pl-0 pr-0 psg-rlt">
                 <div class="passenger">
-                    <label>Passenger(s)</label>
-                    <span>01</span>
-                </div>
-                <div class="passenger-bx">
-                    <div class="psg_main_dv">
-                        <div class="adl_col"><p>Adult</p><span>(12+ yrs)</span></div>
-                        <div class="cnt_col">
-                            <div class="plu-miss">
-                                <div class="mbtn">
-                                    <span class="minus_boxADt">-</span>
+                    <div class="innerpassenger">
+                        <label>Passenger(s)</label>
+                        <span id="lblTotalPassenger">01</span>
+                    </div>
+                    <div class="passenger-bx">
+                        <div class="psg_main_dv">
+                            <div class="adl_col"><p>Adult</p><span>(12+ yrs)</span></div>
+                            <div class="cnt_col">
+                                <div class="plu-miss">
+                                    <div class="mbtn">
+                                        <span class="minus_boxADt">-</span>
+                                    </div>
+                                    <div class="txt">
+                                        <input type="text" id="adquantity" name="adquantity" value="1" readonly="">
+                                    </div>
+                                    <div class="plbtn">
+                                        <span class="plus_box1">+</span>
+                                    </div>
+                                    <div class="clr"></div>
                                 </div>
-                                <div class="txt">
-                                    <input type="text" id="adquantity" name="adquantity" value="1" readonly="">
-                                </div>
-                                <div class="plbtn">
-                                    <span class="plus_box1">+</span>
-                                </div>
-                                <div class="clr"></div>
-                            </div>
 
-                        </div>
-                    </div>
-                    <div class="psg_main_dv">
-                        <div class="adl_col"><p>Child</p><span>(2-12 yrs)</span></div>
-                        <div class="cnt_col">
-                            <div class="plu-miss">
-                                <div class="mbtn">
-                                    <span class="minus_boxADt">-</span>
-                                </div>
-                                <div class="txt">
-                                    <input type="text" id="cdquantity" name="cdquantity" value="0" readonly="">
-                                </div>
-                                <div class="plbtn">
-                                    <span class="plus_box1">+</span>
-                                </div>
-                                <div class="clr"></div>
                             </div>
-
                         </div>
-                    </div>
-                    <div class="psg_main_dv">
-                        <div class="adl_col"><p>Infant</p><span>Before 2 yrs)</span></div>
-                        <div class="cnt_col">
-                            <div class="plu-miss">
-                                <div class="mbtn">
-                                    <span class="minus_boxADt">-</span>
+                        <div class="psg_main_dv">
+                            <div class="adl_col"><p>Child</p><span>(2-12 yrs)</span></div>
+                            <div class="cnt_col">
+                                <div class="plu-miss">
+                                    <div class="mbtn">
+                                        <span class="minus_boxADt">-</span>
+                                    </div>
+                                    <div class="txt">
+                                        <input type="text" id="cdquantity" name="cdquantity" value="0" readonly="">
+                                    </div>
+                                    <div class="plbtn">
+                                        <span class="plus_box1">+</span>
+                                    </div>
+                                    <div class="clr"></div>
                                 </div>
-                                <div class="txt">
-                                    <input type="text" id="inquantity" name="inquantity" value="0" readonly="">
-                                </div>
-                                <div class="plbtn">
-                                    <span class="plus_box1">+</span>
-                                </div>
-                                <div class="clr"></div>
+
                             </div>
+                        </div>
+                        <div class="psg_main_dv">
+                            <div class="adl_col"><p>Infant</p><span>Before 2 yrs)</span></div>
+                            <div class="cnt_col">
+                                <div class="plu-miss">
+                                    <div class="mbtn">
+                                        <span class="minus_boxADt">-</span>
+                                    </div>
+                                    <div class="txt">
+                                        <input type="text" id="inquantity" name="inquantity" value="0" readonly="">
+                                    </div>
+                                    <div class="plbtn">
+                                        <span class="plus_box1">+</span>
+                                    </div>
+                                    <div class="clr"></div>
+                                </div>
 
+                            </div>
                         </div>
+                        <button class="psg-done">Done</button>
                     </div>
-                    <div class="psg_main_dv lst">
-                        <div class="adl_col"><p>Class</p></div>
-                        <div class="cnt_col">
-                            <select id="ddlcabin">
-                                <option value="Economy">Economy</option>
-                                <option value="Premium Economy">Premium Economy</option>
-                                <option value="Business">Business</option>
-                                <option value="First Class">First Class</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button class="psg-done">Done</button>
                 </div>
                 <div class="travel-type">
-                    <label>Travel Class</label>
-                    <span>Economy</span>
-
-
+                    <div class="innertravel-type">
+                        <label>Travel Class</label>
+                        <span id="lblTravelClass">Economy</span>
+                    </div>
+                    <div class="passenger-bx-1">
+                        <div class="psg_main_dv lst">
+                            <div class="adl_col"><p>Class</p></div>
+                            <div class="cnt_col">
+                                <select id="ddlcabin">
+                                    <option value="2">Economy</option>
+                                    <option value="3">Premium Economy</option>
+                                    <option value="4">Business</option>
+                                    <option value="6">First Class</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="psg-done-1">Done</button>
+                    </div>
                 </div>
             </div>
             <div class="clearfix"></div>
@@ -168,7 +156,7 @@
                 </label>
             </div>
             <div class="mt-20">
-                <button ng-click="RedirectToURL()">Search Flights</button>
+                <button id="btnFlightSearch">Search Flights</button>
             </div>
 
         </div>
@@ -188,7 +176,6 @@
             </div>
             <img src="images/man-woman.png" />
         </div>
-
     </div>
 
 </section>
@@ -476,6 +463,8 @@
 
 @section Scripts {
     <script>
+
+
         $(document).ready(function () {
             $('.owl-carousel').owlCarousel({
                 loop: true,
@@ -499,53 +488,115 @@
                 }
             })
         })
-    </script>
-
-    <script>
-
-        var rootUrl = localStorage.getItem("rootUrl");
-        var app = angular.module('MyApp', [])
-        app.controller('MyController', function ($scope, $http, $window) {
-            $scope.DefaultLabel = "Loading.....";
-            var post = $http({
-                method: "GET",
-                url: rootUrl + "air/GetAirport/true/true",
-                dataType: 'json',
-                data: {},
-
+        $(document).ready(function () {
+            $("#returndate").parent().parent().disableSelection();
+            $("#_rdoOneWay").click(function () {
+                $("#_rdoOneWay").addClass("sel");
+                $("#_rdoRoundTrip").removeClass("sel");
+                $("#returndate").parent().parent().disableSelection();
             });
-
-            post.success(function (data, status) {
-
-                $scope.DefaultLabel = "Please Select";
-                $scope.Customers = data;
+            $("#_rdoRoundTrip").click(function () {
+                $("#_rdoOneWay").removeClass("sel");
+                $("#_rdoRoundTrip").addClass("sel");
+                $("#returndate").parent().parent().enableSelection();
             });
+            
+            $(".plus_box1").on("click", function (e) {
+                let CurrentValue = parseInt( $(this).parent().prev().children().val());
+                if (CurrentValue < 9) {
+                    $(this).parent().prev().children().val(CurrentValue + 1);
+                }
+            })
+            $(".minus_boxADt").on("click", function (e) {
+                let CurrentValue = parseInt( $(this).parent().next().children().val());
+                if (CurrentValue > 0) {
+                    $(this).parent().next().children().val(CurrentValue - 1);
+                }
+            })
+            $(".psg-done-1").on("click", function (e) {
+                $("#lblTravelClass").text($("#ddlcabin option:selected").text());
+                $(".passenger-bx-1").removeClass("active");
+            })
 
-            post.error(function (data, status) {
-                $window.alert(data.Message);
-            });
-
-            $scope.RedirectToURL = function () {
-
-                var from = $('#destfrom').find('option:selected').val();
-                var to = $('#destto').find('option:selected').val();
-                var triptype = $(".trip-type li.sel").attr('id');
-                var fdate = $('#fromdate').val();
-                var rdate = $('#returndate').val();
-                var cc = $('#ddlcabin').find('option:selected').val();
-                var paxtype = 'A-' + $('#adquantity').val() + '_C-' + $('#cdquantity').val() + '_I-' + $('#inquantity').val();
-                if (triptype == 'o') {
-                    var landingUrl = "/home/Searchresult?itinerary=" + from + '-' + to + '&ttype=' + triptype + '&fdate=' + fdate + '&paxtype=' + paxtype + '&cc=' + cc;
-
-                    $window.location.href = landingUrl;
+            
+            $(".psg-done").on("click", function (e) {
+                let totalPassenger = parseInt($("#adquantity").val()) + parseInt($("#cdquantity").val()) + parseInt($("#inquantity").val());
+                if (totalPassenger > 9) {
+                    alert("passenger count should be less then 9");
+                    return;
                 }
                 else {
-                    var landingUrl = "/home/Searchresult?itinerary=" + from + '-' + to + '&ttype=' + triptype + '&fdate=' + fdate + '&rdate=' + rdate + '&paxtype=' + paxtype + '&cc=' + cc;
-
-                    $window.location.href = landingUrl;
+                    $("#lblTotalPassenger").text(totalPassenger);
+                    $(this).parent().removeClass("active");
                 }
-            };
+            })
+            $(".innerpassenger").on("click", function () {
+                $(".passenger-bx").addClass("active");
+            });
+            $(".innertravel-type").on("click", function () {
+                $(".passenger-bx-1").addClass("active");
+            });
+            $("#btnFlightSearch").on("click", function () {
+                let Url = "";
+                if ($("#_rdoOneWay").hasClass("sel")) {
+                    Url = `/Home/FlightSearch/${$("#ddlOrign").val()}/${$("#ddlDestination").val()}/${$("#fromdate").val()}/${$("#ddlcabin").val()}/${$("#adquantity").val()}/${$("#cdquantity").val()}/${$("#inquantity").val()}`
+                }
+                else {
+                    Url = `/Home/FlightSearch/${$("#ddlOrign").val()}/${$("#ddlDestination").val()}/${$("#fromdate").val()}/${$("#returndate").val()}/${$("#ddlcabin").val()}/2/${$("#adquantity").val()}/${$("#cdquantity").val()}/${$("#inquantity").val()}`
+                }
+                window.location.href = Url;
+            })
+
         });
+
+    </script>
+    <script>
+        
+        
+
+        //var rootUrl = localStorage.getItem("rootUrl");
+        //var app = angular.module('MyApp', [])
+        //app.controller('MyController', function ($scope, $http, $window) {
+        //    $scope.DefaultLabel = "Loading.....";
+        //    var post = $http({
+        //        method: "GET",
+        //        url: rootUrl + "air/GetAirport/true/true",
+        //        dataType: 'json',
+        //        data: {},
+
+        //    });
+
+        //    post.success(function (data, status) {
+
+        //        $scope.DefaultLabel = "Please Select";
+        //        $scope.Customers = data;
+        //    });
+
+        //    post.error(function (data, status) {
+        //        $window.alert(data.Message);
+        //    });
+
+        //    $scope.RedirectToURL = function () {
+
+        //        var from = $('#destfrom').find('option:selected').val();
+        //        var to = $('#destto').find('option:selected').val();
+        //        var triptype = $(".trip-type li.sel").attr('id');
+        //        var fdate = $('#fromdate').val();
+        //        var rdate = $('#returndate').val();
+        //        var cc = $('#ddlcabin').find('option:selected').val();
+        //        var paxtype = 'A-' + $('#adquantity').val() + '_C-' + $('#cdquantity').val() + '_I-' + $('#inquantity').val();
+        //        if (triptype == 'o') {
+        //            var landingUrl = "/home/Searchresult?itinerary=" + from + '-' + to + '&ttype=' + triptype + '&fdate=' + fdate + '&paxtype=' + paxtype + '&cc=' + cc;
+
+        //            $window.location.href = landingUrl;
+        //        }
+        //        else {
+        //            var landingUrl = "/home/Searchresult?itinerary=" + from + '-' + to + '&ttype=' + triptype + '&fdate=' + fdate + '&rdate=' + rdate + '&paxtype=' + paxtype + '&cc=' + cc;
+
+        //            $window.location.href = landingUrl;
+        //        }
+        //    };
+        //});
 
 
     </script>
