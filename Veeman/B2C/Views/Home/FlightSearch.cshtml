@@ -1,4 +1,4 @@
-﻿
+﻿@model  mdlSearchResponse
 @{
     ViewData["Title"] = "Flight Search";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -36,59 +36,51 @@
         }
     </style>
 }
-<div ng-app="MyApp" ng-controller="MyController">
-    <section class="mod-search">
 
+<div>
+    <section class="mod-search">
         <div class="container">
             <div class="search-box col-12">
                 <label class="modirdo">
                     One way
-                    <input type="radio" name="radio" ng-model="ttype" ng-checked="(ttype == 'o')" value="o" />
+                    <input type="radio" asp-for="JourneyType" id="rdoOneWay"  value="1" />
                     <span class="checkmark"></span>
                 </label>
                 <label class="modirdo">
                     Round Trip
-                    <input type="radio" name="radio" ng-model="ttype" ng-checked="(ttype == 'r')" value="r" />
+                    <input type="radio" asp-for="JourneyType" id="rdoReturnTrip" value="2" />
                     <span class="checkmark"></span>
                 </label>
                 <div class="search-form col-12">
                     <div class="col-md-2 pl-0">
                         <label>
                             From
-                            <select id="destfrom">
-                                <option ng-repeat="customer in Customers.returnId" value="{{customer.airportCode}}" ng-selected="{{ customer.airportCode == selecteddestfrom }}">
-                                    {{customer.airportCode}}, {{customer.cityName}}, {{customer.countryCode}}
-                                </option>
-                            </select>
+                            <select id="ddlOrign" name="Orign" class="form-control select2" asp-items="@ViewBag.FromAirports"></select>
                         </label>
 
                     </div>
                     <div class="col-md-2 pl-0">
                         <label>
                             To
-                            <select id="destto">
-                                <option ng-repeat="customer in Customers.returnId" value="{{customer.airportCode}}" ng-selected="{{ customer.airportCode == selecteddestto }}">
-                                    {{customer.airportCode}}, {{customer.cityName}}, {{customer.countryCode}}
-                                </option>
-                            </select>
+                            <select id="ddlDestination" name="Destination" class="form-control select2" asp-items="@ViewBag.ToAirports"></select>
                         </label>
                     </div>
                     <div class="col-md-2">
                         <label>
                             Departure
-                            <input type="text" ng-value="fromdate" class="datepicker" id="fromdate" />
+                            <input type="text" asp-for="TravelDt" class="datepicker" id="fromdate" />
                         </label>
                     </div>
                     <div class="col-md-2">
                         <label>
                             Return
-                            <input type="text" ng-value="returndate" class="last datepicker" id="returndate" />
+                            <input type="text" asp-for="ReturnDt" class="last datepicker" id="returndate" />
                         </label>
                     </div>
                     <div class="col-md-3">
                         <label>
                             Travellers | Class
-                            <input type="text" class="psg-class" ng-value="tclass">
+                            <input type="text" class="psg-class" value="@string.Concat( Convert.ToString( Model.CabinClass),", ", Model.AdultCount+ Model.ChildCount+ Model.InfantCount ," Passenger")">
                         </label>
 
                         <div class="passenger-bx">
@@ -100,7 +92,7 @@
                                             <span class="minus_boxADt">-</span>
                                         </div>
                                         <div class="txt">
-                                            <input type="text" id="adquantity" name="adquantity" value="1" readonly="">
+                                            <input type="text" id="adquantity" name="adquantity" value="@Model.AdultCount" readonly="">
                                         </div>
                                         <div class="plbtn">
                                             <span class="plus_box1">+</span>
@@ -118,7 +110,7 @@
                                             <span class="minus_boxADt">-</span>
                                         </div>
                                         <div class="txt">
-                                            <input type="text" id="cdquantity" name="cdquantity" value="0" readonly="">
+                                            <input type="text" id="cdquantity" name="cdquantity" value="@Model.ChildCount" readonly="">
                                         </div>
                                         <div class="plbtn">
                                             <span class="plus_box1">+</span>
@@ -136,7 +128,7 @@
                                             <span class="minus_boxADt">-</span>
                                         </div>
                                         <div class="txt">
-                                            <input type="text" id="inquantity" name="inquantity" value="0" readonly="">
+                                            <input type="text" id="inquantity" name="inquantity" value="@Model.InfantCount" readonly="">
                                         </div>
                                         <div class="plbtn">
                                             <span class="plus_box1">+</span>
@@ -149,11 +141,11 @@
                             <div class="psg_main_dv lst">
                                 <div class="adl_col"><p>Class</p></div>
                                 <div class="cnt_col">
-                                    <select id="ddlcabin" data-ng-model="cabin">
-                                        <option value="Economy">Economy</option>
-                                        <option value="Premium Economy">Premium Economy</option>
-                                        <option value="Business">Business</option>
-                                        <option value="First Class">First Class</option>
+                                    <select id="ddlcabin" asp-for="CabinClass" >
+                                        <option value="2">Economy</option>
+                                        <option value="3">Premium Economy</option>
+                                        <option value="4">Business</option>
+                                        <option value="6">First Class</option>
                                     </select>
                                 </div>
                             </div>
@@ -163,7 +155,7 @@
                     <div class="col-md-1 pl-0 pr-0">
                         <label>
                             &nbsp;
-                            <button ng-click="RedirectToURL()">Search</button>
+                            <input type="button" value="Search">
                         </label>
                     </div>
                 </div>
@@ -241,14 +233,11 @@
         </div>
     </section>
     <section class="result-container">
-        <div class="spinner" ng-show="loading">
-            <img src="/images/loading.gif" alt="ajaxload" />
-        </div>
-        <div class="container" ng-show="{{ttype=='o'}}">
-
+        <div class="container">
+            <div asp-validation-summary="All" class="text-danger"></div>
             <div class="col-md-9">
                 <div class="select-dep onway col-md-12">
-                    
+
                     <h3><img src="/images/flight-icon.jpg" width="33" /> SELECT DEPARTING FLIGHT</h3>
                     <h4><b>{{selecteddestfrom}} to {{selecteddestto}}</b> | {{fromdate|date:'EEEE, MMMM d, y'}}</h4>
                     <div class="result-layer col-md-12 pr-0 pl-0" ng-repeat="flight in Flights.returnId.results[0]|orderBy:sorting| filter :airlines|filter:departure|airlinesFilter:stop:duration:minfare:maxfare">
@@ -582,6 +571,25 @@
 @section Scripts {
     <script type="text/javascript">
 
+
+        $(document).ready(function () {
+            $("#fromdate").datepicker('setDate', new Date("@(Model.TravelDt.ToString("yyyy-MM-dd"))"));
+            $("#returndate").datepicker('setDate', new Date("@(Model.ReturnDt.ToString("yyyy-MM-dd"))"));
+            let IsOneway =@(Model.JourneyType == B2C.Classes.enmJourneyType.OneWay?"true":"false");
+            console.log(IsOneway)
+            if (IsOneway==true){
+                $("#rdoOneWay").prop("checked", true);
+                $("#rdoReturnTrip").prop("checked", false);
+            }
+            else
+            {
+                $("#rdoOneWay").prop("checked", false);
+                $("#rdoReturnTrip").prop("checked", true);
+            }
+
+
+        })
+
         var rootUrl = localStorage.getItem("rootUrl");
         var app = angular.module('MyApp', ['ngCookies'])
 
@@ -593,7 +601,7 @@
             expiresValue.setMinutes(today.getMinutes() + 5);
            // $cookieStore.put('lastValue','123');
           //  var value = $cookieStore.get("lastValue");
-          
+
             $scope.DefaultLabel = "Loading.....";
             $scope.minfare = 0;
             $scope.maxfare = 7399;
@@ -717,7 +725,7 @@
                     var minp = 0;
                     var maxp = 0;
                     angular.forEach(data.returnId.results[0], function (item) {
-                        
+
                         var flight = item.segment[0].airline.name;
                         var price = item.totalPriceList[0].netFare;
                         if (minp == 0) {
@@ -729,7 +737,7 @@
                         if (price <minp) {
                             minp = price;
                         }
-                        
+
                         if (flightname.indexOf(flight) === -1) {
                             flightname.push(flight);
                         }
@@ -746,7 +754,7 @@
                             stopss.push(stop);
                         }
                     });
-                   
+
                     $scope.airlinename = flightname;
                     $scope.departurename = originname;
                     $scope.stopage = stopss;
@@ -823,10 +831,10 @@
             };
 
         });
-        app.filter('airlinesFilter', ['$filter', function ($filter) {           
-           
+        app.filter('airlinesFilter', ['$filter', function ($filter) {
+
             return function (inputArray, stop, duration,minfare,maxfare) {
-            
+
                 //if (airlines == undefined) {
                 //    airlines = "";
                 //}
@@ -850,7 +858,7 @@
                 }
                 var data = [];
                 angular.forEach(inputArray, function (item) {
-                   
+
                     var stops = (item.segment.length - 1) + '-stop'.toLowerCase();
                     if (stops == "0-stop") {
                         stops = "non-stop"

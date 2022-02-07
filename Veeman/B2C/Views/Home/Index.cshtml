@@ -500,7 +500,9 @@
                 $("#_rdoRoundTrip").addClass("sel");
                 $("#returndate").parent().parent().enableSelection();
             });
-            
+
+
+
             $(".plus_box1").on("click", function (e) {
                 let CurrentValue = parseInt( $(this).parent().prev().children().val());
                 if (CurrentValue < 9) {
@@ -537,6 +539,11 @@
                 $(".passenger-bx-1").addClass("active");
             });
             $("#btnFlightSearch").on("click", function () {
+                if ($("#ddlOrign").val() == $("#ddlDestination").val()) {
+                    alert("Orgin and Destination should be different");
+                    $("#ddlOrign").focus();
+                    return;
+                }
                 let Url = "";
                 if ($("#_rdoOneWay").hasClass("sel")) {
                     Url = `/Home/FlightSearch/${$("#ddlOrign").val()}/${$("#ddlDestination").val()}/${$("#fromdate").val()}/${$("#ddlcabin").val()}/${$("#adquantity").val()}/${$("#cdquantity").val()}/${$("#inquantity").val()}`
@@ -546,6 +553,8 @@
                 }
                 window.location.href = Url;
             })
+
+            
 
         });
 

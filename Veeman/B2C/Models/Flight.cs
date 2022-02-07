@@ -25,12 +25,27 @@ namespace B2C.Models
         public int Code { get; set; }
         public string Message { get; set; }
     }
+    public class mdlSearchResponseWraper
+    {
+        public enmMessageType messageType { get; set; }
+        public string  message{ get; set; }
+        public mdlSearchResponse returnId { get; set; }
+
+    }
+
     public class mdlSearchResponse
     {
         public enmMessageType ResponseStatus { get; set; }
         public mdlError Error { get; set; }
         public string Origin { get; set; }
         public string Destination { get; set; }
+        public DateTime TravelDt { get; set; }
+        public DateTime ReturnDt { get; set; }
+        public enmJourneyType JourneyType { get; set; } = enmJourneyType.OneWay;
+        public enmCabinClass CabinClass { get; set; } = enmCabinClass.ECONOMY;
+        public int AdultCount { get; set; } = 1;
+        public int ChildCount { get; set; }
+        public int InfantCount { get; set; }
         public List<List<mdlSearchResult>> Results { get; set; }
     }
 

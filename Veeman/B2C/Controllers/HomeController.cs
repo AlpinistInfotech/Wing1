@@ -43,7 +43,7 @@ namespace B2C.Controllers
 
         public async Task<IActionResult> IndexAsync()
         {
-            await LoadAirport("","");
+            await LoadAirport("DEL","BOM");
             return View();
         }
 
@@ -100,7 +100,7 @@ namespace B2C.Controllers
         }
         [Route("/Home/FlightSearch/{Orign}/{Destination}/{TravelDt}/{ReturnDt}/{CabinClass}/{JourneyType}/{AdultCount}/{ChildCount}/{InfantCount}")]
         [Route("/Home/FlightSearch/{Orign}/{Destination}/{TravelDt}/{CabinClass}/{AdultCount}/{ChildCount}/{InfantCount}")]
-        public IActionResult FlightSearch(string Orign,string Destination,DateTime TravelDt, DateTime? ReturnDt=null ,
+        public async Task<IActionResult> FlightSearchAsync(string Orign,string Destination,DateTime TravelDt, DateTime? ReturnDt=null ,
             enmCabinClass CabinClass=enmCabinClass.ECONOMY, int AdultCount=1, int ChildCount=0,int InfantCount=0,
             enmJourneyType JourneyType=enmJourneyType.OneWay)
         {
@@ -117,15 +117,32 @@ namespace B2C.Controllers
                 InfantCount= InfantCount
                
             };
+
+            await LoadAirport(Orign, Destination);
             ValidateFlightSearchRequest(request);
             if (ModelState.IsValid)
             {
+                
                 mdl = _flightSearch.Search(request, _currentUsers.Token);
                 if (mdl.ResponseStatus == enmMessageType.Error)
                 {
                     ModelState.AddModelError("", mdl.Error.Message);
                 }
+                
             }
+            //Default data
+            {
+                mdl.Origin = request.Orign;
+                mdl.Destination = request.Destination;
+                mdl.TravelDt = request.TravelDt;                
+                mdl.ReturnDt = request.ReturnDt;
+                mdl.CabinClass = request.CabinClass;
+                mdl.JourneyType = request.JourneyType;
+                mdl.AdultCount = request.AdultCount;
+                mdl.ChildCount = request.ChildCount;
+                mdl.InfantCount = request.InfantCount;
+            }
+
             return View(mdl);
         }
 

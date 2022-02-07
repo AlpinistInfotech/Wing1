@@ -41,13 +41,17 @@ namespace B2C.Classes
                 if (responseData.MessageType == enmMessageType.Success)
                 {
                     returnData = JsonConvert.DeserializeObject<mdlAirportWraper>(responseData.Message);
-                    var cacheExpiryOptions = new MemoryCacheEntryOptions
+                    if (returnData.messageType == enmMessageType.Success)
                     {
-                        AbsoluteExpiration = DateTime.Now.AddSeconds(AbsoluteExpiration),
-                        Priority = CacheItemPriority.High,
-                        SlidingExpiration = TimeSpan.FromSeconds(SlidingExpiration)
-                    };
-                    _memoryCache.Set(cacheKey, returnData, cacheExpiryOptions);
+                        var cacheExpiryOptions = new MemoryCacheEntryOptions
+                        {
+                            AbsoluteExpiration = DateTime.Now.AddSeconds(AbsoluteExpiration),
+                            Priority = CacheItemPriority.High,
+                            SlidingExpiration = TimeSpan.FromSeconds(SlidingExpiration)
+                        };
+                        _memoryCache.Set(cacheKey, returnData, cacheExpiryOptions);
+                    }
+                    
                 }
                 else
                 {
@@ -60,7 +64,6 @@ namespace B2C.Classes
 
         }
 
-
         public mdlSearchResponse Search(mdlFlightSearchRequest mdl,string Token)
         {
             
@@ -68,22 +71,42 @@ namespace B2C.Classes
             int AbsoluteExpiration = 3600, SlidingExpiration = 3600;
             int.TryParse(_config["Caching:FlightSearch:AbsoluteExpiration"], out AbsoluteExpiration);
             int.TryParse(_config["Caching:FlightSearch:SlidingExpiration"], out SlidingExpiration);
-            
-
             if (!_memoryCache.TryGetValue(cacheKey, out mdlSearchResponse returnData))
             {
                 string jsonString = JsonConvert.SerializeObject(mdl);
                 var responseData = _IServerApi.GetResponsePostMethod(jsonString, string.Format("Air/SearchFlight/{0}", _config["OrgCode"]), Token, "POST");
                 if (responseData.MessageType == enmMessageType.Success)
-                {
-                    returnData = JsonConvert.DeserializeObject<mdlSearchResponse>(responseData.Message);
-                    var cacheExpiryOptions = new MemoryCacheEntryOptions
+                { 
+                    var tempData=  JsonConvert.DeserializeObject<mdlSearchResponseWraper>(responseData.Message);
+                    if (tempData.messageType == enmMessageType.Success)
                     {
-                        AbsoluteExpiration = DateTime.Now.AddSeconds(AbsoluteExpiration),
-                        Priority = CacheItemPriority.Normal,
-                        SlidingExpiration = TimeSpan.FromSeconds(SlidingExpiration)
-                    };
-                    _memoryCache.Set(cacheKey, returnData, cacheExpiryOptions);
+                        returnData = tempData.returnId;
+                        if (returnData.ResponseStatus == enmMessageType.Success)
+                        {
+                            var cacheExpiryOptions = new MemoryCacheEntryOptions
+                            {
+                                AbsoluteExpiration = DateTime.Now.AddSeconds(AbsoluteExpiration),
+                                Priority = CacheItemPriority.Normal,
+                                SlidingExpiration = TimeSpan.FromSeconds(SlidingExpiration)
+                            };
+                            _memoryCache.Set(cacheKey, returnData, cacheExpiryOptions);
+                        }
+                    }
+                    else
+                    {
+                        returnData = new mdlSearchResponse()
+                        {
+                            ResponseStatus = tempData.messageType,
+                            Error = new mdlError()
+                            {
+                                Code = 1,
+                                Message = tempData.message
+                            }
+                        };
+                    }
+                    
+                    
+                    
                 }
                 else
                 {
