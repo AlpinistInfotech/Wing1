@@ -68,7 +68,7 @@
                     <div class="col-md-2">
                         <label>
                             Departure
-                            <input type="text" asp-for="TravelDt" class="datepicker" id="fromdate" />
+                            <input type="text" asp-for="DepartureDt" class="datepicker" id="fromdate" />
                         </label>
                     </div>
                     <div class="col-md-2">
@@ -80,9 +80,8 @@
                     <div class="col-md-3">
                         <label>
                             Travellers | Class
-                            <input type="text" class="psg-class" value="@string.Concat( Convert.ToString( Model.CabinClass),", ", Model.AdultCount+ Model.ChildCount+ Model.InfantCount ," Passenger")">
+                            <input type="text" class="psg-class" value="@string.Concat(Convert.ToString( Model.CabinClass),", ", Model.AdultCount+ Model.ChildCount+ Model.InfantCount ," Passenger")">
                         </label>
-
                         <div class="passenger-bx">
                             <div class="psg_main_dv">
                                 <div class="adl_col"><p>Adult</p><span>(12+ yrs)</span></div>
@@ -573,7 +572,7 @@
 
 
         $(document).ready(function () {
-            $("#fromdate").datepicker('setDate', new Date("@(Model.TravelDt.ToString("yyyy-MM-dd"))"));
+            $("#fromdate").datepicker('setDate', new Date("@(Model.DepartureDt.ToString("yyyy-MM-dd"))"));
             $("#returndate").datepicker('setDate', new Date("@(Model.ReturnDt.ToString("yyyy-MM-dd"))"));
             let IsOneway =@(Model.JourneyType == B2C.Classes.enmJourneyType.OneWay?"true":"false");
             console.log(IsOneway)

@@ -8,15 +8,16 @@ namespace B2C.Models
 {
     public class mdlFlightSearchRequest
     {
-        public string Orign { get; set; } = "DEL";
-        public string Destination { get; set; } = "BOM";
-        public DateTime TravelDt { get; set; }
+        public string From { get; set; } = "DEL";
+        public string To{ get; set; } = "BOM";
+        public DateTime DepartureDt { get; set; }
         public DateTime ReturnDt { get; set; }
         public enmJourneyType JourneyType { get; set; } = enmJourneyType.OneWay;
         public enmCabinClass CabinClass { get; set; } = enmCabinClass.ECONOMY;
         public int AdultCount { get; set; } = 1;
         public int ChildCount { get; set; }
         public int InfantCount { get; set; }
+        public bool DirectFlight { get; set; }
     }
 
     #region *************flight Search Response *********************
@@ -37,9 +38,9 @@ namespace B2C.Models
     {
         public enmMessageType ResponseStatus { get; set; }
         public mdlError Error { get; set; }
-        public string Origin { get; set; }
-        public string Destination { get; set; }
-        public DateTime TravelDt { get; set; }
+        public string From { get; set; } = "DEL";
+        public string To { get; set; } = "BOM";
+        public DateTime DepartureDt { get; set; }
         public DateTime ReturnDt { get; set; }
         public enmJourneyType JourneyType { get; set; } = enmJourneyType.OneWay;
         public enmCabinClass CabinClass { get; set; } = enmCabinClass.ECONOMY;

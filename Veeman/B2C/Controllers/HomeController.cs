@@ -57,25 +57,25 @@ namespace B2C.Controllers
             }
             else
             {
-                if (string.IsNullOrWhiteSpace( request.Orign))
+                if (string.IsNullOrWhiteSpace( request.From))
                 {
                     ModelState.AddModelError("", "Required Origin airport");
                 }
-                if (string.IsNullOrWhiteSpace(request.Destination))
+                if (string.IsNullOrWhiteSpace(request.To))
                 {
                     ModelState.AddModelError("", "Required Destination airport");
                 }
-                if (request.Orign.Equals(request.Destination, StringComparison.OrdinalIgnoreCase))
+                if (request.From.Equals(request.To, StringComparison.OrdinalIgnoreCase))
                 {
                     ModelState.AddModelError("", "Origin and destination should be different");
                 }
-                if(request.TravelDt< CurrentDate)
+                if(request.DepartureDt< CurrentDate)
                 {
                     ModelState.AddModelError("",string.Format("Departure Date should be greater than {0}", CurrentDate.ToString("dd-MMM-yyyy")));
                 }
                 if (request.JourneyType == enmJourneyType.Return)
                 {
-                    if (request.TravelDt > request.ReturnDt)
+                    if (request.DepartureDt > request.ReturnDt)
                     {
                         ModelState.AddModelError("", string.Format("Departure Date should be less than Return Date"));
                     }
@@ -106,9 +106,9 @@ namespace B2C.Controllers
         {
             mdlSearchResponse mdl = new mdlSearchResponse();
             mdlFlightSearchRequest request = new mdlFlightSearchRequest() {
-                Orign = Orign,
-                Destination = Destination,
-                TravelDt = TravelDt,
+                From = Orign,
+                To = Destination,
+                DepartureDt= TravelDt,
                 ReturnDt = ReturnDt.HasValue ? ReturnDt.Value : TravelDt,
                 CabinClass= CabinClass,
                 JourneyType = JourneyType,
@@ -132,9 +132,9 @@ namespace B2C.Controllers
             }
             //Default data
             {
-                mdl.Origin = request.Orign;
-                mdl.Destination = request.Destination;
-                mdl.TravelDt = request.TravelDt;                
+                mdl.From = request.From;
+                mdl.To = request.To;
+                mdl.DepartureDt = request.DepartureDt;                
                 mdl.ReturnDt = request.ReturnDt;
                 mdl.CabinClass = request.CabinClass;
                 mdl.JourneyType = request.JourneyType;

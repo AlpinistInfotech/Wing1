@@ -64,10 +64,26 @@ namespace B2C.Classes
 
         }
 
+        private class mdlFCWraper
+        {
+            public string From { get; set; }
+            public string To { get; set; }
+            public enmJourneyType JourneyType { get; set; }
+            public enmCabinClass CabinClass { get; set; }
+            public DateTime DepartureDt { get; set; }
+            public DateTime? ReturnDt { get; set; }
+            public int AdultCount { get; set; }
+            public int ChildCount { get; set; }
+            public int InfantCount { get; set; }
+            public bool DirectFlight { get; set; }
+        }
+
         public mdlSearchResponse Search(mdlFlightSearchRequest mdl,string Token)
         {
             
-            string cacheKey =string.Concat( _config["Caching:FlightSearch:Name"],mdl.Orign,mdl.Destination,mdl.TravelDt,mdl.ReturnDt,mdl.CabinClass,mdl.JourneyType,mdl.AdultCount,mdl.ChildCount,mdl.InfantCount);
+
+
+            string cacheKey =string.Concat( _config["Caching:FlightSearch:Name"],mdl.From,mdl.To,mdl.DepartureDt,mdl.ReturnDt,mdl.CabinClass,mdl.JourneyType,mdl.AdultCount,mdl.ChildCount,mdl.InfantCount);
             int AbsoluteExpiration = 3600, SlidingExpiration = 3600;
             int.TryParse(_config["Caching:FlightSearch:AbsoluteExpiration"], out AbsoluteExpiration);
             int.TryParse(_config["Caching:FlightSearch:SlidingExpiration"], out SlidingExpiration);
