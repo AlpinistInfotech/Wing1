@@ -33,7 +33,6 @@ namespace B2C.Models
         public mdlSearchResponse returnId { get; set; }
 
     }
-
     public class mdlSearchResponse
     {
         public enmMessageType ResponseStatus { get; set; }
