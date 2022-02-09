@@ -79,10 +79,7 @@ namespace B2C.Classes
         }
 
         public mdlSearchResponse Search(mdlFlightSearchRequest mdl,string Token)
-        {
-            
-
-
+        {   
             string cacheKey =string.Concat( _config["Caching:FlightSearch:Name"],mdl.From,mdl.To,mdl.DepartureDt,mdl.ReturnDt,mdl.CabinClass,mdl.JourneyType,mdl.AdultCount,mdl.ChildCount,mdl.InfantCount);
             int AbsoluteExpiration = 3600, SlidingExpiration = 3600;
             int.TryParse(_config["Caching:FlightSearch:AbsoluteExpiration"], out AbsoluteExpiration);

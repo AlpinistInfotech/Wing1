@@ -1,0 +1,126 @@
+﻿@model mdlSearchResult
+@inject B2C.Classes.ICurrentUsers _currentuser
+@{
+    double LowestFare = Model.TotalPriceList.Min(p => p.ADULT.NetFare);
+}
+<div class="result-layer col-md-12 pr-0 pl-0">
+    <div class="col-md-2 air-logo">
+        <img src="/images/airlines-logo/@(Model.Segment.FirstOrDefault()?.Airline.Code).png" width="45" />
+        <span> @string.Join(", ", Model.Segment.SelectMany(p => p.Airline.Name).Distinct().Select(p=>p))</span>
+        <span>@string.Join(", ", Model.Segment.SelectMany(p => string.Concat(p.Airline.Code, "-", p.Airline.FlightNumber)).Distinct().Select(q=>q))</span>
+    </div>
+    <div class="col-md-6 air-time">
+        <div class="col-md-5">
+            <b>@Model.Segment.FirstOrDefault()?.DepartureTime.ToString("HH:mm")</b>
+            <b>@Model.Segment.FirstOrDefault()?.Origin.AirportCode</b>
+            <small>@Model.Segment.FirstOrDefault()?.Origin.CityName, @Model.Segment.FirstOrDefault()?.Origin.CountryCode</small>
+</div>
+        <div class="col-md-2 air-duration pl-0 pr-0">
+            <span>
+                @string.Concat(Model.Segment.Sum(p => p.Duration + p.Layover) / 60, "h ", Model.Segment.Sum(p => p.Duration + p.Layover) % 60, "m")
+                @if (Model.Segment.Count == 1)
+                {
+                    <small><i></i>non-stop<i></i></small>
+                }
+                else
+                {
+                    <small><i></i>@(Model.Segment.Count-1)-stop<i></i></small>
+                }
+            </span>
+        </div>
+        <div class="col-md-5">
+            <b>@Model.Segment.LastOrDefault()?.ArrivalTime.ToString("HH:mm")</b>            
+            <b>@Model.Segment.FirstOrDefault()?.Destination.AirportCode</b>
+            <small>@Model.Segment.FirstOrDefault()?.Destination.CityName, @Model.Segment.FirstOrDefault()?.Destination.CountryCode</small>
+        </div>
+    </div>
+    <div class="col-md-2 air-price">
+        @if (LowestFare < Model.TotalPriceList.Min(p => p.ADULT.TotalFare))
+        {
+            <b><strike><i class="fa fa-rupee"></i>@Model.TotalPriceList.Min(p => p.ADULT.TotalFare).ToString("#,#.##", _currentuser.cultureInfo)</strike> </b>
+        }
+        <b><i class="fa fa-rupee"></i>@Model.TotalPriceList.Min(p => p.ADULT.NetFare).ToString("#,#.##", _currentuser.cultureInfo)</b>
+    </div>
+    <div class="col-md-2 select-btn">
+        <button>Select</button>
+        <span class="flight-detail-btn">Flight Detail</span>
+    </div>
+    <div class="flight-detail-bx col-md-12">
+        @for (int i = 0; i < Model.Segment.Count; i++)
+        {
+            <div class="col-md-3 text-center air-logo">
+                <img src="/images/@(Model.Segment[i].Airline.Code).jpg" width="45" />
+                <span>@Model.Segment[i].Airline.Name</span>
+                <span>@string.Concat(Model.Segment[i].Airline.Code, "-", Model.Segment[i].Airline.FlightNumber)</span>
+            </div>
+            <div class="col-md-9 air-time">
+                <div class="col-md-4">
+                    <b>@Model.Segment[i].DepartureTime.ToString("HH:mm")</b>
+                    <strong>@Model.Segment[i].Origin.AirportCode</strong>
+                    <small>@Model.Segment[i].Origin.CityName, @Model.Segment[i].Origin.CountryCode</small>
+                </div>
+                <div class="col-md-4 air-duration pl-0 pr-0">
+                    <span>
+                        @string.Concat((Model.Segment[i].Duration) / 60, "h ", (Model.Segment[i].Duration) % 60, "m")
+                        @if ((Model.Segment[i].StopDetail?.Count ?? 0) == 0)
+                        {
+                            <small><i></i>non-stop<i></i></small>
+                        }
+                        else
+                        {
+                            <small><i></i>@(Model.Segment[i].StopDetail.Count - 1)-stop<i></i></small>
+                        }
+
+                    </span>
+                </div>
+                <div class="col-md-4">
+                    <b>@Model.Segment[i].ArrivalTime.ToString("HH:mm")</b>
+                    <strong>@Model.Segment[i].Destination.AirportCode</strong>
+                    <small>@Model.Segment[i].Destination.CityName, @Model.Segment[i].Destination.CountryCode</small>
+                </div>
+            </div>
+            @if (@Model.Segment[i].Layover > 0)
+            {
+                <div class="layover col-md-12">LAYOVER: @string.Concat((Model.Segment[i].Layover) / 60, "h ", (Model.Segment[i].Layover) % 60, "m")</div>
+            }
+        }
+    </div>
+
+    <div class="option-price-bx col-md-12">
+        <div class="col-md-3 pl-0">
+            <ul class="fare-type">
+                <li><b>Fare type</b></li>
+                <li><b>Checked Baggage</b></li>
+                @*<li><b>Hand Baggage</b></li>
+        <li><b>Seat Selection</b></li>
+        <li><b>Date Change</b></li>
+        <li><b>Cancellation</b></li>*@
+                <li><b>Is Rufundable</b></li>
+                <li><b>Meals</b></li>
+            </ul>
+        </div>
+        <div class="col-md-9 pl-0 pr-0">
+            @for (int i = 0; i < Model.TotalPriceList.Count; i++)
+            {
+                <ul class="fare-type fare-option">
+                    <li><h5>@Model.TotalPriceList[i].Identifier @*<small>Budget Friendly</small>*@</h5></li>
+                    <li>@Model.TotalPriceList[i].ADULT.CheckingBaggage</li>
+                    <li>@Model.TotalPriceList[i].ADULT.CabinBaggage</li>
+                    <li>@(Model.TotalPriceList[i].ADULT.IsRefundable>0?"Chargeable":"X" )</li>
+                    <li>@(Model.TotalPriceList[i].ADULT.IsFreeMeal?"Yes":"X" )</li>
+                    @*<li>X</li>
+                    <li>X</li>*@
+                    <li>
+                        @if (LowestFare == Model.TotalPriceList[i].ADULT.NetFare)
+                        {
+                            <span>Lowest fare</span>
+                        }
+                        <b><i class="fa fa-rupee"></i>@Model.TotalPriceList[i].ADULT.NetFare.ToString("#,#.##", _currentuser.cultureInfo )</b><button>SELECT</button>
+                    </li>
+
+                </ul>
+
+            }
+        </div>
+    </div>
+</div>

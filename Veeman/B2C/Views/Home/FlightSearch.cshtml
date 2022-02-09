@@ -234,316 +234,48 @@
     <section class="result-container">
         <div class="container">
             <div asp-validation-summary="All" class="text-danger"></div>
+            @if ((Model.JourneyType == B2C.Classes.enmJourneyType.OneWay && (Model.Results?.Count ?? 0) < 1) ||
+                (Model.JourneyType == B2C.Classes.enmJourneyType.Return && (Model.Results?.Count ?? 0) < 2))
+            {
             <div class="col-md-9">
-                <div class="select-dep onway col-md-12">
-
-                    <h3><img src="/images/flight-icon.jpg" width="33" /> SELECT DEPARTING FLIGHT</h3>
-                    <h4><b>{{selecteddestfrom}} to {{selecteddestto}}</b> | {{fromdate|date:'EEEE, MMMM d, y'}}</h4>
-                    <div class="result-layer col-md-12 pr-0 pl-0" ng-repeat="flight in Flights.returnId.results[0]|orderBy:sorting| filter :airlines|filter:departure|airlinesFilter:stop:duration:minfare:maxfare">
-                        <div class="col-md-2 air-logo">
-                            <img src="/images/airlines-logo/{{flight.segment[0].airline.name}}.png" width="45" />
-                            <span>{{flight.segment[0].airline.name}} </span>
-                            <span>{{flight.segment[0].airline.code}}-{{flight.segment[0].airline.flightNumber}}</span>
-                        </div>
-                        <div class="col-md-6 air-time">
-                            <div class="col-md-5">
-                                <b>{{flight.segment[0].departureTime | date:'hh:mm'}}</b>
-                                <b>{{flight.segment[0].origin.cityName}}</b>
-
-                            </div>
-                            <div class="col-md-2 air-duration pl-0 pr-0">
-                                <span>
-
-                                    {{diffDate(flight.segment[0].departureTime, flight.segment[flight.segment.length-1].arrivalTime) }}
-                                    <small ng-if="flight.segment.length>1"><i></i>{{flight.segment.length-1}}-stop<i></i></small>
-                                    <small ng-if="flight.segment.length<=1"><i></i>non-stop<i></i></small>
-                                    @*<small ng-if="flight.segment?.length >1"><i></i>{{flight.segment.length-1}}-stop<i></i></small>*@
-                                    @*<small *ngIf="flight.segment?.length <= 1"><i></i>non-stop<i></i></small>*@
-                                </span>
-                            </div>
-                            <div class="col-md-5">
-                                <b>{{flight.segment[flight.segment.length-1].arrivalTime | date:'hh:mm'}}</b>
-                                <b>{{flight.segment[flight.segment.length-1].destination.cityName}}</b>
-                            </div>
-                        </div>
-                        <div class="col-md-2 air-price">
-                            <b><i class="fa fa-rupee"></i>{{flight.totalPriceList[0].netFare}}</b>
-                        </div>
-                        <div class="col-md-2 select-btn">
-                            <button>Select</button>
-                            <span class="flight-detail-btn" ng-click="display_item_form($event)">Flight Detail</span>
-                        </div>
-                        <div class="flight-detail-bx col-md-12" ng-repeat="flightlay in flight.segment">
-
-                            <div ng-show="{{$index>0}}">
-                                <div class="layover col-md-12">Stop Layover {{diffoverlay(flight.segment[$index-1].arrivalTime,flight.segment[$index].departureTime) }}</div>
-                                <div class="col-md-3 text-center air-logo">
-                                    <img src="/images/airlines-logo/{{flightlay.airline.name}}.png" width="45" />
-                                    <span>{{flightlay.airline.name}}</span>
-                                    <span>{{flightlay.airline.code}}-{{flightlay.airline.flightNumber}}</span>
-                                </div>
-                                <div class="col-md-9 air-time">
-                                    <div class="col-md-4">
-                                        <b>{{flightlay.departureTime| date:'hh:mm'}}</b>
-                                        <strong>{{flightlay.origin.cityName}}</strong>
-                                    </div>
-                                    <div class="col-md-4 air-duration pl-0 pr-0">
-                                        <span>
-                                            {{diffDate(flightlay.departureTime, flightlay.arrivalTime) }}
-                                            <small><i></i><i></i></small>
-                                        </span>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <b>{{flightlay.arrivalTime| date:'hh:mm'}}</b>
-                                        <strong>{{flightlay.destination.cityName}}</strong>
-
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div ng-show="{{$index==0}}">
-
-                                <div class="col-md-3 text-center air-logo">
-                                    <img src="/images/airlines-logo/{{flightlay.airline.name}}.png" width="45" />
-                                    <span>{{flightlay.airline.name}}</span>
-                                    <span>{{flightlay.airline.code}}-{{flightlay.airline.flightNumber}}</span>
-                                </div>
-                                <div class="col-md-9 air-time">
-                                    <div class="col-md-4">
-                                        <b>{{flightlay.departureTime| date:'hh:mm'}}</b>
-                                        <strong>{{flightlay.origin.cityName}}</strong>
-                                    </div>
-                                    <div class="col-md-4 air-duration pl-0 pr-0">
-                                        <span>
-                                            {{diffDate(flightlay.departureTime, flightlay.arrivalTime) }}
-                                            <small><i></i><i></i></small>
-                                        </span>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <b>{{flightlay.arrivalTime| date:'hh:mm'}}</b>
-                                        <strong>{{flightlay.destination.cityName}}</strong>
-
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-
+                <div class="text-danger">Could not find any Flights</div>
             </div>
+            }
+            else
+            {
+                <div class="col-md-9">
+                    <div class="select-dep onway col-md-12">
+                        <h3><img src="/images/flight-icon.jpg" width="33" /> SELECT DEPARTING FLIGHT</h3>
+                        <h4><b>@Model.From to @Model.To</b> | @Model.DepartureDt.ToString("dddd, dd-MMM-yyyy")</h4>
+                        @foreach (var mdl in Model.Results[0])
+                        {
+                            @await Html.PartialAsync("_FlightDetail", mdl);
+                        }
+
+                    </div>
+                    @if (Model.JourneyType == B2C.Classes.enmJourneyType.Return)
+                    {
+                        <div class="select-dep onway col-md-12">
+                            <h3><img src="/images/flight-icon.jpg" width="33" /> SELECT RETURNING FLIGHT</h3>
+                            <h4><b>@Model.To to @Model.From</b> | @Model.ReturnDt.ToString("dddd, dd-MMM-yyyy")</h4>
+
+                            @foreach (var mdl in Model.Results[1])
+                            {
+                                @await Html.PartialAsync("_FlightDetail", mdl);
+                            }
+
+                        </div>
+                    }
+                </div>
+            }
+
             <div class="col-md-3">
                 <img src="/images/hdfc-result-right.jpg" />
             </div>
 
         </div>
 
-        <div class="container" ng-show="{{ttype=='r'}}">
-
-            <div class="col-md-12">
-
-                <div class="select-dep onway col-md-6">
-
-                    <h3><img src="/images/flight-icon.jpg" width="33" /> SELECT DEPARTING FLIGHT</h3>
-                    <h4><b>{{selecteddestfrom}} to {{selecteddestto}}</b> | {{fromdate|date:'EEEE, MMMM d, y'}}</h4>
-                    <div class="result-layer col-md-12 pr-0 pl-0" ng-repeat="flight in Flights.returnId.results[0]|orderBy:sorting| filter :airlines|filter:departure|airlinesFilter:stop:duration:minfare:maxfare">
-                        <div class="col-md-12 air-logo input-group">
-
-                            <img src="/images/airlines-logo/{{flight.segment[0].airline.name}}.png" width="25" />
-                            <b style="margin-left:10px;">{{flight.segment[0].airline.name}} ({{flight.segment[0].airline.code}}-{{flight.segment[0].airline.flightNumber}}) </b>
-
-                        </div>
-                        <div class="col-md-7 air-time">
-                            <div class="col-md-4">
-                                <b style="display:flex!important">{{flight.segment[0].departureTime | date:'hh:mm'}}</b>
-                                <span>{{flight.segment[0].origin.cityName}}</span>
-
-                            </div>
-                            <div class="col-md-4 air-duration pl-0 pr-0">
-                                <span>
-
-                                    {{diffDate(flight.segment[0].departureTime, flight.segment[flight.segment.length-1].arrivalTime) }}
-                                    <small ng-if="flight.segment.length>1"><i></i>{{flight.segment.length-1}}-stop<i></i></small>
-                                    <small ng-if="flight.segment.length<=1"><i></i>non-stop<i></i></small>
-                                    @*<small ng-if="flight.segment?.length >1"><i></i>{{flight.segment.length-1}}-stop<i></i></small>*@
-                                    @*<small *ngIf="flight.segment?.length <= 1"><i></i>non-stop<i></i></small>*@
-                                </span>
-                            </div>
-                            <div class="col-md-4">
-                                <b style="display:flex!important">{{flight.segment[flight.segment.length-1].arrivalTime | date:'hh:mm'}}</b>
-                                <span>{{flight.segment[flight.segment.length-1].destination.cityName}}</span>
-                            </div>
-                        </div>
-                        <div class="col-md-3 air-price">
-                            <b><i class="fa fa-rupee"></i>{{flight.totalPriceList[0].netFare}}</b>
-                        </div>
-                        <div class="col-md-2 select-btn">
-                            <input type="radio" name="oneflight" id="oneflight" /><br />
-
-                            <span class="flight-detail-btn" ng-click="display_item_form($event)">Flight Detail</span>
-                        </div>
-                        <div class="flight-detail-bx col-md-12" ng-repeat="flightlay in flight.segment">
-
-                            <div ng-show="{{$index>0}}">
-                                <div class="layover col-md-12">Stop Layover {{diffoverlay(flight.segment[$index-1].arrivalTime,flight.segment[$index].departureTime) }}</div>
-                                <div class="col-md-3 text-center air-logo">
-                                    <img src="/images/airlines-logo/{{flightlay.airline.name}}.png" width="45" />
-                                    <span>{{flightlay.airline.name}}</span>
-                                    <span>{{flightlay.airline.code}}-{{flightlay.airline.flightNumber}}</span>
-                                </div>
-                                <div class="col-md-9 air-time">
-                                    <div class="col-md-4">
-                                        <b>{{flightlay.departureTime| date:'hh:mm'}}</b>
-                                        <strong>{{flightlay.origin.cityName}}</strong>
-                                    </div>
-                                    <div class="col-md-4 air-duration pl-0 pr-0">
-                                        <span>
-                                            {{diffDate(flightlay.departureTime, flightlay.arrivalTime) }}
-                                            <small><i></i><i></i></small>
-                                        </span>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <b>{{flightlay.arrivalTime| date:'hh:mm'}}</b>
-                                        <strong>{{flightlay.destination.cityName}}</strong>
-
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div ng-show="{{$index==0}}">
-
-                                <div class="col-md-3 text-center air-logo">
-                                    <img src="/images/airlines-logo/{{flightlay.airline.name}}.png" width="45" />
-                                    <span>{{flightlay.airline.name}}</span>
-                                    <span>{{flightlay.airline.code}}-{{flightlay.airline.flightNumber}}</span>
-                                </div>
-                                <div class="col-md-9 air-time">
-                                    <div class="col-md-4">
-                                        <b>{{flightlay.departureTime| date:'hh:mm'}}</b>
-                                        <strong>{{flightlay.origin.cityName}}</strong>
-                                    </div>
-                                    <div class="col-md-4 air-duration pl-0 pr-0">
-                                        <span>
-                                            {{diffDate(flightlay.departureTime, flightlay.arrivalTime) }}
-                                            <small><i></i><i></i></small>
-                                        </span>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <b>{{flightlay.arrivalTime| date:'hh:mm'}}</b>
-                                        <strong>{{flightlay.destination.cityName}}</strong>
-
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="select-dep roundway col-md-6">
-
-                    <h3><img src="/images/flight-icon.jpg" width="33" /> SELECT RETURING FLIGHT</h3>
-                    <h4><b>{{selecteddestto}} to {{selecteddestfrom}}</b> | {{returndate|date:'EEEE, MMMM d, y'}}</h4>
-                    <div class="result-layer col-md-12 pr-0 pl-0" ng-repeat="flight in Flights.returnId.results[1]|orderBy:sorting| filter :airlines|filter:departure|airlinesFilter:stop:duration:minfare:maxfare">
-                        <div class="col-md-12 air-logo input-group">
-                          
-                                <img src="/images/airlines-logo/{{flight.segment[0].airline.name}}.png" width="25" />
-                                <b style="margin-left:10px;">{{flight.segment[0].airline.name}} ({{flight.segment[0].airline.code}}-{{flight.segment[0].airline.flightNumber}}) </b>
-                                             
-                        </div>
-                        <div class="col-md-7 air-time">
-                            <div class="col-md-4">
-                                <b style="display:flex!important">{{flight.segment[0].departureTime | date:'hh:mm'}}</b>
-                                <span>{{flight.segment[0].origin.cityName}}</span>
-
-                            </div>
-                            <div class="col-md-4 air-duration pl-0 pr-0">
-                                <span>
-
-                                    {{diffDate(flight.segment[0].departureTime, flight.segment[flight.segment.length-1].arrivalTime) }}
-                                    <small ng-if="flight.segment.length>1"><i></i>{{flight.segment.length-1}}-stop<i></i></small>
-                                    <small ng-if="flight.segment.length<=1"><i></i>non-stop<i></i></small>
-                                    @*<small ng-if="flight.segment?.length >1"><i></i>{{flight.segment.length-1}}-stop<i></i></small>*@
-                                    @*<small *ngIf="flight.segment?.length <= 1"><i></i>non-stop<i></i></small>*@
-                                </span>
-                            </div>
-                            <div class="col-md-4">
-                                <b style="display:flex!important">{{flight.segment[flight.segment.length-1].arrivalTime | date:'hh:mm'}}</b>
-                                <span>{{flight.segment[flight.segment.length-1].destination.cityName}}</span>
-                            </div>
-                        </div>
-                        <div class="col-md-3 air-price">
-                            <b><i class="fa fa-rupee"></i>{{flight.totalPriceList[0].netFare}}</b>
-                        </div>
-                        <div class="col-md-2 select-btn">
-                           <input type="radio" name="retflight" id="retflight" /><br />
-                           
-                            <span class="flight-detail-btn" ng-click="display_item_form($event)">Flight Detail</span>
-                        </div>
-                        <div class="flight-detail-bx col-md-12" ng-repeat="flightlay in flight.segment">
-
-                            <div ng-show="{{$index>0}}">
-                                <div class="layover col-md-12">Stop Layover {{diffoverlay(flight.segment[$index-1].arrivalTime,flight.segment[$index].departureTime) }}</div>
-                                <div class="col-md-3 text-center air-logo">
-                                    <img src="/images/airlines-logo/{{flightlay.airline.name}}.png" width="45" />
-                                    <span>{{flightlay.airline.name}}</span>
-                                    <span>{{flightlay.airline.code}}-{{flightlay.airline.flightNumber}}</span>
-                                </div>
-                                <div class="col-md-9 air-time">
-                                    <div class="col-md-4">
-                                        <b>{{flightlay.departureTime| date:'hh:mm'}}</b>
-                                        <strong>{{flightlay.origin.cityName}}</strong>
-                                    </div>
-                                    <div class="col-md-4 air-duration pl-0 pr-0">
-                                        <span>
-                                            {{diffDate(flightlay.departureTime, flightlay.arrivalTime) }}
-                                            <small><i></i><i></i></small>
-                                        </span>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <b>{{flightlay.arrivalTime| date:'hh:mm'}}</b>
-                                        <strong>{{flightlay.destination.cityName}}</strong>
-
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div ng-show="{{$index==0}}">
-
-                                <div class="col-md-3 text-center air-logo">
-                                    <img src="/images/airlines-logo/{{flightlay.airline.name}}.png" width="45" />
-                                    <span>{{flightlay.airline.name}}</span>
-                                    <span>{{flightlay.airline.code}}-{{flightlay.airline.flightNumber}}</span>
-                                </div>
-                                <div class="col-md-9 air-time">
-                                    <div class="col-md-4">
-                                        <b>{{flightlay.departureTime| date:'hh:mm'}}</b>
-                                        <strong>{{flightlay.origin.cityName}}</strong>
-                                    </div>
-                                    <div class="col-md-4 air-duration pl-0 pr-0">
-                                        <span>
-                                            {{diffDate(flightlay.departureTime, flightlay.arrivalTime) }}
-                                            <small><i></i><i></i></small>
-                                        </span>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <b>{{flightlay.arrivalTime| date:'hh:mm'}}</b>
-                                        <strong>{{flightlay.destination.cityName}}</strong>
-
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-
-        </div>
+        
     </section>
     <section class="select-way">
         <div class="container">
