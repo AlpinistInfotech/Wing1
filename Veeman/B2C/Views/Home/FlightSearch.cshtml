@@ -235,38 +235,40 @@
         <div class="container">
             <div asp-validation-summary="All" class="text-danger"></div>
             @if ((Model.JourneyType == B2C.Classes.enmJourneyType.OneWay && (Model.Results?.Count ?? 0) < 1) ||
-                (Model.JourneyType == B2C.Classes.enmJourneyType.Return && (Model.Results?.Count ?? 0) < 2))
+               (Model.JourneyType == B2C.Classes.enmJourneyType.Return && (Model.Results?.Count ?? 0) < 2))
             {
-            <div class="col-md-9">
-                <div class="text-danger">Could not find any Flights</div>
-            </div>
+                <div class="col-md-9">
+                    <div class="text-danger">Could not find any Flights</div>
+                </div>
             }
             else
             {
-                <div class="col-md-9">
-                    <div class="select-dep onway col-md-12">
-                        <h3><img src="/images/flight-icon.jpg" width="33" /> SELECT DEPARTING FLIGHT</h3>
-                        <h4><b>@Model.From to @Model.To</b> | @Model.DepartureDt.ToString("dddd, dd-MMM-yyyy")</h4>
-                        @foreach (var mdl in Model.Results[0])
-                        {
-                            @await Html.PartialAsync("_FlightDetail", mdl);
-                        }
+                @(ViewBag.JourneyType= B2C.Classes.enmJourneyType.OneWay)
+        <div class="col-md-9">
+            <div class="select-dep onway col-md-12">
+                <h3><img src="/images/flight-icon.jpg" width="33" /> SELECT DEPARTING FLIGHT</h3>
+                <h4><b>@Model.From to @Model.To</b> | @Model.DepartureDt.ToString("dddd, dd-MMM-yyyy")</h4>
+                @foreach (var mdl in Model.Results[0])
+                {
+                    @await Html.PartialAsync("_FlightDetail", mdl);
+                }
 
-                    </div>
-                    @if (Model.JourneyType == B2C.Classes.enmJourneyType.Return)
+            </div>
+            @if (Model.JourneyType == B2C.Classes.enmJourneyType.Return)
+            {
+                @(ViewBag.JourneyType= B2C.Classes.enmJourneyType.Return)
+                <div class="select-dep onway col-md-12">
+                    <h3><img src="/images/flight-icon.jpg" width="33" /> SELECT RETURNING FLIGHT</h3>
+                    <h4><b>@Model.To to @Model.From</b> | @Model.ReturnDt.ToString("dddd, dd-MMM-yyyy")</h4>
+
+                    @foreach (var mdl in Model.Results[1])
                     {
-                        <div class="select-dep onway col-md-12">
-                            <h3><img src="/images/flight-icon.jpg" width="33" /> SELECT RETURNING FLIGHT</h3>
-                            <h4><b>@Model.To to @Model.From</b> | @Model.ReturnDt.ToString("dddd, dd-MMM-yyyy")</h4>
-
-                            @foreach (var mdl in Model.Results[1])
-                            {
-                                @await Html.PartialAsync("_FlightDetail", mdl);
-                            }
-
-                        </div>
+                        @await Html.PartialAsync("_FlightDetail", mdl);
                     }
+
                 </div>
+            }
+        </div>
             }
 
             <div class="col-md-3">
@@ -281,15 +283,29 @@
         <div class="container">
             <div class="col-md-12 pl-0 pr-0">
                 <div class="col-md-3 total-price">
-                    <strong>Total price for all Passengers</strong>
-                    <b><i class="fa fa-rupee"></i>4342</b>
+                    <input type="hidden" id="OnewayTraceId" value="">
+                    <input type="hidden" id="OnewayResultIndex" value="">
+                    <input type="hidden" id="OnewayPrice" value="0">
+                    <input type="hidden" id="ReturnTraceId" value="">
+                    <input type="hidden" id="ReturnResultIndex" value="">
+                    <input type="hidden" id="ReturnPrice" value="0">
+                    <strong>Total price for one Passengers</strong>
+                    <b><i class="fa fa-rupee"></i><span id="lblTotalPrice">-</span> </b>
                 </div>
-                <div class="col-md-6 select-way-time">
-                    <strong>Selected Departure</strong>
-                    <small>6:50 (DEL) - 09:00 (BOM)</small>
+
+                <div class="col-md-3 select-way-time">
+                    <strong>Departure : <span id="lblOnewayFligtName">-</span></strong>
+                    <small id="lblOnewayFligtTime"> Select Departure Flight</small>
                 </div>
+                @if (Model.JourneyType == B2C.Classes.enmJourneyType.Return)
+                {
+            <div class="col-md-3 select-way-time">
+                <strong>Return : <span id="lblReturnFligtName">-</span></strong>
+                                         <small id="lblReturnFligtTime"> Select Return Flight</small>
+            </div>
+                }
                 <div class="col-md-3 select-btn">
-                    <button>Select your return flight</button>
+                    <button id="btnFlightReview">Book</button>
                 </div>
             </div>
         </div>
@@ -317,480 +333,532 @@
                 $("#rdoOneWay").prop("checked", false);
                 $("#rdoReturnTrip").prop("checked", true);
             }
+            $('.flight-detail-btn').on('click', function () {
+                $(this).parent('.select-btn').siblings('.flight-detail-bx').toggle();
+                $(this).parent('.select-btn').siblings('.option-price-bx').hide();
+                $(this).siblings('.hide-fare-btn').hide();
+                $(this).siblings('.morefare-btn').show();
+            });
+
+
+
+            $('.morefare-btn').on('click', function () {
+                $(this).hide();
+                $(this).siblings('.hide-fare-btn').show();
+                $(this).parent('.select-btn').siblings('.option-price-bx').toggle();
+                $(this).parent('.select-btn').siblings('.flight-detail-bx').hide();
+            });
+            $('.hide-fare-btn').on('click', function () {
+                $(this).hide();
+                $(this).siblings('.morefare-btn').show();
+                $(this).parent('.select-btn').siblings('.option-price-bx').toggle();
+            });
+
+            $('.btnfareReview').on('click', function () {
+                let journeyType = $(this).data("journeytype");
+                console.log(journeyType )
+                if (journeyType == "@B2C.Classes.enmJourneyType.OneWay") {
+                    $("#OnewayTraceId").val($(this).data("traceid"));
+                    $("#OnewayResultIndex").val($(this).data("resultindex"));
+                    $("#OnewayPrice").val($(this).data("price"));
+                    $("#lblOnewayFligtName").text($(this).data("airline"));
+                    $("#lblOnewayFligtTime").text($(this).data("airlinetime"));
+                }
+                else {
+                    $("#ReturnTraceId").val($(this).data("traceid"));
+                    $("#ReturnResultIndex").val($(this).data("resultindex"));
+                    $("#ReturnPrice").val($(this).data("price"));
+                    $("#lblReturnFligtName").text($(this).data("airline"));
+                    $("#lblReturnFligtTime").text($(this).data("airlinetime"));
+                }
+
+                let OnewayFare = 0, ReturnFare = 0,TotalFare=0;
+                try {
+                    OnewayFare = $("#OnewayPrice").val();
+                    ReturnFare = $("#ReturnPrice").val();
+                } finally
+                {
+                    TotalFare = OnewayFare + ReturnFare;
+                    $("#lblTotalPrice").text(TotalFare.toLocaleString("en-IN"));
+
+                }
+
+            });
+
 
 
         })
 
-        var rootUrl = localStorage.getItem("rootUrl");
-        var app = angular.module('MyApp', ['ngCookies'])
+        //var rootUrl = localStorage.getItem("rootUrl");
+        //var app = angular.module('MyApp', ['ngCookies'])
 
-        app.controller('MyController', function ($scope, $http, $window, $cookieStore) {
-            var today = new Date();
-            var expiresValue = new Date(today);
+        //app.controller('MyController', function ($scope, $http, $window, $cookieStore) {
+        //    var today = new Date();
+        //    var expiresValue = new Date(today);
 
-            //Set 'expires' option in 5 minute
-            expiresValue.setMinutes(today.getMinutes() + 5);
-           // $cookieStore.put('lastValue','123');
-          //  var value = $cookieStore.get("lastValue");
+        //    //Set 'expires' option in 5 minute
+        //    expiresValue.setMinutes(today.getMinutes() + 5);
+        //   // $cookieStore.put('lastValue','123');
+        //  //  var value = $cookieStore.get("lastValue");
 
-            $scope.DefaultLabel = "Loading.....";
-            $scope.minfare = 0;
-            $scope.maxfare = 7399;
-            var post = $http({
-                method: "GET",
-                url: rootUrl + "air/GetAirport/true/true",
-                dataType: 'json',
-                data: {},
+        //    $scope.DefaultLabel = "Loading.....";
+        //    $scope.minfare = 0;
+        //    $scope.maxfare = 7399;
+        //    var post = $http({
+        //        method: "GET",
+        //        url: rootUrl + "air/GetAirport/true/true",
+        //        dataType: 'json',
+        //        data: {},
 
-            });
-            post.success(function (data, status) {
-                $scope.DefaultLabel = "Please Select";
-                $scope.Customers = data;
-                $cookieStore.put('airports', data, { 'expires': expiresValue });
-            });
-            post.error(function (data, status) {
-                $window.alert(data.Message);
-            });
-            $scope.display_item_form = function ($evt) {
-                var ele = angular.element($evt.target);
-                ele.parent().parent().find('.flight-detail-bx').toggle();
-            }
-            var queryString = new Array();
-            if ($window.location.search.split('?').length > 1) {
+        //    });
+        //    post.success(function (data, status) {
+        //        $scope.DefaultLabel = "Please Select";
+        //        $scope.Customers = data;
+        //        $cookieStore.put('airports', data, { 'expires': expiresValue });
+        //    });
+        //    post.error(function (data, status) {
+        //        $window.alert(data.Message);
+        //    });
+        //    $scope.display_item_form = function ($evt) {
+        //        var ele = angular.element($evt.target);
+        //        ele.parent().parent().find('.flight-detail-bx').toggle();
+        //    }
+        //    var queryString = new Array();
+        //    if ($window.location.search.split('?').length > 1) {
 
-                var params = $window.location.search.split('?')[1].split('&');
-                for (var i = 0; i < params.length; i++) {
-                    var key = params[i].split('=')[0];
-                    var value = decodeURIComponent(params[i].split('=')[1]);
-                    queryString[key] = value;
-                }
-            }
-            if (queryString["itinerary"] != null && queryString["ttype"] != null && queryString["paxtype"] != null && queryString["cc"] != null && queryString["fdate"] != null) {
-                var itinerary = queryString["itinerary"];
-                var from = itinerary.split('-')[0];
-                $scope.selecteddestfrom = from;
-                var to = itinerary.split('-')[1];
-                $scope.selecteddestto = to;
+        //        var params = $window.location.search.split('?')[1].split('&');
+        //        for (var i = 0; i < params.length; i++) {
+        //            var key = params[i].split('=')[0];
+        //            var value = decodeURIComponent(params[i].split('=')[1]);
+        //            queryString[key] = value;
+        //        }
+        //    }
+        //    if (queryString["itinerary"] != null && queryString["ttype"] != null && queryString["paxtype"] != null && queryString["cc"] != null && queryString["fdate"] != null) {
+        //        var itinerary = queryString["itinerary"];
+        //        var from = itinerary.split('-')[0];
+        //        $scope.selecteddestfrom = from;
+        //        var to = itinerary.split('-')[1];
+        //        $scope.selecteddestto = to;
 
-                var triptype = queryString["ttype"];
-                var paxtype = queryString["paxtype"];
-                var adult = paxtype.split('_')[0];
-                var adultcnt = adult.split('-')[1];
-                var child = paxtype.split('_')[1];
-                var childcnt = child.split('-')[1];
-                var infant = paxtype.split('_')[2];
-                var infantcnt = infant.split('-')[1];
-                var totpass = parseInt(adultcnt) + parseInt(childcnt) + parseInt(infantcnt)
-                $scope.totpass = totpass;
-                var cabin = queryString["cc"];
-                $scope.cabin = cabin;
-                $scope.tclass = cabin + ', ' + totpass + ' Passenger';
-                var cc = 2;
-                if (cabin == 'Economy') {
-                    cc = 2;
-                }
-                else if (cabin == 'Premium Economy') {
-                    cc = 3;
-                }
-                else if (cabin == 'Business') {
-                    cc = 4;
-                }
-                else {
-                    cc = 6;
-                }
-                var fdate = queryString["fdate"];
+        //        var triptype = queryString["ttype"];
+        //        var paxtype = queryString["paxtype"];
+        //        var adult = paxtype.split('_')[0];
+        //        var adultcnt = adult.split('-')[1];
+        //        var child = paxtype.split('_')[1];
+        //        var childcnt = child.split('-')[1];
+        //        var infant = paxtype.split('_')[2];
+        //        var infantcnt = infant.split('-')[1];
+        //        var totpass = parseInt(adultcnt) + parseInt(childcnt) + parseInt(infantcnt)
+        //        $scope.totpass = totpass;
+        //        var cabin = queryString["cc"];
+        //        $scope.cabin = cabin;
+        //        $scope.tclass = cabin + ', ' + totpass + ' Passenger';
+        //        var cc = 2;
+        //        if (cabin == 'Economy') {
+        //            cc = 2;
+        //        }
+        //        else if (cabin == 'Premium Economy') {
+        //            cc = 3;
+        //        }
+        //        else if (cabin == 'Business') {
+        //            cc = 4;
+        //        }
+        //        else {
+        //            cc = 6;
+        //        }
+        //        var fdate = queryString["fdate"];
 
-                $scope.fromdate = fdate;
-                var rdate = null;
+        //        $scope.fromdate = fdate;
+        //        var rdate = null;
 
-                var jtype = 1;
-                if (triptype == 'r') {
-                    rdate = queryString["rdate"];
-                    jtype = 2;
-                    $scope.ttype = 'r';
-                   // $scope.roundtrip = true;
-                   // $scope.onetrip = false;
-                    $scope.returndate = rdate;
-                }
-                else {
-                   // $scope.roundtrip = false;
-                   // $scope.onetrip = true;
-                    $scope.ttype = 'o';
-                    $scope.returndate = fdate;
-                }
-
-
-                $scope.loading = true;
-                var post = $http({
-                    method: "POST",
-                    url: rootUrl + "air/SearchFlight/VMN",
-                    dataType: 'json',
-                    data: {
-                        "From": from,
-                        "To": to,
-                        "JourneyType": jtype, //OneWay = 1, Return = 2,
-                        "CabinClass": cabin, // ECONOMY = 2, PREMIUM_ECONOMY = 3, BUSINESS = 4,FIRST = 6
-                        "DepartureDt": fdate,
-                        "ReturnDt": rdate,
-                        "AdultCount": adultcnt,
-                        "ChildCount": childcnt,
-                        "InfantCount": infantcnt,
-                        "DirectFlight": true
-                    },
-
-                });
-
-                post.success(function (data, status) {
-                    debugger;
-                    $scope.Flights = data;
-                    $scope.loading = false;
-                   // $cookies.put('flightsearch', data);
-                    //flight.totalPriceList[0].netFare
-                    //$scope.minfare = Math.min.apply(Math, $scope.Flights.map(function (item) { return item.age; }));
-
-                    //$scope.maxfare = Math.max.apply(Math, $scope.Flights.map(function (item) { return item.age; }));
-                    $scope.destfrom = from;
-                    flightname = [];
-                    originname = [];
-                    stopss = [];
-                    var minp = 0;
-                    var maxp = 0;
-                    angular.forEach(data.returnId.results[0], function (item) {
-
-                        var flight = item.segment[0].airline.name;
-                        var price = item.totalPriceList[0].netFare;
-                        if (minp == 0) {
-                            minp = price;
-                        }
-                        if (price > maxp) {
-                            maxp = price;
-                        }
-                        if (price <minp) {
-                            minp = price;
-                        }
-
-                        if (flightname.indexOf(flight) === -1) {
-                            flightname.push(flight);
-                        }
-                        var dept = item.segment[0].origin.cityName;
-                        if (originname.indexOf(dept) === -1) {
-                            originname.push(dept);
-                        }
-                        var stoplen = item.segment.length - 1;
-                        var stop = 'non-stop';
-                        if (stoplen > 0) {
-                            stop = stoplen + "-stop";
-                        }
-                        if (stopss.indexOf(stop) === -1) {
-                            stopss.push(stop);
-                        }
-                    });
-
-                    $scope.airlinename = flightname;
-                    $scope.departurename = originname;
-                    $scope.stopage = stopss;
-                    $scope.minfare = minp;
-                    $scope.maxfare = maxp;
-                    //$scope.airlines2 = data.returnId.results[0][0].segment[0].airline.name; // red
-
-                });
-
-                post.error(function (data, status) {
-                    $window.alert(data.Message);
-                    $scope.loading = false;
-                });
+        //        var jtype = 1;
+        //        if (triptype == 'r') {
+        //            rdate = queryString["rdate"];
+        //            jtype = 2;
+        //            $scope.ttype = 'r';
+        //           // $scope.roundtrip = true;
+        //           // $scope.onetrip = false;
+        //            $scope.returndate = rdate;
+        //        }
+        //        else {
+        //           // $scope.roundtrip = false;
+        //           // $scope.onetrip = true;
+        //            $scope.ttype = 'o';
+        //            $scope.returndate = fdate;
+        //        }
 
 
-            }
+        //        $scope.loading = true;
+        //        var post = $http({
+        //            method: "POST",
+        //            url: rootUrl + "air/SearchFlight/VMN",
+        //            dataType: 'json',
+        //            data: {
+        //                "From": from,
+        //                "To": to,
+        //                "JourneyType": jtype, //OneWay = 1, Return = 2,
+        //                "CabinClass": cabin, // ECONOMY = 2, PREMIUM_ECONOMY = 3, BUSINESS = 4,FIRST = 6
+        //                "DepartureDt": fdate,
+        //                "ReturnDt": rdate,
+        //                "AdultCount": adultcnt,
+        //                "ChildCount": childcnt,
+        //                "InfantCount": infantcnt,
+        //                "DirectFlight": true
+        //            },
 
-            $scope.diffDate = function (date1, date2) {
+        //        });
 
-                var dateout1 = Date.parse(date1, "yyyy-MM-dd HH:mm:ss");
-                var dateout2 = Date.parse(date2, "yyyy-MM-dd HH:mm:ss");
-                // var dateOut1 = new Date(date1); // it will work if date1 is in ISO format
-                // var dateOut2 = new Date(date2);
-                // TimeSpan ts=
-                var timeDiff = Math.abs(dateout2 - dateout1);
-                var seconds = timeDiff / 1000;
-                var minutes = seconds / 60;
-                var relmin = minutes % 60;
-                var hours = Math.floor(minutes / 60);
-                hours = hours < 10 ? '0' + hours : hours;
-                relmin = relmin < 10 ? '0' + relmin : relmin;
-                var days = hours / 24;
+        //        post.success(function (data, status) {
+        //            debugger;
+        //            $scope.Flights = data;
+        //            $scope.loading = false;
+        //           // $cookies.put('flightsearch', data);
+        //            //flight.totalPriceList[0].netFare
+        //            //$scope.minfare = Math.min.apply(Math, $scope.Flights.map(function (item) { return item.age; }));
 
-                var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-                return parseInt(hours) + 'h:' + relmin + 'm';
-            };
-            $scope.diffoverlay = function (date1, date2) {
-                var dateout1 = Date.parse(date1, "yyyy-MM-dd HH:mm:ss");
-                var dateout2 = Date.parse(date2, "yyyy-MM-dd HH:mm:ss");
-                // var dateOut1 = new Date(date1); // it will work if date1 is in ISO format
-                // var dateOut2 = new Date(date2);
-                // TimeSpan ts=
-                var timeDiff = Math.abs(dateout2 - dateout1);
-                var seconds = timeDiff / 1000;
-                var minutes = seconds / 60;
-                var relmin = minutes % 60;
-                var hours = Math.floor(minutes / 60);
-                hours = hours < 10 ? '0' + hours : hours;
-                relmin = relmin < 10 ? '0' + relmin : relmin;
-                var days = hours / 24;
+        //            //$scope.maxfare = Math.max.apply(Math, $scope.Flights.map(function (item) { return item.age; }));
+        //            $scope.destfrom = from;
+        //            flightname = [];
+        //            originname = [];
+        //            stopss = [];
+        //            var minp = 0;
+        //            var maxp = 0;
+        //            angular.forEach(data.returnId.results[0], function (item) {
 
-                var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-                return parseInt(hours) + 'h:' + relmin + 'm';
-            };
-            $scope.RedirectToURL = function () {
-                debugger;
-                var from = $('#destfrom').find('option:selected').val();
-                var to = $('#destto').find('option:selected').val();
-                var triptype = $("input[type='radio'][name='radio']:checked").val();
-                var fdate = $('#fromdate').val();
-                var rdate = $('#returndate').val();
-                var cc = $('#ddlcabin').find('option:selected').val();
-                var paxtype = 'A-' + $('#adquantity').val() + '_C-' + $('#cdquantity').val() + '_I-' + $('#inquantity').val();
-                if (triptype == 'o') {
-                    var landingUrl = "/home/Searchresult?itinerary=" + from + '-' + to + '&ttype=' + triptype + '&fdate=' + fdate + '&paxtype=' + paxtype + '&cc=' + cc;
+        //                var flight = item.segment[0].airline.name;
+        //                var price = item.totalPriceList[0].netFare;
+        //                if (minp == 0) {
+        //                    minp = price;
+        //                }
+        //                if (price > maxp) {
+        //                    maxp = price;
+        //                }
+        //                if (price <minp) {
+        //                    minp = price;
+        //                }
 
-                    $window.location.href = landingUrl;
-                }
-                else {
-                    var landingUrl = "/home/Searchresult?itinerary=" + from + '-' + to + '&ttype=' + triptype + '&fdate=' + fdate + '&rdate=' + rdate + '&paxtype=' + paxtype + '&cc=' + cc;
+        //                if (flightname.indexOf(flight) === -1) {
+        //                    flightname.push(flight);
+        //                }
+        //                var dept = item.segment[0].origin.cityName;
+        //                if (originname.indexOf(dept) === -1) {
+        //                    originname.push(dept);
+        //                }
+        //                var stoplen = item.segment.length - 1;
+        //                var stop = 'non-stop';
+        //                if (stoplen > 0) {
+        //                    stop = stoplen + "-stop";
+        //                }
+        //                if (stopss.indexOf(stop) === -1) {
+        //                    stopss.push(stop);
+        //                }
+        //            });
 
-                    $window.location.href = landingUrl;
-                }
-            };
+        //            $scope.airlinename = flightname;
+        //            $scope.departurename = originname;
+        //            $scope.stopage = stopss;
+        //            $scope.minfare = minp;
+        //            $scope.maxfare = maxp;
+        //            //$scope.airlines2 = data.returnId.results[0][0].segment[0].airline.name; // red
 
-        });
-        app.filter('airlinesFilter', ['$filter', function ($filter) {
+        //        });
 
-            return function (inputArray, stop, duration,minfare,maxfare) {
-
-                //if (airlines == undefined) {
-                //    airlines = "";
-                //}
-                if (duration == undefined) {
-                    duration = "";
-                }
-                //if (departure == undefined) {
-                //    departure = "";
-                //}
-                if (stop == undefined) {
-                    stop = "";
-                }
-                //if (price == undefined) {
-                //    price = 0;
-                //}
-                //if ((!angular.isDefined(airlines) || airlines === '') && (!angular.isDefined(departure) || departure === '') && (!angular.isDefined(stop) || stop === '') && (!angular.isDefined(duration) || duration === '')) {
-                //    return inputArray;
-                //}
-                if ((!angular.isDefined(stop) || stop === '') && (!angular.isDefined(duration) || duration === '') &&(maxfare==0)) {
-                    return inputArray;
-                }
-                var data = [];
-                angular.forEach(inputArray, function (item) {
-
-                    var stops = (item.segment.length - 1) + '-stop'.toLowerCase();
-                    if (stops == "0-stop") {
-                        stops = "non-stop"
-                    }
-                    var dt = $filter('date')(item.segment[0].departureTime, 'yyyy-MM-dd');
-                    var fromd = dt + "T03:00:00";
-                    var tod = dt + "T06:00:00";
-                    if (duration == 'Morning') {
-                        var fromd = dt + "T06:01:00";
-                        var tod = dt + "T12:00:00";
-                    }
-                    else if (duration == 'Afternoon') {
-                        var fromd = dt + "T12:01:00";
-                        var tod = dt + "T18:00:00";
-                    }
-                    else if (duration == 'Evening') {
-                        var fromd = dt + "T18:01:00";
-                        var tod = dt + "T21:00:00";
-                    }
-                    else if (duration == 'Night') {
-                        var fromd = dt + "T21:01:00";
-                        var tod = dt + "T02:59:59";
-                    }
-                    else {
-                        var fromd = dt + "T03:00:00";
-                        var tod = dt + "T06:00:00";
-                    }
-                    var farerul = (item.totalPriceList[0].netFare >= minfare && item.totalPriceList[0].netFare <= maxfare);
-                    var durran = (item.segment[0].departureTime >= fromd && item.segment[0].departureTime <= tod);
-                    if (duration != "" && stop != "") {
-                        if ((stops.indexOf(stop.toLowerCase()) != -1) && durran == true && farerul==true) {
-                            data.push(item);
-                        }
-
-                    }
-
-                    else if (duration == "" && stop != "") {
-                        if ((stops.indexOf(stop.toLowerCase()) != -1) && farerul == true) {
-                            data.push(item);
-                        }
-
-                    }
-
-                    else if (duration != "" && stop == "") {
-                        if (durran == true && farerul == true) {
-                            data.push(item);
-                        }
-
-                    }
+        //        post.error(function (data, status) {
+        //            $window.alert(data.Message);
+        //            $scope.loading = false;
+        //        });
 
 
+        //    }
+
+        //    $scope.diffDate = function (date1, date2) {
+
+        //        var dateout1 = Date.parse(date1, "yyyy-MM-dd HH:mm:ss");
+        //        var dateout2 = Date.parse(date2, "yyyy-MM-dd HH:mm:ss");
+        //        // var dateOut1 = new Date(date1); // it will work if date1 is in ISO format
+        //        // var dateOut2 = new Date(date2);
+        //        // TimeSpan ts=
+        //        var timeDiff = Math.abs(dateout2 - dateout1);
+        //        var seconds = timeDiff / 1000;
+        //        var minutes = seconds / 60;
+        //        var relmin = minutes % 60;
+        //        var hours = Math.floor(minutes / 60);
+        //        hours = hours < 10 ? '0' + hours : hours;
+        //        relmin = relmin < 10 ? '0' + relmin : relmin;
+        //        var days = hours / 24;
+
+        //        var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+        //        return parseInt(hours) + 'h:' + relmin + 'm';
+        //    };
+        //    $scope.diffoverlay = function (date1, date2) {
+        //        var dateout1 = Date.parse(date1, "yyyy-MM-dd HH:mm:ss");
+        //        var dateout2 = Date.parse(date2, "yyyy-MM-dd HH:mm:ss");
+        //        // var dateOut1 = new Date(date1); // it will work if date1 is in ISO format
+        //        // var dateOut2 = new Date(date2);
+        //        // TimeSpan ts=
+        //        var timeDiff = Math.abs(dateout2 - dateout1);
+        //        var seconds = timeDiff / 1000;
+        //        var minutes = seconds / 60;
+        //        var relmin = minutes % 60;
+        //        var hours = Math.floor(minutes / 60);
+        //        hours = hours < 10 ? '0' + hours : hours;
+        //        relmin = relmin < 10 ? '0' + relmin : relmin;
+        //        var days = hours / 24;
+
+        //        var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+        //        return parseInt(hours) + 'h:' + relmin + 'm';
+        //    };
+        //    $scope.RedirectToURL = function () {
+        //        debugger;
+        //        var from = $('#destfrom').find('option:selected').val();
+        //        var to = $('#destto').find('option:selected').val();
+        //        var triptype = $("input[type='radio'][name='radio']:checked").val();
+        //        var fdate = $('#fromdate').val();
+        //        var rdate = $('#returndate').val();
+        //        var cc = $('#ddlcabin').find('option:selected').val();
+        //        var paxtype = 'A-' + $('#adquantity').val() + '_C-' + $('#cdquantity').val() + '_I-' + $('#inquantity').val();
+        //        if (triptype == 'o') {
+        //            var landingUrl = "/home/Searchresult?itinerary=" + from + '-' + to + '&ttype=' + triptype + '&fdate=' + fdate + '&paxtype=' + paxtype + '&cc=' + cc;
+
+        //            $window.location.href = landingUrl;
+        //        }
+        //        else {
+        //            var landingUrl = "/home/Searchresult?itinerary=" + from + '-' + to + '&ttype=' + triptype + '&fdate=' + fdate + '&rdate=' + rdate + '&paxtype=' + paxtype + '&cc=' + cc;
+
+        //            $window.location.href = landingUrl;
+        //        }
+        //    };
+
+        //});
+        //app.filter('airlinesFilter', ['$filter', function ($filter) {
+
+        //    return function (inputArray, stop, duration,minfare,maxfare) {
+
+        //        //if (airlines == undefined) {
+        //        //    airlines = "";
+        //        //}
+        //        if (duration == undefined) {
+        //            duration = "";
+        //        }
+        //        //if (departure == undefined) {
+        //        //    departure = "";
+        //        //}
+        //        if (stop == undefined) {
+        //            stop = "";
+        //        }
+        //        //if (price == undefined) {
+        //        //    price = 0;
+        //        //}
+        //        //if ((!angular.isDefined(airlines) || airlines === '') && (!angular.isDefined(departure) || departure === '') && (!angular.isDefined(stop) || stop === '') && (!angular.isDefined(duration) || duration === '')) {
+        //        //    return inputArray;
+        //        //}
+        //        if ((!angular.isDefined(stop) || stop === '') && (!angular.isDefined(duration) || duration === '') &&(maxfare==0)) {
+        //            return inputArray;
+        //        }
+        //        var data = [];
+        //        angular.forEach(inputArray, function (item) {
+
+        //            var stops = (item.segment.length - 1) + '-stop'.toLowerCase();
+        //            if (stops == "0-stop") {
+        //                stops = "non-stop"
+        //            }
+        //            var dt = $filter('date')(item.segment[0].departureTime, 'yyyy-MM-dd');
+        //            var fromd = dt + "T03:00:00";
+        //            var tod = dt + "T06:00:00";
+        //            if (duration == 'Morning') {
+        //                var fromd = dt + "T06:01:00";
+        //                var tod = dt + "T12:00:00";
+        //            }
+        //            else if (duration == 'Afternoon') {
+        //                var fromd = dt + "T12:01:00";
+        //                var tod = dt + "T18:00:00";
+        //            }
+        //            else if (duration == 'Evening') {
+        //                var fromd = dt + "T18:01:00";
+        //                var tod = dt + "T21:00:00";
+        //            }
+        //            else if (duration == 'Night') {
+        //                var fromd = dt + "T21:01:00";
+        //                var tod = dt + "T02:59:59";
+        //            }
+        //            else {
+        //                var fromd = dt + "T03:00:00";
+        //                var tod = dt + "T06:00:00";
+        //            }
+        //            var farerul = (item.totalPriceList[0].netFare >= minfare && item.totalPriceList[0].netFare <= maxfare);
+        //            var durran = (item.segment[0].departureTime >= fromd && item.segment[0].departureTime <= tod);
+        //            if (duration != "" && stop != "") {
+        //                if ((stops.indexOf(stop.toLowerCase()) != -1) && durran == true && farerul==true) {
+        //                    data.push(item);
+        //                }
+
+        //            }
+
+        //            else if (duration == "" && stop != "") {
+        //                if ((stops.indexOf(stop.toLowerCase()) != -1) && farerul == true) {
+        //                    data.push(item);
+        //                }
+
+        //            }
+
+        //            else if (duration != "" && stop == "") {
+        //                if (durran == true && farerul == true) {
+        //                    data.push(item);
+        //                }
+
+        //            }
 
 
-                    else {
-                        if (farerul) {
-                            data.push(item);
-                        }
 
-                    }
 
-                });
-                return data;
-            };
-        }]);
-        app.directive('sliderRange', ['$document', function ($document) {
+        //            else {
+        //                if (farerul) {
+        //                    data.push(item);
+        //                }
 
-            // Move slider handle and range line
-            var moveHandle = function (handle, elem, posX) {
-                $(elem).find('.handle.' + handle).css("left", posX + '%');
-            };
-            var moveRange = function (elem, posMin, posMax) {
-                $(elem).find('.range').css("left", posMin + '%');
-                $(elem).find('.range').css("width", posMax - posMin + '%');
-            };
+        //            }
 
-            return {
-                template: '<div class="slider horizontal">' +
-                    '<div class="range"></div>' +
-                    '<a class="handle min" ng-mousedown="mouseDownMin($event)"></a>' +
-                    '<a class="handle max" ng-mousedown="mouseDownMax($event)"></a>' +
-                    '</div>',
-                replace: true,
-                restrict: 'E',
-                scope: {
-                    valueMin: "=",
-                    valueMax: "="
-                },
-                link: function postLink(scope, element, attrs) {
-                    // Initilization
-                    var dragging = false;
-                    var startPointXMin = 0;
-                    var startPointXMax = 0;
-                    var xPosMin = 0;
-                    var xPosMax = 0;
-                    var settings = {
-                        "min": (typeof (attrs.min) !== "undefined" ? parseInt(attrs.min, 10) : 0),
-                        "max": (typeof (attrs.max) !== "undefined" ? parseInt(attrs.max, 10) : 10000),
-                        "step": (typeof (attrs.step) !== "undefined" ? parseInt(attrs.step, 10) : 1)
-                    };
-                    if (typeof (scope.valueMin) == "undefined" || scope.valueMin === '')
-                        scope.valueMin = settings.min;
+        //        });
+        //        return data;
+        //    };
+        //}]);
+        //app.directive('sliderRange', ['$document', function ($document) {
 
-                    if (typeof (scope.valueMax) == "undefined" || scope.valueMax === '')
-                        scope.valueMax = settings.max;
+        //    // Move slider handle and range line
+        //    var moveHandle = function (handle, elem, posX) {
+        //        $(elem).find('.handle.' + handle).css("left", posX + '%');
+        //    };
+        //    var moveRange = function (elem, posMin, posMax) {
+        //        $(elem).find('.range').css("left", posMin + '%');
+        //        $(elem).find('.range').css("width", posMax - posMin + '%');
+        //    };
 
-                    // Track changes only from the outside of the directive
-                    scope.$watch('valueMin', function () {
-                        if (dragging) return;
-                        xPosMin = (scope.valueMin - settings.min) / (settings.max - settings.min) * 100;
-                        if (xPosMin < 0) {
-                            xPosMin = 0;
-                        } else if (xPosMin > 100) {
-                            xPosMin = 100;
-                        }
-                        moveHandle("min", element, xPosMin);
-                        moveRange(element, xPosMin, xPosMax);
-                    });
+        //    return {
+        //        template: '<div class="slider horizontal">' +
+        //            '<div class="range"></div>' +
+        //            '<a class="handle min" ng-mousedown="mouseDownMin($event)"></a>' +
+        //            '<a class="handle max" ng-mousedown="mouseDownMax($event)"></a>' +
+        //            '</div>',
+        //        replace: true,
+        //        restrict: 'E',
+        //        scope: {
+        //            valueMin: "=",
+        //            valueMax: "="
+        //        },
+        //        link: function postLink(scope, element, attrs) {
+        //            // Initilization
+        //            var dragging = false;
+        //            var startPointXMin = 0;
+        //            var startPointXMax = 0;
+        //            var xPosMin = 0;
+        //            var xPosMax = 0;
+        //            var settings = {
+        //                "min": (typeof (attrs.min) !== "undefined" ? parseInt(attrs.min, 10) : 0),
+        //                "max": (typeof (attrs.max) !== "undefined" ? parseInt(attrs.max, 10) : 10000),
+        //                "step": (typeof (attrs.step) !== "undefined" ? parseInt(attrs.step, 10) : 1)
+        //            };
+        //            if (typeof (scope.valueMin) == "undefined" || scope.valueMin === '')
+        //                scope.valueMin = settings.min;
 
-                    scope.$watch('valueMax', function () {
-                        if (dragging) return;
-                        xPosMax = (scope.valueMax - settings.min) / (settings.max - settings.min) * 100;
-                        if (xPosMax < 0) {
-                            xPosMax = 0;
-                        } else if (xPosMax > 100) {
-                            xPosMax = 100;
-                        }
-                        moveHandle("max", element, xPosMax);
-                        moveRange(element, xPosMin, xPosMax);
-                    });
+        //            if (typeof (scope.valueMax) == "undefined" || scope.valueMax === '')
+        //                scope.valueMax = settings.max;
 
-                    // Real action control is here
-                    scope.mouseDownMin = function ($event) {
-                        dragging = true;
-                        startPointXMin = $event.pageX;
+        //            // Track changes only from the outside of the directive
+        //            scope.$watch('valueMin', function () {
+        //                if (dragging) return;
+        //                xPosMin = (scope.valueMin - settings.min) / (settings.max - settings.min) * 100;
+        //                if (xPosMin < 0) {
+        //                    xPosMin = 0;
+        //                } else if (xPosMin > 100) {
+        //                    xPosMin = 100;
+        //                }
+        //                moveHandle("min", element, xPosMin);
+        //                moveRange(element, xPosMin, xPosMax);
+        //            });
 
-                        // Bind to full document, to make move easiery (not to lose focus on y axis)
-                        $document.on('mousemove', function ($event) {
-                            if (!dragging) return;
+        //            scope.$watch('valueMax', function () {
+        //                if (dragging) return;
+        //                xPosMax = (scope.valueMax - settings.min) / (settings.max - settings.min) * 100;
+        //                if (xPosMax < 0) {
+        //                    xPosMax = 0;
+        //                } else if (xPosMax > 100) {
+        //                    xPosMax = 100;
+        //                }
+        //                moveHandle("max", element, xPosMax);
+        //                moveRange(element, xPosMin, xPosMax);
+        //            });
 
-                            //Calculate handle position
-                            var moveDelta = $event.pageX - startPointXMin;
+        //            // Real action control is here
+        //            scope.mouseDownMin = function ($event) {
+        //                dragging = true;
+        //                startPointXMin = $event.pageX;
 
-                            xPosMin = xPosMin + ((moveDelta / element.outerWidth()) * 100);
-                            if (xPosMin < 0) {
-                                xPosMin = 0;
-                            } else if (xPosMin > xPosMax) {
-                                xPosMin = xPosMax;
-                            } else {
-                                // Prevent generating "lag" if moving outside window
-                                startPointXMin = $event.pageX;
-                            }
-                            scope.valueMin = Math.round((((settings.max - settings.min) * (xPosMin / 100)) + settings.min) / settings.step) * settings.step;
-                            scope.$apply();
+        //                // Bind to full document, to make move easiery (not to lose focus on y axis)
+        //                $document.on('mousemove', function ($event) {
+        //                    if (!dragging) return;
 
-                            // Move the Handle
-                            moveHandle("min", element, xPosMin);
-                            moveRange(element, xPosMin, xPosMax);
-                        });
-                        $document.mouseup(function () {
-                            dragging = false;
-                            $document.unbind('mousemove');
-                            $document.unbind('mousemove');
-                        });
-                    };
+        //                    //Calculate handle position
+        //                    var moveDelta = $event.pageX - startPointXMin;
 
-                    scope.mouseDownMax = function ($event) {
-                        dragging = true;
-                        startPointXMax = $event.pageX;
+        //                    xPosMin = xPosMin + ((moveDelta / element.outerWidth()) * 100);
+        //                    if (xPosMin < 0) {
+        //                        xPosMin = 0;
+        //                    } else if (xPosMin > xPosMax) {
+        //                        xPosMin = xPosMax;
+        //                    } else {
+        //                        // Prevent generating "lag" if moving outside window
+        //                        startPointXMin = $event.pageX;
+        //                    }
+        //                    scope.valueMin = Math.round((((settings.max - settings.min) * (xPosMin / 100)) + settings.min) / settings.step) * settings.step;
+        //                    scope.$apply();
 
-                        // Bind to full document, to make move easiery (not to lose focus on y axis)
-                        $document.on('mousemove', function ($event) {
-                            if (!dragging) return;
+        //                    // Move the Handle
+        //                    moveHandle("min", element, xPosMin);
+        //                    moveRange(element, xPosMin, xPosMax);
+        //                });
+        //                $document.mouseup(function () {
+        //                    dragging = false;
+        //                    $document.unbind('mousemove');
+        //                    $document.unbind('mousemove');
+        //                });
+        //            };
 
-                            //Calculate handle position
-                            var moveDelta = $event.pageX - startPointXMax;
+        //            scope.mouseDownMax = function ($event) {
+        //                dragging = true;
+        //                startPointXMax = $event.pageX;
 
-                            xPosMax = xPosMax + ((moveDelta / element.outerWidth()) * 100);
-                            if (xPosMax > 100) {
-                                xPosMax = 100;
-                            } else if (xPosMax < xPosMin) {
-                                xPosMax = xPosMin;
-                            } else {
-                                // Prevent generating "lag" if moving outside window
-                                startPointXMax = $event.pageX;
-                            }
-                            scope.valueMax = Math.round((((settings.max - settings.min) * (xPosMax / 100)) + settings.min) / settings.step) * settings.step;
-                            scope.$apply();
+        //                // Bind to full document, to make move easiery (not to lose focus on y axis)
+        //                $document.on('mousemove', function ($event) {
+        //                    if (!dragging) return;
 
-                            // Move the Handle
-                            moveHandle("max", element, xPosMax);
-                            moveRange(element, xPosMin, xPosMax);
-                        });
+        //                    //Calculate handle position
+        //                    var moveDelta = $event.pageX - startPointXMax;
 
-                        $document.mouseup(function () {
-                            dragging = false;
-                            $document.unbind('mousemove');
-                            $document.unbind('mousemove');
-                        });
-                    };
-                }
-            };
-        }]);
+        //                    xPosMax = xPosMax + ((moveDelta / element.outerWidth()) * 100);
+        //                    if (xPosMax > 100) {
+        //                        xPosMax = 100;
+        //                    } else if (xPosMax < xPosMin) {
+        //                        xPosMax = xPosMin;
+        //                    } else {
+        //                        // Prevent generating "lag" if moving outside window
+        //                        startPointXMax = $event.pageX;
+        //                    }
+        //                    scope.valueMax = Math.round((((settings.max - settings.min) * (xPosMax / 100)) + settings.min) / settings.step) * settings.step;
+        //                    scope.$apply();
+
+        //                    // Move the Handle
+        //                    moveHandle("max", element, xPosMax);
+        //                    moveRange(element, xPosMin, xPosMax);
+        //                });
+
+        //                $document.mouseup(function () {
+        //                    dragging = false;
+        //                    $document.unbind('mousemove');
+        //                    $document.unbind('mousemove');
+        //                });
+        //            };
+        //        }
+        //    };
+        //}]);
     </script>
 }

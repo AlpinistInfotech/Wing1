@@ -3,11 +3,12 @@
 @{
     double LowestFare = Model.TotalPriceList.Min(p => p.ADULT.NetFare);
     TimeSpan TotalTime = new TimeSpan(0, Model.Segment.Sum(p => p.Duration + p.Layover+p.Stops),0);
+    string Airline = string.Join(", ", Model.Segment.Select(p => p.Airline.Name).Distinct());
 }
 <div class="result-layer col-md-12 pr-0 pl-0">
     <div class="col-md-2 air-logo">
         <img src="/images/airlineslogo/@(Model.Segment.FirstOrDefault()?.Airline.Code).png" width="45" />
-        <span> @string.Join(", ", Model.Segment.Select(p => p.Airline.Name).Distinct())</span>
+        <span> @Airline </span>
         <span>@string.Join(", ", Model.Segment.Select(p => string.Concat(p.Airline.Code, "-", p.Airline.FlightNumber)))</span>
     </div>
     <div class="col-md-6 air-time">
@@ -31,8 +32,8 @@
         </div>
         <div class="col-md-5">
             <b>@Model.Segment.LastOrDefault()?.ArrivalTime.ToString("HH:mm")</b>            
-            <b>@Model.Segment.FirstOrDefault()?.Destination.AirportCode</b>
-            <small>@Model.Segment.FirstOrDefault()?.Destination.CityName, @Model.Segment.FirstOrDefault()?.Destination.CountryCode</small>
+            <b>@Model.Segment.LastOrDefault()?.Destination.AirportCode</b>
+            <small>@Model.Segment.LastOrDefault()?.Destination.CityName, @Model.Segment.LastOrDefault()?.Destination.CountryCode</small>
         </div>
     </div>
     <div class="col-md-2 air-price">
@@ -43,14 +44,28 @@
         <b><i class="fa fa-rupee"></i>@Model.TotalPriceList.Min(p => p.ADULT.NetFare).ToString("#,#.##", _currentuser.cultureInfo)</b>
     </div>
     <div class="col-md-2 select-btn">
-        <button class="morefare-btn">Select</button>
+        @if (Model.TotalPriceList.Count > 1)
+        {
+            <button class="morefare-btn">More Detail</button>
+            <button class="hide-fare-btn">Hide Fare</button>
+        }
+        else
+        {
+            <button class="btnfareReview" data-journeyType="@ViewBag.JourneyType" data-traceId="@Model.TraceId"
+                    data-resultIndex="@Model.TotalPriceList.FirstOrDefault().ResultIndex"
+                    data-price="@Model.TotalPriceList.FirstOrDefault().ADULT.NetFare" data-airline="@Airline"
+                    data-airlinetime="@string.Concat(Model.Segment.FirstOrDefault()?.DepartureTime.ToString("HH:mm")," - ", Model.Segment.LastOrDefault()?.ArrivalTime.ToString("HH:mm"))">
+                Select
+            </button>
+
+        }
         <span class="flight-detail-btn">Flight Detail</span>
     </div>
     <div class="flight-detail-bx col-md-12">
         @for (int i = 0; i < Model.Segment.Count; i++)
         {
             <div class="col-md-3 text-center air-logo">
-                <img src="/images/airlineslogo/@(Model.Segment[i].Airline.Code).jpg" width="45" />
+                <img src="/images/airlineslogo/@(Model.Segment[i].Airline.Code).png" width="45" />
                 <span>@Model.Segment[i].Airline.Name</span>
                 <span>@string.Concat(Model.Segment[i].Airline.Code, "-", Model.Segment[i].Airline.FlightNumber)</span>
             </div>
@@ -92,8 +107,8 @@
             <ul class="fare-type">
                 <li><b>Fare type</b></li>
                 <li><b>Checked Baggage</b></li>
-                @*<li><b>Hand Baggage</b></li>
-        <li><b>Seat Selection</b></li>
+                <li><b>Hand Baggage</b></li>
+        @*<li><b>Seat Selection</b></li>
         <li><b>Date Change</b></li>
         <li><b>Cancellation</b></li>*@
                 <li><b>Is Rufundable</b></li>
@@ -103,6 +118,7 @@
         <div class="col-md-9 pl-0 pr-0">
             @for (int i = 0; i < Model.TotalPriceList.Count; i++)
             {
+            <div class="col-md-3 pl-0 pr-0">
                 <ul class="fare-type fare-option">
                     <li><h5>@Model.TotalPriceList[i].Identifier @*<small>Budget Friendly</small>*@</h5></li>
                     <li>@Model.TotalPriceList[i].ADULT.CheckingBaggage</li>
@@ -110,16 +126,23 @@
                     <li>@(Model.TotalPriceList[i].ADULT.IsRefundable>0?"Chargeable":"X" )</li>
                     <li>@(Model.TotalPriceList[i].ADULT.IsFreeMeal?"Yes":"X" )</li>
                     @*<li>X</li>
-                    <li>X</li>*@
+            <li>X</li>*@
                     <li>
                         @if (LowestFare == Model.TotalPriceList[i].ADULT.NetFare)
                         {
                             <span>Lowest fare</span>
                         }
-                        <b><i class="fa fa-rupee"></i>@Model.TotalPriceList[i].ADULT.NetFare.ToString("#,#.##", _currentuser.cultureInfo )</b><button>SELECT</button>
+                        <b><i class="fa fa-rupee"></i>@Model.TotalPriceList[i].ADULT.NetFare.ToString("#,#.##", _currentuser.cultureInfo)</b>
+                        <button class="btnfareReview" data-journeyType="@ViewBag.JourneyType" data-traceId="@Model.TraceId"
+                                data-resultIndex="@Model.TotalPriceList[i].ResultIndex"
+                                data-price="@Model.TotalPriceList[i].ADULT.NetFare" data-airline="@Airline"
+                                data-airlinetime="@string.Concat(Model.Segment.FirstOrDefault()?.DepartureTime.ToString("HH:mm")," - ", Model.Segment.LastOrDefault()?.ArrivalTime.ToString("HH:mm"))">
+                            Select
+                        </button>
                     </li>
 
                 </ul>
+            </div>
 
             }
         </div>

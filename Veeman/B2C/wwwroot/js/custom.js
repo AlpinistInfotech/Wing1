@@ -11,19 +11,7 @@ $(function() {
 
 	  
 
-	  $('.morefare-btn').on('click', function() {
-		$(this).hide();
-		$(this).siblings('.hide-fare-btn').show();
-		$(this).parent('.select-btn').siblings('.option-price-bx').toggle();
-		$(this).parent('.select-btn').siblings('.flight-detail-bx').hide();
-		});
 
-		$('.hide-fare-btn').on('click', function() {
-		$(this).hide();
-		$(this).siblings('.morefare-btn').show();
-		$(this).parent('.select-btn').siblings('.option-price-bx').toggle();
-
-		});
 	
 		
 		//$('.trip-type ul li').on('click', function() {
