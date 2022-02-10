@@ -2,12 +2,13 @@
 @inject B2C.Classes.ICurrentUsers _currentuser
 @{
     double LowestFare = Model.TotalPriceList.Min(p => p.ADULT.NetFare);
+    TimeSpan TotalTime = new TimeSpan(0, Model.Segment.Sum(p => p.Duration + p.Layover+p.Stops),0);
 }
 <div class="result-layer col-md-12 pr-0 pl-0">
     <div class="col-md-2 air-logo">
-        <img src="/images/airlines-logo/@(Model.Segment.FirstOrDefault()?.Airline.Code).png" width="45" />
-        <span> @string.Join(", ", Model.Segment.SelectMany(p => p.Airline.Name).Distinct().Select(p=>p))</span>
-        <span>@string.Join(", ", Model.Segment.SelectMany(p => string.Concat(p.Airline.Code, "-", p.Airline.FlightNumber)).Distinct().Select(q=>q))</span>
+        <img src="/images/airlineslogo/@(Model.Segment.FirstOrDefault()?.Airline.Code).png" width="45" />
+        <span> @string.Join(", ", Model.Segment.Select(p => p.Airline.Name).Distinct())</span>
+        <span>@string.Join(", ", Model.Segment.Select(p => string.Concat(p.Airline.Code, "-", p.Airline.FlightNumber)))</span>
     </div>
     <div class="col-md-6 air-time">
         <div class="col-md-5">
@@ -17,7 +18,7 @@
 </div>
         <div class="col-md-2 air-duration pl-0 pr-0">
             <span>
-                @string.Concat(Model.Segment.Sum(p => p.Duration + p.Layover) / 60, "h ", Model.Segment.Sum(p => p.Duration + p.Layover) % 60, "m")
+                @string.Concat(TotalTime.Hours,"h ",TotalTime.Minutes,"m" )
                 @if (Model.Segment.Count == 1)
                 {
                     <small><i></i>non-stop<i></i></small>
@@ -42,14 +43,14 @@
         <b><i class="fa fa-rupee"></i>@Model.TotalPriceList.Min(p => p.ADULT.NetFare).ToString("#,#.##", _currentuser.cultureInfo)</b>
     </div>
     <div class="col-md-2 select-btn">
-        <button>Select</button>
+        <button class="morefare-btn">Select</button>
         <span class="flight-detail-btn">Flight Detail</span>
     </div>
     <div class="flight-detail-bx col-md-12">
         @for (int i = 0; i < Model.Segment.Count; i++)
         {
             <div class="col-md-3 text-center air-logo">
-                <img src="/images/@(Model.Segment[i].Airline.Code).jpg" width="45" />
+                <img src="/images/airlineslogo/@(Model.Segment[i].Airline.Code).jpg" width="45" />
                 <span>@Model.Segment[i].Airline.Name</span>
                 <span>@string.Concat(Model.Segment[i].Airline.Code, "-", Model.Segment[i].Airline.FlightNumber)</span>
             </div>
